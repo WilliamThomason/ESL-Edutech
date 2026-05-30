@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business English Debates — Eloquenta</title>
+<meta name="description" content="36 B2-C2 Business English debate questions with vocabulary, angles, and follow-ups.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #020617; --bg-card: #0f172a; --bg-hover: #1e293b;
+  --border: #1e293b; --border-light: #334155;
+  --text: #e2e8f0; --text-muted: #94a3b8; --text-dim: #64748b;
+  --cyan: #22d3ee; --amber: #fbbf24; --emerald: #34d399; --rose: #fb7185; --violet: #a78bfa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+/* Header */
+.header{padding:60px 0 40px;text-align:center;border-bottom:1px solid var(--border);margin-bottom:40px}
+.header h1{font-size:2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.header h1 span{color:var(--cyan)}
+.header p{color:var(--text-muted);font-size:1.1rem}
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0 4px 8px}
+.badge.b2{background:rgba(34,211,238,.12);color:var(--cyan)}
+.badge.c1{background:rgba(167,139,250,.12);color:var(--violet)}
+.badge.c2{background:rgba(251,113,133,.12);color:var(--rose)}
+
+/* Search */
+.search-wrap{margin-bottom:32px}
+.search-input{width:100%;padding:14px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;outline:none;transition:border .2s}
+.search-input:focus{border-color:var(--cyan)}
+.search-input::placeholder{color:var(--text-dim)}
+
+/* Topic Filter */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.filter-btn:hover{border-color:var(--text-dim);color:var(--text)}
+.filter-btn.active{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+
+/* Stats */
+.stats{display:flex;gap:24px;margin-bottom:32px;justify-content:center}
+.stat{text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:var(--cyan)}
+.stat-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+
+/* Debate Cards */
+.debate-list{display:flex;flex-direction:column;gap:16px;margin-bottom:60px}
+.debat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .2s}
+.debat-card:hover{border-color:var(--border-light);transform:translateY(-1px)}
+.debat-card.hidden{display:none}
+.debat-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.debat-num{width:36px;height:36px;border-radius:10px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text-muted);flex-shrink:0}
+.debat-title{font-size:1.05rem;font-weight:700;flex:1;padding-top:6px}
+.badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.badge-topic{padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.topic-ethics{background:rgba(251,113,133,.12);color:var(--rose)}
+.topic-tech{background:rgba(34,211,238,.12);color:var(--cyan)}
+.topic-work{background:rgba(251,191,36,.12);color:var(--amber)}
+.topic-econ{background:rgba(52,211,153,.12);color:var(--emerald)}
+.topic-mkt{background:rgba(167,139,250,.12);color:var(--volt)}
+.topic-global{background:rgba(148,163,184,.15);color:var(--text-muted)}
+
+.debat-body{padding-left:52px}
+.vocabulary{margin-bottom:14px}
+.vocabulary h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
+.vocab-chips{display:flex;flex-wrap:wrap;gap:6px}
+.vocab-chip{padding:3px 10px;border-radius:6px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);font-size:12px;color:var(--cyan);font-weight:500}
+.vocab-chip .def{color:var(--text-dim);font-size:11px;margin-left:4px;font-style:italic}
+
+.angles h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
+.angle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.angle{padding:8px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-size:13px;color:var(--text-muted)}
+.angle .side{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px}
+.angle.for .side{color:var(--emerald)}
+.angle.against .side{color:var(--rose)}
+
+.followups{margin-top:14px}
+.followups h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
+.followups ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.followups li{font-size:13px;color:var(--text-muted);padding:4px 0}
+.followups li::before{content:"→ ";color:var(--text-dim)}
+
+.expand-btn{margin-top:12px;padding:8px 16px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.expand-btn:hover{border-color:var(--text-dim);color:var(--text)}
+.collapsed .angles,.collapsed .followups{display:none}
+.vocab-word:hover{border-bottom-color:#22d3ee}
+.vocab-word .v-tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:8px;padding:8px 12px;min-width:180px;max-width:260px;font-size:12px;font-weight:400;color:#e2e8f0;line-height:1.4;text-align:left;box-shadow:0 6px 24px rgba(0,0,0,.4);z-index:100;transition:opacity .25s,visibility .25s;pointer-events:none}
+.vocab-word .v-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#334155}
+.vocab-word .v-tooltip strong{display:block;color:#22d3ee;font-weight:700;font-size:13px;margin-bottom:2px}
+.vocab-word:hover .v-tooltip{visibility:visible;opacity:1}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:40px 0;text-align:center}
+.footer p{font-size:13px;color:var(--text-dim)}
+.footer a{color:var(--text-muted)}
+
+@media(max-width:600px){
+  .angle-grid{grid-template-columns:1fr}
+  .stats{flex-wrap:wrap;gap:16px}
+  .debat-body{padding-left:0}
+  .filter-row{gap:6px}
+}
+</style>
+<link rel="stylesheet" href="eloquent-branding.css">
+</head>
+<body style="padding-top:48px">
+<!-- Eloquenta Branded Top Bar -->
+<div class="elo-bar">
+  <a href="landing.html" class="elo-logo" title="Back to Eloquenta Home">
+    El<span class="o">o</span>quenta
+  </a>
+  <span class="elo-tagline">Speaking Lesson</span>
+  <div class="elo-menu">
+    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="dashboard.html" class="elo-menu-link">📊 Dashboard</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 All Lessons</a>
+  </div>
+</div>
+<div class="elo-spacer"></div>
+
+
+<div class="container">
+
+<div class="header">
+  <h1>🎯 Business English <span>Debates</span></h1>
+  <p>36 discussion questions for B2-C2 learners. Vocabulary, angles, and follow-ups included.</p>
+  <div style="margin-top:16px">
+    <span class="badge b2">B2</span>
+    <span class="badge c1">C1</span>
+    <span class="badge c2">C2</span>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="search-wrap">
+  <input type="text" class="search-input" id="searchInput" placeholder="Search topics, vocabulary, or angles..." oninput="filterDebates()">
+</div>
+
+<!-- Topic Filter -->
+<div class="filter-row">
+  <button class="filter-btn active" onclick="setFilter('all')">All 36</button>
+  <button class="filter-btn" onclick="setFilter('ethics')">Ethics & AI</button>
+  <button class="filter-btn" onclick="setFilter('tech')">Technology</button>
+  <button class="filter-btn" onclick="setFilter('work')">Work & Culture</button>
+  <button class="filter-btn" onclick="setFilter('econ')">Economics</button>
+  <button class="filter-btn" onclick="setFilter('marketing')">Marketing</button>
+  <button class="filter-btn" onclick="setFilter('global')">Global Business</button>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat"><div class="stat-num" id="stat-total">36</div><div class="stat-label">Questions</div></div>
+  <div class="stat"><div class="stat-num">180+</div><div class="stat-label">Vocab Items</div></div>
+  <div class="stat"><div class="stat-num">72</div><div class="stat-label">Angles</div></div>
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Topics</div></div>
+</div>
+
+<!-- Debate List -->
+<div class="debate-list" id="debateList"></div>
+
+<div class="footer">
+  <p>Part of the <a href="https://eloquent.ee">Eloquenta</a> Knowledge Base — Premium ESL with live translations</p>
+  <p style="margin-top:4px;font-size:11px">Free for all Eloquenta students. Share freely.</p>
+</div>
+
+</div>
+
+<script>
+var DEBATES = [
+  {
+    id:1, level:"B2", topic:"ethics", title:"Should companies be allowed to use AI to make hiring decisions?",
+    vocab:[
+      {word:"algorithmic bias",def:"unfair outcomes from AI decisions"},
+      {word:"human resources",def:"department managing staff"},
+      {word:"discrimination",def:"unfair treatment based on protected characteristics"},
+      {word:"transparency",def:"openness about how decisions are made"},
+      {word:"accountability",def:"being responsible for outcomes"}
+    ],
+    angles:[
+      {side:"For",text:"Faster, more consistent screening. Reduces human prejudice in initial filtering."},
+      {side:"Against",text:"AI can perpetuate historical biases. Lacks human judgment for context and potential."}
+    ],
+    followups:[
+      "Who is responsible when an AI makes a discriminatory hire — the company or the software provider?",
+      "Should candidates have the right to know if AI was used in their evaluation?",
+      "Could AI actually reduce bias more effectively than humans in some cases?"
+    ]
+  },
+  {
+    id:2, level:"B2", topic:"tech", title:"Is remote work better for productivity than office work?",
+    vocab:[
+      {word:"productivity",def:"efficiency of output per hour worked"},
+      {word:"collaboration",def:"working together toward shared goals"},
+      {word:"burnout",def:"exhaustion from overwork"},
+      {word:"presenteeism",def:"being at work but not fully productive"},
+      {word:"work-life balance",def:"separation between professional and personal time"}
+    ],
+    angles:[
+      {side:"For",text:"Fewer distractions, no commute, flexible hours, better focus time."},
+      {side:"Against",text:"Harder to collaborate spontaneously. Blurred boundaries. Isolation."}
+    ],
+    followups:[
+      "Should companies pay remote workers less since they save on commuting?",
+      "Is 'Zoom fatigue' a real phenomenon or just resistance to change?",
+      "What jobs genuinely cannot be done remotely?"
+    ]
+  },
+  {
+    id:3, level:"B2", topic:"work", title:"Should employees be required to return to the office full-time?",
+    vocab:[
+      {word:"hybrid work",def:"split between office and remote"},
+      {word:"mandate",def:"official requirement"},
+      {word:"attrition",def:"employees leaving the company"},
+      {word:"corporate culture",def:"shared values and practices"},
+      {word:"autonomy",def:"freedom to make your own decisions"}
+    ],
+    angles:[
+      {side:"For",text:"Builds culture, mentorship, spontaneous innovation. Easier management."},
+      {side:"Against",text:"Talent expects flexibility. Mandates cause attrition. Results matter more than presence."}
+    ],
+    followups:[
+      "Is it ethical to require office return when the work can be done remotely?",
+      "Should companies offer 'office perks' instead of mandates?",
+      "What does 'presenteeism' cost companies in lost productivity?"
+    ]
+  },
+  {
+    id:4, level:"B2", topic:"econ", title:"Should companies prioritize profit over environmental sustainability?",
+    vocab:[
+      {word:"shareholder value",def:"financial return to investors"},
+      {word:"ESG",def:"environmental, social, governance criteria"},
+      {word:"greenwashing",def:"misleading claims about environmental practices"},
+      {word:"externality",def:"cost imposed on society but not paid by the company"},
+      {word:"long-term viability",def:"ability to succeed over many years"}
+    ],
+    angles:[
+      {side:"For",text:"Companies have a duty to shareholders. Regulation should handle environmental issues."},
+      {side:"Against",text:"Unsustainable practices create long-term costs. ESG is increasingly tied to profitability."}
+    ],
+    followups:[
+      "Can a company be profitable AND truly sustainable?",
+      "Is greenwashing sometimes necessary to transition toward better practices?",
+      "Who should pay for the environmental damage caused by business?"
+    ]
+  },
+  {
+    id:5, level:"B2", topic:"marketing", title:"Is influencer marketing more effective than traditional advertising?",
+    vocab:[
+      {word:"conversion rate",def:"percentage of viewers who take action"},
+      {word:"brand awareness",def:"how well consumers recognize a brand"},
+      {word:"authenticity",def:"genuine, not fabricated or paid"},
+      {word:"ROI",def:"return on investment"},
+      {word:"demographic",def:"specific segment of the population"}
+    ],
+    angles:[
+      {side:"For",text:"Higher engagement, trusted recommendations, better targeting, measurable ROI."},
+      {side:"Against",text:"Harder to control messaging. Fake followers. Regulatory risk. Short-lived impact."}
+    ],
+    followups:[
+      "Should influencers be required to disclose paid partnerships more prominently?",
+      "Is 'authenticity' possible when the endorsement is paid?",
+      "Which industries benefit most from influencer marketing?"
+    ]
+  },
+  {
+    id:6, level:"B2", topic:"ethics", title:"Should social media companies be held responsible for misinformation?",
+    vocab:[
+      {word:"misinformation",def:"false or inaccurate information"},
+      {word:"content moderation",def:"reviewing and removing harmful content"},
+      {word:"Section 230",def:"US law protecting platforms from liability"},
+      {word:"echo chamber",def:"environment where beliefs are reinforced"},
+      {word:"algorithmic amplification",def:"algorithm promoting engaging content"}
+    ],
+    angles:[
+      {side:"For",text:"Platforms amplify harmful content. They have the resources and data to act."},
+      {side:"Against",text:"Platforms are intermediaries, not publishers. Who decides what is misinformation?"}
+    ],
+    followups:[
+      "Should governments or companies decide what counts as misinformation?",
+      "Is content moderation a form of censorship?",
+      "What role should users play in flagging false information?"
+    ]
+  },
+  {
+    id:7, level:"B2", topic:"global", title:"Is globalization still a force for good?",
+    vocab:[
+      {word:"interdependence",def:"countries relying on each other economically"},
+      {word:"supply chain",def:"network of production and distribution"},
+      {word:"offshoring",def:"moving operations to another country"},
+      {word:"protectionism",def:"restricting imports to protect domestic industry"},
+      {word:"developing economies",def:"countries with less industrialized economies"}
+    ],
+    angles:[
+      {side:"For",text:"Has lifted billions from poverty. Lower prices for consumers. Cultural exchange."},
+      {side:"Against",text:"Widened inequality. Supply chain fragility. Cultural homogenization. Exploitation."}
+    ],
+    followups:[
+      "Has COVID-19 permanently changed globalization?",
+      "Is 'reshoring' or 'friend-shoring' realistic for most industries?",
+      "What should replace the globalization model?"
+    ]
+  },
+  {
+    id:8, level:"B2", topic:"work", title:"Should the four-day work week become standard?",
+    vocab:[
+      {word:"compressed hours",def:"same hours in fewer days"},
+      {word:"output-based evaluation",def:"measuring results not hours"},
+      {word:"labor shortage",def:"not enough workers to fill positions"},
+      {word:"wellbeing",def:"physical and mental health"},
+      {word:"operational continuity",def:"business running without interruption"}
+    ],
+    angles:[
+      {side:"For",text:"Happier employees, lower attrition, similar productivity in trials."},
+      {side:"Against",text:"Not all industries can adapt. Customer service gaps. Harder to coordinate."}
+    ],
+    followups:[
+      "Would a four-day week work in client-facing industries?",
+      "Should pay be reduced proportionally?",
+      "Could a four-day week actually increase inequality between job types?"
+    ]
+  },
+  {
+    id:9, level:"B2", topic:"tech", title:"Should companies ban the use of ChatGPT and AI tools at work?",
+    vocab:[
+      {word:"data leakage",def:"confidential information being exposed"},
+      {word:"intellectual property",def:"ownership of ideas and creations"},
+      {word:"competency",def:"ability to perform a task"},
+      {word:"competitive advantage",def:"edge over rivals"},
+      {word:"governance",def:"rules and policies for management"}
+    ],
+    angles:[
+      {side:"For",text:"Data security risks. Employees may become dependent. IP concerns."},
+      {side:"Against",text:"Holding back productivity. Competitors will use it. Better to train than ban."}
+    ],
+    followups:[
+      "How should companies govern AI use without stifling innovation?",
+      "Should employees disclose AI use in their work?",
+      "Is there a risk of creating an 'AI divide' between companies?"
+    ]
+  },
+  {
+    id:10, level:"B2", topic:"econ", title:"Should universal basic income (UBI) be implemented?",
+    vocab:[
+      {word:"universal basic income",def:"regular cash payment to all citizens"},
+      {word:"incentive to work",def:"motivation to seek employment"},
+      {word:"inflation",def:"general increase in prices"},
+      {word:"social safety net",def:"government support for those in need"},
+      {word:"fiscal policy",def:"government spending and taxation"}
+    ],
+    angles:[
+      {side:"For",text:"Reduces poverty. Gives people freedom to retrain. Cares for unpaid work."},
+      {side:"Against",text:"Too expensive. Could reduce work incentive. May cause inflation."}
+    ],
+    followups:[
+      "Should UBI replace existing welfare programs or supplement them?",
+      "Has any UBI pilot program shown clear results?",
+      "Would UBI be more effective than targeted support for specific groups?"
+    ]
+  },
+  {
+    id:11, level:"B2", topic:"ethics", title:"Is it ethical for companies to use psychological nudges in marketing?",
+    vocab:[
+      {word:"nudge",def:"subtle prompt to influence behavior"},
+      {word:"dark pattern",def:"manipulative design that tricks users"},
+      {word:"informed consent",def:"agreeing with full knowledge"},
+      {word:"behavioral economics",def:"study of psychological factors in economic decisions"},
+      {word:"consumer autonomy",def:"consumer's freedom to choose"}
+    ],
+    angles:[
+      {side:"For",text:"Helps people make better choices. Used in public health. Reduces decision fatigue."},
+      {side:"Against",text:"Manipulative. Undermines rational choice. Exploits cognitive biases for profit."}
+    ],
+    followups:[
+      "Where is the line between a helpful nudge and a dark pattern?",
+      "Should there be regulation of behavioral design in digital products?",
+      "Do consumers have a right to 'friction-free' experiences that may not be in their best interest?"
+    ]
+  },
+  {
+    id:12, level:"B2", topic:"global", title:"Should wealthy nations pay reparations for historical colonialism?",
+    vocab:[
+      {word:"reparations",def:"compensation for past wrongs"},
+      {word:"colonial legacy",def:"ongoing effects of colonial rule"},
+      {word:"reconciliation",def:"restoring friendly relations"},
+      {word:"sovereign wealth",def:"national financial assets"},
+      {word:"development aid",def:"financial assistance to developing countries"}
+    ],
+    angles:[
+      {side:"For",text:"Historical extraction created current inequality. Moral obligation."},
+      {side:"Against",text:"Current generations aren't responsible. Difficult to calculate. Could createdependency."}
+    ],
+    followups:[
+      "What form should reparations take — cash, debt relief, trade agreements?",
+      "Should former colonies also address internal governance issues?",
+      "Is development aid a form of reparation or something different?"
+    ]
+  },
+  {
+    id:13, level:"C1", topic:"ethics", title:"Should companies have the right to monitor employee communications?",
+    vocab:[
+      {word:"surveillance",def:"close observation of people"},
+      {word:"whistleblowing",def:"reporting illegal or unethical behavior"},
+      {word:"reasonable expectation of privacy",def:"legal concept of privacy rights"},
+      {word:"trade secret",def:"confidential business information"},
+      {word:"compliance",def:"following rules and regulations"}
+    ],
+    angles:[
+      {side:"For",text:"Protects trade secrets. Ensures compliance. Prevents harassment."},
+      {side:"Against",text:"Destroys trust. Chills free expression. Disproportionate invasion of privacy."}
+    ],
+    followups:[
+      "Should monitoring be disclosed to employees? Does disclosure defeat the purpose?",
+      "How should companies balance security with privacy rights?",
+      "Does monitoring emails differ from monitoring keystrokes or cameras?"
+    ]
+  },
+  {
+    id:14, level:"C1", topic:"tech", title:"Will artificial intelligence create more jobs than it destroys?",
+    vocab:[
+      {word:"displacement",def:"workers losing jobs to automation"},
+      {word:"reskilling",def:"learning new skills for different work"},
+      {word:"augmentation",def:"enhancing human work with AI"},
+      {word:"structural unemployment",def:"long-term joblessness due to economic shifts"},
+      {word:"creative destruction",def:"new industries replacing old ones"}
+    ],
+    angles:[
+      {side:"For",text:"Every technology shift has created more jobs than it destroyed. New roles emerge."},
+      {side:"Against",text:"AI is different — it replaces cognitive, not just manual labor. Transition may be too fast."}
+    ],
+    followups:[
+      "Which industries will be most affected in the next 10 years?",
+      "Is 'reskilling' realistic for workers over 50?",
+      "What should governments do to prepare for AI-driven unemployment?"
+    ]
+  },
+  {
+    id:15, level:"C1", topic:"work", title:"Should companies be legally required to disclose pay gaps?",
+    vocab:[
+      {word:"pay gap",def:"difference in earnings between groups"},
+      {word:"equal pay",def:"same pay for equivalent work"},
+      {word:"compliance burden",def:"cost of meeting regulations"},
+      {word:"transparency",def:"openness about data"},
+      {word:"glass ceiling",def:"invisible barrier to advancement"}
+    ],
+    angles:[
+      {side:"For",text:"Transparency drives accountability. Employees deserve to know."},
+      {side:"Against",text:"Can embarrass companies without solving the problem. May discourage salary negotiation."}
+    ],
+    followups:[
+      "Should individual salaries be public or only aggregate data?",
+      "Do pay gap laws actually reduce inequality?",
+      "What other factors besides gender/race should be disclosed?"
+    ]
+  },
+  {
+    id:16, level:"C1", topic:"econ", title:"Should governments break up big tech monopolies?",
+    vocab:[
+      {word:"antitrust",def:"laws preventing monopolies"},
+      {word:"market concentration",def:"control by few companies"},
+      {word:"barrier to entry",def:"obstacles preventing new competitors"},
+      {word:"network effect",def:"product becomes more valuable as more people use it"},
+      {word:"consumer welfare",def:"benefit to customers"}
+    ],
+    angles:[
+      {side:"For",text:"Too much power concentrated. Stifles innovation. Harms consumers long-term."},
+      {side:"Against",text:"Antitrust is hard to enforce in digital markets. These companies provide free value."}
+    ],
+    followups:[
+      "Should data be treated as a public utility?",
+      "Would breaking up big tech help or hurt consumers?",
+      "What is the right regulatory approach — break up, regulate, or tax?"
+    ]
+  },
+  {
+    id:17, level:"C1", topic:"marketing", title:"Is data privacy the new competitive advantage?",
+    vocab:[
+      {word:"data minimization",def:"collecting only necessary data"},
+      {word:"GDPR",def:"EU data protection regulation"},
+      {word:"cookie consent",def:"permission to track users"},
+      {word:"privacy by design",def:"building privacy into products from the start"},
+      {word:"surveillance capitalism",def:"business model based on data collection"}
+    ],
+    angles:[
+      {side:"For",text:"Consumers increasingly value privacy. Early movers gain trust."},
+      {side:"Against",text:"Most consumers trade privacy for convenience. Real privacy is expensive to implement."}
+    ],
+    followups:[
+      "Would you pay more for a truly private product?",
+      "Is 'privacy by design' compatible with ad-based business models?",
+      "How should companies handle data from children and vulnerable populations?"
+    ]
+  },
+  {
+    id:18, level:"C1", topic:"global", title:"Should free trade agreements include labor and environmental standards?",
+    vocab:[
+      {word:"free trade",def:" trade without tariffs or quotas"},
+      {word:"race to the bottom",def:"countries lowering standards to attract business"},
+      {word:"comparative advantage",def:"benefit of specializing in certain production"},
+      {word:"enforcement mechanism",def:"way to ensure compliance"},
+      {word:"sovereignty",def:"a nation's right to govern itself"}
+    ],
+    angles:[
+      {side:"For",text:"Prevents exploitation. Levels playing field. Protects workers and planet."},
+      {side:"Against",text:"Infringes sovereignty. Hard to enforce. May hurt developing economies."}
+    ],
+    followups:[
+      "Which is more effective at raising standards — trade sanctions or consumer pressure?",
+      "Should luxury brands be held to different standards than fast fashion?",
+      "What role should NGOs play in monitoring compliance?"
+    ]
+  },
+  {
+    id:19, level:"C1", topic:"ethics", title:"Should companies boycott countries with poor human rights records?",
+    vocab:[
+      {word:"boycott",def:"refusing to do business with"},
+      {word:"complicity",def:"being involved in wrongdoing"},
+      {word:"constructive engagement",def:"working with regimes to encourage reform"},
+      {word:"supply chain",def:"network from raw materials to finished product"},
+      {word:"corporate social responsibility",def:"companies' obligation to society"}
+    ],
+    angles:[
+      {side:"For",text:"Profits should not fund oppression. Consumer pressure works."},
+      {side:"Against",text:"Boycotts often hurt ordinary citizens more than regimes. Engagement is more effective."}
+    ],
+    followups:[
+      "Should a company prioritize its employees in that country or the broader population?",
+      "How should companies verify human rights compliance in their supply chains?",
+      "Is there a difference between government-to-government sanctions and corporate boycotts?"
+    ]
+  },
+  {
+    id:20, level:"C1", topic:"work", title:"Should performance reviews be abolished?",
+    vocab:[
+      {word:"performance review",def:"formal assessment of an employee's work"},
+      {word:"bias",def:"prejudice for or against something"},
+      {word:"continuous feedback",def:"ongoing informal evaluation"},
+      {word:"calibration",def:"ensuring reviews are consistent across teams"},
+      {word:"psychological safety",def:"feeling safe to take risks and speak up"}
+    ],
+    angles:[
+      {side:"For",text:"Reviews are biased. Ranking creates fear. Continuous feedback is better."},
+      {side:"Against",text:"Without reviews, how do you make fair decisions about promotions and pay?"}
+    ],
+    followups:[
+      "What should replace performance reviews — peer feedback, project-based assessment, or something else?",
+      "Do stack-ranking systems improve performance or destroy morale?",
+      "Should employees have the right to see exactly how they are rated against peers?"
+    ]
+  },
+  {
+    id:21, level:"C1", topic:"econ", title:"Should central banks raise interest rates to combat inflation even if it causes recession?",
+    vocab:[
+      {word:"monetary policy",def:"central bank actions to control money supply"},
+      {word:"interest rate",def:"cost of borrowing money"},
+      {word:"stagflation",def:"high inflation plus stagnant growth"},
+      {word:"soft landing",def:"reducing inflation without causing recession"},
+      {word:"purchasing power",def:"how much money can buy"}
+    ],
+    angles:[
+      {side:"For",text:"Inflation hurts everyone, especially the poor. Higher rates restore price stability."},
+      {side:"Against",text:"Recession causes unemployment. Rate hikes take too long to work. Other tools exist."}
+    ],
+    followups:[
+      "Who suffers most from high interest rates — homeowners, businesses, or governments?",
+      "Is it fair that fighting inflation transfers wealth from borrowers to savers?",
+      "Should central banks prioritize employment over price stability?"
+    ]
+  },
+  {
+    id:22, level:"C1", topic:"tech", title:"Should open-source software be the default for government systems?",
+    vocab:[
+      {word:"open source",def:"code publicly available for anyone to inspect and modify"},
+      {word:"vendor lock-in",def:"dependency on a single provider"},
+      {word:"cybersecurity",def:"protection from digital attacks"},
+      {word:"interoperability",def:"ability of systems to work together"},
+      {word:"total cost of ownership",def:"all costs including maintenance"}
+    ],
+    angles:[
+      {side:"For",text:"Transparency, security, no vendor lock-in, lower long-term cost."},
+      {side:"Against",text:"Harder to maintain. No commercial support. Security through obscurity has value."}
+    ],
+    followups:[
+      "Should governments contribute back to open-source projects they use?",
+      "What is the real total cost of ownership comparison?",
+      "Are there categories of government software that should never be open source?"
+    ]
+  },
+  {
+    id:23, level:"C1", topic:"marketing", title:"Has personal branding replaced company branding?",
+    vocab:[
+      {word:"personal brand",def:"an individual's public professional identity"},
+      {word:"thought leadership",def:"being recognized as an expert in a field"},
+      {word:"employer brand",def:"reputation of a company as a place to work"},
+      {word:"network effect",def:"value increases with number of connections"},
+      {word:"credibility",def:"quality of being trusted"}
+    ],
+    angles:[
+      {side:"For",text:"People follow people, not logos. LinkedIn changes everything."},
+      {side:"Against",text:"Company brands outlast individuals. Institutional trust is deeper."}
+    ],
+    followups:[
+      "Should companies encourage or discourage employee personal branding?",
+      "Is there a conflict of interest between personal and company brand?",
+      "How should companies handle employees whose personal brand contradicts company values?"
+    ]
+  },
+  {
+    id:24, level:"C2", topic:"ethics", title:"Is stakeholder capitalism a genuine shift or just PR?",
+    vocab:[
+      {word:"stakeholder capitalism",def:"serving all stakeholders, not just shareholders"},
+      {word:"ESG rating",def:"environmental, social, governance score"},
+      {word:"fiduciary duty",def:"legal obligation to act in shareholders' interest"},
+      {word:"greenwashing",def:"misleading environmental claims"},
+      {word:"triple bottom line",def:"people, planet, profit"}
+    ],
+    angles:[
+      {side:"For",text:"Businesses have societal obligations. Long-term thinking requires stakeholder focus."},
+      {side:"Against",text:"Without profit focus, companies lose competitiveness. ESG metrics are too subjective."}
+    ],
+    followups:[
+      "Can stakeholder capitalism be measured meaningfully?",
+      "Should fiduciary duty be legally expanded to include stakeholders?",
+      "What would genuine (not performative) stakeholder capitalism look like?"
+    ]
+  },
+  {
+    id:25, level:"C2", topic:"global", title:"Is economic decoupling from China inevitable and desirable?",
+    vocab:[
+      {word:"decoupling",def:"reducing economic interdependence"},
+      {word:"strategic autonomy",def:"ability to act independently"},
+      {word:"reshoring",def:"bringing production back to home country"},
+      {word:"geopolitical risk",def:"risk from political tensions between nations"},
+      {word:"comparative advantage",def:"gains from specialization"}
+    ],
+    angles:[
+      {side:"For",text:"National security trumps economic efficiency. Dependency is leverage."},
+      {side:"Against",text:"Decoupling raises prices for everyone. Ignores mutual economic benefits."}
+    ],
+    followups:[
+      "Which industries should be considered 'strategic' and reshored?",
+      "Would decoupling accelerate or slow the green energy transition?",
+      "Who would benefit most from US-China decoupling — third countries, or no one?"
+    ]
+  },
+  {
+    id:26, level:"C2", topic:"tech", title:"Should AI-generated content be protected by copyright?",
+    vocab:[
+      {word:"copyright",def:"legal protection for original creative works"},
+      {word:"derivative work",def:"work based on existing copyrighted material"},
+      {word:"fair use",def:"limited use of copyrighted material without permission"},
+      {word:"authorship",def:"being the creator of a work"},
+      {word:"public domain",def:"works not protected by copyright"}
+    ],
+    angles:[
+      {side:"For",text:"AI tools are instruments. The human directing the AI is the author."},
+      {side:"Against",text:"If no human creativity is involved, there is no original expression to protect."}
+    ],
+    followups:[
+      "Should AI companies be required to disclose training data sources?",
+      "How should royalties be handled when AI creates music or art in the style of specific artists?",
+      "Is there a difference between AI-assisted and AI-generated content?"
+    ]
+  },
+  {
+    id:27, level:"C2", topic:"econ", title:"Should there be a global minimum corporate tax?",
+    vocab:[
+      {word:"tax haven",def:"jurisdiction with very low taxes"},
+      {word:"profit shifting",def:"moving profits to low-tax jurisdictions"},
+      {word:"OECD",def:"Organization for Economic Cooperation and Development"},
+      {word:"tax competition",def:"countries competing to offer lower taxes"},
+      {word:"fiscal sovereignty",def:"a nation's right to set its own taxes"}
+    ],
+    angles:[
+      {side:"For",text:"Ends the race to the bottom. Ensures multinationals pay fair share."},
+      {side:"Against",text:"Infringes fiscal sovereignty. OECD standards reflect wealthy nations' interests."}
+    ],
+    followups:[
+      "Should the minimum rate be 15% or higher?",
+      "How should the tax be distributed — where profits are booked or where customers are?",
+      "Would a global minimum tax actually reduce inequality or just shift it?"
+    ]
+  },
+  {
+    id:28, level:"C2", topic:"work", title:"Is the concept of a 'career' becoming obsolete?",
+    vocab:[
+      {word:"gig economy",def:"short-term freelance work"},
+      {word:"portfolio career",def:"multiple income streams simultaneously"},
+      {word:"upskilling",def:"learning new, higher-level skills"},
+      {word:"lifetime employment",def:"staying with one employer for entire career"},
+      {word:"transferable skills",def:"abilities useful across different jobs"}
+    ],
+    angles:[
+      {side:"For",text:"Technology changes too fast. Portfolio careers are more resilient. Younger generations prefer it."},
+      {side:"Against",text:"Most people still want stability. 'Career' can be redefined rather than abandoned."}
+    ],
+    followups:[
+      "How should education systems adapt to prepare students for portfolio careers?",
+      "Is the gig economy empowering or exploitative?",
+      "What workplace benefits and protections should apply to portfolio workers?"
+    ]
+  },
+  {
+    id:29, level:"C2", topic:"marketing", title:"Is neuromarketing ethical?",
+    vocab:[
+      {word:"neuromarketing",def:"using brain science to influence consumer behavior"},
+      {word:"subconscious",def:"below the level of conscious awareness"},
+      {word:"informed consent",def:"agreeing with full knowledge"},
+      {word:"persuasion architecture",def:"design intended to influence decisions"},
+      {word:"vulnerable populations",def:"groups more susceptible to influence"}
+    ],
+    angles:[
+      {side:"For",text:"All marketing works on emotion. Neuromarketing is just more effective."},
+      {side:"Against",text:"Bypasses rational decision-making. Especially harmful to vulnerable groups."}
+    ],
+    followups:[
+      "Should neuromarketing be regulated differently from traditional advertising?",
+      "Is there a meaningful distinction between 'persuasion' and 'manipulation'?",
+      "Should neuromarketing research be publicly funded and shared?"
+    ]
+  },
+  {
+    id:30, level:"C2", topic:"global", title:"Should intellectual property rights be waived for essential medicines?",
+    vocab:[
+      {word:"TRIPS waiver",def:"waiving WTO intellectual property rules"},
+      {word:"generic drug",def:"non-branded equivalent of a patented drug"},
+      {word:"technology transfer",def:"sharing knowledge to enable local production"},
+      {word:"incentive to innovate",def:"motivation from potential profit"},
+      {word:"compulsory licensing",def:"government allowing production without patent holder consent"}
+    ],
+    angles:[
+      {side:"For",def:"Health emergencies require extraordinary measures. Profits should not override lives."},
+      {side:"Against",text:"Patents fund future R&D. Waivers reduce incentive. Compulsory licensing already exists."}
+    ],
+    followups:[
+      "Did the COVID vaccine IP waiver actually help developing countries?",
+      "How should we balance innovation incentives with access to essential medicines?",
+      "Should the same logic apply to green energy technology?"
+    ]
+  },
+  {
+    id:31, level:"C2", topic:"ethics", title:"Should whistleblowers be financially rewarded?",
+    vocab:[
+      {word:"whistleblower",def:"person who reports illegal or unethical activity"},
+      {word:"qui tam",def:"legal action by a private person on behalf of the government"},
+      {word:"retaliation",def:"punishment for reporting wrongdoing"},
+      {word:"bounty",def:"financial reward"},
+      {word:"public interest",def:"benefit to society as a whole"}
+    ],
+    angles:[
+      {side:"For",text:"Rewards incentivize reporting. Risks are enormous. Public benefit is huge."},
+      {side:"Against",text:"Could encourage false reporting. Moral duty should be enough. Conflicts of interest."}
+    ],
+    followups:[
+      "What percentage of recovered funds is fair for a whistleblower reward?",
+      "Should there be a cap on whistleblower payouts?",
+      "How do we protect whistleblowers from retaliation while preventing abuse?"
+    ]
+  },
+  {
+    id:32, level:"C2", topic:"work", title:"Should executives have their pay capped relative to the median worker?",
+    vocab:[
+      {word:"pay ratio",def:"executive pay divided by median worker pay"},
+      {word:"LMT",def:"living minimum wage"},
+      {word:"golden parachute",def:"large payment on departure"},
+      {word:"pay compression",def:"reducing the gap between highest and lowest paid"}
+    ],
+    angles:[
+      {side:"For",text:"Extreme ratios are morally indefensible. Workers create value too."},
+      {side:"Against",text:"Market determines pay. Caps drive talent to unregulated companies."}
+    ],
+    followups:[
+      "What would be a reasonable pay ratio — 20:1, 50:1, 100:1?",
+      "Should pay caps apply to all companies or only publicly traded ones?",
+      "How do we account for different living costs across countries?"
+    ]
+  }
+];
+
+// Render debates
+function renderDebates() {
+  var list = document.getElementById('debateList');
+  var html = '';
+  DEBATES.forEach(function(d, i) {
+    html += '<div class="debat-card collapsed" id="card-'+d.id+'" data-topic="'+d.topic+'" data-level="'+d.level+'" data-search="'+d.title.toLowerCase()+' '+d.vocab.map(function(v){return v.word}).join(' ').toLowerCase()+'">'+
+      '<div class="debat-header">'+
+        '<div class="debat-num">'+d.id+'</div>'+
+        '<div style="flex:1">'+
+          '<div class="debat-title">'+d.title+'</div>'+
+          '<div class="badges">'+
+            '<span class="badge '+d.level.toLowerCase()+'">'+d.level+'</span>'+
+            '<span class="badge-topic topic-'+d.topic+'">'+d.topic+'</span>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="debat-body">'+
+        '<div class="vocabulary"><h4>Key Vocabulary</h4><p style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Hover over any word to see its definition</p><div class="vocab-chips">'+
+          d.vocab.map(function(v){return '<span class="vocab-word">'+v.word+'<span class="v-tooltip"><strong>'+v.word+'</strong><br>'+v.def+'</span></span>'}).join('')+
+        '</div></div>'+
+        '<div class="angles"><h4>Discussion Angles</h4><div class="angle-grid">'+
+          d.angles.map(function(a){return '<div class="angle '+a.side.toLowerCase()+'"><span class="side">'+a.side+'</span>'+a.text+'</div>'}).join('')+
+        '</div></div>'+
+        '<div class="followups"><h4>Follow-up Questions</h4><ul>'+
+          d.followups.map(function(f){return '<li>'+f+'</li>'}).join('')+
+        '</ul></div>'+
+        '<button class="expand-btn" onclick="toggleCard('+d.id+')">Show angles &amp; vocabulary ▼</button>'+
+      '</div>'+
+    '</div>';
+  });
+  list.innerHTML = html;
+  updateStats();
+}
+
+function toggleCard(id) {
+  var card = document.getElementById('card-' + id);
+  var btn = card.querySelector('.expand-btn');
+  var isCollapsed = card.classList.contains('collapsed');
+  card.classList.toggle('collapsed', !isCollapsed);
+  btn.textContent = isCollapsed ? 'Hide ▲' : 'Show angles & vocabulary ▼';
+}
+
+var currentFilter = 'all';
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
+  event.target.classList.add('active');
+  filterDebates();
+}
+
+function filterDebates() {
+  var search = document.getElementById('searchInput').value.toLowerCase();
+  var shown = 0;
+  document.querySelectorAll('.debat-card').forEach(function(card) {
+    var topic = card.dataset.topic;
+    var level = card.dataset.level;
+    var searchData = card.dataset.search;
+    var matchFilter = currentFilter === 'all' || topic === currentFilter;
+    var matchSearch = !search || searchData.indexOf(search) !== -1;
+    var visible = matchFilter && matchSearch;
+    card.classList.toggle('hidden', !visible);
+    if (visible) shown++;
+  });
+  updateStats(shown);
+}
+
+function updateStats(shown) {
+  var el = document.getElementById('stat-total');
+  if (el) el.textContent = shown !== undefined ? shown : DEBATES.length;
+}
+
+// Init
+renderDebates();
+</script>
+
+</body>
+</html>

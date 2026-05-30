@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Travel & Places — Speaking Lesson | Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow:hidden;height:100vh}
+.slide{display:none;width:100vw;height:100vh;position:relative;flex-direction:column;justify-content:center;align-items:center}.slide.active{display:flex}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.28) saturate(1.2)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.2) 40%,rgba(0,0,0,.55) 100%)}
+.slide-content{position:relative;z-index:2;max-width:820px;padding:40px;text-align:center}
+.slide-number{position:absolute;top:24px;left:28px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase}
+.slide-category{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;border:1px solid}
+.slide h1{font-size:3rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+.slide h2{font-size:1.4rem;font-weight:600;line-height:1.4;margin-bottom:16px;color:rgba(255,255,255,.9)}
+.slide p{font-size:1.05rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:600px;margin:0 auto}
+.vocab-word{border-bottom:2px dotted rgba(34,211,238,.5);cursor:help;color:#22d3ee;font-weight:600;position:relative;transition:border-color .2s}
+.vocab-word:hover{border-bottom-color:#22d3ee}
+.tt button {
+    display:block;margin-top:8px;padding:4px 8px;font-size:10px;
+    background:#22d3ee;color:#000;border:none;border-radius:4px;cursor:pointer;width:100%;
+}
+
+.vocab-word .tt{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 14px;min-width:200px;max-width:300px;font-size:13px;font-weight:400;color:#e2e8f0;line-height:1.5;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;transition:opacity .25s,visibility .25s;pointer-events:none}
+.vocab-word .tt::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#334155}
+.vocab-word .tt strong{display:block;color:#22d3ee;font-weight:700;font-size:14px;margin-bottom:3px}
+.vocab-word:hover .tt{visibility:visible;opacity:1}
+.nav{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:8px;align-items:center}
+.nav-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;transition:all .15s}
+.nav-btn:hover{background:rgba(255,255,255,.25)}
+.nav-dots{display:flex;gap:6px;align-items:center;padding:0 8px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.4)}
+.nav-dot:hover{background:rgba(255,255,255,.5)}
+.progress{position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(255,255,255,.06);height:10px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#22d3ee,#f472b6);transition:width .5s ease-out;border-radius:0 5px 5px 0;box-shadow:0 0 14px rgba(34,211,238,.4),0 0 6px rgba(244,114,182,.3)}
+.q-list{text-align:left;max-width:620px;margin:16px auto 0;display:flex;flex-direction:column;gap:10px}
+.q-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 20px;font-size:15px;line-height:1.7;text-align:left}
+.q-item .num{display:inline-block;width:24px;height:24px;border-radius:50%;background:rgba(34,211,238,.12);color:#22d3ee;font-size:11px;font-weight:700;text-align:center;line-height:24px;margin-right:10px;vertical-align:top;flex-shrink:0}
+.warmup-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(52,211,153,.12);color:#34d399;margin-bottom:16px;border:1px solid rgba(52,211,153,.25)}
+.slide-footer{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.2);letter-spacing:1px}
+.logo{color:#fff;font-weight:700}.logo .o{color:#22d3ee}
+@media(max-width:640px){.slide h1{font-size:2rem}.slide h2{font-size:1.1rem}.slide p{font-size:.9rem}.slide-content{padding:20px}.q-item{font-size:13px;padding:12px 14px}}
+
+/* Question number circle */
+.q-circle{
+  width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:0 auto 16px;
+  border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;
+  backdrop-filter:blur(4px);
+}
+.q-circle.accent{background:rgba(34,211,238,.15);border-color:rgba(34,211,238,.3);color:#22d3ee}
+.q-circle.warm{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.3);color:#fbbf24}
+</style>
+<link rel="stylesheet" href="eloquent-branding.css">
+</head>
+<body style="padding-top:48px">
+<!-- Eloquenta Branded Top Bar -->
+<div class="elo-bar">
+  <a href="landing.html" class="elo-logo" title="Back to Eloquenta Home">
+    El<span class="o">o</span>quenta
+  </a>
+  <span class="elo-tagline">Speaking Lesson</span>
+  <div class="elo-menu">
+    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="dashboard.html" class="elo-menu-link">📊 Dashboard</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 All Lessons</a>
+  </div>
+</div>
+<div class="elo-spacer"></div>
+
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div id="slides-container"></div>
+<div class="nav"><button class="nav-btn" onclick="prevSlide()">◀</button><div class="nav-dots" id="navDots"></div><button class="nav-btn" onclick="nextSlide()">▶</button></div>
+<script>
+var SLIDES=[
+  {bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",cat:"Speaking Lesson",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Travel & Places",subtitle:"",text:"Explore travel experiences, dream destinations, cultural differences, transportation, and tourism.",isTitle:true},
+  {bg:"https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80",cat:"Warm-up",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"Travel memories",subtitle:"",isWarmup:true,warmupQ:["Have you ever traveled to another country? Where?","Do you prefer traveling alone or with others?","What is the farthest place you have ever been from home?"]},
+  {bg:"https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80",cat:"Travel Experiences",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Your travel stories",subtitle:"",questions:["Describe the most <span class='vocab-word'>memorable<span class='tt'><strong>memorable</strong><br>Worth remembering; special and unforgettable.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> trip you have taken.","Have you ever had a travel experience that went completely wrong? What happened?","Do you prefer planned trips or spontaneous adventures? Why?","What is the most <span class='vocab-word'>breathtaking<span class='tt'><strong>breathtaking</strong><br>Extremely beautiful or impressive; stunning.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> place you have visited?"]},
+  {bg:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80",cat:"Dream Destinations",catB:"rgba(245,158,11,.15);color:#fbbf24;border-color:rgba(245,158,11,.3)",title:"Where would you go?",subtitle:"",questions:["If you could visit any country in the world, where would you go and why?","Do you prefer beach vacations, city trips, mountain adventures, or cultural tours?","Is there a place you have always wanted to visit but never had the chance?","Would you rather visit one place for two weeks, or four places for three days each?"]},
+  {bg:"https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=1920&q=80",cat:"Cultural Differences",catB:"rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)",title:"Culture & customs",subtitle:"",questions:["What is the most interesting cultural difference you have noticed between your country and another?","Have you experienced <span class='vocab-word'>culture shock<span class='tt'><strong>culture shock</strong><br>Confusion or discomfort when experiencing a very different culture.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span>? Describe it.","Do you think tourism helps or harms local cultures? Give examples.","What customs from your country do you think visitors find most surprising?"]},
+  {bg:"https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1920&q=80",cat:"Transportation",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"Getting around",subtitle:"",questions:["What is your preferred way to travel — plane, train, car, or something else? Why?","Do you think high-speed trains are better than domestic flights for short distances?","Has <span class='vocab-word'>ride-sharing<span class='tt'><strong>ride-sharing</strong><br>Services like Uber where drivers use their own cars to transport passengers.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> changed how people get around?","Do you think electric cars will completely replace petrol cars in your lifetime?"]},
+  {bg:"https://images.unsplash.com/photo-1528605105345-5344b6c91a43?w=1920&q=80",cat:"Migration & Home",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Moving abroad",subtitle:"",questions:["Would you ever consider living in another country permanently? Why or why not?","What is the biggest <span class='vocab-word'>sacrifice<span class='tt'><strong>sacrifice</strong><br>Something you give up in order to have or do something more important.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> people make when moving abroad?","Do you think emigrants should fully adopt the culture of their new country, or keep their own traditions?","Is it better to live near family in your home country, or abroad with more opportunities?"]},
+  {bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",cat:"Wrap-up",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Well done!",subtitle:"Travel & Places — Speaking Lesson",text:"Practice these questions with a partner. Try to speak for at least 2 minutes on each topic.",isEnd:true}
+];
+var current=0;
+function renderSlides(){var container=document.getElementById('slides-container');var dots=document.getElementById('navDots');var html='',dotsHtml='';SLIDES.forEach(function(s,i){html+='<div class="slide'+(i===0?' active':'')+'" id="slide-'+i+'">';html+='<div class="slide-bg" style="background-image:url('+s.bg+')"></div>';html+='<span class="slide-number">'+(i+1)+' / '+SLIDES.length+'</span>';html+='<div class="slide-content">';if(s.isTitle){html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';html+='<h1>'+s.title+'</h1>';html+='<p>'+s.text+'</p>';html+='<p style="font-size:11px;color:rgba(255,255,255,.25);margin-top:12px">💡 Hover over highlighted words to see definitions</p>';}else if(s.isWarmup){html+='<span class="warmup-badge">🔥 Warm-up</span>';html+='<h2>'+s.title+'</h2>';if(s.warmupQ){html+='<div class="q-list">';s.warmupQ.forEach(function(q,j){html+='<div class="q-item"><span class="num">'+(j+1)+'</span>'+q+'</div>';});html+='</div>';}}else if(s.isEnd){html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';html+='<h1>'+s.title+'</h1>';html+='<h2>'+s.subtitle+'</h2>';html+='<p>'+s.text+'</p>';}else{html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';html+='<h2>'+s.title+'</h2>';if(s.questions){html+='<div class="q-list">';s.questions.forEach(function(q,j){html+='<div class="q-item"><span class="num">'+(j+1)+'</span>'+q+'</div>';});html+='</div>';}}html+='</div>';html+='<div class="slide-footer"><span class="logo">El<span class="o">o</span>quenta</span> — Travel & Places</div>';html+='</div>';dotsHtml+='<div class="nav-dot'+(i===0?' active':'')+'" onclick="goTo('+i+')"></div>';});container.innerHTML=html;dots.innerHTML=dotsHtml;}
+function showSlide(n){if(n<0||n>=SLIDES.length)return;document.querySelectorAll('.slide').forEach(function(el){el.classList.remove('active')});document.querySelectorAll('.nav-dot').forEach(function(el){el.classList.remove('active')});document.getElementById('slide-'+n).classList.add('active');document.querySelectorAll('.nav-dot')[n].classList.add('active');current=n;document.getElementById('progressBar').style.width=((current+1)/SLIDES.length*100)+'%';}
+function nextSlide(){showSlide(current+1)}function prevSlide(){showSlide(current-1)}function goTo(n){showSlide(n)}
+document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}});
+var tx=0;document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX});document.addEventListener('touchend',function(e){var d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50){d>0?nextSlide():prevSlide()}});
+renderSlides();
+
+    function translateWord(btn) {
+        btn.innerText = "Translating...";
+        // For now, simple mock simulation
+        setTimeout(() => {
+            btn.innerText = "L1 Translation: [Example]";
+        }, 800);
+    }
+
+</script>
+</body>
+</html>

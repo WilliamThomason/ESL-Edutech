@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Degrees of Likelihood — Grammar Infographic | Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow:hidden;height:100vh;padding-top:48px}
+.slide{display:none;width:100vw;height:100vh;position:relative;flex-direction:column;justify-content:center;align-items:center}
+.slide.active{display:flex}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.25) saturate(1.2)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.2) 40%,rgba(0,0,0,.6) 100%)}
+.slide-content{position:relative;z-index:2;max-width:900px;padding:40px;text-align:center}
+.slide-number{position:absolute;top:24px;left:28px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase}
+.slide-category{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;border:1px solid}
+.slide h1{font-size:3rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+.slide h2{font-size:1.4rem;font-weight:600;line-height:1.4;margin-bottom:16px;color:rgba(255,255,255,.9)}
+.slide p{font-size:1.05rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:640px;margin:0 auto}
+.nav{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:8px;align-items:center}
+.nav-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.nav-btn:hover{background:rgba(255,255,255,.25)}
+.nav-dots{display:flex;gap:6px;align-items:center;padding:0 8px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.5)}
+.nav-dot:hover{background:rgba(255,255,255,.4)}
+.progress{position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(255,255,255,.06);height:10px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#fbbf24,#22d3ee);transition:width .5s ease-out;border-radius:0 5px 5px 0;box-shadow:0 0 14px rgba(251,191,36,.4),0 0 6px rgba(34,211,238,.3)}
+.logo{color:#fff;font-weight:700;letter-spacing:.5px}
+.logo .o{color:#22d3ee}
+.slide-footer{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.2);letter-spacing:1px}
+
+/* ═══ LIKELIHOOD SCALE ═══ */
+.scale-wrap{width:100%;max-width:820px;margin:0 auto;padding:0 20px}
+.scale-bar{display:flex;height:48px;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative}
+.seg{flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.9);border-right:1px solid rgba(0,0,0,.2);transition:all .3s;cursor:default}
+.seg:last-child{border-right:none}
+.seg:hover{filter:brightness(1.2)}
+.seg.active{outline:3px solid #fff;outline-offset:-3px;z-index:2}
+
+/* Specific segment colors */
+.s-certain{background:linear-gradient(135deg,#059669,#10b981)}
+.s-high{background:linear-gradient(135deg,#0891b2,#06b6d4)}
+.s-medium{background:linear-gradient(135deg,#d97706,#f59e0b)}
+.s-low{background:linear-gradient(135deg,#9333ea,#a855f7)}
+.s-unlikely{background:linear-gradient(135deg,#64748b,#94a3b8)}
+.s-impossible{background:linear-gradient(135deg,#1e293b,#334155)}
+
+/* Labels below scale */
+.scale-labels{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:4px}
+.scale-label{text-align:center;font-size:10px;color:rgba(255,255,255,.4);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.scale-pct{text-align:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.6);font-family:'JetBrains Mono',monospace;margin-top:2px}
+.scale-pcts{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:20px}
+
+/* ═══ VOCAB CARDS ═══ */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:20px;text-align:left}
+.vocab-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;transition:all .2s;cursor:help;position:relative}
+.vocab-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.vocab-card .word{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.vocab-card .level{display:inline-block;padding:1px 8px;border-radius:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.vocab-card .def{font-size:12px;color:rgba(255,255,255,.5);line-height:1.5}
+.vocab-card .eg{font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;font-style:italic}
+.vocab-card .tt{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:260px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px;font-size:12px;font-weight:400;color:#e2e8f0;line-height:1.5;z-index:100;box-shadow:0 8px 30px rgba(0,0,0,.5);transition:opacity .25s;pointer-events:none}
+.vocab-card:hover .tt{visibility:visible;opacity:1}
+
+/* ═══ EXAMPLE SENTENCES ═══ */
+.examples{display:flex;flex-direction:column;gap:10px;margin-top:16px;text-align:left;max-width:640px;margin-left:auto;margin-right:auto}
+.example{background:rgba(255,255,255,.05);border-left:3px solid;border-radius:0 8px 8px 0;padding:12px 16px;font-size:14px;line-height:1.6}
+.example em{font-style:normal;font-weight:700}
+.example .adverb{color:#22d3ee;font-weight:700}
+.source{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px;text-align:right}
+
+/* ═══ COMPARISON TABLE ═══ */
+.comp-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}
+.comp-table th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.1)}
+.comp-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table .adverb-cell{font-weight:700;font-size:14px}
+.comp-table .example-cell{color:rgba(255,255,255,.5);font-style:italic;font-size:12px}
+
+/* Level badges */
+.lvl{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.lvl-certain{background:rgba(16,185,129,.15);color:#34d399}
+.lvl-high{background:rgba(6,182,212,.15);color:#22d3ee}
+.lvl-medium{background:rgba(245,158,11,.15);color:#fbbf24}
+.lvl-low{background:rgba(168,85,247,.15);color:#a78bfa}
+.lvl-unlikely{background:rgba(148,163,184,.15);color:#94a3b8}
+.lvl-impossible{background:rgba(100,116,139,.2);color:#64748b}
+
+/* Speaking prompts */
+.prompt-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto}
+.prompt{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 18px;font-size:14px;line-height:1.6}
+.prompt .num{display:inline-block;width:24px;height:24px;border-radius:50%;background:rgba(34,211,22,.15);color:#22d3ee;font-size:11px;font-weight:700;text-align:center;line-height:24px;margin-right:10px;vertical-align:middle}
+
+/* Warmup badge */
+.warmup-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(52,211,153,.12);color:#34d399;margin-bottom:16px;border:1px solid rgba(52,211,153,.25)}
+
+@media(max-width:700px){
+  .slide h1{font-size:2rem}
+  .slide h2{font-size:1.1rem}
+  .slide p{font-size:.9rem}
+  .slide-content{padding:20px}
+  .vocab-grid{grid-template-columns:1fr 1fr}
+  .scale-bar{height:36px}
+  .seg{font-size:8px}
+}
+@media(max-width:480px){
+  .vocab-grid{grid-template-columns:1fr}
+}
+
+/* Question number circle */
+.q-circle{
+  width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:0 auto 16px;
+  border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;
+  backdrop-filter:blur(4px);
+}
+.q-circle.accent{background:rgba(34,211,238,.15);border-color:rgba(34,211,238,.3);color:#22d3ee}
+.q-circle.warm{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.3);color:#fbbf24}
+</style>
+<link rel="stylesheet" href="eloquent-branding.css">
+</head>
+<body style="padding-top:48px">
+<!-- Eloquenta Branded Top Bar -->
+<div class="elo-bar">
+  <a href="landing.html" class="elo-logo" title="Back to Eloquenta Home">
+    El<span class="o">o</span>quenta
+  </a>
+  <span class="elo-tagline">Speaking Lesson</span>
+  <div class="elo-menu">
+    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="dashboard.html" class="elo-menu-link">📊 Dashboard</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 All Lessons</a>
+  </div>
+</div>
+<div class="elo-spacer"></div>
+
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div id="slides-container"></div>
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<script>
+var SLIDES=[
+  {
+    bg:"https://images.unsplash.com/photo-1509909756405-be0199881695?w=1920&q=80",
+    cat:"Grammar Infographic",catC:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+    title:"Degrees of Likelihood",
+    subtitle:"How to express certainty and doubt in English",
+    text:"Master the adverbs that show how sure you are — from <em>definitely</em> to <em>impossibly</em>.",
+    isTitle:true
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80",
+    cat:"Overview",catC:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+    title:"The Likelihood Scale",
+    subtitle:"Six levels of certainty, from 100% to 0%",
+    text:"",
+    isScale:true
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1920&q=80",
+    cat:"Certain — 100%",catC:"rgba(16,185,129,.15);color:#34d399;border-color:rgba(16,185,129,.3)",
+    title:"High Certainty",
+    subtitle:"definitely, certainly, undoubtedly, absolutely",
+    text:"Use these when you are completely sure about something. There is no doubt in your mind.",
+    isVocab:true,
+    vocabList:[
+      {word:"definitely",eg:"She <em>definitely</em> won the award — I watched the ceremony.",pct:"100%"},
+      {word:"certainly",eg:"I will <em>certainly</em> be there tomorrow. You can count on me.",pct:"99%"},
+      {word:"undoubtedly",eg:"This is <em>undoubtedly</em> the best restaurant in town.",pct:"98%"},
+      {word:"absolutely",eg:"Can you help me? <em>Absolutely</em>! I'd be happy to.",pct:"99%"}
+    ]
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1920&q=80",
+    cat:"High — 80-90%",catC:"rgba(6,182,212,.15);color:#22d3ee;border-color:rgba(6,182,212,.3)",
+    title:"Medium-High Likelihood",
+    subtitle:"probably, likely",
+    text:"Use these when you think something is very possible, but you're not 100% sure. There's still a small chance it might not happen.",
+    isVocab:true,
+    vocabList:[
+      {word:"probably",sg:"They will <em>probably</em> arrive late — traffic is terrible today.",pct:"80%"},
+      {word:"likely",eg:"It is <em>likely</em> to rain tomorrow. Take an umbrella just in case.",pct:"75%"}
+    ]
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1920&q=80",
+    cat:"Medium — 50-60%",catC:"rgba(245,158,11,.15);color:#fbbf24;border-color:rgba(245,158,11,.3)",
+    title:"Medium Possibility",
+    subtitle:"possibly, perhaps",
+    text:"Use these when something could go either way. You genuinely don't know what will happen.",
+    isVocab:true,
+    vocabList:[
+      {word:"possibly",eg:"It will <em>possibly</em> rain tomorrow, but the forecast is unclear.",pct:"50%"},
+      {word:"perhaps",eg:"<em>Perhaps</em> we should leave early — just to be safe.",pct:"45%"},
+      {word:"might",eg:"She <em>might</em> come to the party, but she hasn't confirmed yet.",pct:"40%"}
+    ]
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1920&q=80",
+    cat:"Low — 20-40%",catC:"rgba(168,85,247,.15);color:#a78bfa;border-color:rgba(168,85,247,.3)",
+    title:"Low Likelihood",
+    subtitle:"maybe, conceivably, hardly",
+    text:"Use these when you think something is not very likely, but you don't want to rule it out completely.",
+    isVocab:true,
+    vocabList:[
+      {word:"maybe",eg:"<em>Maybe</em> we should leave early — I'm not sure though.",pct:"30%"},
+      {word:"conceivably",eg:"It could <em>conceivably</em> work, but I wouldn't bet on it.",pct:"25%"},
+      {word:"hardly",eg:"I will <em>hardly</em> finish this today — there's too much left.",pct:"15%"}
+    ]
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1920&q=80",
+    cat:"Very Low — 5-10%",catC:"rgba(148,163,184,.15);color:#94a3b8;border-color:rgba(148,163,184,.3)",
+    title:"Unlikely & Impossible",
+    subtitle:"unlikely, improbably, barely",
+    text:"Use these when something is almost certainly not going to happen — or cannot happen at all.",
+    isVocab:true,
+    vocabList:[
+      {word:"unlikely",eg:"It is <em>unlikely</em> to snow in July — the temperature is 30°C.",pct:"5%"},
+      {word:"improbably",eg:"He will <em>improbably</em> win the lottery. The odds are astronomical.",pct:"2%"},
+      {word:"barely",eg:"We will <em>barely</em> make it in time — we need to hurry.",pct:"8%"}
+    ]
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1920&q=80",
+    cat:"Comparison",catC:"rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)",
+    title:"Compare the Levels",
+    subtitle:"See how the adverbs change the meaning",
+    text:"",
+    isCompare:true
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=1920&q=80",
+    cat:"Practice",catC:"rgba(52,211,153,.15);color:#34d399;border-color:rgba(52,211,153,.3)",
+    title:"Practice Speaking",
+    subtitle:"Use these prompts in your next lesson",
+    text:"",
+    isPractice:true
+  },
+  {
+    bg:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1920&q=80",
+    cat:"Wrap-up",catC:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+    title:"Well done!",
+    subtitle:"Degrees of Likelihood — Grammar Infographic",
+    text:"Practice using these adverbs in conversation. Try to use at least three different ones in your next speaking session!",
+    isEnd:true
+  }
+];
+
+var current=0;
+
+function renderSlides(){
+  var container=document.getElementById('slides-container');
+  var dots=document.getElementById('navDots');
+  var html='',dotsHtml='';
+  SLIDES.forEach(function(s,i){
+    html+='<div class="slide'+(i===0?' active':'')+'" id="slide-'+i+'">';
+    html+='<div class="slide-bg" style="background-image:url('+s.bg+')"></div>';
+    html+='<span class="slide-number">'+(i+1)+' / '+SLIDES.length+'</span>';
+    html+='<div class="slide-content">';
+    if(s.isTitle){
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h1>'+s.title+'</h1>';
+      html+='<p>'+s.text+'</p>';
+      html+='<p style=\"font-size:11px;color:rgba(255,255,255,.25);margin-top:12px\">💡 Hover over highlighted words to see definitions</p>';
+    } else if(s.isScale){
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h2>'+s.title+'</h2>';
+      html+='<div class="scale-wrap">';
+      html+='<div class="scale-bar">';
+      html+='<div class="seg s-certain">Certain</div>';
+      html+='<div class="seg s-high">High</div>';
+      html+='<div class="seg s-medium">Medium</div>';
+      html+='<div class="seg s-low">Low</div>';
+      html+='<div class="seg s-unlikely">Unlikely</div>';
+      html+='<div class="seg s-impossible">Impossible</div>';
+      html+='</div>';
+      html+='<div class="scale-pcts">';
+      ['100%','80-90%','50-60%','20-40%','5-10%','0%'].forEach(function(p){
+        html+='<div class="scale-pct">'+p+'</div>';
+      });
+      html+='</div>';
+      html+='<div class="scale-labels">';
+      ['definitely, certainly','probably, likely','possibly, perhaps','maybe, conceivably','unlikely, improbably','impossible'].forEach(function(l){
+        html+='<div class="scale-label">'+l+'</div>';
+      });
+      html+='</div></div>';
+      html+='<p style="margin-top:20px;color:rgba(255,255,255,.4);font-size:.85rem">Hover over each section to see which adverbs belong at that level</p>';
+    } else if(s.isVocab){
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h2>'+s.title+'</h2>';
+      html+='<p>'+s.text+'</p>';
+      html+='<p style=\"font-size:11px;color:rgba(255,255,255,.25);margin-top:12px\">💡 Hover over highlighted words to see definitions</p>';
+      html+='<div class="vocab-grid">';
+      (s.vocabList||[]).forEach(function(v){
+        html+='<div class="vocab-card">';
+        html+='<div class="word">'+v.word+'</div>';
+        if(v.pct) html+='<span class="lvl lvl-'+s.cat.split(' ')[0].toLowerCase()+'" style="margin-bottom:8px;display:inline-block">'+v.pct+'</span>';
+        html+='<div class="eg">'+v.eg+'</div>';
+        html+='</div>';
+      });
+      html+='</div>';
+    } else if(s.isCompare){
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h2>'+s.title+'</h2>';
+      html+='<table class="comp-table"><thead><tr><th>Level</th><th>Adverb</th><th>Example</th></tr></thead><tbody>';
+      [
+        ['Certain','<span class="adverb-cell" style="color:#34d399">definitely</span>','The project will <em>definitely</em> be finished on time.'],
+        ['High','<span class="adverb-cell" style="color:#22d3ee">probably</span>','We will <em>probably</em> hire two new staff members.'],
+        ['Medium','<span class="adverb-cell" style="color:#fbbf24">possibly</span>','The deal is <em>possibly</em> going to fall through.'],
+        ['Low','<span class="adverb-cell" style="color:#a78bfa">maybe</span>','<em>Maybe</em> we should reconsider our strategy.'],
+        ['Unlikely','<span class="adverb-cell" style="color:#94a3b8">unlikely</span>','It is <em>unlikely</em> they will accept our offer.'],
+        ['Impossible','<span class="adverb-cell" style="color:#64748b">barely</span>','We will <em>barely</em> meet the deadline at this pace.']
+      ].forEach(function(row){
+        html+='<tr><td><span class="lvl lvl-'+row[0].toLowerCase()+'">'+row[0]+'</span></td><td>'+row[1]+'</td><td class="example-cell">'+row[2]+'</td></tr>';
+      });
+      html+='</tbody></table>';
+    } else if(s.isPractice){
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h2>'+s.title+'</h2>';
+      html+='<p>'+s.subtitle+'</p>';
+      html+='<div class="prompt-list">';
+      [
+        "Describe a future event at each level of certainty: <em>I will definitely... / It will probably... / It might possibly...</em>",
+        "Compare two business decisions — one you're certain about and one you're doubtful about. Use at least 4 likelihood adverbs.",
+        "Role-play: One person is optimistic about a new project, the other is pessimistic. Try to convince each other.",
+        "Think of a current news story. Describe what <em>will definitely</em> happen, what <em>will probably</em> happen, and what <em>might conceivably</em> happen.",
+        "Describe your career plans using the full scale: something definite, something likely, something possible, and something unlikely."
+      ].forEach(function(p,j){
+        html+='<div class="prompt"><span class="num">'+(j+1)+'</span>'+p+'</div>';
+      });
+      html+='</div>';
+    } else if(s.isEnd){
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h1>'+s.title+'</h1>';
+      html+='<h2>'+s.subtitle+'</h2>';
+      html+='<p>'+s.text+'</p>';
+      html+='<p style=\"font-size:11px;color:rgba(255,255,255,.25);margin-top:12px\">💡 Hover over highlighted words to see definitions</p>';
+    } else {
+      html+='<span class="slide-category" style="background:'+s.catC+'">'+s.cat+'</span>';
+      html+='<h2>'+s.title+'</h2>';
+      if(s.subtitle) html+='<p style="color:rgba(255,255,255,.7);font-size:.95rem;margin-bottom:12px">'+s.subtitle+'</p>';
+      html+='<p>'+s.text+'</p>';
+      html+='<p style=\"font-size:11px;color:rgba(255,255,255,.25);margin-top:12px\">💡 Hover over highlighted words to see definitions</p>';
+    }
+    html+='</div>';
+    html+='<div class="slide-footer">Eloquenta Grammar Infographic — Degrees of Likelihood</div>';
+    html+='</div>';
+    dotsHtml+='<div class="nav-dot'+(i===0?' active':'')+'" onclick="goTo('+i+')"></div>';
+  });
+  container.innerHTML=html;
+  dots.innerHTML=dotsHtml;
+
+  // Animate scale segments on slide 1
+  setTimeout(function(){
+    var segs=document.querySelectorAll('.seg');
+    segs.forEach(function(s,i){
+      s.style.opacity='0';s.style.transform='translateY(10px)';
+      setTimeout(function(){s.style.transition='all .4s';s.style.opacity='1';s.style.transform='translateY(0)'},i*80);
+    });
+  },300);
+}
+
+function showSlide(n){
+  if(n<0||n>=SLIDES.length)return;
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-dot').forEach(function(d){d.classList.remove('active')});
+  document.getElementById('slide-'+n).classList.add('active');
+  document.querySelectorAll('.nav-dot')[n].classList.add('active');
+  current=n;
+  document.getElementById('progressBar').style.width=(((current+1)/SLIDES.length)*100)+'%';
+
+  // Trigger scale animation when returning to scale slide
+  if(SLIDES[current].isScale){
+    setTimeout(function(){
+      document.querySelectorAll('.seg').forEach(function(s,i){
+        s.style.opacity='0';s.style.transform='translateY(10px)';
+        setTimeout(function(){s.style.transition='all .4s';s.style.opacity='1';s.style.transform='translateY(0)'},i*80);
+      });
+    },200);
+  }
+}
+
+function nextSlide(){showSlide(current+1)}
+function prevSlide(){showSlide(current-1)}
+function goTo(n){showSlide(n)}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}
+  if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}
+});
+
+renderSlides();
+</script>
+</body>
+</html>

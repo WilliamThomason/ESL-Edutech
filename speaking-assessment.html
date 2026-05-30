@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+title>Speaking Assessment — Conversation Questions | Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;--violet:#a78bfa;--rose:#fb7185;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+/* Header */
+.header{padding:48px 0 32px;text-align:center;border-bottom:1px solid var(--border);margin-bottom:40px}
+.header h1{font-size:2.2rem;font-weight:900;letter-spacing:-.5px;margin-bottom:8px}
+.header h1 .o{color:var(--cyan)}
+.header p{color:var(--text-muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+.meta{display:flex;gap:16px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.meta-item{padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted)}
+
+/* Search */
+.search-wrap{margin-bottom:32px}
+.search-input{width:100%;padding:14px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;outline:none;transition:border .2s}
+.search-input:focus{border-color:var(--cyan)}
+.search-input::placeholder{color:var(--text-dim)}
+
+/* Topic Filter */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.filter-btn:hover{border-color:var(--text-dim);color:var(--text)}
+.filter-btn.active{background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan)}
+
+/* Stats */
+.stats{display:flex;gap:24px;margin-bottom:32px;justify-content:center}
+.stat{text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+
+/* Topic Sections */
+.topic-section{margin-bottom:48px}
+.topic-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.topic-icon{font-size:1.6rem}
+.topic-title{font-size:1.3rem;font-weight:800}
+.topic-count{font-size:12px;color:var(--text-dim);background:var(--bg-card);padding:2px 10px;border-radius:10px;border:1px solid var(--border)}
+
+/* Question Cards */
+.q-list{display:flex;flex-direction:column;gap:10px}
+.q-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;transition:all .2s;position:relative}
+.q-card:hover{border-color:var(--border-light);background:var(--bg-hover)}
+.q-card.hidden{display:none}
+.q-num{position:absolute;top:14px;right:16px;font-size:11px;font-weight:700;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.q-text{font-size:15px;line-height:1.7;padding-right:40px}
+.q-hint{font-size:12px;color:var(--text-dim);margin-top:8px;font-style:italic;border-top:1px solid var(--border);padding-top:8px}
+
+/* Vocab hover */
+.vocab{border-bottom:2px dotted rgba(34,211,238,.4);cursor:help;color:var(--cyan);font-weight:600;position:relative}
+.vocab .tip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:8px;padding:8px 12px;min-width:180px;max-width:260px;font-size:12px;font-weight:400;color:#e2e8f0;line-height:1.4;text-align:left;box-shadow:0 6px 20px rgba(0,0,0,.4);z-index:100;transition:opacity .2s;pointer-events:none;white-space:normal}
+.vocab .tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#334155}
+.vocab:hover .tip{visibility:visible;opacity:1}
+
+/* Footer */
+.footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;margin-top:40px}
+.footer p{font-size:13px;color:var(--text-dim)}
+.footer .logo{color:#fff;font-weight:700}
+.footer .logo .o{color:var(--cyan)}
+
+/* Print */
+@media print{
+  .search-wrap,.filter-row,.nav-dots{display:none}
+  .q-card{break-inside:avoid;border:1px solid #ccc}
+  body{background:#fff;color:#000}
+}
+
+/* Responsive */
+@media(max-width:640px){
+  .header h1{font-size:1.6rem}
+  .stats{flex-wrap:wrap;gap:16px}
+  .filter-row{gap:6px}
+  .q-text{font-size:14px}
+}
+</style>
+<link rel="stylesheet" href="eloquent-branding.css">
+</head>
+<body style="padding-top:48px">
+<!-- Eloquenta Branded Top Bar -->
+<div class="elo-bar">
+  <a href="landing.html" class="elo-logo" title="Back to Eloquenta Home">
+    El<span class="o">o</span>quenta
+  </a>
+  <span class="elo-tagline">Speaking Lesson</span>
+  <div class="elo-menu">
+    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="dashboard.html" class="elo-menu-link">📊 Dashboard</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 All Lessons</a>
+  </div>
+</div>
+<div class="elo-spacer"></div>
+
+<div class="container">
+
+<div class="header">
+  <h1>🎯 Speaking Assessment — <span class="logo">El<span class="o">o</span>quenta</span></h1>
+  <p>Conversation questions for the 20-minute speaking assessment during your free trial lesson. Answer as naturally as possible — there are no right or wrong answers.</p>
+  <div class="meta">
+    <span class="meta-item">~40 Questions</span>
+    <span class="meta-item">12 Topics</span>
+    <span class="meta-item">A2–B2 Level</span>
+    <span class="meta-item">20 Minutes</span>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <input type="text" class="search-input" id="searchInput" placeholder="Search questions by topic or keyword..." oninput="filterQuestions()">
+</div>
+
+<div class="filter-row">
+  <button class="filter-btn active" onclick="setFilter('all')">All Topics</button>
+  <button class="filter-btn" onclick="setFilter('personal')">👤 Personal</button>
+  <button class="filter-btn" onclick="setFilter('daily')">🏠 Daily Life</button>
+  <button class="filter-btn" onclick="setFilter('work')">💼 Work</button>
+  <button class="filter-btn" onclick="setFilter('travel')">✈️ Travel</button>
+  <button class="filter-btn" onclick="setFilter('food')">🍽️ Food</button>
+  <button class="filter-btn" onclick="setFilter('society')">🌍 Society</button>
+  <button class="filter-btn" onclick="setFilter('future')">🔮 Future</button>
+  <button class="filter-btn" onclick="setFilter('opinions')">💬 Opinions</button>
+  <button class="filter-btn" onclick="setFilter('hypothetical')">🤔 Hypothetical</button>
+  <button class="filter-btn" onclick="setFilter('culture')">🎭 Culture</button>
+  <button class="filter-btn" onclick="setFilter('nature')">🌿 Nature</button>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num" id="stat-total">40</div><div class="stat-label">Questions</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Topics</div></div>
+  <div class="stat"><div class="stat-num">~20</div><div class="stat-label">Minutes</div></div>
+</div>
+
+<div id="questions-container"></div>
+
+<div class="footer">
+  <p><span class="logo">El<span class="o">o</span>quenta</span> — Premium ESL with live translations</p>
+  <p style="margin-top:4px;font-size:11px">This document is used during your free trial assessment. Your teacher will select questions based on your level.</p>
+</div>
+
+</div>
+
+<script>
+var QUESTIONS = [
+  // PERSONAL
+  {t:"Tell me about yourself — your name, where you're from, and what you do.",cat:"personal",hint:""},
+  {t:"What are three words that describe your personality? Explain why you chose each one.",cat:"personal",hint:""},
+  {t:"What is something you are really good at? How did you develop that skill?",cat:"personal",hint:""},
+  {t:"Describe your family. Who are you closest to and why?",cat:"personal",hint:""},
+
+  // DAILY LIFE
+  {t:"Describe a typical day in your life. What time do you wake up? What do you do in the evening?",cat:"daily",hint:""},
+  {t:"What is your favorite way to spend a free afternoon? Has this changed over the years?",cat:"daily",hint:""},
+  {t:"Do you prefer a structured schedule or a flexible routine? Give reasons for your answer.",cat:"daily",hint:""},
+  {t:"What is one daily habit you would like to change? Why?",cat:"daily",hint:""},
+
+  // WORK
+  {t:"What do you do for work or study? Describe what a typical day looks like.",cat:"work",hint:""},
+  {t:"What would your dream job be? Describe it in detail — the work, the environment, the salary.",cat:"work",hint:""},
+  {t:"Do you think people should change careers multiple times, or stick to one profession? Why?",cat:"work",hint:""},
+  {t:"What is more important in a job — a high salary or job satisfaction? Explain your view.",cat:"work",hint:""},
+
+  // TRAVEL
+  {t:"What is the most beautiful place you have ever visited? Describe what made it special.",cat:"travel",hint:""},
+  {t:"Do you prefer traveling alone or with other people? What are the advantages of each?",cat:"travel",hint:""},
+  {t:"If you could live anywhere in the world for one year, where would it be and why?",cat:"travel",hint:""},
+  {t:"What is something surprising you learned about another culture while traveling or meeting foreigners?",cat:"travel",hint:""},
+
+  // FOOD
+  {t:"What is a traditional dish from your country? Can you describe how it is made?",cat:"food",hint:""},
+  {t:"Has the way you eat changed compared to when you were younger? What influenced that change?",cat:"food",hint:""},
+  {t:"Do you enjoy trying food from other cultures? What is the most unusual thing you have ever eaten?",cat:"food",hint:""},
+  {t:"Describe a typical family meal in your home. Who usually cooks? Who cleans up afterwards?",cat:"food",hint:""},
+
+  // SOCIETY
+  {t:"Do you think social media has improved or damaged the way people communicate? Explain your view.",cat:"society",hint:""},
+  {t:"Should learning a foreign language be compulsory in schools? At what age should it start?",cat:"society",hint:""},
+  {t:"What is one thing about modern life that you would change if you could?",cat:"society",hint:""},
+  {t:"Do you think people in your country are generally happy? What would make them happier?",cat:"society",hint:""},
+
+  // FUTURE
+  {t:"Where do you see yourself in five years? Describe your ideal life.",cat:"future",hint:""},
+  {t:"What is a goal you are working towards right now? What steps are you taking to achieve it?",cat:"future",hint:""},
+  {t:"How do you think the world will be different in 50 years? What will change the most?",cat:"future",hint:""},
+  {t:"If you could learn any new skill instantly, what would it be and how would you use it?",cat:"future",hint:""},
+
+  // OPINIONS
+  {t:"Is it better to be a leader or a follower? Give examples to support your answer.",cat:"opinions",hint:""},
+  {t:"Do you think money can buy happiness? Where do you draw the line?",cat:"opinions",hint:""},
+  {t:"Is it ever acceptable to lie? Describe a situation where lying might be the right thing to do.",cat:"opinions",hint:""},
+  {t:"Should children have unlimited access to the internet, or should parents control what they see?",cat:"opinions",hint:""},
+
+  // HYPOTHETICAL
+  {t:"If you won a million euros tomorrow, what would you do with it? Be specific.",cat:"hypothetical",hint:""},
+  {t:"If you could have dinner with any person, living or dead, who would it be and what would you ask them?",cat:"hypothetical",hint:""},
+  {t:"If you could go back in time and give your younger self one piece of advice, what would it be?",cat:"hypothetical",hint:""},
+  {t:"If you could instantly become an expert in one subject, what would you choose and why?",cat:"hypothetical",hint:""},
+
+  // CULTURE
+  {t:"What is a tradition in your country that visitors find strange or interesting? Explain it.",cat:"culture",hint:""},
+  {t:"How has your culture changed in the last 20 years? What do you think caused those changes?",cat:"culture",hint:""},
+  {t:"Is it important to preserve traditional customs, or should cultures evolve naturally? What is your view?",cat:"culture",hint:""},
+  {t:"What is a popular film, book, or song from your country that you would recommend to a foreigner? Why?",cat:"culture",hint:""},
+
+  // NATURE
+  {t:"Do you prefer spending time in nature or in the city? Give reasons for your answer.",cat:"nature",hint:""},
+  {t:"What is the most beautiful natural place you have ever seen? Describe it.",cat:"nature",hint:""},
+  {t:"How does the natural environment change throughout the year where you live?",cat:"nature",hint:""},
+  {t:"Is climate change something you think about in your daily life? What small things do you do to help the environment?",cat:"nature",hint:""},
+];
+
+var TOPICS = [
+  {id:"personal",icon:"👤",title:"Personal & Background"},
+  {id:"daily",icon:"🏠",title:"Daily Life & Routines"},
+  {id:"work",icon:"💼",title:"Work & Career"},
+  {id:"travel",icon:"✈️",title:"Travel & Places"},
+  {id:"food",icon:"🍽️",title:"Food & Culture"},
+  {id:"society",icon:"🌍",title:"Society & Life"},
+  {id:"future",icon:"🔮",title:"Future & Goals"},
+  {id:"opinions",icon:"💬",title:"Opinions & Values"},
+  {id:"hypothetical",icon:"🤔",title:"Hypothetical Situations"},
+  {id:"culture",icon:"🎭",title:"Culture & Traditions"},
+  {id:"nature",icon:"🌿",title:"Nature & Environment"},
+];
+
+var currentFilter = 'all';
+
+function renderQuestions() {
+  var container = document.getElementById('questions-container');
+  var html = '';
+  var qNum = 0;
+
+  TOPICS.forEach(function(topic) {
+    var topicQs = QUESTIONS.filter(function(q) { return q.cat === topic.id; });
+    if (topicQs.length === 0) return;
+
+    html += '<div class="topic-section" data-topic="' + topic.id + '">';
+    html += '<div class="topic-header">';
+    html += '<span class="topic-icon">' + topic.icon + '</span>';
+    html += '<h2 class="topic-title">' + topic.title + '</h2>';
+    html += '<span class="topic-count">' + topicQs.length + ' questions</span>';
+    html += '</div>';
+    html += '<div class="q-list">';
+
+    topicQs.forEach(function(q) {
+      qNum++;
+      html += '<div class="q-card" data-cat="' + q.cat + '" data-search="' + q.t.toLowerCase() + '">';
+      html += '<span class="q-num">#' + qNum + '</span>';
+      html += '<div class="q-text">' + q.t + '</div>';
+      if (q.hint) html += '<div class="q-hint">💡 ' + q.hint + '</div>';
+      html += '</div>';
+    });
+
+    html += '</div></div>';
+  });
+
+  container.innerHTML = html;
+  updateStats();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (event && event.target) event.target.classList.add('active');
+  filterQuestions();
+}
+
+function filterQuestions() {
+  var search = document.getElementById('searchInput').value.toLowerCase();
+  var shown = 0;
+  var total = 0;
+
+  document.querySelectorAll('.q-card').forEach(function(card) {
+    var cat = card.dataset.cat;
+    var searchData = card.dataset.search;
+    var matchFilter = currentFilter === 'all' || cat === currentFilter;
+    var matchSearch = !search || searchData.indexOf(search) !== -1;
+    var visible = matchFilter && matchSearch;
+    card.classList.toggle('hidden', !visible);
+    if (visible) shown++;
+    total++;
+  });
+
+  // Hide empty topic sections
+  document.querySelectorAll('.topic-section').forEach(function(section) {
+    var visibleCards = section.querySelectorAll('.q-card:not(.hidden)');
+    section.style.display = visibleCards.length > 0 ? 'block' : 'none';
+  });
+
+  updateStats(shown);
+}
+
+function updateStats(n) {
+  var el = document.getElementById('stat-total');
+  if (el) el.textContent = n !== undefined ? n : QUESTIONS.length;
+}
+
+renderQuestions();
+</script>
+</body>
+</html>
