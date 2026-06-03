@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Progress Tracker — Classroom Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--bg4:#273549;--border:#374151;--border2:#4b5563;--text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--violet:#a78bfa;--rose:#fb7185;--indigo:#818cf8;--teal:#2dd4bf;--orange:#fb923c}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;min-height:100vh}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.back-btn{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);text-decoration:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.back-btn:hover{color:var(--cyan);border-color:var(--cyan);background:rgba(34,211,238,.08)}
+.back-icon{font-size:16px}
+.header-title{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.header-spacer{flex:1}
+.student-select{appearance:none;padding:6px 28px 6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;outline:none;transition:all .15s}
+.student-select:hover{border-color:var(--cyan)}
+.student-select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+.container{max-width:1100px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.15rem;font-weight:800;margin:0 0 16px;display:flex;align-items:center;gap:10px;letter-spacing:-.3px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title .icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:rgba(34,211,238,.1);color:var(--cyan)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.stat-card.sessions::before{background:linear-gradient(90deg,var(--cyan),var(--teal))}
+.stat-card.score::before{background:linear-gradient(90deg,var(--green),var(--teal))}
+.stat-card.words::before{background:linear-gradient(90deg,var(--violet),var(--indigo))}
+.stat-card.time::before{background:linear-gradient(90deg,var(--amber),var(--orange))}
+.stat-icon{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800}
+.stat-card.sessions .stat-icon{background:rgba(34,211,238,.1);color:var(--cyan)}
+.stat-card.score .stat-icon{background:rgba(52,211,153,.1);color:var(--green)}
+.stat-card.words .stat-icon{background:rgba(167,139,250,.1);color:var(--violet)}
+.stat-card.time .stat-icon{background:rgba(251,191,36,.1);color:var(--amber)}
+.stat-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.stat-value{font-size:2rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:2px}
+.stat-sub{font-size:12px;color:var(--text-dim)}
+.stat-trend{font-size:11px;font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:4px}
+.stat-trend.up{color:var(--green)}
+.stat-trend.down{color:var(--rose)}
+.streak-row{display:flex;align-items:center;gap:20px;margin-bottom:36px}
+.streak-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;flex:0 0 300px;position:relative;overflow:hidden}
+.streak-card::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(251,146,58,.08);pointer-events:none}
+.streak-flame{width:48px;height:48px;border-radius:12px;background:rgba(251,191,36,.1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.streak-info{flex:1}
+.streak-number{font-size:2.2rem;font-weight:900;letter-spacing:-1px;line-height:1;color:var(--amber)}
+.streak-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.streak-best{font-size:12px;color:var(--text-dim)}
+.streak-days{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:10px}
+.streak-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid var(--border);color:var(--text-muted)}
+.streak-dot.done{background:var(--green);border-color:var(--green);color:var(--bg)}
+.streak-dot.today{background:rgba(34,211,238,.15);border-color:var(--cyan);color:var(--cyan);animation:pulse-glow 2s infinite}
+.streak-dot.missed{background:var(--bg3);border-color:var(--border);color:var(--text-muted)}
+.streak-legend{margin-top:8px;display:flex;gap:16px;font-size:11px;color:var(--text-muted)}
+.streak-legend span{display:flex;align-items:center;gap:4px}
+.streak-legend .dot{width:8px;height:8px;border-radius:50%}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(34,211,238,.3)}50%{box-shadow:0 0 0 6px rgba(34,211,238,0)}}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-title{font-size:13px;font-weight:700;color:var(--text)}
+.chart-subtitle{font-size:11px;color:var(--text-muted)}
+.bar-chart{position:relative;height:180px;display:flex;align-items:flex-end;gap:6px;padding:0 0 24px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .4s cubic-bezier(.34,1.56,.64,1);position:relative}
+.bar:hover{filter:brightness(1.2)}
+.bar-label{position:absolute;bottom:-20px;font-size:10px;color:var(--text-muted);font-weight:600}
+.bar-value{position:absolute;top:-18px;font-size:10px;color:var(--text-dim);font-weight:700;opacity:0;transition:opacity .2s}
+.bar-col:hover .bar-value{opacity:1}
+.bar-chart-y{position:absolute;left:0;top:0;bottom:24px;width:24px;display:flex;flex-direction:column;justify-content:space-between;font-size:9px;color:var(--text-muted);font-weight:600}
+.bar-chart-grid{position:absolute;left:28px;right:0;top:0;bottom:24px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.bar-chart-grid-line{border-top:1px dashed rgba(55,65,81,.4)}
+.line-chart{position:relative;height:180px}
+.line-chart-canvas{width:100%;height:100%}
+.line-chart-tooltip{position:absolute;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;font-size:11px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;transform:translate(-50%,-110%)}
+.line-chart-tooltip.show{opacity:1}
+.line-chart-tooltip .tt-date{font-weight:700;color:var(--text)}
+.line-chart-tooltip .tt-val{color:var(--cyan)}
+.activity-section{margin-bottom:36px}
+.activity-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.activity-filters{display:flex;gap:4px}
+.filter-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
+.filter-btn:hover{color:var(--text);border-color:var(--border2)}
+.filter-btn.active{color:var(--cyan);border-color:var(--cyan);background:rgba(34,211,238,.08)}
+.export-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:6px}
+.export-btn:hover{color:var(--green);border-color:var(--green);background:rgba(52,211,153,.08)}
+.activity-list{display:flex;flex-direction:column;gap:6px}
+.activity-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:14px;transition:all .15s}
+.activity-item:hover{border-color:var(--border2);background:rgba(17,24,39,.8)}
+.activity-dot{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.activity-dot.vocab{background:rgba(34,211,238,.1);color:var(--cyan)}
+.activity-dot.quiz{background:rgba(167,139,250,.1);color:var(--violet)}
+.activity-dot.typing{background:rgba(52,211,153,.1);color:var(--green)}
+.activity-dot.reading{background:rgba(251,191,36,.1);color:var(--amber)}
+.activity-dot.speaking{background:rgba(251,113,133,.1);color:var(--rose)}
+.activity-name{font-size:13px;font-weight:700;color:var(--text)}
+.activity-date{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+.activity-type{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.activity-type.vocab{background:rgba(34,211,238,.1);color:var(--cyan)}
+.activity-type.quiz{background:rgba(167,139,250,.1);color:var(--violet)}
+.activity-type.typing{background:rgba(52,211,153,.1);color:var(--green)}
+.activity-type.reading{background:rgba(251,191,36,.1);color:var(--amber)}
+.activity-type.speaking{background:rgba(251,113,133,.1);color:var(--rose)}
+.activity-score{text-align:right}
+.activity-score-val{font-size:16px;font-weight:800}
+.activity-score-val.high{color:var(--green)}
+.activity-score-val.mid{color:var(--amber)}
+.activity-score-val.low{color:var(--rose)}
+.activity-score-label{font-size:10px;color:var(--text-muted);font-weight:600}
+.activity-time{font-size:11px;color:var(--text-muted);min-width:50px;text-align:right}
+.goals-section{margin-bottom:36px}
+.goals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.goal-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.goal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.goal-name{font-size:13px;font-weight:700;color:var(--text)}
+.goal-badge{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.goal-badge.daily{background:rgba(34,211,238,.1);color:var(--cyan)}
+.goal-badge.weekly{background:rgba(167,139,250,.1);color:var(--violet)}
+.goal-badge.target{background:rgba(52,211,153,.1);color:var(--green)}
+.goal-progress-outer{width:100%;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.goal-progress-inner{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.goal-progress-inner.cyan{background:linear-gradient(90deg,var(--cyan),var(--teal))}
+.goal-progress-inner.violet{background:linear-gradient(90deg,var(--violet),var(--indigo))}
+.goal-progress-inner.green{background:linear-gradient(90deg,var(--green),var(--teal))}
+.goal-progress-inner.amber{background:linear-gradient(90deg,var(--amber),var(--orange))}
+.goal-progress-inner.rose{background:linear-gradient(90deg,var(--rose),var(--orange))}
+.goal-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim)}
+.goal-meta .current{font-weight:700;color:var(--text)}
+.goal-setting-row{margin-top:12px;display:flex;gap:6px;align-items:center}
+.goal-input{flex:1;height:30px;padding:0 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:12px;font-family:inherit;outline:none;width:70px}
+.goal-input:focus{border-color:var(--cyan)}
+.goal-save-btn{height:30px;padding:0 12px;border-radius:6px;border:none;background:rgba(34,211,238,.15);color:var(--cyan);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.goal-save-btn:hover{background:rgba(34,211,238,.25)}
+.achieve-section{margin-bottom:36px}
+.achieve-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.achieve-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center;transition:all .15s;cursor:default;position:relative;overflow:hidden}
+.achieve-card:hover{border-color:var(--border2)}
+.achieve-card.locked{opacity:.35}
+.achieve-card.locked .achieve-icon{filter:grayscale(1)}
+.achieve-icon{font-size:22px;margin-bottom:6px;display:block}
+.achieve-name{font-size:10px;font-weight:700;color:var(--text)}
+.achieve-desc{font-size:9px;color:var(--text-muted);margin-top:2px;line-height:1.3}
+.achieve-unlocked-label{position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--bg);font-weight:900}
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .charts-grid{grid-template-columns:1fr}
+  .goals-grid{grid-template-columns:1fr}
+  .achieve-grid{grid-template-columns:repeat(3,1fr)}
+  .streak-row{flex-direction:column}
+  .streak-card{flex:none;width:100%}
+  .activity-item{grid-template-columns:auto 1fr auto}
+  .activity-type,.activity-time{display:none}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .achieve-grid{grid-template-columns:repeat(2,1fr)}
+  .header-title{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html" class="back-btn">
+    <span class="back-icon">&#8592;</span> Back
+  </a>
+  <span class="header-title">Progress Tracker</span>
+  <div class="header-spacer"></div>
+  <select class="student-select" id="studentSelect" onchange="switchStudent(this.value)">
+    <option value="0">All Students</option>
+    <option value="1" selected>William Chen</option>
+    <option value="2">Sofia Martinez</option>
+    <option value="3">James Okafor</option>
+    <option value="4">Aisha Patel</option>
+    <option value="5">Liam Johansson</option>
+  </select>
+</div>
+
+<div class="container">
+  <div class="section-title">Overview</div>
+  <div class="stats-grid">
+    <div class="stat-card sessions"><span class="stat-icon">S</span><div class="stat-label">Total Sessions</div><div class="stat-value" id="statSessions">147</div><div class="stat-sub" id="statSessionsSub">Across all activities</div><div class="stat-trend up" id="statSessionsTrend">&#9650; 12% vs last month</div></div>
+    <div class="stat-card score"><span class="stat-icon">%</span><div class="stat-label">Average Score</div><div class="stat-value" id="statScore">82<span style="font-size:1rem;font-weight:600;color:var(--text-dim)">%</span></div><div class="stat-sub" id="statScoreSub">Across completed quizzes</div><div class="stat-trend up" id="statScoreTrend">&#9650; 5% vs last month</div></div>
+    <div class="stat-card words"><span class="stat-icon">W</span><div class="stat-label">Words Learned</div><div class="stat-value" id="statWords">1,284</div><div class="stat-sub" id="statWordsSub">234 mastered this week</div><div class="stat-trend up" id="statWordsTrend">&#9650; 18% vs last month</div></div>
+    <div class="stat-card time"><span class="stat-icon">H</span><div class="stat-label">Time Spent</div><div class="stat-value" id="statTime">38<span style="font-size:1rem;font-weight:600;color:var(--text-dim)">h</span></div><div class="stat-sub" id="statTimeSub">Total practice time</div><div class="stat-trend up" id="statTimeTrend">&#9650; 8% vs last month</div></div>
+  </div>
+
+  <div class="streak-row">
+    <div class="streak-card">
+      <div class="streak-flame">&#128293;</div>
+      <div class="streak-info">
+        <div class="streak-number" id="streakNumber">12</div>
+        <div class="streak-label">Current Streak</div>
+        <div class="streak-best" id="streakBest">Best: 28 days</div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div class="streak-days" id="streakDays"></div>
+      <div class="streak-legend">
+        <span><span class="dot" style="background:var(--green)"></span> Completed</span>
+        <span><span class="dot" style="background:var(--cyan)"></span> Today</span>
+        <span><span class="dot" style="background:var(--border)"></span> Upcoming</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="icon">~</span> Weekly Activity</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Sessions per Day</div><div class="chart-subtitle">Last 7 days</div></div>
+      <div class="bar-chart" id="barChart"><div class="bar-chart-y"><span>10</span><span>7</span><span>5</span><span>2</span><span>0</span></div><div class="bar-chart-grid" style="left:28px"><div class="bar-chart-grid-line"></div><div class="bar-chart-grid-line"></div><div class="bar-chart-grid-line"></div><div class="bar-chart-grid-line"></div><div class="bar-chart-grid-line"></div></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Score Trend</div><div class="chart-subtitle">Last 14 days</div></div>
+      <div class="line-chart" id="lineChart"><canvas class="line-chart-canvas" id="lineCanvas"></canvas><div class="line-chart-tooltip" id="lineTooltip"><div class="tt-date"></div><div class="tt-val"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="icon">!</span> Recent Activity</div>
+  <div class="activity-section">
+    <div class="activity-header">
+      <div class="activity-filters" id="activityFilters">
+        <button class="filter-btn active" data-filter="all" onclick="filterActivity('all',this)">All</button>
+        <button class="filter-btn" data-filter="vocab" onclick="filterActivity('vocab',this)">Vocab</button>
+        <button class="filter-btn" data-filter="quiz" onclick="filterActivity('quiz',this)">Quizzes</button>
+        <button class="filter-btn" data-filter="typing" onclick="filterActivity('typing',this)">Typing</button>
+        <button class="filter-btn" data-filter="reading" onclick="filterActivity('reading',this)">Reading</button>
+        <button class="filter-btn" data-filter="speaking" onclick="filterActivity('speaking',this)">Speaking</button>
+      </div>
+      <button class="export-btn" onclick="exportCSV()">&#8595; Export CSV</button>
+    </div>
+    <div class="activity-list" id="activityList"></div>
+  </div>
+
+  <div class="section-title"><span class="icon">G</span> Goals</div>
+  <div class="goals-section">
+    <div class="goals-grid">
+      <div class="goal-card"><div class="goal-header"><div class="goal-name">Daily Practice</div><span class="goal-badge daily">Daily</span></div><div class="goal-progress-outer"><div class="goal-progress-inner cyan" id="goalDailyBar" style="width:75%"></div></div><div class="goal-meta"><span class="current" id="goalDailyCur">45 min</span><span id="goalDailyTarget">Goal: 60 min</span></div><div class="goal-setting-row"><input type="number" class="goal-input" id="goalDaily" value="60" min="5" step="5"><span style="font-size:11px;color:var(--text-muted)">min/day</span><button class="goal-save-btn" onclick="updateGoal('daily')">Save</button></div></div>
+      <div class="goal-card"><div class="goal-header"><div class="goal-name">Weekly Words</div><span class="goal-badge weekly">Weekly</span></div><div class="goal-progress-outer"><div class="goal-progress-inner violet" id="goalWeeklyBar" style="width:67%"></div></div><div class="goal-meta"><span class="current" id="goalWeeklyCur">14 words</span><span id="goalWeeklyTarget">Goal: 20 words</span></div><div class="goal-setting-row"><input type="number" class="goal-input" id="goalWeekly" value="20" min="1" step="1"><span style="font-size:11px;color:var(--text-muted)">words/wk</span><button class="goal-save-btn" onclick="updateGoal('weekly')">Save</button></div></div>
+      <div class="goal-card"><div class="goal-header"><div class="goal-name">Quiz Target</div><span class="goal-badge target">Score</span></div><div class="goal-progress-outer"><div class="goal-progress-inner green" id="goalScoreBar" style="width:82%"></div></div><div class="goal-meta"><span class="current" id="goalScoreCur">82% avg</span><span id="goalScoreTarget">Target: 90%</span></div><div class="goal-setting-row"><input type="number" class="goal-input" id="goalScore" value="90" min="10" max="100" step="5"><span style="font-size:11px;color:var(--text-muted)">% target</span><button class="goal-save-btn" onclick="updateGoal('score')">Save</button></div></div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="icon">A</span> Achievements</div>
+  <div class="achieve-section"><div class="achieve-grid" id="achieveGrid"></div></div>
+</div>
+
+<script>
+// ═══ PER-STUDENT DEMO DATA ══=
+var STUDENTS={
+  1:{name:"William Chen",level:"B2",sessions:147,avgScore:82,words:1284,time:"38h",streak:12,bestStreak:28,sessionsTrend:"+12%",scoreTrend:"+5%",wordsTrend:"+18%",timeTrend:"+8%",goalDaily:45,goalDailyTarget:60,goalWeekly:14,goalWeeklyTarget:20,goalScoreCur:82,goalScoreTarget:90,barData:[{label:"Mon",value:6},{label:"Tue",value:8},{label:"Wed",value:4},{label:"Thu",value:9},{label:"Fri",value:7},{label:"Sat",value:3},{label:"Sun",value:5}],lineData:[72,74,71,78,80,76,82,79,85,81,83,78,86,82],activities:[
+    {type:"vocab",name:"Vocabulary Set: Animals",date:"May 30, 2026  9:15 AM",score:88,duration:"12 min"},
+    {type:"quiz",name:"Unit 3 Assessment",date:"May 29, 2026  2:30 PM",score:94,duration:"25 min"},
+    {type:"typing",name:"Typing Drill: Lesson 7",date:"May 29, 2026  10:00 AM",score:76,duration:"15 min"},
+    {type:"reading",name:"Reading: Ocean Worlds",date:"May 28, 2026  4:00 PM",score:82,duration:"20 min"},
+    {type:"vocab",name:"Vocabulary Set: Verbs",date:"May 28, 2026  11:30 AM",score:91,duration:"10 min"},
+    {type:"speaking",name:"Speaking Practice: Introductions",date:"May 27, 2026  3:45 PM",score:70,duration:"18 min"},
+    {type:"quiz",name:"Quick Check: Grammar",date:"May 27, 2026  9:00 AM",score:95,duration:"8 min"},
+    {type:"vocab",name:"Vocabulary Set: Adjectives",date:"May 26, 2026  1:15 PM",score:85,duration:"14 min"},
+    {type:"reading",name:"Reading: Space Exploration",date:"May 25, 2026  10:30 AM",score:79,duration:"22 min"},
+    {type:"typing",name:"Typing Drill: Lesson 6",date:"May 25, 2026  8:45 AM",score:68,duration:"15 min"},
+    {type:"quiz",name:"Unit 2 Assessment",date:"May 24, 2026  2:00 PM",score:87,duration:"30 min"},
+    {type:"speaking",name:"Speaking Practice: Role Play",date:"May 23, 2026  11:00 AM",score:73,duration:"20 min"},
+    {type:"vocab",name:"Vocabulary Set: Nouns",date:"May 23, 2026  9:00 AM",score:90,duration:"11 min"},
+    {type:"reading",name:"Reading: Climate Change",date:"May 22, 2026  3:30 PM",score:84,duration:"18 min"},
+    {type:"typing",name:"Typing Drill: Lesson 5",date:"May 22, 2026  10:00 AM",score:92,duration:"12 min"}
+  ],achievements:[
+    {icon:"🏅",name:"First Steps",desc:"Completed your first lesson — the journey of a thousand miles begins with a single step",unlocked:true},
+    {icon:"🔥",name:"On Fire",desc:"7-day practice streak — consistency is the key to mastery",unlocked:true},
+    {icon:"📚",name:"Word Collector",desc:"Learned 1,000+ vocabulary words — your lexicon is growing impressively",unlocked:true},
+    {icon:"🎯",name:"Sharp Shooter",desc:"Scored 90%+ on 5 quizzes in a row — precision under pressure",unlocked:true},
+    {icon:"💬",name:"Conversation Starter",desc:"Completed 10 speaking sessions — building confidence one conversation at a time",unlocked:true},
+    {icon:"⚡",name:"Speed Reader",desc:"Read 20+ passages — comprehension and pace improving together",unlocked:true},
+    {icon:"🎹",name:"Typing Flow",desc:"Reached 60 WPM — fingers dancing across the keyboard",unlocked:false},
+    {icon:"🏃",name:"Marathon Runner",desc:"Practiced for 1 hour in a single session — endurance and dedication",unlocked:false},
+    {icon:"🌟",name:"Fluency Rising",desc:"Less hesitation and more use of advanced verbs — natural speech emerging",unlocked:true},
+    {icon:"🧠",name:"Deep Thinker",desc:"Mastered 500 words with 90%+ quiz scores — quality over quantity",unlocked:true},
+    {icon:"🌍",name:"Global Citizen",desc:"Studied topics across 10+ categories — broadening your world through language",unlocked:false},
+    {icon:"👑",name:"Streak Legend",desc:"Achieved a 30-day practice streak — unstoppable commitment",unlocked:false}
+  ]},
+  2:{name:"Sofia Martinez",level:"B1",sessions:89,avgScore:74,words:876,time:"22h",streak:5,bestStreak:14,sessionsTrend:"+8%",scoreTrend:"+3%",wordsTrend:"+12%",timeTrend:"+5%",goalDaily:30,goalDailyTarget:45,goalWeekly:10,goalWeeklyTarget:15,goalScoreCur:74,goalScoreTarget:80,barData:[{label:"Mon",value:4},{label:"Tue",value:6},{label:"Wed",value:3},{label:"Thu",value:7},{label:"Fri",value:5},{label:"Sat",value:2},{label:"Sun",value:4}],lineData:[60,62,58,65,68,64,70,67,72,69,71,68,74,74],activities:[
+    {type:"vocab",name:"Vocabulary Set: Food & Drink",date:"May 30, 2026  10:00 AM",score:78,duration:"14 min"},
+    {type:"speaking",name:"Speaking: My Family",date:"May 29, 2026  3:00 PM",score:65,duration:"20 min"},
+    {type:"reading",name:"Reading: Daily Routines",date:"May 29, 2026  9:30 AM",score:80,duration:"18 min"},
+    {type:"quiz",name:"Grammar Check: Present Tense",date:"May 28, 2026  2:00 PM",score:72,duration:"12 min"},
+    {type:"vocab",name:"Vocabulary Set: Travel",date:"May 28, 2026  11:00 AM",score:85,duration:"10 min"},
+    {type:"typing",name:"Typing Drill: Accents",date:"May 27, 2026  4:00 PM",score:60,duration:"15 min"},
+    {type:"speaking",name:"Speaking: At the Airport",date:"May 27, 2026  10:30 AM",score:58,duration:"22 min"},
+    {type:"vocab",name:"Vocabulary Set: Shopping",date:"May 26, 2026  1:00 PM",score:82,duration:"12 min"},
+    {type:"reading",name:"Reading: City Life",date:"May 25, 2026  3:30 PM",score:76,duration:"20 min"},
+    {type:"quiz",name:"Unit 1 Assessment",date:"May 24, 2026  11:00 AM",score:70,duration:"25 min"}
+  ],achievements:[
+    {icon:"🏅",name:"First Steps",desc:"Completed your first lesson — the journey of a thousand miles begins with a single step",unlocked:true},
+    {icon:"🔥",name:"Getting Warm",desc:"5-day practice streak — building momentum one day at a time",unlocked:true},
+    {icon:"📚",name:"Word Collector",desc:"Learned 800+ vocabulary words — steady and consistent progress",unlocked:true},
+    {icon:"🎯",name:"Sharp Shooter",desc:"Scored 90%+ on 5 quizzes in a row — precision under pressure",unlocked:false},
+    {icon:"💬",name:"Conversation Starter",desc:"Completed 10 speaking sessions — building confidence one conversation at a time",unlocked:false},
+    {icon:"⚡",name:"Speed Reader",desc:"Read 20+ passages — comprehension and pace improving together",unlocked:true},
+    {icon:"🎹",name:"Typing Flow",desc:"Reached 60 WPM — fingers dancing across the keyboard",unlocked:false},
+    {icon:"🏃",name:"Marathon Runner",desc:"Practiced for 1 hour in a single session — endurance and dedication",unlocked:false},
+    {icon:"🌟",name:"Finding Your Voice",desc:"Speaking fluency improving — fewer pauses and more natural rhythm",unlocked:true},
+    {icon:"🧠",name:"Deep Thinker",desc:"Mastered 500 words with 90%+ quiz scores — quality over quantity",unlocked:false},
+    {icon:"🌍",name:"Global Citizen",desc:"Studied topics across 10+ categories — broadening your world through language",unlocked:false},
+    {icon:"👑",name:"Streak Legend",desc:"Achieved a 30-day practice streak — unstoppable commitment",unlocked:false}
+  ]},
+  3:{name:"James Okafor",level:"C1",sessions:213,avgScore:91,words:2156,time:"56h",streak:21,bestStreak:45,sessionsTrend:"+15%",scoreTrend:"+7%",wordsTrend:"+22%",timeTrend:"+10%",goalDaily:60,goalDailyTarget:60,goalWeekly:25,goalWeeklyTarget:20,goalScoreCur:91,goalScoreTarget:95,barData:[{label:"Mon",value:9},{label:"Tue",value:10},{label:"Wed",value:7},{label:"Thu",value:8},{label:"Fri",value:9},{label:"Sat",value:6},{label:"Sun",value:8}],lineData:[82,84,80,86,88,85,89,87,90,88,91,89,92,91],activities:[
+    {type:"speaking",name:"Speaking: Debate Practice",date:"May 30, 2026  2:00 PM",score:88,duration:"25 min"},
+    {type:"reading",name:"Reading: Business English",date:"May 30, 2026  9:00 AM",score:94,duration:"30 min"},
+    {type:"quiz",name:"Advanced Grammar Test",date:"May 29, 2026  3:30 PM",score:96,duration:"20 min"},
+    {type:"vocab",name:"Vocabulary: Academic Words",date:"May 29, 2026  10:00 AM",score:92,duration:"15 min"},
+    {type:"typing",name:"Typing: Essay Writing",date:"May 28, 2026  4:00 PM",score:88,duration:"35 min"},
+    {type:"speaking",name:"Speaking: Presentation Skills",date:"May 28, 2026  11:00 AM",score:90,duration:"28 min"},
+    {type:"reading",name:"Reading: Scientific American",date:"May 27, 2026  2:00 PM",score:95,duration:"25 min"},
+    {type:"quiz",name:"IELTS Practice: Reading",date:"May 26, 2026  9:30 AM",score:89,duration:"40 min"},
+    {type:"vocab",name:"Vocabulary: Idioms",date:"May 25, 2026  3:00 PM",score:93,duration:"12 min"},
+    {type:"speaking",name:"Speaking: Job Interview",date:"May 24, 2026  10:00 AM",score:87,duration:"30 min"}
+  ],achievements:[
+    {icon:"🏅",name:"First Steps",desc:"Completed your first lesson — the journey of a thousand miles begins with a single step",unlocked:true},
+    {icon:"🔥",name:"On Fire",desc:"21-day practice streak — you are an inspiration to other learners",unlocked:true},
+    {icon:"📚",name:"Word Collector",desc:"Learned 2,000+ vocabulary words — an impressive linguistic arsenal",unlocked:true},
+    {icon:"🎯",name:"Sharp Shooter",desc:"Scored 90%+ on 5 quizzes in a row — precision under pressure",unlocked:true},
+    {icon:"💬",name:"Conversation Starter",desc:"Completed 10 speaking sessions — building confidence one conversation at a time",unlocked:true},
+    {icon:"⚡",name:"Speed Reader",desc:"Read 20+ passages — comprehension and pace improving together",unlocked:true},
+    {icon:"🎹",name:"Typing Flow",desc:"Reached 60 WPM — fingers dancing across the keyboard",unlocked:true},
+    {icon:"🏃",name:"Marathon Runner",desc:"Practiced for 1 hour in a single session — endurance and dedication",unlocked:true},
+    {icon:"🌟",name:"Near Native",desc:"Fluency approaching native level — subtle nuances and natural intonation",unlocked:true},
+    {icon:"🧠",name:"Deep Thinker",desc:"Mastered 500 words with 90%+ quiz scores — quality over quantity",unlocked:true},
+    {icon:"🌍",name:"Global Citizen",desc:"Studied topics across 10+ categories — broadening your world through language",unlocked:true},
+    {icon:"👑",name:"Streak Legend",desc:"Achieved a 30-day practice streak — unstoppable commitment",unlocked:true}
+  ]},
+  4:{name:"Aisha Patel",level:"A2",sessions:42,avgScore:68,words:342,time:"11h",streak:3,bestStreak:7,sessionsTrend:"+20%",scoreTrend:"+8%",wordsTrend:"+25%",timeTrend:"+15%",goalDaily:20,goalDailyTarget:30,goalWeekly:8,goalWeeklyTarget:10,goalScoreCur:68,goalScoreTarget:75,barData:[{label:"Mon",value:2},{label:"Tue",value:3},{label:"Wed",value:1},{label:"Thu",value:4},{label:"Fri",value:3},{label:"Sat",value:1},{label:"Sun",value:2}],lineData:[50,52,48,55,58,54,60,57,62,60,64,62,66,68],activities:[
+    {type:"vocab",name:"Vocabulary Set: Greetings",date:"May 30, 2026  11:00 AM",score:72,duration:"10 min"},
+    {type:"reading",name:"Reading: My Home",date:"May 29, 2026  2:00 PM",score:65,duration:"15 min"},
+    {type:"quiz",name:"Basics Check: Alphabet",date:"May 28, 2026  10:00 AM",score:78,duration:"8 min"},
+    {type:"vocab",name:"Vocabulary Set: Numbers",date:"May 27, 2026  3:00 PM",score:80,duration:"12 min"},
+    {type:"typing",name:"Typing Drill: Home Row",date:"May 26, 2026  11:00 AM",score:55,duration:"20 min"},
+    {type:"speaking",name:"Speaking: Hello & Goodbye",date:"May 25, 2026  1:00 PM",score:60,duration:"15 min"},
+    {type:"vocab",name:"Vocabulary Set: Colors",date:"May 24, 2026  10:00 AM",score:75,duration:"10 min"},
+    {type:"reading",name:"Reading: At the Market",date:"May 23, 2026  2:00 PM",score:62,duration:"18 min"}
+  ],achievements:[
+    {icon:"🏅",name:"First Steps",desc:"Completed your first lesson — the journey of a thousand miles begins with a single step",unlocked:true},
+    {icon:"🔥",name:"Getting Warm",desc:"3-day practice streak — every expert was once a beginner",unlocked:true},
+    {icon:"📚",name:"Word Collector",desc:"Learned 300+ vocabulary words — building your foundation one word at a time",unlocked:true},
+    {icon:"🎯",name:"Sharp Shooter",desc:"Scored 90%+ on 5 quizzes in a row — precision under pressure",unlocked:false},
+    {icon:"💬",name:"Conversation Starter",desc:"Completed 10 speaking sessions — building confidence one conversation at a time",unlocked:false},
+    {icon:"⚡",name:"Speed Reader",desc:"Read 20+ passages — comprehension and pace improving together",unlocked:false},
+    {icon:"🎹",name:"Typing Flow",desc:"Reached 60 WPM — fingers dancing across the keyboard",unlocked:false},
+    {icon:"🏃",name:"Marathon Runner",desc:"Practiced for 1 hour in a single session — endurance and dedication",unlocked:false},
+    {icon:"🌟",name:"First Words",desc:"Speaking your first full sentences — courage and progress combined",unlocked:true},
+    {icon:"🧠",name:"Deep Thinker",desc:"Mastered 500 words with 90%+ quiz scores — quality over quantity",unlocked:false},
+    {icon:"🌍",name:"Global Citizen",desc:"Studied topics across 10+ categories — broadening your world through language",unlocked:false},
+    {icon:"👑",name:"Streak Legend",desc:"Achieved a 30-day practice streak — unstoppable commitment",unlocked:false}
+  ]},
+  5:{name:"Liam Johansson",level:"B2",sessions:112,avgScore:79,words:1045,time:"29h",streak:8,bestStreak:19,sessionsTrend:"+10%",scoreTrend:"+4%",wordsTrend:"+15%",timeTrend:"+7%",goalDaily:40,goalDailyTarget:50,goalWeekly:12,goalWeeklyTarget:15,goalScoreCur:79,goalScoreTarget:85,barData:[{label:"Mon",value:5},{label:"Tue",value:7},{label:"Wed",value:4},{label:"Thu",value:8},{label:"Fri",value:6},{label:"Sat",value:3},{label:"Sun",value:5}],lineData:[68,70,67,72,74,71,75,73,77,75,78,76,79,79],activities:[
+    {type:"quiz",name:"Unit 4 Assessment",date:"May 30, 2026  1:00 PM",score:82,duration:"22 min"},
+    {type:"vocab",name:"Vocabulary Set: Technology",date:"May 29, 2026  10:00 AM",score:88,duration:"12 min"},
+    {type:"speaking",name:"Speaking: Describing Photos",date:"May 29, 2026  3:00 PM",score:75,duration:"20 min"},
+    {type:"reading",name:"Reading: Social Media",date:"May 28, 2026  11:00 AM",score:80,duration:"18 min"},
+    {type:"typing",name:"Typing Drill: Lesson 8",date:"May 27, 2026  2:00 PM",score:72,duration:"14 min"},
+    {type:"vocab",name:"Vocabulary Set: Emotions",date:"May 26, 2026  9:30 AM",score:85,duration:"10 min"},
+    {type:"quiz",name:"Grammar: Past Tense",date:"May 25, 2026  3:30 PM",score:78,duration:"15 min"},
+    {type:"speaking",name:"Speaking: Telling Stories",date:"May 24, 2026  10:00 AM",score:70,duration:"25 min"},
+    {type:"reading",name:"Reading: News Article",date:"May 23, 2026  1:00 PM",score:84,duration:"20 min"},
+    {type:"vocab",name:"Vocabulary Set: Nature",date:"May 22, 2026  11:00 AM",score:90,duration:"11 min"}
+  ],achievements:[
+    {icon:"🏅",name:"First Steps",desc:"Completed your first lesson — the journey of a thousand miles begins with a single step",unlocked:true},
+    {icon:"🔥",name:"On Fire",desc:"8-day practice streak — consistency is building your skills",unlocked:true},
+    {icon:"📚",name:"Word Collector",desc:"Learned 1,000+ vocabulary words — a solid and growing vocabulary base",unlocked:true},
+    {icon:"🎯",name:"Sharp Shooter",desc:"Scored 90%+ on 5 quizzes in a row — precision under pressure",unlocked:false},
+    {icon:"💬",name:"Conversation Starter",desc:"Completed 10 speaking sessions — building confidence one conversation at a time",unlocked:true},
+    {icon:"⚡",name:"Speed Reader",desc:"Read 20+ passages — comprehension and pace improving together",unlocked:true},
+    {icon:"🎹",name:"Typing Flow",desc:"Reached 60 WPM — fingers dancing across the keyboard",unlocked:false},
+    {icon:"🏃",name:"Marathon Runner",desc:"Practiced for 1 hour in a single session — endurance and dedication",unlocked:false},
+    {icon:"🌟",name:"Fluency Rising",desc:"Less hesitation and more use of advanced verbs — natural speech emerging",unlocked:true},
+    {icon:"🧠",name:"Deep Thinker",desc:"Mastered 500 words with 90%+ quiz scores — quality over quantity",unlocked:true},
+    {icon:"🌍",name:"Global Citizen",desc:"Studied topics across 10+ categories — broadening your world through language",unlocked:false},
+    {icon:"👑",name:"Streak Legend",desc:"Achieved a 30-day practice streak — unstoppable commitment",unlocked:false}
+  ]}
+};
+
+var currentStudent=1;
+var currentFilter='all';
+var typeIcons={vocab:'V',quiz:'Q',typing:'T',reading:'R',speaking:'S'};
+
+// ═══ SWITCH STUDENT ══=
+function switchStudent(id){
+  currentStudent=parseInt(id);
+  var s=STUDENTS[currentStudent];
+  if(!s)return;
+
+  // Stats
+  document.getElementById('statSessions').textContent=s.sessions;
+  document.getElementById('statScore').innerHTML=s.avgScore+'<span style="font-size:1rem;font-weight:600;color:var(--text-dim)">%</span>';
+  document.getElementById('statWords').textContent=s.words.toLocaleString();
+  document.getElementById('statTime').innerHTML=s.time;
+  document.getElementById('statSessionsTrend').innerHTML='&#9650; '+s.sessionsTrend+' vs last month';
+  document.getElementById('statScoreTrend').innerHTML='&#9650; '+s.scoreTrend+' vs last month';
+  document.getElementById('statWordsTrend').innerHTML='&#9650; '+s.wordsTrend+' vs last month';
+  document.getElementById('statTimeTrend').innerHTML='&#9650; '+s.timeTrend+' vs last month';
+
+  // Streak
+  document.getElementById('streakNumber').textContent=s.streak;
+  document.getElementById('streakBest').textContent='Best: '+s.bestStreak+' days';
+  buildStreakDots();
+
+  // Goals
+  document.getElementById('goalDailyBar').style.width=Math.min(100,(s.goalDaily/s.goalDailyTarget)*100)+'%';
+  document.getElementById('goalDailyCur').textContent=s.goalDaily+' min';
+  document.getElementById('goalDailyTarget').textContent='Goal: '+s.goalDailyTarget+' min';
+  document.getElementById('goalDaily').value=s.goalDailyTarget;
+  document.getElementById('goalWeeklyBar').style.width=Math.min(100,(s.goalWeekly/s.goalWeeklyTarget)*100)+'%';
+  document.getElementById('goalWeeklyCur').textContent=s.goalWeekly+' words';
+  document.getElementById('goalWeeklyTarget').textContent='Goal: '+s.goalWeeklyTarget+' words';
+  document.getElementById('goalWeekly').value=s.goalWeeklyTarget;
+  document.getElementById('goalScoreBar').style.width=Math.min(100,(s.goalScoreCur/s.goalScoreTarget)*100)+'%';
+  document.getElementById('goalScoreCur').textContent=s.goalScoreCur+'% avg';
+  document.getElementById('goalScoreTarget').textContent='Target: '+s.goalScoreTarget+'%';
+  document.getElementById('goalScore').value=s.goalScoreTarget;
+
+  // Charts
+  buildBarChart();
+  buildLineChart();
+
+  // Activities
+  buildActivityList('all');
+
+  // Achievements
+  buildAchievements();
+}
+
+// ═══ STREAK ══=
+function buildStreakDots(){
+  var container=document.getElementById('streakDays');
+  container.innerHTML='';
+  var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var s=STUDENTS[currentStudent];
+  days.forEach(function(d,i){
+    var dot=document.createElement('div');
+    dot.className='streak-dot';
+    dot.textContent=d;
+    if(i<s.streak-1)dot.classList.add('done');
+    else if(i===s.streak-1)dot.classList.add('today');
+    else dot.classList.add('missed');
+    container.appendChild(dot);
+  });
+}
+
+// ═══ BAR CHART ══=
+function buildBarChart(){
+  var chart=document.getElementById('barChart');
+  // Keep the grid lines, remove bars
+  var grid=chart.querySelector('.bar-chart-grid');
+  var yaxis=chart.querySelector('.bar-chart-y');
+  chart.innerHTML='';
+  chart.appendChild(yaxis);
+  chart.appendChild(grid);
+  var s=STUDENTS[currentStudent];
+  s.barData.forEach(function(d){
+    var col=document.createElement('div');
+    col.className='bar-col';
+    var bar=document.createElement('div');
+    bar.className='bar';
+    var pct=(d.value/10)*100;
+    bar.style.background=pct>80?'linear-gradient(180deg,#22d3ee,#2dd4bf)':pct>50?'linear-gradient(180deg,#34d399,#2dd4bf)':'linear-gradient(180deg,#fbbf24,#fb923c)';
+    bar.style.height='0%';
+    bar.style.maxWidth='36px';
+    bar.style.margin='0 auto';
+    var val=document.createElement('span');
+    val.className='bar-value';
+    val.textContent=d.value;
+    var label=document.createElement('span');
+    label.className='bar-label';
+    label.textContent=d.label;
+    col.appendChild(val);
+    col.appendChild(bar);
+    col.appendChild(label);
+    chart.appendChild(col);
+    requestAnimationFrame(function(){bar.style.height=pct+'%';});
+  });
+}
+
+// ═══ LINE CHART ══=
+function buildLineChart(){
+  var canvas=document.getElementById('lineCanvas');
+  var container=document.getElementById('lineChart');
+  var tooltip=document.getElementById('lineTooltip');
+  var s=STUDENTS[currentStudent];
+  var dpr=window.devicePixelRatio||1;
+  var rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*dpr;
+  canvas.height=rect.height*dpr;
+  var ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  var w=rect.width,h=rect.height;
+  var pad={top:20,bottom:30,left:36,right:16};
+  var cW=w-pad.left-pad.right,cH=h-pad.bottom-pad.top;
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='rgba(55,65,81,0.4)';
+  ctx.lineWidth=0.5;
+  ctx.setLineDash([4,4]);
+  for(var i=0;i<=4;i++){var y=pad.top+(cH*i/4);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cW,y);ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.fillStyle='#64748b';
+  ctx.font='10px Inter';
+  ctx.textAlign='right';
+  for(var i=0;i<=4;i++){var val=90-i*5;var y=pad.top+(cH*i/4);ctx.fillText(val+'%',pad.left-8,y+3);}
+  ctx.textAlign='center';
+  var dates=['17 May','18 May','19 May','20 May','21 May','22 May','23 May','24 May','25 May','26 May','27 May','28 May','29 May','30 May'];
+  for(var i=0;i<s.lineData.length;i++){var x=pad.left+(cW*i/(s.lineData.length-1));ctx.fillText(dates[i],x,pad.top+cH+16);}
+  var points=s.lineData.map(function(v,i){return{x:pad.left+(cW*i/(s.lineData.length-1)),y:pad.top+cH-(cH*(v-65)/25),val:v};});
+  var grad=ctx.createLinearGradient(0,pad.top,0,pad.top+cH);
+  grad.addColorStop(0,'rgba(34,211,238,0.2)');
+  grad.addColorStop(1,'rgba(34,211,238,0)');
+  ctx.beginPath();
+  ctx.moveTo(points[0].x,pad.top+cH);
+  points.forEach(function(p){ctx.lineTo(p.x,p.y);});
+  ctx.lineTo(points[points.length-1].x,pad.top+cH);
+  ctx.closePath();
+  ctx.fillStyle=grad;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(points[0].x,points[0].y);
+  for(var i=1;i<points.length;i++){var prev=points[i-1],curr=points[i];var cpx=(prev.x+curr.x)/2;ctx.quadraticCurveTo(prev.x+(curr.x-prev.x)*0.5,prev.y,cpx,(prev.y+curr.y)/2);if(i===points.length-1)ctx.quadraticCurveTo(cpx,(prev.y+curr.y)/2,curr.x,curr.y);}
+  ctx.strokeStyle='#22d3ee';
+  ctx.lineWidth=2.5;
+  ctx.stroke();
+  points.forEach(function(p,i){var isLast=i===points.length-1;ctx.beginPath();ctx.arc(p.x,p.y,isLast?5:3.5,0,Math.PI*2);ctx.fillStyle=isLast?'#22d3ee':'#0a0f1a';ctx.fill();ctx.strokeStyle='#22d3ee';ctx.lineWidth=2;ctx.stroke();});
+  canvas.onmousemove=function(e){var r=canvas.getBoundingClientRect();var mx=e.clientX-r.left;var closest=points[0],minDist=Infinity;points.forEach(function(p){var d=Math.abs(p.x-mx);if(d<minDist){minDist=d;closest=p;}});if(minDist<30){tooltip.style.left=closest.x+'px';tooltip.style.top=(closest.y-8)+'px';var dateIdx=points.indexOf(closest);tooltip.querySelector('.tt-date').textContent=dates[dateIdx]||'May '+(dateIdx+17);tooltip.querySelector('.tt-val').textContent=closest.val+'%';tooltip.classList.add('show');}else{tooltip.classList.remove('show');}};
+  canvas.onmouseleave=function(){tooltip.classList.remove('show');};
+}
+
+// ═══ ACTIVITY LIST ══=
+function buildActivityList(filter){
+  var list=document.getElementById('activityList');
+  list.innerHTML='';
+  var s=STUDENTS[currentStudent];
+  var filtered=filter==='all'?s.activities:s.activities.filter(function(a){return a.type===filter;});
+  filtered.forEach(function(a){
+    var item=document.createElement('div');
+    item.className='activity-item';
+    var scoreClass=a.score>=85?'high':a.score>=70?'mid':'low';
+    item.innerHTML='<div class="activity-dot '+a.type+'">'+(typeIcons[a.type]||'A')+'</div><div><div class="activity-name">'+a.name+'</div><div class="activity-date">'+a.date+'</div></div><span class="activity-type '+a.type+'">'+a.type.charAt(0).toUpperCase()+a.type.slice(1)+'</span><div class="activity-score"><div class="activity-score-val '+scoreClass+'">'+a.score+'%</div><div class="activity-score-label">Score</div></div><div class="activity-time">'+a.duration+'</div>';
+    list.appendChild(item);
+  });
+}
+
+function filterActivity(filter,btn){
+  currentFilter=filter;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  buildActivityList(filter);
+}
+
+// ═══ ACHIEVEMENTS ══=
+function buildAchievements(){
+  var grid=document.getElementById('achieveGrid');
+  grid.innerHTML='';
+  var s=STUDENTS[currentStudent];
+  s.achievements.forEach(function(a){
+    var card=document.createElement('div');
+    card.className='achieve-card'+(a.unlocked?'':' locked');
+    card.innerHTML=(a.unlocked?'<div class="achieve-unlocked-label">&#10003;</div>':'')+'<div class="achieve-icon">'+a.icon+'</div><div class="achieve-name">'+a.name+'</div><div class="achieve-desc">'+a.desc+'</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ═══ EXPORT CSV ══=
+function exportCSV(){
+  var s=STUDENTS[currentStudent];
+  var csv='Date,Activity Type,Name,Score,Duration\n';
+  s.activities.forEach(function(a){csv+='"'+a.date+'",'+a.type+',"'+a.name+'",'+a.score+'%,"'+a.duration+'"\n';});
+  var blob=new Blob([csv],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);
+  var link=document.createElement('a');
+  link.href=url;
+  link.download='progress_'+s.name.replace(/\s+/g,'_')+'.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══ GOAL ══=
+function updateGoal(type){
+  var s=STUDENTS[currentStudent];
+  var inputEl=document.getElementById(type==='daily'?'goalDaily':type==='weekly'?'goalWeekly':'goalScore');
+  var val=parseInt(inputEl.value);
+  var btn=inputEl.nextElementSibling.nextElementSibling;
+  var orig=btn.textContent;
+  btn.textContent='Saved';
+  btn.style.background='rgba(52,211,153,.25)';
+  btn.style.color='var(--green)';
+  setTimeout(function(){btn.textContent=orig;btn.style.cssText='';},1500);
+  // Update local data
+  if(type==='daily'){s.goalDailyTarget=val;document.getElementById('goalDailyTarget').textContent='Goal: '+val+' min';}
+  else if(type==='weekly'){s.goalWeeklyTarget=val;document.getElementById('goalWeeklyTarget').textContent='Goal: '+val+' words';}
+  else{s.goalScoreTarget=val;document.getElementById('goalScoreTarget').textContent='Target: '+val+'%';}
+}
+
+// ═══ INIT ══=
+document.addEventListener('DOMContentLoaded',function(){
+  switchStudent(currentStudent);
+});
+</script>
+</body>
+</html>

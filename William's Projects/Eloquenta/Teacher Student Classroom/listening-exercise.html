@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Listening Exercise — Teacher Student Hub</title>
+<style>
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border);cursor:pointer}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:16px;font-weight:700;flex:1}
+.main{max-width:900px;margin:0 auto;padding:24px 20px}
+
+.yt-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.yt-panel h2{font-size:18px;font-weight:700;margin-bottom:6px}
+.yt-panel p{color:var(--dim);font-size:13px;margin-bottom:16px}
+.yt-row{display:flex;gap:8px;margin-bottom:12px}
+.yt-input{flex:1;height:40px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:14px;outline:none}
+.yt-input:focus{border-color:var(--cyan)}
+.yt-btn{height:40px;padding:0 20px;border-radius:8px;border:none;background:var(--cyan);color:var(--bg);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.yt-btn:hover{filter:brightness(1.1)}
+.yt-btn:disabled{opacity:.4;cursor:not-allowed}
+.yt-btn.secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.yt-embed-wrap{position:relative;padding-bottom:56.25%;height:0;border-radius:8px;overflow:hidden;background:#000;margin-top:12px;display:none}
+.yt-embed-wrap.show{display:block}
+.yt-embed-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+
+.transcript-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;display:none}
+.transcript-panel.show{display:block}
+.transcript-text{font-size:14px;line-height:1.8;color:var(--dim);max-height:250px;overflow-y:auto;padding:12px;background:var(--bg3);border-radius:8px;margin:8px 0;white-space:pre-wrap}
+
+.timer-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 24px;margin-bottom:20px;display:none;justify-content:space-between;align-items:center}
+.timer-panel.show{display:flex}
+.timer-clock{font-size:28px;font-weight:800;font-family:mono;color:var(--text)}
+.timer-clock.warning{color:var(--amber)}
+.timer-clock.danger{color:var(--rose)}
+.timer-label{font-size:11px;color:var(--muted)}
+.timer-qcount{font-size:13px;font-weight:600}
+.timer-qcount span{color:var(--cyan)}
+
+.quiz-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;display:none}
+.quiz-panel.show{display:block}
+.quiz-type-tabs{display:flex;gap:4px;margin-bottom:16px}
+.qtt{height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer}
+.qtt.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+.q-block{margin-bottom:14px;padding:12px;background:var(--bg3);border-radius:8px}
+.q-text{font-size:13px;font-weight:600;margin-bottom:8px}
+.q-text .blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--cyan);color:var(--cyan);text-align:center;margin:0 4px;font-weight:700}
+.opts{display:flex;flex-direction:column;gap:4px}
+.opt{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:13px}
+.opt:hover{border-color:var(--cyan)}
+.opt.sel{background:rgba(34,211,238,.08);border-color:var(--cyan)}
+.opt.correct{background:rgba(52,211,153,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(251,113,133,.1);border-color:var(--rose);color:var(--rose)}
+.tf-row{display:flex;gap:8px}
+.tf-btn{height:36px;padding:0 20px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:13px;font-weight:600;cursor:pointer}
+.tf-btn:hover{border-color:var(--cyan)}
+.tf-btn.sel-true{background:rgba(52,211,153,.1);border-color:var(--green);color:var(--green)}
+.tf-btn.sel-false{background:rgba(251,113,133,.1);border-color:var(--rose);color:var(--rose)}
+.short-answer{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;resize:vertical;min-height:40px;font-family:inherit}
+.short-answer:focus{border-color:var(--cyan)}
+.check-btn{height:36px;padding:0 20px;border-radius:6px;border:none;background:var(--cyan);color:var(--bg);font-size:13px;font-weight:700;cursor:pointer;margin-top:12px}
+.check-btn:hover{filter:brightness(1.1)}
+.feedback{margin-top:8px;font-size:12px;padding:6px 10px;border-radius:4px;display:none}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(52,211,153,.1);color:var(--green)}
+.feedback.wrong{background:rgba(251,113,133,.1);color:var(--rose)}
+.results-row{display:flex;gap:12px;margin-top:16px}
+.rst{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;text-align:center;flex:1}
+.rst .val{font-size:20px;font-weight:800}
+.rst .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+.manual-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.manual-panel textarea{width:100%;min-height:120px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:14px;outline:none;resize:vertical;line-height:1.6;font-family:inherit}
+.manual-panel textarea:focus{border-color:var(--cyan)}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Listening Exercise — 10 Questions</div>
+</div>
+<div class="main">
+
+  <div class="yt-panel">
+    <h2>Paste a YouTube Video</h2>
+    <p>The video will be embedded for playback. Then paste the transcript below to generate 10 comprehension questions.</p>
+    <div class="yt-row">
+      <input type="text" class="yt-input" id="ytUrl" placeholder="https://www.youtube.com/watch?v=...">
+      <button class="yt-btn" onclick="loadVideo()">Load Video</button>
+    </div>
+    <div class="yt-embed-wrap" id="ytEmbed"></div>
+  </div>
+
+  <div class="transcript-panel" id="transcriptPanel">
+    <h3 style="font-size:14px;font-weight:700;margin-bottom:8px">Transcript</h3>
+    <textarea class="transcript-text" id="transcriptText" placeholder="Paste the video transcript here...&#10;&#10;You can get this from:&#10;• YouTube's auto-generated captions (click '...' under video → Show transcript)&#10;• Any transcription service&#10;• Or write your own passage"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="yt-btn" onclick="generateQuestions()">📝 Generate 10 Questions</button>
+      <button class="yt-btn secondary" onclick="startQuiz()">🎧 Start Quiz</button>
+    </div>
+  </div>
+
+  <div class="timer-panel" id="timerPanel">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="timer-clock" id="timerClock">5:00</div>
+      <div class="timer-label">Time remaining<br><span style="font-size:9px">10 questions</span></div>
+    </div>
+    <div style="text-align:right">
+      <div class="timer-qcount"><span id="qAnswered">0</span> / 10 answered</div>
+      <button class="yt-btn" style="height:32px;font-size:11px;margin-top:4px" onclick="submitQuiz()">Submit All</button>
+    </div>
+  </div>
+
+  <div class="quiz-panel" id="quizPanel">
+    <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Comprehension Quiz — 10 Questions</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Based on the transcript. Re-watch the video anytime.</p>
+    <div class="quiz-type-tabs">
+      <button class="qtt active" onclick="showQuizType('blank',this)">Fill the Blank</button>
+      <button class="qtt" onclick="showQuizType('tf',this)">True / False</button>
+      <button class="qtt" onclick="showQuizType('choice',this)">Multiple Choice</button>
+    </div>
+    <div id="quizContent"></div>
+    <div class="results-row" id="resultsRow" style="display:none">
+      <div class="rst"><div class="val" id="rScore">0%</div><div class="lbl">Score</div></div>
+      <div class="rst"><div class="val" id="rCorrect">0</div><div class="lbl">Correct</div></div>
+      <div class="rst"><div class="val" id="rWrong">0</div><div class="lbl">Wrong</div></div>
+    </div>
+  </div>
+
+  <div class="manual-panel">
+    <div class="divider">or create from text only (no video)</div>
+    <textarea id="manualText" placeholder="Paste any text passage here to generate questions...&#10;&#10;Example: Anna visits the market every weekend. She usually buys tomatoes, cucumbers, and olive oil..."></textarea>
+    <button class="yt-btn" style="margin-top:12px;width:100%" onclick="useManualText()">Create 10-Question Exercise</button>
+  </div>
+
+</div>
+
+<script>
+var transcriptText='',quizData={blank:[],tf:[],choice:[]};
+var timerInterval=null,timerRemaining=300;
+var tfSel={},mcSel={};
+
+function loadVideo(){
+  var url=document.getElementById('ytUrl').value.trim();
+  if(!url)return;
+  var vid=getVideoId(url);
+  if(!vid){alert('Invalid YouTube URL');return;}
+  document.getElementById('ytEmbed').innerHTML='<iframe src="https://www.youtube.com/embed/'+vid+'?rel=0&modestbranding=1" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>';
+  document.getElementById('ytEmbed').classList.add('show');
+  document.getElementById('transcriptPanel').classList.add('show');
+  document.getElementById('transcriptText').focus();
+}
+function getVideoId(url){
+  var m=url.match(/[?&]v=([^&]+)/);if(m)return m[1];
+  m=url.match(/youtu\.be\/([^?&]+)/);if(m)return m[1];
+  m=url.match(/embed\/([^?&]+)/);if(m)return m[1];
+  return null;
+}
+
+function useManualText(){
+  var text=document.getElementById('manualText').value.trim();
+  if(text.length<50){alert('Please enter at least 50 characters.');return;}
+  transcriptText=text;
+  document.getElementById('transcriptText').value=text;
+  document.getElementById('transcriptPanel').classList.add('show');
+  generateQuestions();
+}
+
+function generateQuestions(){
+  var text=document.getElementById('transcriptText').value.trim();
+  if(!text){alert('Paste a transcript first.');return;}
+  if(text.length<50){alert('Text too short. Need at least 50 characters.');return;}
+  transcriptText=text;
+  var sentences=text.replace(/\n+/g,' ').split(/[.!?]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>15&&s.split(/\s+/).length>=4;});
+  if(sentences.length<10){alert('Need at least 10 good sentences. Found: '+sentences.length+'. Add more text.');return;}
+  for(var i=sentences.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=sentences[i];sentences[i]=sentences[j];sentences[j]=t;}
+  quizData={blank:[],tf:[],choice:[]};
+  for(var i=0;i<4;i++) mkBlank(sentences[i]);
+  mkTF(sentences[4],true); mkTF(sentences[5],false); mkTF(sentences[6],true);
+  for(var i=7;i<10;i++) mkMC(sentences[i],sentences);
+  showQuizType('blank',document.querySelectorAll('.qtt')[0]);
+  document.getElementById('quizPanel').classList.add('show');
+  document.getElementById('resultsRow').style.display='none';
+}
+
+function mkBlank(s){
+  var words=s.split(/\s+/);var longest='',bi=-1;
+  var skip='that this with from were was are has had not but for have been will would could should'.split(' ');
+  words.forEach(function(w,j){var c=w.replace(/[^a-zA-Z'-]/g,'');if(c.length>=4&&skip.indexOf(c.toLowerCase())<0){if(c.length>longest.length){longest=c;bi=j;}}});
+  if(bi<0){bi=Math.min(1,words.length-1);longest=words[bi].replace(/[^a-zA-Z]/g,'');}
+  var bw=words[bi].replace(/[^a-zA-Z'-]/g,'');
+  quizData.blank.push({sentence:words.map(function(w,j){return j===bi?'______':w;}).join(' '),answer:bw,full:s});
+}
+
+function mkTF(s,isTrue){
+  if(isTrue){quizData.tf.push({statement:s,correct:true});return;}
+  var words=s.split(/\s+/);var modified=false;
+  for(var j=0;j<words.length&&!modified;j++){if(words[j].match(/^\d+$/)){words[j]=String(parseInt(words[j])+1);modified=true;}}
+  if(!modified){
+    var pairs={'always':'never','all':'none','many':'few','more':'less','most':'least','big':'small','good':'bad','old':'new','first':'last','hot':'cold','long':'short','high':'low','fast':'slow','easy':'hard','rich':'poor','love':'hate','like':'dislike','agree':'disagree','accept':'reject','win':'lose','begin':'end','arrive':'leave','buy':'sell','give':'take','push':'pull','open':'close','start':'stop','remember':'forget','find':'lose','build':'destroy','create':'delete','add':'remove','increase':'decrease','succeed':'fail','rise':'fall','grow':'shrink','allow':'forbid','approve':'reject','believe':'doubt','can':'cannot','will':'will not','is':'is not','are':'are not','was':'was not','were':'were not','has':'has not','have':'have not','had':'had not','does':'does not','do':'do not','did':'did not'};
+    for(var j=0;j<words.length&&!modified;j++){var w=words[j].toLowerCase().replace(/[^a-zA-Z]/g,'');if(pairs[w]){words[j]=pairs[w];modified=true;}}
+  }
+  if(!modified){for(var j=1;j<words.length-1&&!modified;j++){if(words[j].length>=4&&'the and but that this'.indexOf(words[j].toLowerCase())<0){words[j]='different';modified=true;}}}
+  if(!modified)words[words.length-1]='something else';
+  quizData.tf.push({statement:words.join(' '),correct:false});
+}
+
+function mkMC(s,allSentences){
+  var words=s.split(/\s+/);var answer=words.find(function(w){return w.replace(/[^a-zA-Z]/g,'').length>=4;})||words[0];answer=answer.replace(/[^a-zA-Z]/g,'');
+  var wrongs=[];allSentences.forEach(function(os){if(wrongs.length>=3)return;if(os===s)return;var ow=os.split(/\s+/).find(function(w){var c=w.replace(/[^a-zA-Z]/g,'');return c.length>=4&&c.toLowerCase()!==answer.toLowerCase();});if(ow)wrongs.push(ow.replace(/[^a-zA-Z]/g,''));});
+  while(wrongs.length<3)wrongs.push(['none of the above','not mentioned in the passage','the opposite is true'][wrongs.length]||'unknown');
+  var opts=[answer].concat(wrongs.slice(0,3));
+  for(var j=opts.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=opts[j];opts[j]=opts[k];opts[k]=t;}
+  quizData.choice.push({sentence:s.replace(new RegExp('\\b'+answer+'\\b','i'),'______'),options:opts,answer:answer});
+}
+
+function showQuizType(type,btn){
+  document.querySelectorAll('.qtt').forEach(function(el){el.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  var data=quizData[type];if(!data||!data.length)return;
+  var html='';
+  data.forEach(function(q,i){
+    html+='<div class="q-block" id="qb'+type+i+'">';
+    html+='<div class="q-text"><span style="color:var(--cyan);font-weight:700;margin-right:4px">Q'+(i+1)+'.</span>';
+    html+=type==='tf'?q.statement:q.sentence;
+    html+='</div>';
+    if(type==='blank'){html+='<input type="text" class="short-answer" id="inp'+type+i+'" placeholder="Type the missing word..." oninput="updateAnswered()">';}
+    else if(type==='tf'){html+='<div class="tf-row"><button class="tf-btn" onclick="selTF('+i+',true,this)">True</button><button class="tf-btn" onclick="selTF('+i+',false,this)">False</button></div>';}
+    else{html+='<div class="opts">';q.options.forEach(function(opt,j){html+='<div class="opt" onclick="selMC('+i+','+j+',this)"><span style="font-weight:700;margin-right:8px;color:var(--text-dim)">'+String.fromCharCode(65+j)+'.</span>'+opt+'</div>';});html+='</div>';}
+    html+='<div class="feedback" id="fb'+type+i+'"></div></div>';
+  });
+  document.getElementById('quizContent').innerHTML=html;
+  updateAnswered();
+}
+
+function selTF(idx,val,btn){
+  tfSel[idx]=val;
+  btn.parentElement.querySelectorAll('.tf-btn').forEach(function(b){b.classList.remove('sel-true','sel-false');});
+  btn.classList.add(val?'sel-true':'sel-false');
+  updateAnswered();
+}
+function selMC(idx,opt,el){
+  mcSel[idx]=opt;
+  el.parentElement.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+  updateAnswered();
+}
+function updateAnswered(){
+  var a=0;
+  for(var i=0;i<(quizData.blank||[]).length;i++){if(document.getElementById('inpblank'+i)&&document.getElementById('inpblank'+i).value.trim())a++;}
+  for(var i=0;i<(quizData.tf||[]).length;i++){if(tfSel[i]!==undefined)a++;}
+  for(var i=0;i<(quizData.choice||[]).length;i++){if(mcSel[i]!==undefined)a++;}
+  document.getElementById('qAnswered').textContent=Math.min(a,10);
+}
+
+function startTimer(){
+  timerRemaining=300;
+  document.getElementById('timerPanel').classList.add('show');
+  updateTimerDisplay();
+  timerInterval=setInterval(function(){timerRemaining--;updateTimerDisplay();if(timerRemaining<=0)submitQuiz();},1000);
+}
+function updateTimerDisplay(){
+  var m=Math.floor(timerRemaining/60),s=timerRemaining%60;
+  var el=document.getElementById('timerClock');
+  el.textContent=m+':'+String(s).padStart(2,'0');
+  el.classList.toggle('warning',timerRemaining<=60);
+  el.classList.toggle('danger',timerRemaining<=30);
+}
+
+function startQuiz(){
+  if(!transcriptText){alert('Generate questions first.');return;}
+  generateQuestions();
+  startTimer();
+  window.scrollTo({top:document.getElementById('quizPanel').offsetTop-80,behavior:'smooth'});
+}
+
+function submitQuiz(){
+  clearInterval(timerInterval);
+  document.getElementById('timerPanel').classList.remove('show');
+  var types=['blank','tf','choice'],total=0,correct=0;
+  types.forEach(function(type){
+    (quizData[type]||[]).forEach(function(q,i){
+      total++;
+      var fb=document.getElementById('fb'+type+i);
+      fb.classList.add('show');
+      if(type==='blank'){
+        var val=(document.getElementById('inp'+type+i)||{}).value||'';
+        if(val.trim().toLowerCase()===q.answer.toLowerCase()){correct++;fb.className='feedback show correct';fb.innerHTML='✓ Correct';}
+        else{fb.className='feedback show wrong';fb.innerHTML='✗ Answer: <strong>'+q.answer+'</strong>';}
+      } else if(type==='tf'){
+        var sel=tfSel[i];
+        if(sel===undefined){fb.className='feedback show wrong';fb.innerHTML='✗ Not answered';}
+        else if(sel===q.correct){correct++;fb.className='feedback show correct';fb.innerHTML='✓ Correct';}
+        else{fb.className='feedback show wrong';fb.innerHTML='✗ Answer: '+(q.correct?'True':'False');}
+      } else {
+        var sel=mcSel[i];
+        if(sel===undefined){fb.className='feedback show wrong';fb.innerHTML='✗ Not answered. Answer: <strong>'+q.answer+'</strong>';}
+        else if(q.options[sel]&&q.options[sel].toLowerCase()===q.answer.toLowerCase()){correct++;fb.className='feedback show correct';fb.innerHTML='✓ Correct';}
+        else{fb.className='feedback show wrong';fb.innerHTML='✗ Answer: <strong>'+q.answer+'</strong>';}
+      }
+    });
+  });
+  document.getElementById('rScore').textContent=Math.round(correct/total*100)+'%';
+  document.getElementById('rCorrect').textContent=correct;
+  document.getElementById('rWrong').textContent=Math.min(total-correct,10-correct);
+  document.getElementById('resultsRow').style.display='flex';
+  window.scrollTo({top:document.getElementById('quizPanel').offsetTop-80,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

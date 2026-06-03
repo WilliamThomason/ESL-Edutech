@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>How to Avoid Acoustic Guitar Feedback at a Gig</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e2e8f0;line-height:1.6;font-size:15px}
+.container{max-width:900px;margin:0 auto;padding:40px 24px}
+
+/* Header */
+.header{text-align:center;padding:48px 0 40px}
+.header h1{font-size:2.6rem;font-weight:900;letter-spacing:-.5px;margin-bottom:8px;line-height:1.1}
+.header h1 .highlight{color:#fbbf24}
+.header p{color:#94a3b8;font-size:1.1rem;max-width:600px;margin:0 auto}
+.tagline{display:inline-block;margin-top:16px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+
+/* Section headers */
+.section{margin-bottom:48px}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid #1e293b}
+.section-icon{font-size:1.8rem}
+.section-title{font-size:1.4rem;font-weight:800}
+.section-sub{font-size:13px;color:#64748b;margin-top:2px}
+
+/* Feedback explanation */
+.explain-box{background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(249,115,22,.05));border:1px solid rgba(251,191,36,.15);border-radius:16px;padding:24px;margin-bottom:32px}
+.explain-box h3{font-size:1.1rem;font-weight:700;color:#fbbf24;margin-bottom:8px}
+.explain-box p{color:#94a3b8;font-size:14px;line-height:1.7}
+.explain-diagram{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.diagram-item{text-align:center;padding:12px 16px;background:#0f172a;border-radius:10px;border:1px solid #1e293b;min-width:100px}
+.diagram-item .icon{font-size:1.6rem;margin-bottom:4px}
+.diagram-item .label{font-size:11px;color:#94a3b8;font-weight:600}
+.diagram-arrow{font-size:1.4rem;color:#475569}
+
+/* Do / Don't cards */
+.dodont-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.do-box,.dont-box{border-radius:14px;padding:20px}
+.do-box{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15)}
+.dont-box{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.15)}
+.do-box h4,.dont-box h4{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.do-box h4{color:#34d399}
+.dont-box h4{color:#fb7185}
+.do-box ul,.dont-box ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.do-box li,.dont-box li{font-size:13px;color:#94a3b8;padding-left:20px;position:relative;line-height:1.5}
+.do-box li::before{content:"✓";position:absolute;left:0;color:#34d399;font-weight:700}
+.dont-box li::before{content:"✗";position:absolute;left:0;color:#fb7185;font-weight:700}
+
+/* Technique cards */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:32px}
+.tech-card{background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:20px;transition:all .2s}
+.tech-card:hover{border-color:#334155;transform:translateY(-2px)}
+.tech-num{display:inline-block;width:28px;height:28px;border-radius:50%;background:rgba(34,211,238,.12);color:#22d3ee;font-size:12px;font-weight:700;text-align:center;line-height:28px;margin-bottom:10px}
+.tech-card h4{font-size:15px;font-weight:700;margin-bottom:6px}
+.tech-card p{font-size:13px;color:#94a3b8;line-height:1.6}
+.tech-tip{margin-top:10px;padding:8px 12px;background:rgba(34,211,238,.06);border-radius:8px;font-size:12px;color:#22d3ee;border-left:2px solid #22d3ee}
+
+/* EQ visual */
+.eq-section{background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:32px}
+.eq-section h4{font-size:1.1rem;font-weight:700;margin-bottom:16px}
+.eq-bars{display:flex;align-items:flex-end;gap:4px;height:120px;padding:0 8px;margin-bottom:28px}
+.eq-bar{flex:1;border-radius:3px 3px 0 0;position:relative;transition:height .3s}
+.eq-bar .label{position:absolute;bottom:-25px;left:50%;transform:translateX(-50%);font-size:13px;color:#cbd5e0;font-family:'JetBrains Mono',monospace;white-space:nowrap;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.eq-bar.cut{background:linear-gradient(to top,#fb7185,#fb718588)}
+.eq-bar.keep{background:linear-gradient(to top,#34d399,#34d39988)}
+.eq-bar.boost{background:linear-gradient(to top,#22d3ee,#22d3ee88)}
+.eq-legend{display:flex;gap:16px;justify:center;margin-top:20px;flex-wrap:wrap}
+.eq-legend-item{display:flex;gap:6px;align-items:center;font-size:11px;color:#94a3b8}
+.eq-legend-dot{width:8px;height:8px;border-radius:2px}
+
+/* Stage layout */
+.stage-layout{background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:32px;text-align:center}
+.stage-layout h4{font-size:1.1rem;font-weight:700;margin-bottom:16px}
+.stage-diagram{position:relative;max-width:600px;margin:0 auto}
+.stage{width:100%;height:60px;background:linear-gradient(180deg,#1e293b,#0f172a);border:1px solid #334155;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#64748b;margin-bottom:8px}
+.stage-area{display:flex;gap:20px;justify-content:center;align-items:flex-end;padding:16px 0}
+.monitor{position:relative}
+.monitor-body{width:60px;height:40px;background:#1e293b;border:2px solid #475569;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#64748b;text-align:center}
+.monitor.bad{border-color:#fb7185;background:rgba(251,113,133,.1)}
+.monitor.good{border-color:#34d399;background:rgba(52,211,153,.1)}
+.monitor-label{font-size:10px;margin-top:6px;text-align:center;font-weight:600}
+.monitor-label.bad{color:#fb7185}
+.monitor-label.good{color:#34d399}
+.guitarist-icon{font-size:2.5rem;text-align:center}
+.guitarist-label{font-size:11px;color:#94a3b8;margin-top:4px;text-align:center}
+.arrow-down{font-size:1.2rem;color:#475569;text-align:center;margin:4px 0}
+.feedback-arrow{font-size:1rem;color:#fb7185;text-align:center;margin:4px 0;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.no-feedback{font-size:1rem;color:#34d399;text-align:center;margin:4px 0}
+
+/* Quick reference */
+.quick-ref{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:1px solid rgba(34,211,238,.12);border-radius:16px;padding:24px;margin-bottom:32px}
+.quick-ref h4{font-size:1.1rem;font-weight:700;margin-bottom:16px;color:#22d3ee}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.quick-item{background:#0f172a;border-radius:10px;padding:14px;border:1px solid #1e293b}
+.quick-item .q-icon{font-size:1.4rem;margin-bottom:6px}
+.quick-item h5{font-size:13px;font-weight:700;margin-bottom:4px}
+.quick-item p{font-size:11px;color:#64748b;line-height:1.5}
+
+/* Checklist */
+.checklist{background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:32px}
+.checklist h4{font-size:1.1rem;font-weight:700;margin-bottom:16px}
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check-item{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:8px;font-size:13px;color:#94a3b8}
+.check-item input[type="checkbox"]{margin-top:3px;accent-color:#22d3ee;cursor:pointer}
+.check-item.checked{color:#34d399;text-decoration:line-through}
+
+/* String Theory Logo */
+.st-logo{height:100px;width:100px;object-fit:contain;border-radius:8px;margin-bottom:16px}
+.logo-link{display:inline-block}
+
+/* Footer */
+.footer{border-top:1px solid #1e293b;padding:32px 0;text-align:center}
+.footer p{font-size:12px;color:#64748b}
+
+@media(max-width:640px){
+  .header h1{font-size:1.8rem}
+  .dodont-grid{grid-template-columns:1fr}
+  .checklist-grid{grid-template-columns:1fr}
+  .eq-bars{height:80px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <a href="#" class="logo-link" title="String Theory">
+    <img src="logo-string-theory.png" alt="String Theory" class="st-logo">
+  </a>
+  <h1>🎸 How to Avoid <span class="highlight">Acoustic Guitar Feedback</span> at a Gig</h1>
+  <p>A complete guide for performing musicians — from stage setup to EQ settings</p>
+  <span class="tagline">🎵 Play with confidence. No more embarrassing screeches.</span>
+</div>
+
+<!-- What causes feedback -->
+<div class="explain-box">
+  <h3>🔊 What Causes Feedback?</h3>
+  <p>Feedback happens when your guitar's pickup or microphone picks up sound from the stage monitors or PA system, creating a loop: <strong>guitar → pickup → amp/monitor → guitar → pickup → SCREECH!</strong> In big halls with powerful PA systems, this is even more likely because there's more sound energy bouncing around the room.</p>
+  <div class="explain-diagram">
+    <div class="diagram-item"><div class="icon">🎸</div><div class="label">Guitar<br>Pickup</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-item"><div class="icon">🔊</div><div class="label">Monitor /<br>PA System</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-item"><div class="icon">📢</div><div class="label">Sound<br>Bounces Back</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-item" style="border-color:#fb7185;background:rgba(251,113,133,.1)"><div class="icon">💥</div><div class="label" style="color:#fb7185">FEEDBACK<br>SCREECH!</div></div>
+  </div>
+</div>
+
+<!-- Do / Don't -->
+<div class="section">
+  <div class="section-header"><span class="section-icon">⚡</span><div><div class="section-title">The Golden Rules</div><div class="section-sub">Do this, not that</div></div></div>
+  <div class="dodont-grid">
+    <div class="do-box">
+      <h4>✅ DO</h4>
+      <ul>
+        <li>Face AWAY from stage monitors</li>
+        <li>Use a notch/feedback eliminator pedal</li>
+        <li>Cut the problematic frequencies on EQ</li>
+        <li>Use a soundhole cover to reduce resonance</li>
+        <li>Keep your guitar volume moderate — let the PA do the work</li>
+        <li>Ask the sound engineer for a monitor check before the show</li>
+        <li>Use a directional (cardioid) microphone if miking your guitar</li>
+        <li>Position monitors at 45° angles behind you, not directly facing you</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <h4>❌ DON'T</h4>
+      <ul>
+        <li>Stand directly in front of a monitor</li>
+        <li>Crank your guitar volume to maximum</li>
+        <li>Point your guitar's soundhole at the monitors</li>
+        <li>Ignore the soundcheck — always test before the audience arrives</li>
+        <li>Use an omnidirectional mic that picks up everything</li>
+        <li>Place your amp or monitor behind you aimed at the guitar's pickup</li>
+        <li>Forget to cut the feedback frequency once you find it</li>
+        <li>Assume the sound engineer knows your instrument's feedback points</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Technique cards -->
+<div class="section">
+  <div class="section-header"><span class="section-icon">🎯</span><div><div class="section-title">6 Key Techniques to Prevent Feedback</div><div class="section-sub">Master these and you'll never fear the stage again</div></div></div>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-num">1</div>
+      <h4>🎛️ EQ — Cut the Feedback Frequencies</h4>
+      <p>Every guitar and room has specific frequencies that feed back first. During soundcheck, slowly raise the volume until feedback starts, then use a <strong>parametric EQ</strong> to cut that frequency by 3-6 dB. Common feedback zones: 800 Hz, 1.2 kHz, 2.5 kHz, 4 kHz.</p>
+      <div class="tech-tip">💡 Pro tip: Use a graphic EQ pedal on your guitar to cut problem frequencies before they reach the PA.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-num">2</div>
+      <h4>🔇 Use a Soundhole Cover</h4>
+      <p>A <strong>feedback buster</strong> (rubber or plastic disc) that fits into your guitar's soundhole dramatically reduces internal resonance and feedback. It's the single most effective physical fix for acoustic guitars. Brands: Feedback Buster, Superplug.</p>
+      <div class="tech-tip">💡 This alone can eliminate 80% of feedback problems. Always carry one in your gig bag.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-num">3</div>
+      <h4>🧭 Position Yourself Correctly</h4>
+      <p>Your guitar's pickup has a "hot spot" — the direction it's most sensitive to incoming sound. <strong>Face away from monitors</strong> and angle your guitar so the back (not the soundhole) faces the speakers. In big halls, stay at least 10 feet from any monitor wedge.</p>
+      <div class="tech-tip">💡 If you must face the audience (and therefore the monitors behind you), angle your guitar slightly to the side.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-num">4</div>
+      <h4>🎚️ Volume Management</h4>
+      <p>The #1 mistake: <strong>too much guitar volume on stage</strong>. In a big hall with a PA, your guitar only needs to be loud enough for YOU to hear. Let the front-of-house engineer handle the audience volume. Keep your onboard preamp at 60-70% max.</p>
+      <div class="tech-tip">💡 If you can't hear yourself, ask for more monitor mix — don't turn up your guitar.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-num">5</div>
+      <h4>🎤 Mic Technique (If Using a Mic)</h4>
+      <p>If you're using a microphone instead of a pickup: use a <strong>cardioid pattern</strong> mic (rejects sound from behind), keep the mic close to the guitar (6-8 inches), and aim the mic's null point at the monitors. Never use an omnidirectional mic on stage.</p>
+      <div class="tech-tip">💡 A clip-on condenser mic (like DPA 4099) is more feedback-resistant than a stand mic.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-num">6</div>
+      <h4>🔧 Feedback Eliminator Pedal</h4>
+      <p>Devices like the <strong>Boss FB-2</strong>, <strong>Feedback Ferret</strong>, or <strong>LR Baggs Align</strong> automatically detect and notch out feedback frequencies in real-time. Set it to "auto" mode and it will find and kill feedback before you hear it.</p>
+      <div class="tech-tip">💡 The LR Baggs Align Reverb has a built-in feedback suppressor — great for acoustic performers.</div>
+    </div>
+  </div>
+</div>
+
+<!-- EQ Visual -->
+<div class="eq-section">
+  <h4>🎛️ EQ Cheat Sheet — What to Cut and What to Keep</h4>
+  <div class="eq-bars">
+    <div class="eq-bar cut" style="height:30%"><div class="label">80Hz<br>Cut rumble</div></div>
+    <div class="eq-bar keep" style="height:70%"><div class="label">200Hz<br>Warmth ✓</div></div>
+    <div class="eq-bar cut" style="height:25%"><div class="label">400Hz<br>Cut muddiness</div></div>
+    <div class="eq-bar keep" style="height:80%"><div class="label">800Hz<br>Body ✓</div></div>
+    <div class="eq-bar cut" style="height:20%"><div class="label">1.2kHz<br>⚠️ Feedback zone</div></div>
+    <div class="eq-bar keep" style="height:75%"><div class="label">2kHz<br>Presence ✓</div></div>
+    <div class="eq-bar cut" style="height:15%"><div class="label">2.5kHz<br>⚠️ Feedback zone</div></div>
+    <div class="eq-bar cut" style="height:20%"><div class="label">4kHz<br>⚠️ Feedback zone</div></div>
+    <div class="eq-bar keep" style="height:60%"><div class="label">6kHz<br>Sparkle ✓</div></div>
+    <div class="eq-bar boost" style="height:50%"><div class="label">10kHz<br>Air ✓</div></div>
+  </div>
+  <div class="eq-legend">
+    <div class="eq-legend-item"><div class="eq-legend-dot" style="background:#fb7185"></div>Cut these (feedback zones)</div>
+    <div class="eq-legend-item"><div class="eq-legend-dot" style="background:#34d399"></div>Keep these (tone)</div>
+    <div class="eq-legend-item"><div class="eq-legend-dot" style="background:#22d3ee"></div>Optional boost</div>
+  </div>
+</div>
+
+<!-- Stage layout -->
+<div class="stage-layout">
+  <h4>🎪 Stage Positioning — Good vs Bad</h4>
+  <div class="stage-diagram">
+    <div class="stage">🎤 STAGE (Audience in front)</div>
+    <div class="stage-area">
+      <div>
+        <div class="monitor bad"><div class="monitor-body">MON<br>❌</div></div>
+        <div class="monitor-label bad">Bad: Facing guitar directly</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="guitarist-icon">🎸</div>
+        <div class="guitarist-label">You (facing audience)</div>
+      </div>
+      <div>
+        <div class="monitor good"><div class="monitor-body">MON<br>✓</div></div>
+        <div class="monitor-label good">Good: 45° angle, behind you</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:13px;color:#64748b">
+      <span style="color:#fb7185">❌ Bad:</span> Monitor faces guitar's soundhole/pickup directly → feedback loop<br>
+      <span style="color:#34d399">✓ Good:</span> Monitors at 45° behind you, guitar angled away → no loop
+    </div>
+  </div>
+</div>
+
+<!-- Quick reference -->
+<div class="quick-ref">
+  <h4>📋 Quick Reference — Gig Day Checklist</h4>
+  <div class="quick-grid">
+    <div class="quick-item"><div class="q-icon">🔇</div><h5>Soundhole Cover</h5><p>Insert feedback buster before soundcheck</p></div>
+    <div class="quick-item"><div class="q-icon">🎛️</div><h5>EQ Pedal</h5><p>Set to auto-notch mode or pre-cut known feedback freqs</p></div>
+    <div class="quick-item"><div class="q-icon">📐</div><h5>Positioning</h5><p>Face audience, angle guitar away from monitors</p></div>
+    <div class="quick-item"><div class="q-icon">🔊</div><h5>Volume</h5><p>Keep guitar at 60-70%, let PA handle the rest</p></div>
+    <div class="quick-item"><div class="q-icon">🎤</div><h5>Soundcheck</h5><p>Always test with monitors at performance volume</p></div>
+    <div class="quick-item"><div class="q-icon">📞</div><h5>Communicate</h5><p>Tell the sound engineer about your feedback issues</p></div>
+  </div>
+</div>
+
+<!-- Interactive checklist -->
+<div class="checklist">
+  <h4>✅ Pre-Gig Feedback Prevention Checklist</h4>
+  <div class="checklist-grid">
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Soundhole cover inserted</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> EQ pedal on and set to auto-notch</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Guitar volume at 60-70%</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Monitors positioned at 45° behind you</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Soundcheck completed at performance volume</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Feedback frequencies identified and cut on EQ</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Guitar angled away from monitors</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Backup plan: know which frequencies to cut manually</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Communicated with sound engineer about feedback concerns</label>
+    <label class="check-item"><input type="checkbox" onchange="this.parentElement.classList.toggle('checked',this.checked)"> Tested with full band at performance volume</label>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Made for guitarists who want to play with confidence · Based on professional live sound engineering principles</p>
+  <p style="margin-top:8px;font-size:11px">Remember: feedback is a physics problem, not a talent problem. Every pro deals with it — the difference is preparation.</p>
+</div>
+
+</div>
+</body>
+</html>

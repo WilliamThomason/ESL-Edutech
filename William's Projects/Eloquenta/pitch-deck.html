@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Investor Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.15);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.15);--emerald:#34d399;--emerald-dim:rgba(52,211,153,.15);--violet:#a78bfa;--violet-dim:rgba(167,139,250,.15);--rose:#fb7185;--rose-dim:rgba(251,113,133,.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow:hidden}
+.slideshow{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:60px 80px;opacity:0;transition:opacity .5s ease;overflow-y:auto}
+.slide.active{display:flex;opacity:1}
+.slide-num{position:fixed;top:20px;right:28px;font-size:.8rem;opacity:.4;font-weight:600;z-index:50}
+.progress{position:fixed;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.08);z-index:60}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--emerald));transition:width .4s ease}
+.nav-btn{position:fixed;bottom:20px;z-index:50;background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.3);color:var(--cyan);padding:10px 20px;border-radius:50px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
+.nav-btn:hover{background:rgba(34,211,238,.25)}
+.nav-prev{left:20px}
+.nav-next{right:20px}
+/* TYPOLOGY */
+h1{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(2rem,4.5vw,3.5rem);line-height:1.1;margin-bottom:16px}
+h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.4rem,3vw,2.2rem);margin-bottom:12px}
+h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(1rem,1.8vw,1.3rem);margin-bottom:8px;color:var(--cyan)}
+.tagline{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(1rem,2vw,1.4rem);color:var(--text-muted);margin-bottom:32px}
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+/* CARDS */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.card.highlight{border-color:rgba(34,211,238,.3);background:rgba(34,211,238,.04)}
+.card.accent{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04)}
+.card.violet{border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.04)}
+.card.rose{border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.04)}
+.card.amber{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.04)}
+/* STATS */
+.stat{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(1.8rem,3.5vw,2.8rem);color:var(--cyan)}
+.stat-label{font-size:.85rem;color:var(--text-muted);font-weight:500}
+/* IMAGES */
+.img-card{border-radius:12px;overflow:hidden;position:relative}
+.img-card img{width:100%;height:100%;object-fit:cover;display:block}
+.img-card .overlay{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.img-card .overlay p{font-weight:600;font-size:.9rem}
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin-top:16px}
+th{text-align:left;padding:10px 12px;font-size:.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+td strong{color:var(--emerald)}
+/* BADGE */
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-cyan{background:rgba(34,211,238,.15);color:var(--cyan)}
+.badge-emerald{background:rgba(74,222,128,.15);color:var(--emerald)}
+.badge-violet{background:rgba(167,139,250,.15);color:var(--violet)}
+.badge-amber{background:rgba(251,191,36,.15);color:var(--amber)}
+.badge-rose{background:rgba(251,113,133,.15);color:var(--rose)}
+/* LIST */
+ul{list-style:none}
+ul li{padding:6px 0;font-size:.9rem;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px}
+ul li::before{content:'→';color:var(--cyan);font-weight:700;flex-shrink:0}
+/* CTA */
+.cta-box{background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(74,222,128,.1));border:1px solid rgba(34,211,238,.25);border-radius:20px;padding:32px;text-align:center}
+.cta-box h2{margin-bottom:8px}
+.cta-box p{color:var(--text-muted);margin-bottom:20px}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .slide{padding:40px 24px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  h1{font-size:1.6rem}
+  .grid-4{grid-template-columns:1fr}
+}
+/* PRINT */
+@media print{
+  .slide{position:relative;display:flex!important;opacity:1;page-break-after:always;height:auto;overflow:visible}
+  .nav-btn,.progress,.slide-num{display:none}
+  body{overflow:visible}
+}
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-fill" id="progressFill" style="width:5%"></div></div>
+
+<div class="slideshow" id="slideshow">
+
+<!-- ═══ SLIDE 1: COVER ═══ -->
+<div class="slide active" data-slide="1" style="background:linear-gradient(135deg,#020617 0%,#0f172a 50%,#1a1a3e 100%);justify-content:center;align-items:center;text-align:center">
+  <span class="slide-num">1 / 18</span>
+  <div style="max-width:800px">
+    <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--cyan),var(--emerald));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 24px">E</div>
+    <h1 style="font-size:clamp(2.5rem,6vw,4.5rem);margin-bottom:8px">Eloquenta</h1>
+    <p class="tagline" style="font-size:clamp(1.1rem,2.5vw,1.6rem);color:var(--cyan);margin-bottom:16px">English. In Your Language.</p>
+    <p style="color:var(--text-muted);font-size:1.1rem;max-width:600px;margin:0 auto">Premium online ESL education platform combining AI-powered interactive lessons with live 1-on-1 tutoring — built for global markets, headquartered in Estonia.</p>
+    <div style="margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <span class="badge badge-cyan">EdTech</span>
+      <span class="badge badge-emerald">Estonia e-Residency</span>
+      <span class="badge badge-violet">AI-Powered</span>
+      <span class="badge badge-amber">Global</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 2: THE PROBLEM ═══ -->
+<div class="slide" data-slide="2" style="background:var(--bg)">
+  <span class="slide-num">2 / 18</span>
+  <h1 style="color:var(--rose)">The Problem</h1>
+  <p class="tagline">English education is broken for non-native speakers</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <h3 style="color:var(--rose)">😰 Students Are Lost</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Most ESL platforms teach English in English. Students who don't understand feel embarrassed, fall behind, and quit. In Japan, Korea, Germany, Spain, Brazil — millions of potential learners are excluded.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--rose)">📉 High Dropout Rates</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Online ESL platforms see 60-80% dropout within 3 months. Why? Impersonal content, no emotional connection, and lessons that don't adapt to the student's actual goals.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--rose)">🌍 One Size Fits None</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">A Japanese student preparing for TOEFL has completely different needs than a German professional working in tech. Current platforms offer the same content to everyone.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--rose)">💸 Premium = Exclusive</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Quality 1-on-1 tutoring costs $40-80/hour. Group classes are affordable but impersonal. There's no middle ground — quality education for the masses.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 3: THE SOLUTION ═══ -->
+<div class="slide" data-slide="3" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(34,211,238,.03) 100%)">
+  <span class="slide-num">3 / 18</span>
+  <h1 style="color:var(--emerald)">The Solution</h1>
+  <p class="tagline">Eloquenta — Premium ESL that speaks your language</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card accent">
+      <h3>🎯 Goal-Focused Learning</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Every lesson is built around the student's specific goal — TOEFL, IELTS, OET, IGCSE, Business English, accent reduction, or interview prep. No generic content.</p>
+    </div>
+    <div class="card accent">
+      <h3>🗣️ Teach in Their Language</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Our teachers speak the student's native language. German, Spanish, Japanese — explanations happen in the language they understand best. This is our unfair advantage.</p>
+    </div>
+    <div class="card accent">
+      <h3>🤖 AI + Human Hybrid</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Interactive AI lesson slides for self-study + live 1-on-1 sessions with professional tutors. The AI handles practice and repetition. The human handles nuance and motivation.</p>
+    </div>
+    <div class="card accent">
+      <h3>📱 Free Live Sessions</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Weekly free live sessions on popular topics (exam tips, pronunciation, grammar) let students experience our teaching style before committing. This is our growth engine.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 4: HOW IT WORKS ═══ -->
+<div class="slide" data-slide="4" style="background:var(--bg)">
+  <span class="slide-num">4 / 18</span>
+  <h1>How It Works</h1>
+  <p class="tagline">Three tiers, one platform</p>
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card" style="text-align:center;padding:32px 20px">
+      <div style="font-size:2.5rem;margin-bottom:12px">🆓</div>
+      <h3 style="color:var(--emerald)">Free Tier</h3>
+      <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:12px">Weekly live group sessions on trending topics. AI lesson slides for self-study. Community access.</p>
+      <p style="color:var(--emerald);font-weight:700">€0/month</p>
+      <p style="font-size:.75rem;color:var(--text-dim);margin-top:8px">Growth engine — builds trust and brand awareness</p>
+    </div>
+    <div class="card highlight" style="text-align:center;padding:32px 20px;border-color:rgba(34,211,238,.4)">
+      <div style="font-size:2.5rem;margin-bottom:12px">⭐</div>
+      <h3 style="color:var(--cyan)">Premium</h3>
+      <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:12px">Unlimited AI lessons + 4 live sessions/month + goal-specific curriculum + progress tracking.</p>
+      <p style="color:var(--cyan);font-weight:700">€48/month</p>
+      <p style="font-size:.75rem;color:var(--text-dim);margin-top:8px">Core revenue driver</p>
+    </div>
+    <div class="card violet" style="text-align:center;padding:32px 20px">
+      <div style="font-size:2.5rem;margin-bottom:12px">👑</div>
+      <h3 style="color:var(--violet)">Pro</h3>
+      <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:12px">Unlimited everything + 12 live sessions/month + dedicated tutor + exam guarantee + accent reduction.</p>
+      <p style="color:var(--violet);font-weight:700">€88/month</p>
+      <p style="font-size:.75rem;color:var(--text-dim);margin-top:8px">High-margin premium tier</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 5: PRODUCT DEMO ═══ -->
+<div class="slide" data-slide="5" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(167,139,250,.03) 100%)">
+  <span class="slide-num">5 / 18</span>
+  <h1 style="color:var(--violet)">The Product</h1>
+  <p class="tagline">Interactive lesson slides with AI characters</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="img-card" style="height:280px">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop" alt="students learning">
+      <div class="overlay"><p>🎯 Interactive slide-based lessons with speech bubbles, vocabulary cards, and real-world images</p></div>
+    </div>
+    <div class="img-card" style="height:280px">
+      <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&h=400&fit=crop" alt="online learning">
+      <div class="overlay"><p>🤖 AI characters guide students through lessons in their native language</p></div>
+    </div>
+  </div>
+  <div class="grid-4" style="margin-top:16px">
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:8px">📊</div>
+      <p style="font-size:.8rem;color:var(--text-muted)">Progress Tracking</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:8px">🎤</div>
+      <p style="font-size:.8rem;color:var(--text-muted)">Pronunciation AI</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:8px">📝</div>
+      <p style="font-size:.8rem;color:var(--text-muted)">Exam Prep</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:8px">💬</div>
+      <p style="font-size:.8rem;color:var(--text-muted)">Live Chat</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 6: MARKET SIZE ═══ -->
+<div class="slide" data-slide="6" style="background:var(--bg)">
+  <span class="slide-num">6 / 18</span>
+  <h1>Market Opportunity</h1>
+  <p class="tagline">$55 billion global ESL market, growing 12% annually</p>
+  <div class="grid-4" style="margin-top:24px">
+    <div class="card" style="text-align:center">
+      <div class="stat">$55B</div>
+      <div class="stat-label">Global ESL Market (2025)</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat">1.5B</div>
+      <div class="stat-label">English Learners Worldwide</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat">12%</div>
+      <div class="stat-label">Annual Growth Rate</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat">60%</div>
+      <div class="stat-label">Online Segment Growth</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <h3>🎯 Target Markets</h3>
+      <ul style="margin-top:12px">
+        <li>Japan — $8B ESL market, high willingness to pay</li>
+        <li>South Korea — $6B, exam-driven culture</li>
+        <li>Germany — $4B, professional English demand</li>
+        <li>Spain/LatAm — $5B, growing middle class</li>
+        <li>Australia — immigration English requirements</li>
+        <li>Southeast Asia — fastest growing segment</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🏆 Competitive Advantage</h3>
+      <ul style="margin-top:12px">
+        <li>Native-language teaching (we speak their language)</li>
+        <li>AI + human hybrid (scale without sacrificing quality)</li>
+        <li>Goal-specific curricula (not one-size-fits-all)</li>
+        <li>Free tier for acquisition (low barrier to entry)</li>
+        <li>Estonia base (EU credibility, e-Residency, grants)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 7: BUSINESS MODEL ═══ -->
+<div class="slide" data-slide="7" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(74,222,128,.03) 100%)">
+  <span class="slide-num">7 / 18</span>
+  <h1 style="color:var(--emerald)">Business Model</h1>
+  <p class="tagline">Freemium + subscriptions + B2B licensing</p>
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card accent">
+      <h3>📱 B2C Subscriptions</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Free → €48/mo Premium → €88/mo Pro. Conversion target: 8% free-to-paid within 6 months. LTV target: €480/year.</p>
+    </div>
+    <div class="card accent">
+      <h3>🏢 B2B Licensing</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">License our AI lesson platform to language schools, universities, and corporate training departments. €5,000-€20,000/year per institution.</p>
+    </div>
+    <div class="card accent">
+      <h3>📝 Exam Partnerships</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Official prep courses for TOEFL, IELTS, OET. Revenue share with exam boards. Students pay premium for guaranteed results.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:24px">
+    <h3>Revenue Streams Breakdown (Year 3 Target)</h3>
+    <table>
+      <thead><tr><th>Stream</th><th>% of Revenue</th><th>Year 3 Target</th></tr></thead>
+      <tbody>
+        <tr><td>B2C Subscriptions</td><td>55%</td><td>€660,000</td></tr>
+        <tr><td>B2B Licensing</td><td>25%</td><td>€300,000</td></tr>
+        <tr><td>Exam Prep Courses</td><td>12%</td><td>€144,000</td></tr>
+        <tr><td>Corporate Training</td><td>8%</td><td>€96,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 8: FINANCIAL FORECAST ═══ -->
+<div class="slide" data-slide="8" style="background:var(--bg)">
+  <span class="slide-num">8 / 18</span>
+  <h1>Financial Forecast</h1>
+  <p class="tagline">5-year projection — conservative estimates</p>
+  <table>
+    <thead><tr><th>Metric</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>Year 4</th><th>Year 5</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Students (paid)</strong></td><td>200</td><td>1,200</td><td>4,000</td><td>10,000</td><td>22,000</td></tr>
+      <tr><td><strong>Free Users</strong></td><td>2,000</td><td>15,000</td><td>50,000</td><td>120,000</td><td>250,000</td></tr>
+      <tr><td><strong>Conversion Rate</strong></td><td>10%</td><td>8%</td><td>8%</td><td>8.3%</td><td>8.8%</td></tr>
+      <tr><td><strong>ARPU (annual)</strong></td><td>€576</td><td>€576</td><td>€576</td><td>€600</td><td>€624</td></tr>
+      <tr><td><strong>B2B Clients</strong></td><td>2</td><td>12</td><td>35</td><td>70</td><td>120</td></tr>
+      <tr><td><strong>Total Revenue</strong></td><td>€126,000</td><td>€750,000</td><td>€2,400,000</td><td>€6,600,000</td><td>€14,400,000</td></tr>
+      <tr><td><strong>Gross Margin</strong></td><td>65%</td><td>72%</td><td>78%</td><td>82%</td><td>85%</td></tr>
+      <tr><td><strong>Net Profit</strong></td><td>-€84,000</td><td>€45,000</td><td>€528,000</td><td>€1,848,000</td><td>€4,752,000</td></tr>
+    </tbody>
+  </table>
+  <div class="grid-3" style="margin-top:20px">
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.4rem">€126K</div>
+      <div class="stat-label">Year 1 Revenue</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.4rem">€2.4M</div>
+      <div class="stat-label">Year 3 Revenue</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.4rem">€14.4M</div>
+      <div class="stat-label">Year 5 Revenue</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 9: GROWTH STRATEGY ═══ -->
+<div class="slide" data-slide="9" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(251,191,36,.03) 100%)">
+  <span class="slide-num">9 / 18</span>
+  <h1 style="color:var(--amber)">Growth Strategy</h1>
+  <p class="tagline">Free education as our acquisition engine</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card amber">
+      <h3>📺 Free Live Sessions</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Weekly free live sessions on YouTube, Instagram, and TikTok. Topics like "5 TOEFL Mistakes Japanese Students Make" or "Business English for German Engineers." Students experience our teaching style → convert to paid.</p>
+    </div>
+    <div class="card amber">
+      <h3>📱 Social Media Campaigns</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Students get discounts for social media engagement: share a post → 10% off, refer a friend → 20% off, create a TikTok review → 1 month free. Viral growth loop built into the product.</p>
+    </div>
+    <div class="card amber">
+      <h3>🤝 Ambassador Program</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Top students become Eloquenta ambassadors. They get free access + commission for every referral. We target university students in Japan, Germany, Spain, and Australia.</p>
+    </div>
+    <div class="card amber">
+      <h3>🏫 B2B Partnerships</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Partner with language schools, universities, and corporations. They get our AI platform + teacher network. We get their students + credibility. Revenue share model.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>📊 Customer Acquisition Cost (CAC) Strategy</h3>
+    <table>
+      <thead><tr><th>Channel</th><th>CAC</th><th>Conversion</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td>Free Live Sessions</td><td>€0</td><td>8% → paid</td><td>Primary channel</td></tr>
+        <tr><td>Social Media Organic</td><td>€0</td><td>3% → free tier</td><td>Brand building</td></tr>
+        <tr><td>Referral Program</td><td>€15</td><td>25% → paid</td><td>Growth engine</td></tr>
+        <tr><td>Paid Ads (Google/Meta)</td><td>€45</td><td>5% → paid</td><td>Scale phase</td></tr>
+        <tr><td>B2B Partnerships</td><td>€120</td><td>40% → contract</td><td>High-value</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 10: DISCOUNT & CAMPAIGN ENGINE ═══ -->
+<div class="slide" data-slide="10" style="background:var(--bg)">
+  <span class="slide-num">10 / 18</span>
+  <h1>Discount & Campaign Engine</h1>
+  <p class="tagline">Students earn discounts by helping us grow</p>
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">📸</div>
+      <h3 style="color:var(--cyan)">Share & Save</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Share Eloquenta on Instagram/TikTok → <strong style="color:var(--emerald)">10% off</strong> next month</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">👥</div>
+      <h3 style="color:var(--cyan)">Refer a Friend</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Friend signs up → <strong style="color:var(--emerald)">20% off</strong> for both, forever</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">🎬</div>
+      <h3 style="color:var(--cyan)">Create Content</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Post a review video → <strong style="color:var(--emerald)">1 month free</strong></p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">⭐</div>
+      <h3 style="color:var(--cyan)">Leave a Review</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Google/Trustpilot review → <strong style="color:var(--emerald)">15% off</strong></p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">🎯</div>
+      <h3 style="color:var(--cyan)">Exam Pass Bonus</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Pass your target exam → <strong style="color:var(--emerald)">next month free</strong></p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">📅</div>
+      <h3 style="color:var(--cyan)">Annual Commit</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Pay annually → <strong style="color:var(--emerald)">2 months free</strong> (17% off)</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(251,113,133,.08))">
+    <h3>📈 Viral Growth Projection</h3>
+    <p style="color:var(--text-muted);font-size:.9rem">With a 20% referral discount driving 30% of new signups through referrals, and each paid user referring 1.5 friends on average, we project a <strong style="color:var(--amber)">viral coefficient of 0.45</strong> — meaning organic growth alone drives 45% of new acquisitions by Year 3.</p>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 11: TEAM ═══ -->
+<div class="slide" data-slide="11" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(167,139,250,.03) 100%)">
+  <span class="slide-num">11 / 18</span>
+  <h1 style="color:var(--violet)">The Team</h1>
+  <p class="tagline">Multilingual educators with exam prep expertise</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card violet">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800">W</div>
+        <div>
+          <h3 style="color:var(--violet);margin:0">William</h3>
+          <p style="color:var(--text-muted);font-size:.85rem">Founder & Lead Instructor</p>
+        </div>
+      </div>
+      <ul>
+        <li>Fluent in English, German, and Spanish</li>
+        <li>Experienced exam prep: TOEFL, IELTS, OET, IGCSE</li>
+        <li>Specializes in accent reduction</li>
+        <li>Young learners specialist</li>
+        <li>Based in South Africa, operating globally</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🌍 Hiring Plan</h3>
+      <table>
+        <thead><tr><th>Role</th><th>Year 1</th><th>Year 3</th></tr></thead>
+        <tbody>
+          <tr><td>Lead Instructors</td><td>1</td><td>5</td></tr>
+          <tr><td>ESL Tutors</td><td>3</td><td>20</td></tr>
+          <tr><td>Content Creators</td><td>1</td><td>4</td></tr>
+          <tr><td>AI/Platform Dev</td><td>1</td><td>3</td></tr>
+          <tr><td>Marketing</td><td>1</td><td>4</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>7</strong></td><td><strong>36</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 12: ESTONIA ADVANTAGE ═══ -->
+<div class="slide" data-slide="12" style="background:var(--bg)">
+  <span class="slide-num">12 / 18</span>
+  <h1>Why Estonia?</h1>
+  <p class="tagline">EU credibility, e-Residency, and €300K+ in available grants</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <h3>🏛️ Estonia e-Residency Benefits</h3>
+      <ul style="margin-top:12px">
+        <li>Register EU company 100% online</li>
+        <li>0% corporate tax on retained earnings</li>
+        <li>Access to EU single market</li>
+        <li>Digital-first government (everything online)</li>
+        <li>Low bureaucracy, high transparency</li>
+        <li>Company registration in 1-2 days</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>💰 Available Funding</h3>
+      <table>
+        <thead><tr><th>Source</th><th>Amount</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>EdTech Estonia</td><td>In-kind</td><td>Market access, mentorship</td></tr>
+          <tr><td>EIS Innovation Grant</td><td>Up to €300K</td><td>Platform development</td></tr>
+          <tr><td>KredEx Start-up Loan</td><td>€20K-€50K</td><td>Initial operations</td></tr>
+          <tr><td>EU R&D Grants</td><td>Up to €100K</td><td>AI development</td></tr>
+          <tr><td>EEA/Norway Grants</td><td>Variable</td><td>Education projects</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 13: TARGET MARKETS ═══ -->
+<div class="slide" data-slide="13" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(34,211,238,.03) 100%)">
+  <span class="slide-num">13 / 18</span>
+  <h1 style="color:var(--cyan)">Target Markets</h1>
+  <p class="tagline">Where we pitch, where we teach, where we win</p>
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card highlight">
+      <h3>🇯🇵 Japan</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">$8B ESL market. High willingness to pay. Exam-driven culture (TOEFL, EIKEN). Our German/English bilingual approach is unique here.</p>
+    </div>
+    <div class="card highlight">
+      <h3>🇩🇪 Germany</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">$4B market. Professional English demand. William's native German is a massive trust signal. Corporate training opportunity.</p>
+    </div>
+    <div class="card highlight">
+      <h3>🇪🇸 Spain & LatAm</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">$5B combined. Growing middle class. William's Spanish + English = unique trilingual offering. Huge underserved market.</p>
+    </div>
+    <div class="card highlight">
+      <h3>🇦🇺 Australia</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Immigration English requirements. IELTS/OET demand. Large expat community. English-native credibility.</p>
+    </div>
+    <div class="card highlight">
+      <h3>🇪🇪 Estonia</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">Company HQ. EU credibility. EdTech ecosystem. Grant access. Digital infrastructure. Talent pool.</p>
+    </div>
+    <div class="card highlight">
+      <h3>🇿🇦 South Africa</h3>
+      <p style="color:var(--text-muted);font-size:.85rem">William's home base. Growing EdTech market. English + German teaching. Cost-effective operations. Gateway to Africa.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>🌏 Additional Markets (Year 3+)</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <span class="badge badge-cyan">South Korea</span>
+      <span class="badge badge-emerald">Brazil</span>
+      <span class="badge badge-violet">Thailand</span>
+      <span class="badge badge-amber">Vietnam</span>
+      <span class="badge badge-rose">Indonesia (Bali)</span>
+      <span class="badge badge-cyan">Turkey</span>
+      <span class="badge badge-emerald">Poland</span>
+      <span class="badge badge-violet">UAE</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 14: COMPETITIVE LANDSCAPE ═══ -->
+<div class="slide" data-slide="14" style="background:var(--bg)">
+  <span class="slide-num">14 / 18</span>
+  <h1>Competitive Landscape</h1>
+  <p class="tagline">We don't compete — we complement and outperform</p>
+  <table>
+    <thead><tr><th>Feature</th><th>Duolingo</th><th>iTalki</th><th>Cambly</th><th><strong>Eloquenta</strong></th></tr></thead>
+    <tbody>
+      <tr><td>Native Language Teaching</td><td>❌</td><td>✅</td><td>❌</td><td>✅</td></tr>
+      <tr><td>AI-Powered Lessons</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Goal-Specific Curriculum</td><td>❌</td><td>✅</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Exam Prep Guarantee</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Free Live Sessions</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Accent Reduction</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>B2B Licensing</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Price (monthly)</td><td>€7</td><td>€20-80/hr</td><td>€50+</td><td><strong>€48-88</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(34,211,238,.08))">
+    <h3 style="color:var(--emerald)">Our Unfair Advantage</h3>
+    <p style="color:var(--text-muted);font-size:.9rem">We're the only platform that combines <strong>native-language teaching</strong> + <strong>AI-powered interactive lessons</strong> + <strong>goal-specific exam prep</strong> + <strong>free live sessions for acquisition</strong>. No one else does all four. William's trilingual ability (English, German, Spanish) means we can teach in 3 of the world's most spoken languages from day one.</p>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 15: TRACTION & MILESTONES ═══ -->
+<div class="slide" data-slide="15" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(74,222,128,.03) 100%)">
+  <span class="slide-num">15 / 18</span>
+  <h1 style="color:var(--emerald)">Traction & Milestones</h1>
+  <p class="tagline">What we've built, what's next</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <h3>✅ Done</h3>
+      <ul style="margin-top:12px">
+        <li>Brand identity & visual design system</li>
+        <li>Landing page with pricing tiers</li>
+        <li>Interactive lesson slide deck (10 slides)</li>
+        <li>AI character system (5 characters)</li>
+        <li>Forest Friends kids' learning app</li>
+        <li>Curriculum framework (14 levels)</li>
+        <li>Exam prep content (TOEFL, IELTS, OET, IGCSE)</li>
+      </ul>
+    </div>
+    <div class="card accent">
+      <h3 style="color:var(--emerald)">🎯 Next (6 months)</h3>
+      <ul style="margin-top:12px">
+        <li>Estonia e-Residency + company registration</li>
+        <li>EdTech Estonia application</li>
+        <li>EIS grant application (€300K target)</li>
+        <li>AI character art generation (ComfyUI)</li>
+        <li>50 interactive lesson slides</li>
+        <li>Free live session launch (YouTube/Instagram)</li>
+        <li>First 100 beta students</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid-4" style="margin-top:20px">
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.2rem">Q3 2025</div>
+      <div class="stat-label">Estonia Registration</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.2rem">Q4 2025</div>
+      <div class="stat-label">Grant Applications</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.2rem">Q1 2026</div>
+      <div class="stat-label">Beta Launch</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="stat" style="font-size:1.2rem">Q2 2026</div>
+      <div class="stat-label">Public Launch</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 16: FUNDING ASK ═══ -->
+<div class="slide" data-slide="16" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(251,191,36,.04) 100%)">
+  <span class="slide-num">16 / 18</span>
+  <h1 style="color:var(--amber)">Funding Ask</h1>
+  <p class="tagline">€500,000 seed round — here's how we use it</p>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <h3>💰 Use of Funds</h3>
+      <table>
+        <thead><tr><th>Category</th><th>Amount</th><th>%</th></tr></thead>
+        <tbody>
+          <tr><td>Platform Development (AI + Lessons)</td><td>€180,000</td><td>36%</td></tr>
+          <tr><td>Content Creation (500+ lessons)</td><td>€100,000</td><td>20%</td></tr>
+          <tr><td>Marketing & User Acquisition</td><td>€90,000</td><td>18%</td></tr>
+          <tr><td>Team Hiring (5 instructors + 2 devs)</td><td>€80,000</td><td>16%</td></tr>
+          <tr><td>Operations & Legal</td><td>€30,000</td><td>6%</td></tr>
+          <tr><td>Reserve</td><td>€20,000</td><td>4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>📊 Investment Terms</h3>
+      <ul style="margin-top:12px">
+        <li><strong>Round:</strong> Seed</li>
+        <li><strong>Ask:</strong> €500,000</li>
+        <li><strong>Instrument:</strong> SAFE or equity</li>
+        <li><strong>Target valuation:</strong> €2.5M pre-money</li>
+        <li><strong>Grant leverage:</strong> Up to €300K from EIS (2:1 match)</li>
+        <li><strong>Break-even:</strong> Month 18</li>
+        <li><strong>Exit target:</strong> €15-25M in 5 years</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(251,113,133,.08))">
+    <h3 style="color:var(--amber)">🎯 The Ask</h3>
+    <p style="color="var(--text-muted);font-size:.9rem">We're raising <strong style="color:var(--amber)">€500,000</strong> to build the platform, create 500+ interactive lessons, hire our initial team, and acquire our first 1,000 paying students. With up to <strong style="color:var(--amber)">€300,000</strong> in Estonian government grants as a match, your investment is effectively <strong style="color:var(--amber)">2x leveraged</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 17: WHY NOW ═══ -->
+<div class="slide" data-slide="17" style="background:var(--bg)">
+  <span class="slide-num">17 / 18</span>
+  <h1>Why Now?</h1>
+  <p class="tagline">Three converging trends make this the perfect moment</p>
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card">
+      <h3 style="color:var(--cyan)">🤖 AI Maturity</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">AI image generation, text-to-speech, and adaptive learning are now good enough to build a real product. 2 years ago this wasn't possible. In 2 years, everyone will do it. Now is the window.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--emerald)">📱 Post-COVID Shift</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Online education is no longer stigmatized. Students expect digital-first learning. The market has been trained. Acquisition costs are lower than ever.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--violet)">🇪🇪 Estonia Push</h3>
+      <p style="color:var(--text-muted);font-size:.9rem">Estonia is actively recruiting EdTech companies with grants, e-Residency, and EU market access. The government wants to be the EdTech capital of Europe. We're riding that wave.</p>
+    </div>
+  </div>
+  <div class="cta-box" style="margin-top:32px">
+    <h2 style="color:var(--amber)">The Bottom Line</h2>
+    <p style="color:var(--text-muted);max-width:600px;margin:0 auto 20px">Eloquenta combines native-language teaching, AI-powered interactive lessons, and a freemium growth engine to capture a share of the $55B global ESL market. Based in Estonia, backed by EU grants, built by a multilingual educator with exam prep expertise.</p>
+    <p style="font-size:1.2rem;font-weight:700;color:var(--cyan)">English. In Your Language. For the World.</p>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 18: CONTACT ═══ -->
+<div class="slide" data-slide="18" style="background:linear-gradient(135deg,#020617 0%,#0f172a 50%,#1a1a3e 100%);justify-content:center;align-items:center;text-align:center">
+  <span class="slide-num">18 / 18</span>
+  <div style="max-width:700px">
+    <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--cyan),var(--emerald));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px">E</div>
+    <h1 style="font-size:clamp(2rem,4vw,3rem)">Let's Build Eloquenta</h1>
+    <p class="tagline" style="margin-bottom:32px">English. In Your Language. For the World.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:32px">
+      <div class="card" style="min-width:200px">
+        <h3 style="color:var(--cyan);font-size:.9rem">📧 Email</h3>
+        <p style="color:var(--text-muted);font-size:.85rem">william@eloquenta.com</p>
+      </div>
+      <div class="card" style="min-width:200px">
+        <h3 style="color:var(--emerald);font-size:.9rem">🌐 Website</h3>
+        <p style="color:var(--text-muted);font-size:.85rem">eloquenta.com</p>
+      </div>
+      <div class="card" style="min-width:200px">
+        <h3 style="color:var(--violet);font-size:.9rem">📍 HQ</h3>
+        <p style="color:var(--text-muted);font-size:.85rem">Tallinn, Estonia (e-Residency)</p>
+      </div>
+    </div>
+    <p style="color:var(--text-dim);font-size:.85rem">Pitch deck generated May 2025 — Eloquenta OÜ</p>
+  </div>
+</div>
+
+</div>
+
+<button class="nav-btn nav-prev" id="btnPrev">← Prev</button>
+<button class="nav-btn nav-next" id="btnNext">Next →</button>
+
+<script>
+(function(){
+  'use strict';
+  var slides=document.querySelectorAll('.slide');
+  var current=0;
+  var total=slides.length;
+  var pf=document.getElementById('progressFill');
+  var btnPrev=document.getElementById('btnPrev');
+  var btnNext=document.getElementById('btnNext');
+  function show(n){
+    if(n<0||n>=total)return;
+    slides[current].classList.remove('active');
+    current=n;
+    slides[current].classList.add('active');
+    pf.style.width=((current+1)/total*100)+'%';
+    btnPrev.style.opacity=current===0?'0.3':'1';
+    btnNext.style.opacity=current===total-1?'0.3':'1';
+  }
+  btnPrev.addEventListener('click',function(){show(current-1)});
+  btnNext.addEventListener('click',function(){show(current+1)});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();show(current+1)}
+    if(e.key==='ArrowLeft'){e.preventDefault();show(current-1)}
+  });
+  var tx=0;
+  document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX});
+  document.addEventListener('touchend',function(e){
+    var d=tx-e.changedTouches[0].clientX;
+    if(Math.abs(d)>50)show(current+(d>0?1:-1));
+  });
+  show(0);
+})();
+</script>
+</body>
+</html>

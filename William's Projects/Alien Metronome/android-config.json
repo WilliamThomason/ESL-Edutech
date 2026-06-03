@@ -1,0 +1,60 @@
+{
+  "android": {
+    "buildSettings": {
+      "minSdkVersion": 22,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34,
+      "buildToolsVersion": "34.0.0",
+      "androidxEnabled": true,
+      "gradlePluginVersion": "8.0.0",
+      "kotlinVersion": "1.8.0"
+    },
+    "manifest": {
+      "package": "com.eloquenta.alienmetronome",
+      "versionCode": 1,
+      "versionName": "1.0.0",
+      "applicationLabel": "Alien Metronome",
+      "allowBackup": true,
+      "supportsRtl": true,
+      "usesCleartextTraffic": false,
+      "networkSecurityConfig": true,
+      "screenOrientation": "portrait",
+      "windowSoftInputMode": "adjustResize",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.WAKE_LOCK"
+      ],
+      "features": {
+        "android.hardware.touchscreen": true,
+        "android.software.leanback": false
+      }
+    },
+    "dependencies": {
+      "androidx.core:core": "1.12.0",
+      "androidx.appcompat:appcompat": "1.6.1",
+      "com.google.android.material:material": "1.11.0",
+      "androidx.webkit:webkit": "1.9.0",
+      "androidx.browser:browser": "1.7.0"
+    },
+    "proguardRules": [
+      "-keep class com.getcapacitor.** { *; }",
+      "-keep class org.apache.cordova.** { *; }",
+      "-dontwarn com.getcapacitor.**"
+    ],
+    "buildVariants": {
+      "debug": {
+        "debuggable": true,
+        "minifyEnabled": false,
+        "shrinkResources": false
+      },
+      "release": {
+        "debuggable": false,
+        "minifyEnabled": true,
+        "shrinkResources": true,
+        "proguardFiles": ["proguard-rules.pro"]
+      }
+    }
+  }
+}

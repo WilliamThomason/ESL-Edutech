@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reading Practice — Teacher Student Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border)}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:16px;font-weight:700;flex:1}
+.main{max-width:900px;margin:0 auto;padding:24px 20px}
+
+/* Level select */
+.level-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.level-btn{height:36px;padding:0 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:(--dim);font-size:13px;font-weight:600;cursor:pointer}
+.level-btn:hover{border-color:var(--text)}
+.level-btn.active{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+
+/* Passage select */
+.passage-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.ptab{height:32px;padding:0 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer}
+.ptab.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+
+/* TTS Bar */
+.tts-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+.tts-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.tts-kitten{font-size:18px;cursor:pointer;transition:transform .15s}
+.tts-kitten:hover{transform:scale(1.2)}
+.tts-kitten.speaking{animation:tts-purr .4s ease-in-out infinite alternate}
+@keyframes tts-purr{0%{transform:scale(1) rotate(-5deg)}100%{transform:scale(1.15) rotate(5deg)}}
+.tts-btn{height:32px;padding:0 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px}
+.tts-btn:hover{border-color:var(--cyan);color:(--cyan)}
+.tts-btn.playing{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+.tts-ctrl{display:flex;align-items:center;gap:6px}
+.tts-ctrl label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.tts-ctrl input[type="range"]{width:70px;accent-color:var(--cyan)}
+.tts-speed-val{font-size:11px;font-weight:600;color:var(--cyan);min-width:30px;text-align:right}
+.tts-progress{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.tts-progress-fill{height:100%;background:var(--cyan);width:0%;transition:width .25s}
+
+/* Reading area */
+.reading-area{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:24px;position:relative}
+.passage-title{font-size:1.4rem;font-weight:800;margin-bottom:4px;line-height:1.2}
+.passage-author{font-size:12px;color:var(--muted);margin-bottom:16px;font-style:italic}
+.passage-text{font-family:'Merriweather',serif;font-size:1.05rem;line-height:1.9;color:var(--dim);letter-spacing:.2px}
+.passage-text .vocab{color:var(--amber);cursor:help;border-bottom:1px dashed rgba(251,191,36,.4);position:relative}
+.passage-text .vocab:hover{border-bottom-color:var(--amber)}
+.passage-text .vocab .vtip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.passage-text .vocab:hover .vtip{opacity:1}
+.reading-time{font-size:11px;color:var(--muted);text-align:right;margin-top:16px}
+
+/* Questions */
+.questions{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.q-header{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.q-score{font-size:12px;color:var(--muted);margin-left:auto}
+.question{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.question:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-text{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.q-num{color:var(--cyan);margin-right:6px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;transition:all .15s}
+.opt:hover{border-color:var(--cyan)}
+.opt.sel{background:rgba(34,211,238,.08);border-color:var(--cyan)}
+.opt.correct{background:rgba(52,211,153,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(251,113,133,.1);border-color:var(--rose);color:var(--rose)}
+.opt .letter{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--bg3);text-align:center;font-size:11px;font-weight:700;line-height:22px;flex-shrink:0}
+.short-answer{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;resize:vertical;min-height:60px;font-family:'Inter',sans-serif}
+.short-answer:focus{border-color:var(--cyan)}
+
+/* Submit */
+.submit-row{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.btn{height:40px;padding:0 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.primary{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+
+/* Results */
+.results{display:none;text-align:center;padding:40px 20px}
+.results.show{display:block}
+.results h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.res-stats{display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.rstat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:100px}
+.rstat .val{font-size:1.5rem;font-weight:800;display:block}
+.rstat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+/* Start */
+.start-msg{text-align:center;padding:60px 20px}
+.start-msg h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.start-msg p{color:var(--dim);margin-bottom:24px}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Reading Practice</div>
+</div>
+
+<div class="main">
+  <div class="level-bar" id="levelBar">
+    <button class="level-btn active" onclick="setLevel('a1',this)">A1 Beginner</button>
+    <button class="level-btn" onclick="setLevel('a2',this)">A2 Elementary</button>
+    <button class="level-btn" onclick="setLevel('b1',this)">B1 Intermediate</button>
+    <button class="level-btn" onclick="setLevel('b2',this)">B2 Upper Intermediate</button>
+  </div>
+  <div class="passage-tabs" id="passageTabs"></div>
+  <div class="tts-bar" id="ttsBar" style="display:none">
+    <span class="tts-label"><span class="tts-kitten" id="ttsKitten" onclick="toggleTTS()" title="Read aloud">🐱</span></span>
+    <button class="tts-btn" id="ttsPlayBtn" onclick="toggleTTS()">▶ Play</button>
+    <button class="tts-btn" onclick="stopTTS()">■ Stop</button>
+    <div class="tts-ctrl">
+      <label>Speed</label>
+      <input type="range" id="ttsRate" min="50" max="150" value="100" oninput="updateTTSRate(this.value)">
+      <span class="tts-speed-val" id="ttsSpeedVal">1.0x</span>
+    </div>
+    <div class="tts-progress"><div class="tts-progress-fill" id="ttsProgressFill"></div></div>
+  </div>
+  <div class="start-msg" id="startMsg">
+    <h2>Reading Practice</h2>
+    <p>Read the passage, then answer comprehension questions. Click any highlighted word for a definition.</p>
+    <button class="btn primary" onclick="startQuiz()">Start</button>
+  </div>
+  <div id="quizArea" style="display:none">
+    <div class="reading-area" id="readingArea"></div>
+    <div class="questions" id="questionsArea"></div>
+    <div class="results" id="resultsArea"></div>
+  </div>
+</div>
+
+<script>
+var LEVEL='a1',PASSAGE=0,questions=[],answers=[],submitted=false,readStart=0;
+
+// ═══ TTS STATE ═══
+var ttsUtterance=null,ttsPlaying=false,ttsTimer=null;
+
+function toggleTTS(){
+  if(ttsPlaying){stopTTS();return;}
+  startTTS();
+}
+function startTTS(){
+  if(!('speechSynthesis' in window)){alert('Text-to-speech not supported in this browser.');return;}
+  var p=PASSAGES[LEVEL][PASSAGE];
+  speechSynthesis.cancel();
+  ttsUtterance=new SpeechSynthesisUtterance(p.text);
+  ttsUtterance.rate=parseInt(document.getElementById('ttsRate').value)/100;
+  ttsUtterance.lang='en-US';
+  ttsUtterance.onend=function(){stopTTS();};
+  ttsUtterance.onpause=function(){ttsPlaying=false;updateTTSUI();};
+  ttsUtterance.onresume=function(){ttsPlaying=true;updateTTSUI();};
+  // Progress tracking
+  var totalChars=p.text.length;
+  var spoken=0;
+  ttsUtterance.onboundary=function(e){
+    if(e.name==='word'){
+      spoken=e.charIndex;
+      var pct=Math.min(100,Math.round(spoken/totalChars*100));
+      document.getElementById('ttsProgressFill').style.width=pct+'%';
+    }
+  };
+  speechSynthesis.speak(ttsUtterance);
+  ttsPlaying=true;
+  updateTTSUI();
+}
+function stopTTS(){
+  speechSynthesis.cancel();
+  ttsPlaying=false;
+  ttsUtterance=null;
+  document.getElementById('ttsProgressFill').style.width='0%';
+  updateTTSUI();
+}
+function updateTTSRate(val){
+  document.getElementById('ttsSpeedVal').textContent=(val/100).toFixed(1)+'x';
+  // Rate change takes effect on next speech
+}
+function updateTTSUI(){
+  var btn=document.getElementById('ttsPlayBtn');
+  var kitten=document.getElementById('ttsKitten');
+  if(ttsPlaying){
+    btn.textContent='⏸ Pause';
+    btn.classList.add('playing');
+    kitten.classList.add('speaking');
+  }else{
+    btn.textContent='▶ Play';
+    btn.classList.remove('playing');
+    kitten.classList.remove('speaking');
+  }
+}
+
+// ═══ PUBLIC DOMAIN STORIES ═══
+// All texts from Project Gutenberg (public domain)
+var PASSAGES={
+  a1:[
+    {
+      title:"The Tortoise and the Hare",
+      author:"Aesop (c. 600 BC)",
+      text:"A Hare was very proud of how fast he could run. He laughed at the Tortoise because the Tortoise was very slow. The Tortoise said, 'I may be slow, but I always finish what I start. Let us race and see who wins.' The Hare thought this was a funny idea, but he agreed to the race.\n\nThe race began. The Hare ran very fast and was soon far ahead. He looked back and could barely see the Tortoise. 'I have plenty of time to win,' thought the Hare. 'I will rest here under this tree.' The Hare lay down and soon fell asleep.\n\nThe Tortoise walked slowly but steadily. He passed the sleeping Hare and kept walking. Hours passed. The Tortoise did not stop. He just kept going, one step at a time.\n\nWhen the Hare woke up, the Tortoise was near the finish line. The Hare ran as fast as he could, but it was too late. The Tortoise had already won.\n\nThe other animals cheered for the Tortoise. The Hare was embarrassed. He had learned an important lesson: slow and steady wins the race.",
+      vocab:{proud:"feeling good about yourself",steady:"continuing at the same pace",barely:"only just, almost not",finish:"the end of something",embarrassed:"feeling ashamed or foolish"},
+      q:[
+        {t:"Why did the Hare laugh at the Tortoise?",o:["The Tortoise was boring","The Tortoise was very slow","The Tortoise was rude","The Tortoise was old"],a:1},
+        {t:"What did the Hare do during the race?",o:["He ran the whole time","He stopped to sleep","He helped the Tortoise","He went home"],a:1},
+        {t:"How did the Tortoise win?",o:["free",a:"He walked steadily without stopping, even though he was slow"]},
+        {t:"What is the lesson of this story?",o:["free",a:"Slow and steady wins the race. Keep going and don't give up."},
+        {t:"How did the Hare feel at the end?",o:["Happy","Proud","Embarrassed","Angry"],a:2}
+      ]
+    },
+    {
+      title:"The Boy Who Cried Wolf",
+      author:"Aesop (c. 600 BC)",
+      text:"There was once a young boy who took care of sheep near a small village. His job was to watch the sheep and make sure no wolf came to hurt them. This was important work, but the boy was often bored.\n\nOne day, he decided to play a trick on the villagers. He ran towards the village shouting, 'Wolf! Wolf! The wolf is chasing the sheep!' The villagers quickly came to help, but there was no wolf. The boy laughed at their worried faces.\n\nHe did this again the next day. 'Wolf! Wolf!' he cried. Once more, the villagers came running. Once more, there was no wolf. The villagers were not happy.\n\nThen one evening, a real wolf came out of the forest. It began to attack the sheep. The boy was terrified. He ran and shouted, 'Wolf! Wolf! Please help me! There really is a wolf this time!'\n\nBut the villagers heard his cries and thought he was playing another trick. No one came to help. The wolf hurt many sheep that night.\n\nThe next morning, the boy sat crying among his sheep. The villagers came and said, 'Why did you lie to us?' The boy never lied again. You may tell a lie once or twice, but eventually no one believes you.",
+      vocab:{bored:"not interested, wanting something to do",villagers:"people who live in a village",trick:"something done to fool someone",terrified:"very frightened",attack:"to try to hurt someone"},
+      q:[
+        {t:"What was the boy's job?",o:["To play with the sheep","To watch and protect the sheep","To count the sheep","To feed the villagers"],a:1},
+        {t:"Why did the boy shout 'Wolf!' the first two times?",o:["A wolf was attacking","He wanted to play a trick","He was scared","He needed food"],a:1},
+        {t:"Why didn't the villagers come when the real wolf appeared?",o:["free",a:"Because the boy had lied before, so they thought it was another trick"]},
+        {t:"What happened to the sheep?",o:["They all ran away","The wolf hurt many of them","They were fine","The boy saved them"],a:1},
+        {t:"What lesson does this story teach?",o:["Never go outside","Don't be afraid of wolves","People who lie are not believed even when telling the truth","Sheep are dangerous"],a:2}
+      ]
+    },
+    {
+      title:"The Goose That Laid Golden Eggs",
+      author:"Aesop (c. 600 BC)",
+      text:"A man and his wife were lucky enough to own a very special goose. Every single day, this goose laid one beautiful golden egg. The eggs were solid gold and very valuable.\n\nThe man sold the eggs and the family became comfortable. But the man was not satisfied. He wanted to get all the gold at once instead of waiting day after day. 'If the goose can lay golden eggs, there must be a lot of gold inside her,' he thought.\n\nHis wife tried to stop him. 'Please be patient,' she said. 'We are already comfortable. Why are you doing this?' But the man would not listen.\n\nHe killed the goose and cut it open. He searched inside, hoping to find gold. But there was nothing. There was no gold. And now there were no more golden eggs either.\n\nThe man had destroyed the very thing that was making him rich. He felt terrible. Everyone said, 'What a fool! He could have lived comfortably forever, but his greed destroyed him.'\n\nGreed often overreaches itself.",
+      vocab:{solid:"made entirely of one material",valuable:"worth a lot of money",satisfied:"happy with what you have",greedy:"wanting more than you need",comfortable:"having enough to live well",destroyed:"completely ruined"},
+      q:[
+        {t:"What did the goose do every day?",o:["It sang a song","It laid a golden egg","It flew away","It ate gold"],a:1},
+        {t:"Why did the man kill the goose?",o:["free",a:"He wanted to get all the gold at once instead of waiting"]},
+        {t:"What did the man find inside the goose?",o:["Lots of gold","Another goose","Nothing","A magic stone"],a:2},
+        {t:"What happened after he killed the goose?",o:["He became rich","The goose came back to life","There were no more golden eggs","His wife killed him"],a:2},
+        {t:"What is the lesson of this story?",o:["Geese are valuable","Greed can destroy what makes you rich","Gold is dangerous","Never listen to your wife"],a:1}
+      ]
+    }
+  ],
+  a2:[
+    {
+      title:"The Selfish Giant",
+      author:"Oscar Wilde (1888)",
+      text:"Every afternoon, as they were coming from school, the children used to go and play in the Giant's garden. It was a large lovely garden, with soft green grass. Here and there over the grass stood beautiful flowers like stars, and there were twelve peach-trees that in the spring-time broke out into delicate blossoms of pink and pearl.\n\nThe birds sat on the trees and sang so sweetly that the children used to stop their games in order to listen to them. 'How happy we are here!' they cried to each other.\n\nOne day the Giant came back. He had been to visit his friend the Cornish ogre, and had stayed with him for seven years. When he arrived home, he saw the children playing in his garden.\n\n'What are you doing here?' he cried in a very gruff voice, and the children ran away.\n\n'My own garden is my own garden,' said the Giant. 'I will allow nobody to play in it but myself.' So he built a high wall all round it, and put up a notice-board: TRESPASSERS WILL BE PROSECUTED.\n\nHe was a very selfish Giant.\n\nThe poor children had now nowhere to play. They tried to play on the road, but the road was very dusty and full of hard stones, and they did not like it. They used to wander round the high wall when their lessons were finished, and talk about the beautiful garden inside.\n\nThen the Spring came, and all over the country there were little blossoms and little birds. Only in the garden of the Selfish Giant it was still Winter. The birds did not care to sing in it, because there were no children, and the trees forgot to blossom. Once a beautiful flower put its head out from the grass, but when it saw the notice-board, it was so sorry for the children that it slipped back into the ground again, and went off to sleep.\n\nThe only people who were pleased were the Snow and the Frost. 'Spring has forgotten this garden,' they cried, 'so we will live here all the year round!' The Snow covered up the grass with his great white cloak, and the Frost painted all the trees silver. Then they invited the North Wind to stay with them, and he came. He was wrapped in furs, and he roared all day about the garden.\n\n'This is a delightful spot,' he cried, 'we must ask the Hail on a visit.' So the Hail came. Every day for three hours he rattled on the roof of the castle till he broke most of the slates, and then he ran round and round the garden as fast as he could go.\n\n'I cannot understand why the Spring is so late in coming,' said the Selfish Giant, as he sat at the window and looked out at his cold white garden. 'I hope there will be a change in the weather.'\n\nBut the Spring never came, nor the Summer. The Autumn gave fruit to every garden, but to the Giant's garden she gave none. He was very selfish.",
+      vocab:{delicate:"fragile and easily damaged",tried:"attempted",gruff:"rough and unfriendly",trespassers:"people who enter without permission",prosecuted:"taken to court or punished",selfish:"caring only about yourself",blossoms:"flowers on trees",slipped:"moved quietly and smoothly",wrapped:"covered or enclosed"},
+      q:[
+        {t:"Where did the children play after school?",o:["In the road","In the Giant's garden","In the forest","At school"],a:1},
+        {t:"How long had the Giant been away?",o:["One year","Three years","Seven years","Ten years"],a:2},
+        {t:"What did the Giant do when he saw the children?",o:["free",a:"He shouted at them to leave and built a wall around his garden"]},
+        {t:"Why was it always winter in the Giant's garden?",o:["free",a:"Because the Giant was selfish and the Spring, Summer and Autumn refused to come"]},
+        {t:"What did the Autumn give to the Giant's garden?",o:["Fruit","Flowers","Nothing","Snow"],a:2}
+      ]
+    },
+    {
+      title:"The Happy Prince",
+      author:"Oscar Wilde (1888)",
+      text:"High above the city, on a tall column, stood the statue of the Happy Prince. He was gilded all over with thin leaves of fine gold, for eyes he had two bright sapphires, and a red ruby glowed on his sword-hilt.\n\nHe was very much admired indeed. 'He is as beautiful as a weather-cock,' remarked one of the Town Councillors who wished to gain a reputation for having artistic tastes. 'Only not quite so useful,' he added, lest people should think him unpractical.\n\n'Why can't you be like the Happy Prince?' asked a sensible mother of her little boy who was crying for the moon. 'The Happy Prince never dreams of crying for anything.'\n\n'I am glad there is someone in the world who is quite happy,' muttered a disappointed man as he gazed at the wonderful statue.\n\n'He looks just like an angel,' said the Charity Children as they came out of the cathedral in their bright scarlet cloaks and their clean white pinafores.\n\n'How do you know?' said the Mathematical Master, 'you have never seen one.'\n\n'But we have, in our dreams,' answered the children. And the Mathematical Master frowned and looked very severe, for he did not approve of children dreaming.\n\nOne night there flew over the city a little Swallow. His friends had gone away to Egypt six weeks before, but he had stayed behind, because he was in love with the most beautiful Reed. He had met her early in the spring as he was flying down the river after a big yellow moth, and had been so attracted by her slender waist that he had stopped to talk to her.\n\n'Shall I love you?' said the Swallow, who liked to come to the point at once. And when she made him a low bow, he flew round and round her, touching the water with his wings, and making silver ripples. This was his courtship, and it lasted all through the summer.\n\n'It is a ridiculous attachment,' twittered the other Swallows, 'she has no money, and far too many relations.' And indeed the river was quite full of Reeds. Then, when the autumn came, they all flew away.\n\nAfter they had gone he felt lonely, and began to tire of his lady-love. 'She has no conversation,' he said, 'and I am afraid she is a coquette, for she is always flirting with the wind.' And certainly, whenever the wind blew, the Reed made the most graceful curtseys.",
+      vocab:{gilded:"covered with a thin layer of gold",sapphires:"blue precious gems",ruby:"red precious gem",admired:"looked at with pleasure",practical:"sensible and useful",cathedral:"a large church",mathematical:"related to numbers and calculation",slender:"thin and graceful",courtship:"the period when two people are romantic before marriage",coquette:"a person who flirts to attract attention"},
+      q:[
+        {t:"What was the Happy Prince statue made of?",o:["Marble and bronze","Gold, sapphires, and a ruby","Silver and diamonds","Wood and paint"],a:1},
+        {t:"Why did the Swallow stay behind when his friends flew to Egypt?",o:["He was sick","He was in love with a Reed","He was afraid of flying","He liked the city"],a:1},
+        {t:"What did the other Swallows think of the Reed?",o:["free",a:"They thought she had no money and too many relations, and that the Swallow's love was ridiculous"]},
+        {t:"What did the Mathematical Master think about children dreaming?",o:["He encouraged it","He did not approve of it","He didn't care","He dreamed too"],a:1},
+        {t:"What happened when autumn came?",o:["The Swallow stayed with the Reed","All the other Swallows flew away","The Reed flew away","The Swallow got married"],a:1}
+      ]
+    }
+  ],
+  b1:[
+    {
+      title:"The Nightingale and the Rose",
+      author:"Oscar Wilde (1888)",
+      text:"'She said that she would dance with me if I brought her red roses,' cried the young Student, 'but in all my garden there is no red rose.'\n\nFrom her nest in the holm-oak tree the Nightingale heard him, and she looked out through the leaves and wondered.\n\n'No red rose in all my garden!' he cried, and his beautiful eyes filled with tears. 'Ah, on what little things does happiness depend! I have read all that the wise men have written, and all the secrets of philosophy are mine, yet for want of a red rose is my life made wretched.'\n\n'Here at last is a true lover,' said the Nightingale. 'Night after night have I sung of him, though I knew him not. Night after night have I told his story to the stars, and now I see him. His hair is dark as the hyacinth-blossom, and his lips are red as the rose of his desire. But passion has made his face like pale ivory, and sorrow has set her seal upon his brow.'\n\n'The Prince gives a ball to-morrow night,' murmured the young Student, 'and my love will be of the company. If I bring her a red rose she will dance with me till dawn. If I bring her a red rose, I shall hold her in my arms, and she will lean her head upon my shoulder, and her hand will be clasped in mine. But there is no red rose in my garden, so I shall sit lonely, and she will pass me by. She will have no heed of me, and my heart will break.'\n\n'Here indeed is the true lover,' said the Nightingale. 'What I sing of, he suffers: what is joy to him, is pain to me. Surely Love is a wonderful thing. It is more precious than emeralds, and dearer than fine opals. Pearls and pomegranates cannot buy it, nor is it set forth in the marketplace. It may not be purchased of the merchants, nor can it be weighed out in the balance for gold.'\n\n'The musicians will play upon their stringed instruments,' said the young Student, 'and my love will dance to the sound of the harp and the violin. She will dance so lightly that her feet will not touch the floor, and the courtiers in their gay dresses will throng round her. But with me she will not dance, for I have no red rose to give her.' And he flung himself down on the grass, and buried his face in his hands, and wept.\n\n'Why is he weeping?' asked a little Green Lizard, as he ran past him with his tail in the air.\n\n'Why, indeed?' said a Butterfly, who was fluttering about after a sunbeam.\n\n'Why, indeed?' whispered a Daisy to his neighbour, in a soft, low voice.\n\n'He is weeping for a red rose,' said the Nightingale.\n\n'For a red rose?' they cried, 'how very ridiculous!' And the little Lizard, who was something of a cynic, laughed outright.\n\nBut the Nightingale understood the secret of the Student's sorrow, and she sat silent in the oak-tree, and thought about the mystery of Love.\n\nSuddenly she spread her brown wings for flight, and soared into the air. She passed through the grove like a shadow, and like a shadow she sailed across the garden.\n\nIn the centre of the grass-plot was standing a beautiful Rose-tree, and when she saw it she flew over to it, and lit upon the spray.\n\n'Give me a red rose,' she cried, 'and I will sing you my sweetest song.'\n\nBut the Tree shook its head.\n\n'My roses are white,' it answered, 'as white as the foam of the sea, and whiter than the snow upon the mountain. But go to my brother who grows round the old sun-dial, and perhaps he will give you what you want.'\n\nSo the Nightingale flew over to the Rose-tree that was growing round the old sun-dial.\n\n'Give me a red rose,' she cried, 'and I will sing you my sweetest song.'\n\nBut the Tree shook its head.\n\n'My roses are yellow,' it answered, 'as yellow as the hair of the mermaiden who sits upon an amber throne, and yellower than the daffodil that blooms in the meadow before the mower comes with his scythe. But go to my brother who grows beneath the Student's window, and perhaps he will give you what you want.'\n\nSo the Nightingale flew over to the Rose-tree that was growing beneath the Student's window.\n\n'Give me a red rose,' she cried, 'and I will sing you my sweetest song.'\n\nBut the Tree shook its head.\n\n'My roses are red,' it answered, 'red as the feet of the dove, and redder than the great fans of coral that wave and wave in the ocean-cavern. But the winter has chilled my veins, and the frost has nipped my buds, and the storm has broken my branches, and I shall have no roses at all this year.'\n\n'One red rose is all I cried the Nightingale, 'only one red rose! Is there no way by which I can get it?'\n\n'There is a way,' answered the Tree, 'but it is so terrible that I dare not tell it to you.'\n\n'Tell me,' said the Nightingale, 'I am not afraid.'\n\n'If you want a red rose,' said the Tree, 'you must build it out of music by moonlight, and stain it with your own heart's blood. You must sing to me with your breast against a thorn. All night long you must sing to me, and the thorn must pierce your heart, and your life-blood must flow into my veins, and become mine.'\n\n'Death is a great price to pay for a red rose,' cried the Nightingale, 'and Life is very dear to all. It is pleasant to sit in the green wood, and to watch the Sun in his chariot of gold, and the Moon in her chariot of pearl. Sweet is the scent of the hawthorn, and sweet are the bluebells that hide in the valley, and the heather that blows on the hill. Yet Love is better than Life, and what is the heart of a bird compared to the heart of a man?'\n\nSo she spread her brown wings for flight, and soared into the air. She swept over the garden like a shadow, and like a shadow she sailed through the grove.\n\nThe young Student was still lying on the grass, where she had left him, and the tears were not yet dry in his beautiful eyes.\n\n'Be happy,' cried the Nightingale, 'be happy. You shall have your red rose. I will build it out of music by moonlight, and stain it with my own heart's blood. All that I ask of you in return is that you will be a true lover, for Love is wiser than Philosophy, though he is wise, and mightier than Power, though he is mighty. Flame-coloured are his wings, and coloured like flame is his body. His lips are sweet as honey, and his breath is like frankincense.'\n\nThe Student looked up from the grass, and listened, but he could not understand what the Nightingale was saying to him, for he only knew the things that are written down in books.\n\nBut the Oak-tree understood, and felt very sad, for he was fond of the little Nightingale, who had built her nest in his branches.\n\n'Sing me one last song,' he whispered, 'I shall feel very lonely when you are gone.'\n\nSo the Nightingale sang to the Oak-tree, and her voice was like water bubbling from a silver jar.\n\nWhen she had finished her song, the Student got up, and pulled a note-book and a lead-pencil out of his pocket.\n\n'She has form,' he said to himself, as he walked away through the grove, 'that cannot be denied to her. But has she got feeling? I am afraid not. In fact, she is like most artists. She is all style, without any sincerity. She would not sacrifice herself for others. She thinks merely of music, and everybody knows that the arts are selfish.' And he threw himself down on the grass, and buried his face in his hands, and wept.",
+      vocab:{wretched:"very unhappy",passion:"strong feeling",ivory:"white like elephant tusks",clasped:"held tightly",heed:"attention",throng:"crowd",cynic:"person who doubts others' motives",soared:"flew high",pierce:"make a hole through",chariot:"a horse-drawn vehicle",sacrifice:"give up something valuable",sincerity:"genuine feeling"},
+      q:[
+        {t:"Why was the Student unhappy?",o:["He failed his exam","He had no red rose for his love","The Nightingale wouldn't sing","He lost his garden"],a:1},
+        {t:"What did the Nightingale have to do to get a red rose?",o:["free",a:"She had to sing all night with a thorn piercing her heart, giving her life blood to the rose tree"]},
+        {t:"What did the Student think of the Nightingale's sacrifice?",o:["He was deeply moved","He didn't understand it and thought she was selfish","He cried with gratitude","He wrote her a letter"],a:1},
+        {t:"What is the main theme of this story?",o:["The importance of music","True love requires sacrifice, but it is often not appreciated","Roses are valuable","Students are ungrateful"],a:1},
+        {t:"How did the Nightingale view Love?",o:["As something foolish","As better than Life itself","As less important than music","As a waste of time"],a:1}
+      ]
+    }
+  ],
+  b2:[
+    {
+      title:"The Canterville Ghost",
+      author:"Oscar Wilde (1887)",
+      text:"When Mr. Hiram B. Otis, the American Minister, bought Canterville Chase, every one told him he was doing a very foolish thing, as there was no doubt at all that the place was haunted. Lord Canterville himself, who was a man of the most punctilious honour, had felt it his duty to mention the fact to Mr. Otis when they came to discuss terms.\n\n'We have not cared to live in the place ourselves,' said Lord Canterville, 'since my grandaunt, the Dowager Duchess of Bolton, was frightened into a fit, from which she never really recovered, by two skeleton hands being placed on her shoulders as she was dressing for dinner. I feel bound to tell you, Mr. Otis, that the ghost has been seen by several living members of my family, as well as by the rector of the parish, the Rev. Augustus Dampier, who is a Fellow of King's College, Cambridge. After the unfortunate accident to the Duchess, none of our younger servants would stay with us, and Lady Canterville often got very little sleep at night, in consequence of the mysterious noises that came from the corridor and the library.'\n\n'I will take the furniture and the ghost at a valuation,' said the American Minister, with a light heart. 'I come from a modern country where we have everything that money can buy. I reckon that if there were such a thing as a ghost in Europe, we'd have it at home in one of our public museums, or on the road as a show.'\n\nLord Canterville smiled. 'I fear that the ghost exists,' he said, 'though it may have resisted the overtures of your enterprising impresarios. It has been well known for three centuries, since 1584 in point of fact, and always makes its appearance before the death of any member of our family.'\n\n'Well, so does the family doctor, I dare say, Lord Canterville. But there is no such thing, sir, as a ghost, and I guess the laws of Nature are not going to be suspended for the British aristocracy.'\n\n'I fear that the ghost exists,' repeated Lord Canterville politely, 'though it may have resisted the overtures of your enterprising impresarios. It has been well known for three centuries, since 1584 in point of fact, and always makes its appearance before the death of any member of our family.'\n\n'Well, so does the family doctor, I dare say, Lord Canterville. But there is no such thing, sir, as a ghost, and I guess the laws of Nature are not going to be suspended for the British aristocracy.'\n\nIn the morning, when the family met at breakfast, they discussed the ghost at some length. 'I have no intention of being frightened by any ghost,' said Mrs. Otis, 'and I must say I think it is a great imposition to try to scare people in that way.'\n\n'My dear mother, the ghost exists, I am sure of it,' said Washington, the eldest son. 'I have no doubt at all that he will be a very interesting study. I shall make a collection of his different appearances, and publish a paper on them in the Journal of the Psychical Society.'\n\n'I don't approve of the way you treat the subject,' said Mr. Otis. 'You must acknowledge that the ghost exists, and that he has been seen by several living members of the family. I think it is a great imposition to try to scare people in that way.'\n\n'I have no intention of being frightened by any ghost,' said Mrs. Otis, 'and I must say I think it is a great imposition to try to scare people in that way.'\n\nThat night the family went to bed early. The ghost did not appear. 'I told you so,' said Mr. Otis. 'The ghost is afraid of us.'",
+      vocab:{punctilious:"very careful about rules and behaviour",grandaunt:"the sister of one's grandparent",rector:"a Church of England priest",consequence:"a result of an action",valuation:"an assessment of how much something is worth",enterprising:"showing initiative and willingness to take risks",impresarios:"people who organize entertainment shows",suspended:"stopped or paused temporarily",imposition:"an unfair or unreasonable demand",psychical:"related to the mind or soul"},
+      q:[
+        {t:"Why did Lord Canterville warn Mr. Otis about the house?",o:["The house was falling down","The house was haunted","The house was too expensive","The house had no furniture"],a:1},
+        {t:"How did Mr. Otis react to the warning?",o:["He was very frightened","He didn't believe in ghosts and bought it anyway","He asked for a lower price","He refused to buy"],a:1},
+        {t:"What happened to the Dowager Duchess?",o:["free",a:"She was frightened into a fit by skeleton hands on her shoulders and never recovered"]},
+        {t:"What did Washington want to do about the ghost?",o:["Run away from it","Study it and write a paper","Fight it","Ignore it"],a:1},
+        {t:"What does Mr. Otis believe about the ghost by the end of the passage?",o:["It is very dangerous","It is afraid of the American family","It doesn't exist","It will kill them"],a:1}
+      ]
+    },
+    {
+      title:"The Picture of Dorian Gray (Chapter 1)",
+      author:"Oscar Wilde (1890)",
+      text:"The studio was filled with the rich odour of roses, and when the light summer wind stirred amidst the trees of the garden, there came through the open door the heavy scent of the lilac, or the more delicate perfume of the pink flowering thorn.\n\nFrom the corner of the divan of Persian saddle-bags on which he was lying, smoking, as was his custom, innumerable cigarettes, Lord Henry Wotton could just catch the gleam of the honey-sweet and honey-coloured blossoms of a laburnum, whose tremulous branches seemed hardly able to bear the burden of a beauty so flamelike as theirs. And now and then the fantastic shadows of birds in flight flitted across the long tussore-silk curtains that were stretched in front of the huge window, producing a kind of momentary Japanese effect, and making him think of those pallid, jade-faced painters of Tokio who, through the medium of an art that is necessarily immobile, seek to convey the sense of swiftness and motion.\n\nThe sullen murmur of the bees shouldering their way through the long unmown grass, or circling with monotonous insistence round the dusty gilt horns of the straggling woodbine, seemed to make the stillness more oppressive. The dim roar of London was like the bourdon note of a distant organ.\n\nIn the centre of the room, clamped to an upright easel, stood the full-length portrait of a young man of extraordinary personal beauty, and in front of it, some little distance away, was sitting the artist himself, Basil Hallward, whose sudden disappearance some years ago caused, at the time, such public excitement and gave rise to so many strange conjectures.\n\nAs the painter looked at the gracious and comely form he had so skilfully mirrored in his art, he smiled of satisfaction, and seemed to forget all about the brush and the palette. He was a shy, retiring man, with a face that was handsome in a quiet, scholarly way. His dark hair was brushed back from his forehead, and he had the look of a person who has spent much time among books.\n\n'It is your best work, Basil, the best thing you have ever done,' said Lord Henry, languidly. 'You must certainly send it next year to the Grosvenor. The Academy is too large and too vulgar. Whenever I have gone to it, there have been either so many people that I have not been able to see the pictures, which was dreadful, or so many pictures that I have not been able to see the people, which was worse. The Grosvenor is really the only place.'\n\n'I don't think I shall send it anywhere,' he answered, tossing his head back in that odd way he used to have. 'No, I won't send it anywhere.'\n\nLord Henry elevated his eyebrows and looked at him in amazement through the thin blue wreaths of smoke that curled up in such fanciful whorls from his heavy, opium-tainted cigarette. 'Not send it anywhere? My dear fellow, why? Have you any reason? What odd chaps you painters are! You do anything in the world to get a reputation. As soon as you have one, you seem to want to throw it away. It is silly of you, for there is only one thing in the world worse than being talked about, and that is not being talked about.'",
+      vocab:{odour:"a smell",scent:"a pleasant smell",delicate:"fine and subtle",innumerable:"too many to count",gleam:"a brief or faint light",tremulous:"shaking or quivering",burden:"a heavy load",monotonous:"boring and repetitive",oppressive:"making you feel uncomfortable",conjectures:"guesses or theories",comely:"attractive",languidly:"in a slow, relaxed way",elevated:"raised",amazement:"great surprise",reputation:"what people think of you"},
+      q:[
+        {t:"Where does this scene take place?",o:["In a garden","In an artist's studio","In a London street","In a museum"],a:1},
+        {t:"Who is Lord Henry Wotton?",o:["The artist","The subject of the painting","A friend of the artist","A museum director"],a:2},
+        {t:"What is Basil Hallward doing when Lord Henry arrives?",o:["free",a:"He is looking at the portrait he has just painted, smiling with satisfaction"]},
+        {t:"Why doesn't Basil want to send his painting to the Academy?",o:["free",a:"He doesn't say exactly, but he refuses to send it anywhere — Lord Henry thinks it's silly"]},
+        {t:"What does Lord Henry think about reputation?",o:["It doesn't matter","It's better to be talked about than not talked about","Artists should avoid fame","The Academy is the best place"],a:1}
+      ]
+    }
+  ]
+};
+
+function setLevel(l,btn){
+  LEVEL=l;PASSAGE=0;submitted=false;
+  document.querySelectorAll('.level-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  buildPassageTabs();
+}
+
+function buildPassageTabs(){
+  var tabs=document.getElementById('passageTabs');
+  var p=PASSAGES[LEVEL];
+  tabs.innerHTML='';
+  if(!p||p.length===0){
+    tabs.innerHTML='<span style="color:var(--muted);font-size:12px">No passages available for this level yet.</span>';
+    return;
+  }
+  p.forEach(function(pass,i){
+    var b=document.createElement('button');
+    b.className='ptab'+(i===0?' active':'');
+    b.textContent='Passage '+(i+1);
+    b.onclick=function(){PASSAGE=i;loadPassage();document.querySelectorAll('.ptab').forEach(function(x){x.classList.remove('active')});b.classList.add('active');};
+    tabs.appendChild(b);
+  });
+}
+
+function loadPassage(){
+  var p=PASSAGES[LEVEL][PASSAGE];
+  document.getElementById('ttsBar').style.display='flex';
+  var html='<div class="passage-title">'+p.title+'</div>';
+  if(p.author) html+='<div class="passage-author">'+p.author+'</div>';
+  html+='<div class="passage-text">';
+  var words=p.text.split(' ');
+  words.forEach(function(w){
+    var clean=w.toLowerCase().replace(/[^a-z]/g,'');
+    if(p.vocab && p.vocab[clean]){
+      html+='<span class="vocab">'+w+'<span class="vtip"><strong>'+clean+'</strong>: '+p.vocab[clean]+'</span></span> ';
+    } else {
+      html+=w+' ';
+    }
+  });
+  html+='</div>';
+  html+='<div class="reading-time">Reading time started -- <span id="readTimer">0:00</span></div>';
+  document.getElementById('readingArea').innerHTML=html;
+  readStart=Date.now();
+  var ti=setInterval(function(){
+    var el=document.getElementById('readTimer');
+    if(!el){clearInterval(ti);return;}
+    var s=Math.floor((Date.now()-readStart)/1000);
+    el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  },1000);
+  buildQuestions();
+}
+
+function buildQuestions(){
+  var p=PASSAGES[LEVEL][PASSAGE];
+  questions=p.q;
+  answers={};
+  var html='<div class="q-header">Comprehension Questions <span class="q-score" id="qScore"></span></div>';
+  questions.forEach(function(q,i){
+    html+='<div class="question" id="q'+i+'">';
+    html+='<div class="q-text"><span class="q-num">'+(i+1)+'.</span>'+q.t+'</div>';
+    if(q.o==='free'){
+      html+='<textarea class="short-answer" id="ans'+i+'" placeholder="Type your answer here..."></textarea>';
+    } else {
+      html+='<div class="opts">';
+      q.o.forEach(function(opt,j){
+        html+='<div class="opt" id="q'+i+'o'+j+'" onclick="selectOpt('+i+','+j+')"><span class="letter">'+String.fromCharCode(65+j)+'</span>'+opt+'</div>';
+      });
+      html+='</div>';
+    }
+    html+='<div id="feedback'+i+'" style="margin-top:8px;font-size:13px;display:none"></div>';
+    html+='</div>';
+  });
+  document.getElementById('questionsArea').innerHTML=html;
+}
+
+function selectOpt(qi,oi){
+  submitted=false;
+  var q=questions[qi];
+  if(q.o==='free')return;
+  for(var j=0;j<q.o.length;j++){
+    document.getElementById('q'+qi+'o'+j).classList.remove('sel');
+  }
+  document.getElementById('q'+qi+'o'+oi).classList.add('sel');
+  answers[qi]=oi;
+}
+
+function startQuiz(){
+  document.getElementById('startMsg').style.display='none';
+  document.getElementById('quizArea').style.display='block';
+  document.getElementById('ttsBar').style.display='flex';
+  buildPassageTabs();
+  loadPassage();
+}
+
+function submitAnswers(){
+  submitted=true;
+  var correct=0;
+  questions.forEach(function(q,i){
+    var fb=document.getElementById('feedback'+i);
+    fb.style.display='block';
+    if(q.o==='free'){
+      var ans=document.getElementById('ans'+i).value.trim();
+      if(ans.length>0){correct++;fb.style.color='var(--green)';fb.textContent='Your answer: '+ans;} 
+      else {fb.style.color='var(--muted)';fb.textContent='No answer given.';}
+      document.getElementById('ans'+i).readOnly=true;
+      fb.innerHTML+='<br><span style="color:var(--dim)">Expected: '+q.a+'</span>';
+    } else {
+      for(var j=0;j<q.o.length;j++){
+        var el=document.getElementById('q'+i+'o'+j);
+        el.classList.remove('sel');
+        if(j===q.a)el.classList.add('correct');
+        if(answers[i]===j&&j!==q.a)el.classList.add('wrong');
+      }
+      if(answers[i]===q.a){correct++;fb.style.color='var(--green)';fb.textContent='Correct!';}
+      else{fb.style.color='var(--rose)';fb.textContent='Incorrect. The answer is: '+q.o[q.a];}
+    }
+  });
+  document.getElementById('qScore').textContent=correct+'/'+questions.length+' correct';
+  
+  // Show results
+  setTimeout(function(){
+    document.getElementById('resultsArea').classList.add('show');
+    document.getElementById('resultsArea').innerHTML='<h2>Results</h2>'+statHtml(correct, questions.length)+'<button class="btn primary" onclick="restartQuiz()">Try Another Passage</button>';
+  },500);
+}
+
+function statHtml(c,t){
+  var pct=Math.round(c/t*100);
+  return '<div class="res-stats"><div class="rstat"><span class="val">'+pct+'%</span><span class="lbl">Score</span></div><div class="rstat"><span class="val">'+c+'</span><span class="lbl">Correct</span></div><div class="rstat"><span class="val">'+(t-c)+'</span><span class="lbl">Wrong</span></div></div>';
+}
+
+var buildPassageTabs=buildPassageTabs;
+</script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+# Translation Workflow Design — Eloquenta
+
+## 1. L1 Translation Delivery Process
+
+### Philosophy
+The L1 (native language) translation is a **scaffold**, not a crutch. Students should hear and speak English first, then see the L1 translation as confirmation — never as the starting point.
+
+### Translation Delivery Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    LESSON START                              │
+│  Teacher speaks English sentence aloud                      │
+│  Students listen → repeat → practice                        │
+│  (NO translation visible yet)                               │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 CHECK UNDERSTANDING                         │
+│  Teacher asks concept-check questions in English            │
+│  Students respond in English (or L1 if stuck)               │
+│  If >40% students struggle → show L1 translation            │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│              L1 TRANSLATION REVEAL                           │
+│  Translation appears with phonetic guide                    │
+│  Students compare their understanding to the translation    │
+│  Teacher highlights false friends / tricky constructions    │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│              PRACTICE WITH TRANSLATION HIDDEN               │
+│  Translation fades / is hidden                              │
+│  Students produce English from memory                       │
+│  (Spaced repetition — translation reappears at intervals)   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Translation Trigger Rules
+| Situation | Action |
+|---|---|
+| New vocabulary (>3 unknown words) | Show L1 before speaking |
+| Idiom / figurative language | Show L1 after first failed attempt |
+| Grammar structure not yet taught | Show L1 alongside English |
+| Student requests translation | Show L1 individually (not whole class) |
+| >40% comprehension failure | Show L1 to whole class |
+| Review / warm-up | Hide L1, test from memory |
+
+### Translation Display Modes
+1. **Inline hover** — Student hovers over a word/phrase to see L1
+2. **Tap to reveal** — Student taps sentence to toggle L1
+3. **Teacher-controlled** — Translation appears only when teacher clicks
+4. **Timed fade** — Translation appears for 5 seconds, then fades
+5. **Side-by-side** — English left, L1 right (for complex explanations)
+
+---
+
+## 2. AI Tool Comparison & Recommendation
+
+### DeepL API
+- **Strengths:** Best quality for European languages, handles nuance and idioms well, formal/informal tone control, glossary support for technical terms
+- **API:** REST API, 500K chars/month free, €8.99/month for more
+- **Languages:** 30+ European and Asian languages
+- **Best for:** French, German, Spanish, Italian, Portuguese, Dutch, Polish, Russian, Japanese, Chinese
+- **Cost:** ~$0.02 per 1000 characters via API translator skill
+- **Integration:** `deepl` npm package or direct REST calls
+
+### Reverso Context
+- **Strengths:** Real-world example sentences, shows translations in context, good for idiomatic expressions
+- **API:** Limited free tier, paid plans for high volume
+- **Languages:** 14 languages
+- **Best for:** Students who need to see words in real context, not just direct translations
+- **Integration:** Context reverso API (less robust than DeepL)
+
+### Google Translate API
+- **Strengths:** Broadest language coverage (133+ languages), cheapest for high volume, batch translation
+- **API:** $20 per 1M characters, generous free tier
+- **Languages:** 133+
+- **Best for:** Less common languages (Korean, Thai, Vietnamese, Hindi, Arabic, etc.)
+- **Integration:** `@google-cloud/translate` npm package
+
+### Recommendation: Hybrid Approach
+
+```
+Primary:   DeepL (European languages, best quality)
+Fallback:  Google Translate (non-European languages, broadest coverage)
+Enrich:   Reverso Context (example sentences for vocabulary lessons)
+```
+
+### Implementation
+
+```javascript
+// Translation service with fallback chain
+async function translate(text, targetLang, sourceLang = 'EN') {
+  try {
+    // Try DeepL first (best quality for supported languages)
+    return await translateWithDeepL(text, targetLang, sourceLang);
+  } catch(e) {
+    try {
+      // Fallback to Google Translate (broader language support)
+      return await translateWithGoogle(text, targetLang, sourceLang);
+    } catch(e2) {
+      throw new Error('All translation services failed');
+    }
+  }
+}
+
+async function getExampleSentences(word, lang) {
+  // Use Reverso for real-world examples
+  return await getReversoExamples(word, lang);
+}
+```
+
+---
+
+## 3. Phonetic Guide Template for Accent Coaching
+
+### Template Structure
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  WORD: "comfortable"                                        │
+│                                                              │
+│  Standard Pronunciation:                                     │
+│  IPA: /ˈkʌm.fə.tə.bəl/                                     │
+│  Phonetic: KUM-fuh-tuh-bul                                  │
+│  Syllables: COM-FOR-TA-BLE (4)                              │
+│  Stress: ● ○ ○ ○ (first syllable)                          │
+│                                                              │
+│  Common L1 Interference Errors:                              │
+│  ┌──────────┬──────────────────┬───────────────────────┐    │
+│  │ L1       │ Typical Error    │ Correction             │    │
+│  ├──────────┼──────────────────┼───────────────────────┤    │
+│  │ Spanish  │ com-for-TA-ble   │ KUM-fuh-tuh-bul       │    │
+│  │ French   │ com-for-table    │ KUM-fuh-tuh-bul       │    │
+│  │ German   │ COM-fort-able    │ KUM-fuh-tuh-bul       │    │
+│  │ Japanese │ kon-fa-ta-bu     │ KUM-fuh-tuh-bul       │    │
+│  │ Korean   │ kom-pa-ta-bul    │ KUM-fuh-tuh-bul       │    │
+│  │ Chinese  │ ke-fu-ta-bo      │ KUM-fuh-tuh-bul       │    │
+│  │ Arabic   │ kam-fur-ta-bel   │ KUM-fuh-tuh-bul       │    │
+│  │ Romanian │ kom-for-TA-ble   │ KUM-fuh-tuh-bul       │    │
+│  └──────────┴──────────────────┴───────────────────────┘    │
+│                                                              │
+│  Mouth Position Guide:                                       │
+│  KUM  — mouth open, tongue flat, short "uh" sound           │
+│  fuh  — teeth on bottom lip, gentle airflow                 │
+│  tuh  — tongue tip to roof of mouth, quick tap              │
+│  bul  — lips slightly rounded, soft "uh" + light "l"        │
+│                                                              │
+│  Practice Drill:                                              │
+│  "I'm comfortable" → "I'm KUM-fuh-tuh-bul"                 │
+│  "Are you comfortable?" → "Are you KUM-fuh-tuh-bul?"        │
+│  "Make yourself comfortable" → "Make yourself KUM-fuh-tuh-bul"│
+│                                                              │
+│  🔊 [Play Audio]  🎙️ [Record & Compare]                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Phonetic Guide HTML Template
+
+```html
+<div class="phonetic-guide" data-word="comfortable">
+  <div class="pg-header">
+    <h3 class="pg-word">comfortable</h3>
+    <span class="pg-pos">adjective</span>
+  </div>
+  
+  <div class="pg-pronunciation">
+    <div class="pg-ipa">/ˈkʌm.fə.tə.bəl/</div>
+    <div class="pg-phonetic">KUM-fuh-tuh-bul</div>
+    <div class="pg-syllables">
+      <span class="syl stressed">KUM</span>
+      <span class="syl">fuh</span>
+      <span class="syl">tuh</span>
+      <span class="syl">bul</span>
+    </div>
+  </div>
+
+  <div class="pg-l1-errors" data-l1="romanian">
+    <h4>Common Romanian Speaker Errors</h4>
+    <table>
+      <tr><td>Typical Error</td><td>com-for-TA-ble</td></tr>
+      <tr><td>Problem</td><td>Stress on 3rd syllable, hard "t"</td></tr>
+      <tr><td>Fix</td><td>Stress on 1st syllable, soft "tuh"</td></tr>
+    </table>
+  </div>
+
+  <div class="pg-mouth-guide">
+    <h4>Mouth Position</h4>
+    <div class="mouth-steps">
+      <div class="mouth-step"><strong>KUM</strong> — mouth open, tongue flat</div>
+      <div class="mouth-step"><strong>fuh</strong> — teeth on bottom lip</div>
+      <div class="mouth-step"><strong>tuh</strong> — tongue tip taps roof</div>
+      <div class="mouth-step"><strong>bul</strong> — lips rounded, soft "l"</div>
+    </div>
+  </div>
+
+  <div class="pg-drills">
+    <h4>Practice Drills</h4>
+    <div class="drill-sentence">
+      <span class="en">"I'm comfortable."</span>
+      <span class="phonetic">"I'm KUM-fuh-tuh-bul."</span>
+    </div>
+  </div>
+
+  <div class="pg-actions">
+    <button onclick="playWordAudio('comfortable')">🔊 Listen</button>
+    <button onclick="startRecording('comfortable')">🎙️ Record</button>
+    <button onclick="comparePronunciation('comfortable')">📊 Compare</button>
+  </div>
+</div>
+```
+
+### L1-Specific Phonetic Guides (Priority Languages)
+
+| Language | Key Challenges | Priority Words |
+|---|---|---|
+| Romanian | /θ/→/t/, /ð/→/d/, /w/→/v/, stress patterns | think, this, water, comfortable |
+| Spanish | /b/→/v/, /θ/→/s/, /h/→ silent, final consonants | have, think, very, business |
+| French | /θ/→/s/, /h/→ silent, nasal vowels, /r/ | the, have, three, really |
+| German | /θ/→/s/, /w/→/v/, /r/ uvular, final devoicing | the, with, think, that |
+| Japanese | /l/→/r/, /θ/→/s/, /v/→/b/, consonant clusters | really, three, very, world |
+| Korean | /f/→/p/, /v/→/b/, /z/→/j/, final consonants | have, very, business, is |
+| Chinese | /θ/→/s/, /l/→/r/, /n/→/l/, tones on English | think, light, no, right |
+| Arabic | /p/→/b/, /v/→/f/, /g/→/k/, consonant clusters | please, very, big, spring |
+| Turkish | /w/→/v/, /θ/→/t/, /ð/→/d/, vowel harmony carryover | we, the, this, think |
+| Portuguese | /θ/→/t/, /ð/→/d/, /h/→ silent, nasal vowels | think, the, have, comfortable |
+
+---
+
+## 4. Eloquence-First Lesson Structure
+
+### Core Principle
+**Speak first, grammar second.** Students learn to communicate before they learn to be correct. Grammar emerges from communication, not the other way around.
+
+### Lesson Architecture (45-minute lesson)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 1: WARM-UP (5 min)                                   │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ • Greet in English (no L1)                          │    │
+│  │ • Quick review: "What did we learn last time?"      │    │
+│  │ • Teacher models 2-3 key phrases from last lesson   │    │
+│  │ • Students repeat (chorus + individual)              │    │
+│  │ • NO grammar explanation yet                         │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                              │
+│  PHASE 2: NEW CONTENT — SPEAK FIRST (15 min)                │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ • Teacher introduces topic with visual context       │    │
+│  │ • Teacher speaks target phrases naturally            │    │
+│  │ • Students listen → repeat → practice in pairs       │    │
+│  │ • L1 translation ONLY if >40% fail comprehension     │    │
+│  │ • Focus: Can you SAY it? (not "can you explain it?") │    │
+│  │ • Error correction: pronunciation > grammar          │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                              │
+│  PHASE 3: GUIDED PRACTICE (10 min)                          │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ • Role-play / scenario practice                      │    │
+│  │ • Students use target language in context             │    │
+│  │ • Teacher circulates, corrects pronunciation          │    │
+│  │ • L1 available on demand (student taps to reveal)     │    │
+│  │ • Peer correction encouraged                          │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                              │
+│  PHASE 4: GRAMMAR SPOTLIGHT (5 min)                         │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ • NOW explain the grammar pattern                     │    │
+│  │ • Use examples students already spoke                 │    │
+│  │ • "You just said X. Here's why it works that way."   │    │
+│  │ • L1 translation for grammar explanation if needed    │    │
+│  │ • Keep it under 5 minutes — don't over-explain        │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                              │
+│  PHASE 5: FREE PRACTICE + CLOSING (10 min)                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ • Open conversation using target language             │    │
+│  │ • No L1 visible (translation hidden)                  │    │
+│  │ • Teacher notes errors for next lesson                │    │
+│  │ • Closing: Students summarize what they learned       │    │
+│  │ • Preview next lesson's topic                         │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Translation Integration Points
+
+| Phase | Translation Visible? | How |
+|---|---|---|
+| Warm-up | ❌ No | Pure English review |
+| New content | ⚠️ Conditional | Only if comprehension <60% |
+| Guided practice | ✅ On demand | Student taps to reveal |
+| Grammar spotlight | ✅ Yes | L1 for grammar explanation |
+| Free practice | ❌ No | English only |
+
+### Lesson Material Template
+
+Each lesson page should have this structure:
+
+```html
+<div class="lesson" data-level="B1" data-topic="travel">
+  
+  <!-- Phase 1: Warm-up -->
+  <section class="phase warm-up">
+    <h2>🔥 Warm-Up</h2>
+    <div class="dialogue">
+      <p><strong>Teacher:</strong> "What did you do last weekend?"</p>
+      <p><strong>Student:</strong> [Free response]</p>
+    </div>
+    <div class="review-phrases">
+      <span class="phrase" data-l1-ro="Am mers la mare">I went to the beach</span>
+      <span class="phrase" data-l1-ro="Am vizitat muzeul">I visited the museum</span>
+    </div>
+  </section>
+
+  <!-- Phase 2: New Content (speak first) -->
+  <section class="phase new-content">
+    <h2>🆕 New Phrases</h2>
+    <div class="target-language">
+      <p class="en">"I'm planning to travel to Spain next month."</p>
+      <button class="reveal-l1" onclick="showL1(this)">🇷🇴 Show Romanian</button>
+      <p class="l1 hidden">"Planific să călătoresc în Spania luna viitoare."</p>
+    </div>
+    <div class="practice">
+      <button onclick="playAudio('travel-sentence-1')">🔊 Listen</button>
+      <button onclick="startRecording()">🎙️ Record</button>
+    </div>
+  </section>
+
+  <!-- Phase 3: Guided Practice -->
+  <section class="phase guided-practice">
+    <h2>💬 Practice</h2>
+    <div class="role-play">
+      <p><strong>Scenario:</strong> You're at a travel agency. Book a trip.</p>
+      <div class="role-a">Agent: "Where would you like to go?"</div>
+      <div class="role-b">You: [Use today's phrases]</div>
+    </div>
+  </section>
+
+  <!-- Phase 4: Grammar Spotlight -->
+  <section class="phase grammar">
+    <h2>📐 Grammar Spotlight</h2>
+    <div class="grammar-point">
+      <p class="pattern">"I'm planning to + verb"</p>
+      <p class="explanation">We use "planning to" for future intentions.</p>
+      <p class="l1-note">🇷🇴 In Romanian: "Planific să + verb (conjunctiv)"</p>
+    </div>
+  </section>
+
+  <!-- Phase 5: Free Practice -->
+  <section class="phase free-practice">
+    <h2>🎯 Free Practice</h2>
+    <p>Talk about your travel plans for the next year. No peeking at translations!</p>
+    <div class="timer">⏱️ 5 minutes</div>
+  </section>
+
+</div>
+```
+
+### Key Metrics to Track
+
+| Metric | Target | How to Measure |
+|---|---|---|
+| English speaking time | >70% of lesson | Timer per phase |
+| L1 translation reveals | <3 per lesson | Click tracking |
+| Student pronunciation accuracy | >80% | Recording comparison |
+| Grammar accuracy (post-spotlight) | >70% | Practice exercises |
+| Student confidence (self-reported) | >7/10 | End-of-lesson survey |
+
+---
+
+## Implementation Priority
+
+1. **Week 1:** Set up DeepL API integration, create translation service module
+2. **Week 1:** Build phonetic guide template HTML/CSS
+3. **Week 2:** Create lesson structure template with 5-phase flow
+4. **Week 2:** Build first 3 lessons using new structure
+5. **Week 2:** Test with students, gather feedback, iterate

@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — English. In Your Language.</title>
+<meta name="description" content="Premium 1-on-1 English tutoring with live translations. TOEFL, IELTS, OET, IGCSE and Business English. Your teacher speaks your language.">
+<style>
+:root {
+  --bg: #020617;
+  --bg-card: #0f172a;
+  --bg-hover: #1e293b;
+  --border: #1e293b;
+  --border-light: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,0.15);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,0.15);
+  --emerald: #34d399;
+  --emerald-dim: rgba(52,211,153,0.15);
+  --violet: #a78bfa;
+  --violet-dim: rgba(167,139,250,0.15);
+  --rose: #fb7185;
+  --rose-dim: rgba(251,113,133,0.15);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* NAVBAR */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(2,6,23,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+.navbar .container {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1280px;
+}
+.logo {
+  font-size: 60px; font-weight: 700;
+  letter-spacing: -1.5px; line-height: 1;
+  text-decoration: none; display: inline-flex; align-items: center;
+  padding: 8px 16px;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+.logo:hover {
+  text-decoration: none;
+  background: rgba(255,255,255,0.05);
+}
+.nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+.nav-links a { color: var(--text-muted); font-size: 14px; font-weight: 500; }
+.nav-links a:hover { color: var(--text); text-decoration: none; }
+
+.lang-select {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  color: var(--text-muted); padding: 6px 10px; border-radius: 6px;
+  font-size: 13px; cursor: pointer;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 10px 20px; border-radius: 8px; font-size: 14px;
+  font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+  text-decoration: none;
+}
+.btn:hover { text-decoration: none; }
+.btn-primary { background: #1e3a5f; color: #fff; }
+.btn-primary:hover { background: #2a4f7a; }
+.btn-secondary {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-light);
+}
+.btn-secondary:hover { background: var(--bg-hover); border-color: var(--text-dim); }
+.btn-large { padding: 14px 28px; font-size: 16px; border-radius: 10px; }
+.btn-small { padding: 8px 16px; font-size: 13px; }
+
+/* OPAQUE TEXT BOX — light blue-grey rounded */
+.text-box {
+  background: rgba(200, 215, 230, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(200, 215, 230, 0.25);
+  border-radius: 14px;
+  padding: 16px 22px;
+  margin: 8px 0;
+}
+.text-box p, .text-box {
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1.7;
+}
+.text-box .jp {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.9em;
+  margin-top: 4px;
+}
+.text-box h2, .text-box h3 {
+  color: #ffffff;
+  font-weight: 800;
+}
+/* Override for cards that already have backgrounds */
+.usp-card.text-box, .teacher-card.text-box, .level-card.text-box, 
+.step-card.text-box, .result-card.text-box, .faq-item.text-box {
+  background: rgba(200, 215, 230, 0.10);
+  border-color: rgba(200, 215, 230, 0.20);
+}
+.usp-card.text-box p, .teacher-card.text-box p, .level-card.text-box p,
+.step-card.text-box p, .result-card.text-box p, .faq-item.text-box p {
+  color: #e8f5e9;
+  font-weight: 600;
+}
+
+/* ── HERO TEXT — BOLD & BRIGHT ── */
+.hero h1 {
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.4), 0 0 60px rgba(34,211,238,0.15);
+  letter-spacing: -1px;
+}
+.hero-badge {
+  color: var(--cyan) !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  border: 1px solid rgba(34,211,238,0.4) !important;
+  background: rgba(34,211,238,0.12) !important;
+  text-shadow: 0 0 12px rgba(34,211,238,0.3);
+}
+.hero-sub {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  background: rgba(200, 215, 230, 0.12) !important;
+  border: 1px solid rgba(200, 215, 230, 0.2) !important;
+}
+.hero-small {
+  color: var(--cyan) !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+}
+
+/* ── SECTION TITLES ── */
+.section-title h2 {
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 2px 15px rgba(0,0,0,0.3);
+}
+.section-title p {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* ── USP CARDS ── */
+.usp-card h3 {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.usp-card p {
+  color: #d1fae5;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ── SLIDESHOW CAPTIONS ── */
+.slideshow-caption {
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 1.6rem;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+.slideshow-sub {
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+}
+
+/* ── STEP CARDS ── */
+.step-num {
+  background: var(--cyan) !important;
+  color: var(--bg) !important;
+  font-weight: 900 !important;
+  box-shadow: 0 0 20px rgba(34,211,238,0.3);
+}
+.step-card h3 {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* ── LEVEL CARDS ── */
+.level-card h3, .level-card h4 {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* ── PRICING ── */
+.price-card h3 {
+  color: #ffffff;
+  font-weight: 800;
+}
+.price-amount {
+  color: var(--cyan) !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 20px rgba(34,211,238,0.2);
+}
+.price-save {
+  color: var(--emerald) !important;
+  font-weight: 800 !important;
+}
+
+/* ── TESTIMONIALS ── */
+.testimonial-text {
+  color: #e8f5e9 !important;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.testimonial-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+/* ── FAQ ── */
+.faq-q {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.faq-a {
+  color: #d1fae5 !important;
+  font-weight: 600 !important;
+}
+
+/* ── TEACHER CARDS ── */
+.teacher-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.teacher-bio {
+  color: #d1fae5 !important;
+  font-weight: 600 !important;
+}
+
+/* ── CTA SECTION ── */
+.cta-section h2 {
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.cta-section p {
+  color: rgba(255,255,255,0.9);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* ── DONATE ── */
+.donate-card h2 {
+  color: #ffffff;
+  font-weight: 900;
+}
+.donate-card p {
+  color: #d1fae5;
+  font-weight: 600;
+}
+
+/* ── FOOTER ── */
+.footer-brand .l, .footer-brand .r {
+  font-weight: 900;
+}
+
+/* DONATE BUTTON */
+.btn-donate {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  font-weight: 500;
+}
+.btn-donate:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--text);
+  border-color: var(--text-dim);
+  transform: none;
+  box-shadow: none;
+}
+
+/* DONATE SECTION */
+.donate-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(244,63,94,0.05) 0%, rgba(2,6,23,0) 50%, rgba(251,191,36,0.05) 100%);
+}
+.donate-card {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.donate-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rose), var(--amber), var(--rose));
+}
+.donate-card .donate-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+.donate-card h2 {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.donate-card p {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.donate-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.btn-donate-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: all 0.2s;
+  color: #fff;
+}
+.btn-donate-large:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.btn-paypal { background: linear-gradient(135deg, #003087, #009cde); }
+.btn-paypal:hover { background: linear-gradient(135deg, #004db3, #00b4f5); }
+.btn-stripe { background: linear-gradient(135deg, #635bff, #7a73ff); }
+.btn-stripe:hover { background: linear-gradient(135deg, #7a73ff, #938dff); }
+.btn-crypto { background: linear-gradient(135deg, #f7931a, #ffab40); color: #1a1a2e; }
+.btn-crypto:hover { background: linear-gradient(135deg, #ffab40, #ffc069); }
+.btn-gofundme { background: linear-gradient(135deg, #00b964, #00d675); }
+.btn-gofundme:hover { background: linear-gradient(135deg, #00d675, #00f085); }
+.donate-small {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.donate-secure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 16px;
+}
+
+/* HERO */
+.hero {
+  padding: 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hero image reel */
+.hero-reel {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+.hero-reel .reel-slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 1.8s ease-in-out;
+}
+.hero-reel .reel-slide.active {
+  opacity: 1;
+}
+.hero-reel .reel-bg {
+  position: absolute;
+  top: -5%; left: -5%;
+  width: 110%; height: 110%;
+  background-size: cover;
+  background-position: center;
+  animation: hero-kenburns 12s ease-in-out infinite alternate;
+}
+.hero-reel .reel-slide:nth-child(2) .reel-bg { animation-delay: -3s; }
+.hero-reel .reel-slide:nth-child(3) .reel-bg { animation-delay: -6s; }
+.hero-reel .reel-slide:nth-child(4) .reel-bg { animation-delay: -9s; }
+.hero-reel .reel-slide:nth-child(5) .reel-bg { animation-delay: -2s; }
+.hero-reel .reel-slide:nth-child(6) .reel-bg { animation-delay: -5s; }
+@keyframes hero-kenburns {
+  0%   { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.12) translate(-1.5%, -2%); }
+}
+
+/* Dark overlay for text readability */
+.hero-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(2,6,23,0.7) 0%,
+    rgba(2,6,23,0.4) 40%,
+    rgba(2,6,23,0.5) 70%,
+    rgba(2,6,23,0.85) 100%
+  );
+  z-index: 1;
+}
+
+/* Hero content sits above the reel */
+.hero .container {
+  position: relative;
+  z-index: 2;
+  padding: 180px 24px 80px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(34,211,238,0.15);
+  backdrop-filter: blur(8px);
+  color: var(--cyan);
+  padding: 8px 18px; border-radius: 20px; font-size: 13px;
+  font-weight: 600; margin-bottom: 28px;
+  border: 1px solid rgba(34,211,238,0.2);
+}
+.hero h1 {
+  font-size: 64px; font-weight: 800; line-height: 1.05;
+  letter-spacing: -2px; margin-bottom: 24px;
+  background: linear-gradient(135deg, #fff 0%, #e2e8f0 40%, #94a3b8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+.hero-sub {
+  font-size: 18px; color: var(--text-muted); max-width: 640px;
+  margin: 0 auto 36px; line-height: 1.7;
+}
+.hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.hero-small { font-size: 13px; color: var(--text-dim); margin-top: 20px; }
+
+/* Reel progress indicator */
+.hero-reel-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+}
+.hero-reel-indicator .bar {
+  width: 32px; height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.25);
+  overflow: hidden;
+}
+.hero-reel-indicator .bar .fill {
+  width: 0%;
+  height: 100%;
+  background: var(--cyan);
+  border-radius: 2px;
+}
+.hero-reel-indicator .bar.active .fill {
+  animation: reel-progress 5s linear forwards;
+}
+@keyframes reel-progress {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* USP */
+.usps {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+}
+.usps-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.usp-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px;
+}
+.usp-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+}
+.usp-icon.cyan { background: var(--cyan-dim); }
+.usp-icon.amber { background: var(--amber-dim); }
+.usp-icon.emerald { background: var(--emerald-dim); }
+.usp-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.usp-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* HOW IT WORKS */
+.how { padding: 80px 0; border-top: 1px solid var(--border); }
+.section-title { text-align: center; margin-bottom: 48px; }
+.section-title h2 {
+  font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;
+}
+.section-title p { font-size: 16px; color: var(--text-muted); }
+
+.steps-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+}
+.step-card {
+  text-align: center; padding: 24px 16px;
+}
+.step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--cyan);
+  margin: 0 auto 16px;
+}
+.step-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.step-card p { font-size: 13px; color: var(--text-muted); }
+
+/* CURRICULUM */
+.curriculum {
+  padding: 80px 0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.levels-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.level-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+}
+.level-card .fl-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 11px; font-weight: 700; margin-bottom: 8px;
+}
+.fl-badge.beginner { background: rgba(52,211,153,0.15); color: var(--emerald); }
+.fl-badge.intermediate { background: rgba(251,191,36,0.15); color: var(--amber); }
+.fl-badge.advanced { background: rgba(34,211,238,0.15); color: var(--cyan); }
+.fl-badge.proficient { background: rgba(167,139,250,0.15); color: var(--violet); }
+.level-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.level-card .cefr { font-size: 11px; color: var(--text-dim); margin-bottom: 10px; }
+.level-card ul { list-style: none; }
+.level-card ul li { font-size: 12px; color: var(--text-muted); padding: 2px 0; }
+.level-card ul li::before { content: "▸ "; color: var(--text-dim); }
+
+/* PRICING */
+.pricing { padding: 80px 0; border-top: 1px solid var(--border); }
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  max-width: 960px; margin: 0 auto;
+}
+.price-card {
+  background: var(--bg-card); border: 2px solid var(--border);
+  border-radius: 16px; padding: 32px 24px; text-align: center;
+  position: relative; cursor: pointer; transition: all .25s;
+}
+.price-card:hover { border-color: var(--cyan); transform: translateY(-4px); }
+.price-card.selected { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-dim); }
+.price-card.popular { border-color: var(--cyan); }
+.popular-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--cyan); color: var(--bg);
+  padding: 4px 14px; border-radius: 12px;
+  font-size: 11px; font-weight: 700;
+}
+.price-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.price-amount { font-size: 40px; font-weight: 800; margin: 16px 0 4px; }
+.price-amount span { font-size: 14px; font-weight: 500; color: var(--text-dim); }
+.price-per { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.price-save {
+  display: inline-block; padding: 4px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 700; margin-bottom: 16px;
+}
+.price-save.green { background: var(--emerald-dim); color: var(--emerald); }
+.price-features { list-style: none; margin: 16px 0; text-align: left; }
+.price-features li { font-size: 13px; color: var(--text-muted); padding: 5px 0; }
+.price-features li::before { content: "✓ "; color: var(--emerald); font-weight: 700; }
+.pricing-note { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 24px; }
+.price-card .check-icon {
+  position: absolute; top: 16px; right: 16px; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--cyan); color: var(--bg);
+  display: none; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.price-card.selected .check-icon { display: flex; }
+.package-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--text-dim); margin-bottom: 2px;
+}
+#selected-package-display {
+  text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 16px;
+  min-height: 24px;
+}
+
+/* BETA PRICING */
+.beta-toggle {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 24px; font-size: 14px;
+}
+.beta-toggle-label { color: var(--text-muted); font-weight: 600; }
+.beta-toggle-label.active { color: var(--text); }
+.beta-switch {
+  width: 48px; height: 26px; border-radius: 13px; background: var(--border);
+  cursor: pointer; position: relative; transition: background .2s;
+}
+.beta-switch.on { background: var(--cyan); }
+.beta-switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%; background: #fff;
+  transition: transform .2s;
+}
+.beta-switch.on::after { transform: translateX(22px); }
+.beta-banner {
+  background: rgba(251,191,36,.1); border: 1px solid var(--amber);
+  border-radius: 10px; padding: 12px 20px; text-align: center;
+  font-size: 13px; color: var(--amber); margin-bottom: 24px;
+}
+.beta-banner strong { color: #fff; }
+.price-amount .original {
+  text-decoration: line-through; color: var(--text-dim);
+  font-size: 20px; margin-right: 8px;
+}
+.referral-input {
+  display: flex; gap: 8px; margin-bottom: 20px; justify-content: center;
+}
+.referral-input input {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 14px; color: var(--text);
+  font-size: 13px; width: 200px;
+}
+.referral-input input:focus { outline: none; border-color: var(--cyan); }
+.referral-msg { font-size: 12px; text-align: center; min-height: 18px; }
+.referral-msg.ok { color: var(--emerald); }
+.referral-msg.err { color: var(--rose); }
+
+/* FAQ */
+.faq { padding: 80px 0; border-top: 1px solid var(--border); }
+.faq-grid {
+  max-width: 720px; margin: 0 auto;
+}
+.faq-item {
+  border: 1px solid var(--border); border-radius: 10px;
+  margin-bottom: 10px; overflow: hidden;
+}
+.faq-q {
+  width: 100%; text-align: left; padding: 18px 20px;
+  background: var(--bg-card); border: none; color: var(--text);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: inherit;
+}
+.faq-q:hover { background: var(--bg-hover); }
+.faq-q::after { content: "+"; color: var(--text-dim); font-size: 18px; }
+.faq-q.active::after { content: "−"; }
+.faq-a {
+  padding: 0 20px; max-height: 0; overflow: hidden;
+  transition: all 0.3s ease; background: var(--bg-card);
+}
+.faq-a.open { padding: 0 20px 18px; max-height: 500px; }
+.faq-a p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* VOIP VOIP VOIP VOIP */
+.voip-banner {
+  background: linear-gradient(135deg, var(--emerald-dim), var(--cyan-dim));
+  border: 1px solid var(--emerald-dim);
+  border-radius: 12px; padding: 24px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 40px 0;
+}
+.voip-banner h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.voip-banner p { font-size: 13px; color: var(--text-muted); }
+.voip-logos { display: flex; gap: 12px; }
+.voip-badge {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  padding: 8px 16px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; display: flex; align-items: center; gap: 6px;
+}
+.voip-badge.primary { border-color: var(--emberald, 10); color: var(--emerald); }
+.voip-badge.backup { border-color: var(--amber-dim); color: var(--amber); }
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border); padding: 48px 0 32px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px;
+  margin-bottom: 32px;
+}
+.footer-brand p { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.6; }
+.footer h4 { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.footer ul { list-style: none; }
+.footer ul li { margin-bottom: 8px; }
+.footer ul li a { font-size: 13px; color: var(--text-muted); }
+.footer ul li a:hover { color: var(--text); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-bottom p { font-size: 12px; color: var(--text-dim); }
+
+/* CTA SECTION */
+.cta-section {
+  padding: 80px 0; text-align: center;
+  border-top: 1px solid var(--border);
+}
+.cta-section h2 {
+  font-size: 36px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px;
+}
+.cta-section p { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; }
+
+/* TEACHER PROFILES */
+.teachers-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.teacher-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s;
+  position: relative;
+}
+.teacher-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+.teacher-card.featured {
+  border-color: var(--amber);
+}
+.teacher-card.featured::before {
+  content: '⭐ Featured';
+  position: absolute;
+  top: 12px; right: 12px;
+  background: var(--amber);
+  color: var(--bg);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  z-index: 2;
+}
+.teacher-photo {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.teacher-info {
+  padding: 20px;
+}
+.teacher-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.teacher-title {
+  font-size: 12px;
+  color: var(--cyan);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.teacher-bio {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.teacher-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.lang-tag {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.teacher-stats {
+  display: flex;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.teacher-stat {
+  text-align: center;
+}
+.teacher-stat-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+.teacher-stat-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.teacher-card .btn {
+  width: 100%;
+}
+
+/* FEEDBACK / TESTIMONIALS */
+.testimonials-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+.testimonials-track {
+  display: flex;
+  gap: 24px;
+  animation: scroll-testimonials 40s linear infinite;
+  width: max-content;
+}
+.testimonials-track:hover {
+  animation-play-state: paused;
+}
+@keyframes scroll-testimonials {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 380px;
+  flex-shrink: 0;
+  position: relative;
+}
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: 16px; right: 20px;
+  font-size: 60px;
+  color: var(--border-light);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+.testimonial-stars {
+  color: var(--amber);
+  font-size: 14px;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+.testimonial-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.testimonial-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-light);
+}
+.testimonial-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+.testimonial-detail {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* RESULTS / STATS FEEDBACK */
+.results-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg) 100%);
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.result-card {
+  text-align: center;
+  padding: 32px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+.result-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+.result-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+.result-num {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.result-num.cyan { color: var(--cyan); }
+.result-num.amber { color: var(--amber); }
+.result-num.emerald { color: var(--emerald); }
+.result-num.violet { color: var(--violet); }
+.result-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.result-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.results-testimonials {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.result-quote {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.result-quote-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.result-quote-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.result-quote-author {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+.result-quote-role {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* KEN BURNS SLIDESHOW */
+.slideshow-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+.slideshow-section .section-title {
+  margin-bottom: 40px;
+}
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.slideshow-slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.slideshow-slide.active {
+  opacity: 1;
+}
+.slideshow-slide .slide-bg {
+  position: absolute;
+  top: -10%; left: -10%;
+  width: 120%; height: 120%;
+  background-size: cover;
+  background-position: center;
+  animation: kenburns 8s ease-in-out infinite alternate;
+}
+.slideshow-slide:nth-child(2) .slide-bg { animation-delay: -2s; }
+.slideshow-slide:nth-child(3) .slide-bg { animation-delay: -4s; }
+.slideshow-slide:nth-child(4) .slide-bg { animation-delay: -6s; }
+@keyframes kenburns {
+  0%   { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-2%, -3%); }
+}
+.slideshow-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(2,6,23,0.75) 0%, rgba(2,6,23,0.3) 50%, rgba(2,6,23,0.75) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 40px;
+}
+.slideshow-caption {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  margin-bottom: 8px;
+}
+.slideshow-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+.slideshow-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+.slideshow-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border-light);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.slideshow-dot.active {
+  background: var(--cyan);
+  transform: scale(1.2);
+}
+
+/* VIDEO / ABOUT SECTION */
+.about-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.about-text h2 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+.about-text p {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.about-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.about-feature-tag {
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.video-player-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+  aspect-ratio: 16/9;
+  cursor: pointer;
+}
+.video-player-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.video-placeholder {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+.video-placeholder .play-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(34,211,238,0.2);
+  border: 2px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--cyan);
+  transition: all 0.3s;
+}
+.video-player-wrapper:hover .play-icon {
+  background: var(--cyan);
+  color: var(--bg);
+  transform: scale(1.1);
+}
+.video-placeholder .video-label {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.video-placeholder .video-sublabel {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .usps-grid, .steps-grid, .levels-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 36px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .slideshow-container { height: 300px; }
+  .hero { min-height: 80vh; }
+  .hero h1 { font-size: 42px; }
+  .hero-reel-indicator { bottom: 24px; }
+  .teachers-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: repeat(2, 1fr); }
+  .results-testimonials { grid-template-columns: 1fr; }
+  .testimonial-card { width: 300px; }
+}
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .hero h1 { font-size: 28px; }
+  .hero-sub { font-size: 15px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .voip-banner { flex-direction: column; gap: 16px; text-align: center; }
+  .slideshow-container { height: 220px; }
+  .slideshow-caption { font-size: 16px; }
+  .donate-card { padding: 32px 20px; }
+  .donate-buttons { flex-direction: column; align-items: center; }
+  .hero-reel-indicator { bottom: 20px; }
+  .hero-reel-indicator .bar { width: 24px; }
+  .teachers-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr 1fr; }
+  .results-testimonials { grid-template-columns: 1fr; }
+  .testimonial-card { width: 280px; }
+}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
+    <ul class="nav-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#teachers">Teachers</a></li>
+      <li><a href="#curriculum">Curriculum</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="recruit/" style="color:var(--emerald);font-weight:600;">🎓 Teach With Us</a></li>
+      <li>
+        <select class="lang-select" aria-label="Select language">
+          <option value="en">EN</option>
+          <option value="de">DE</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+          <option value="it">IT</option>
+          <option value="pt">PT</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+        </select>
+      </li>
+      <li><a href="#book" class="btn btn-primary btn-small">Book Free Trial</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Image reel background -->
+  <div class="hero-reel" id="heroReel">
+    <div class="reel-slide active">
+      <div class="reel-bg" style="background-image:url('https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1600&q=80');"></div>
+    </div>
+    <div class="reel-slide">
+      <div class="reel-bg" style="background-image:url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1600&q=80');"></div>
+    </div>
+    <div class="reel-slide">
+      <div class="reel-bg" style="background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1600&q=80');"></div>
+    </div>
+    <div class="reel-slide">
+      <div class="reel-bg" style="background-image:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1600&q=80');"></div>
+    </div>
+    <div class="reel-slide">
+      <div class="reel-bg" style="background-image:url('https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&q=80');"></div>
+    </div>
+    <div class="reel-slide">
+      <div class="reel-bg" style="background-image:url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1600&q=80');"></div>
+    </div>
+  </div>
+
+  <!-- Dark overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- Hero image reel -->
+  <!-- Reel progress bars -->
+  <div class="hero-reel-indicator" id="heroReelIndicator">
+    <div class="bar active"><div class="fill"></div></div>
+    <div class="bar"><div class="fill"></div></div>
+    <div class="bar"><div class="fill"></div></div>
+    <div class="bar"><div class="fill"></div></div>
+    <div class="bar"><div class="fill"></div></div>
+    <div class="bar"><div class="fill"></div></div>
+  </div>
+
+  <!-- Hero text content -->
+  <div class="container">
+    <div class="hero-badge text-box" style="display:inline-block">🌍 Premium English Fluency — Tailor-Made for You</div>
+    <h1>English.<br>Finally Fluent.</h1>
+    <p class="hero-sub text-box">
+      1-on-1 lessons with industry-expert teachers. Custom-built courses that reach your goals — fast. Optional live translations in 8+ languages.
+    </p>
+    <div class="hero-ctas">
+      <a href="#book" class="btn btn-primary btn-large">Book Free Trial</a>
+      <a href="#how" class="btn btn-secondary btn-large">See How It Works</a>
+    </div>
+    <p class="hero-small text-box" style="display:inline-block">Free 30-min trial · No credit card · Cancel anytime</p>
+  </div>
+</section>
+
+<!-- USPS -->
+<section class="usps">
+  <div class="container">
+    <div class="usps-grid">
+      <div class="usp-card text-box">
+        <div class="usp-icon cyan">🗣️</div>
+        <h3>Live Translations</h3>
+        <p>Your teacher translates key concepts in real-time. Currently available in German, Spanish, and 6+ more languages using AI-assisted translation.</p>
+      </div>
+      <div class="usp-card text-box">
+        <div class="usp-icon amber">📊</div>
+        <h3>Structured Curriculum</h3>
+        <p>Our 14-level system (CEFR Pre-A1 to C2+) comes with placement tests, progress tracking, and assessments at the end of every block.</p>
+      </div>
+      <div class="usp-card">
+        <div class="usp-icon emerald">🎯</div>
+        <h3>Exam Specialists</h3>
+        <p>TOEFL, IELTS, OET, IGCSE, and Business English — with tailored prep materials and a proven framework for score improvement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEN BURNS SLIDESHOW -->
+<section class="slideshow-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Real People. Real Progress.</h2>
+      <p>Students from around the world learning English their way</p>
+    </div>
+    <div class="slideshow-container" id="slideshow">
+      <div class="slideshow-slide active">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1200&q=80');"></div>
+        <div class="slideshow-overlay">
+          <div class="slideshow-caption">1-on-1 Video Lessons</div>
+          <div class="slideshow-sub">Personalized sessions with live translations in your language</div>
+        </div>
+      </div>
+      <div class="slideshow-slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&q=80');"></div>
+        <div class="slideshow-overlay">
+          <div class="slideshow-caption">Expert Teachers</div>
+          <div class="slideshow-sub">8+ years of ESL experience across 14 curriculum levels</div>
+        </div>
+      </div>
+      <div class="slideshow-slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80');"></div>
+        <div class="slideshow-overlay">
+          <div class="slideshow-caption">Global Community</div>
+          <div class="slideshow-sub">Students from Germany, Spain, Brazil, Japan, and beyond</div>
+        </div>
+      </div>
+      <div class="slideshow-slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80');"></div>
+        <div class="slideshow-overlay">
+          <div class="slideshow-caption">Exam Success</div>
+          <div class="slideshow-sub">TOEFL, IELTS, OET, IGCSE — structured prep that delivers results</div>
+        </div>
+      </div>
+    </div>
+    <div class="slideshow-dots">
+      <div class="slideshow-dot active" onclick="goToSlide(0)"></div>
+      <div class="slideshow-dot" onclick="goToSlide(1)"></div>
+      <div class="slideshow-dot" onclick="goToSlide(2)"></div>
+      <div class="slideshow-dot" onclick="goToSlide(3)"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-title text-box">
+      <h2>How It Works</h2>
+      <p>From booking to fluency in 4 simple steps</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card text-box">
+        <div class="step-num">1</div>
+        <h3>Book Free Trial</h3>
+        <p>Schedule your free 30-minute session. Pick a time that works across time zones.</p>
+      </div>
+      <div class="step-card text-box">
+        <div class="step-num">2</div>
+        <h3>Placement Test</h3>
+        <p>We assess your level (FL0-FL13) using a structured test covering all skill areas.</p>
+      </div>
+      <div class="step-card text-box">
+        <div class="step-num">3</div>
+        <h3>Start Learning</h3>
+        <p>1-on-1 lessons via Google Meet with live translations in your language via Reverso.</p>
+      </div>
+      <div class="step-card text-box">
+        <div class="step-num">4</div>
+        <h3>Track Progress</h3>
+        <p>End-of-block assessments, level ups, and clear progress reports. On to the next level.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section class="curriculum" id="curriculum">
+  <div class="container">
+    <div class="section-title">
+      <h2>Our Curriculum</h2>
+      <p>14 levels. CEFR-aligned. From zero to proficient.</p>
+    </div>
+    <div class="levels-grid">
+
+      <div class="level-card text-box">
+        <span class="fl-badge beginner">FL0-FL2</span>
+        <h4>Beginner — Pre-A1 to A1+</h4>
+        <p class="cefr">Objects, nationality, daily routine, present simple, past simple basics</p>
+        <ul>
+          <li>To be, have/has</li>
+          <li>Present & past simple</li>
+          <li>Numbers, dates, time</li>
+        </ul>
+      </div>
+
+      <div class="level-card text-box">
+        <span class="fl-badge beginner">FL3</span>
+        <h4>Pre-Intermediate — A2</h4>
+        <p class="cefr">Obligation, future plans, comparisons, phrasal verbs, shopping, weather</p>
+        <ul>
+          <li>Must/should</li>
+          <li>Going to / will</li>
+          <li>Comparative & superlative</li>
+        </ul>
+      </div>
+
+      <div class="level-card text-box">
+        <span class="fl-badge intermediate">FL4-FL5</span>
+        <h4>Intermediate — B1</h4>
+        <p class="cefr">Present perfect, conditionals, passive voice, phone calls, tech</p>
+        <ul>
+          <li>Present perfect & continuous</li>
+          <li>Passive voice</li>
+          <li>Relative clauses, modals</li>
+        </ul>
+      </div>
+
+      <div class="level-card text-box">
+        <span class="fl-badge intermediate">FL6-FL7</span>
+        <h4>Upper Intermediate — B2</h4>
+        <p class="cefr">All past tenses, 3rd conditional, reported speech, job interviews</p>
+        <ul>
+          <li>Past perfect, 3rd conditional</li>
+          <li>Reported speech</li>
+          <li>Work phrasal verbs</li>
+        </ul>
+      </div>
+
+      <div class="level-card text-box">
+        <span class="fl-badge advanced">FL8-FL10</span>
+        <h4>Advanced — C1</h4>
+        <p class="cefr">Mixed conditionals, passive + modals, connectors, presentations</p>
+        <ul>
+          <li>Mixed & advanced conditionals</li>
+          <li>Advanced connectors</li>
+          <li>Business English & presentations</li>
+        </ul>
+      </div>
+
+      <div class="level-card text-box">
+        <span class="fl-badge proficient">FL11-FL13</span>
+        <h4>Proficient — C2 / C2+</h4>
+        <p class="cefr">Debates, data, societal issues, custom topics</p>
+        <ul>
+          <li>Economics & politics</li>
+          <li>Media & marketing</li>
+          <li>Fully customized content</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TEACHER PROFILES -->
+<section class="teachers-section" id="teachers">
+  <div class="container">
+    <div class="section-title">
+      <h2>Choose Your Teacher</h2>
+      <p>All teachers are native English speakers with live translation abilities</p>
+    </div>
+    <div class="teachers-grid">
+
+      <div class="teacher-card featured text-box">
+        <img class="teacher-photo" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="William">
+        <div class="teacher-info">
+          <div class="teacher-name">William</div>
+          <div class="teacher-title">Founder · Lead Teacher</div>
+          <p class="teacher-bio">8 years teaching ESL. Native English speaker fluent in German and Spanish. Specializes in exam prep (TOEFL, IELTS, OET) and business English. Uses live translations in every lesson.</p>
+          <div class="teacher-langs">
+            <span class="lang-tag">🇬🇧 English (Native)</span>
+            <span class="lang-tag">🇩🇪 German (Fluent)</span>
+            <span class="lang-tag">🇪🇸 Spanish (Fluent)</span>
+          </div>
+          <div class="teacher-stats">
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">8+</div>
+              <div class="teacher-stat-label">Years</div>
+            </div>
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">500+</div>
+              <div class="teacher-stat-label">Students</div>
+            </div>
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">4.9</div>
+              <div class="teacher-stat-label">Rating</div>
+            </div>
+          </div>
+          <a href="#book" class="btn btn-primary">Book with William</a>
+        </div>
+      </div>
+
+      <div class="teacher-card text-box">
+        <img class="teacher-photo" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80" alt="Sarah">
+        <div class="teacher-info">
+          <div class="teacher-name">Sarah</div>
+          <div class="teacher-title">Senior Teacher · Young Learners</div>
+          <p class="teacher-bio">5 years teaching ESL to children and teenagers. Cambridge CELTA certified. Makes lessons fun with games, stories, and interactive activities. Great with shy or anxious learners.</p>
+          <div class="teacher-langs">
+            <span class="lang-tag">🇬🇧 English (Native)</span>
+            <span class="lang-tag">🇫🇷 French (Fluent)</span>
+            <span class="lang-tag">🇵🇹 Portuguese (B2)</span>
+          </div>
+          <div class="teacher-stats">
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">5+</div>
+              <div class="teacher-stat-label">Years</div>
+            </div>
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">300+</div>
+              <div class="teacher-stat-label">Students</div>
+            </div>
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">4.8</div>
+              <div class="teacher-stat-label">Rating</div>
+            </div>
+          </div>
+          <a href="#book" class="btn btn-secondary">Book with Sarah</a>
+        </div>
+      </div>
+
+      <div class="teacher-card text-box">
+        <img class="teacher-photo" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80" alt="James">
+        <div class="teacher-info">
+          <div class="teacher-name">James</div>
+          <div class="teacher-title">Business English Specialist</div>
+          <p class="teacher-bio">Former corporate trainer with 10 years of experience. Focuses on presentations, negotiations, email writing, and interview prep. Has helped 50+ professionals land jobs at international companies.</p>
+          <div class="teacher-langs">
+            <span class="lang-tag">🇬🇧 English (Native)</span>
+            <span class="lang-tag">🇯🇵 Japanese (Fluent)</span>
+            <span class="lang-tag">🇰🇷 Korean (B2)</span>
+          </div>
+          <div class="teacher-stats">
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">10+</div>
+              <div class="teacher-stat-label">Years</div>
+            </div>
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">400+</div>
+              <div class="teacher-stat-label">Students</div>
+            </div>
+            <div class="teacher-stat">
+              <div class="teacher-stat-num">4.9</div>
+              <div class="teacher-stat-label">Rating</div>
+            </div>
+          </div>
+          <a href="#book" class="btn btn-secondary">Book with James</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / VIDEO SECTION -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text text-box">
+        <h2>Meet Your Teacher</h2>
+        <p>
+          William has been teaching English as a second language for eight years.
+          A native English speaker fluent in German and Spanish, he founded Eloquenta
+          to bridge the gap between traditional language schools and real human connection.
+        </p>
+        <p>
+          Every course is custom-designed using a proven 14-level curriculum. Whether
+          you're preparing for TOEFL, improving your business English, or helping your
+          child with IGCSE — William uses live translations and real-time feedback to
+          make every minute count.
+        </p>
+        <div class="about-features">
+          <span class="about-feature-tag">🇬🇧 Native English</span>
+          <span class="about-feature-tag">🇩🇪 Fluent German</span>
+          <span class="about-feature-tag">🇪🇸 Fluent Spanish</span>
+          <span class="about-feature-tag">📊 14-Level Curriculum</span>
+          <span class="about-feature-tag">🎯 Exam Specialist</span>
+          <span class="about-feature-tag">👨‍👩‍👧 Young Learners</span>
+        </div>
+      </div>
+      <div>
+        <!-- Video Option 1: Main intro (YouTube) -->
+        <div class="video-player-wrapper" id="videoPlayer" style="margin-bottom:16px">
+          <div class="video-placeholder" id="videoPlaceholder" onclick="playVideo()">
+            <div class="play-icon">▶</div>
+            <div class="video-label">▶ Watch: About Eloquenta</div>
+            <div class="video-sublabel">2 min introduction</div>
+          </div>
+          <div id="videoEmbed" style="display:none; width:100%; height:100%;">
+            <iframe id="youtubeFrame" style="width:100%; height:100%; border:none; border-radius:16px;" src="" title="About Eloquenta" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+        <!-- Video Option 2: Teaching method -->
+        <div class="video-player-wrapper" style="margin-bottom:16px">
+          <div class="video-placeholder" onclick="playVideo2(event)">
+            <div class="play-icon">▶</div>
+            <div class="video-label">▶ How Live Translations Work</div>
+            <div class="video-sublabel">See the method in action</div>
+          </div>
+        </div>
+        <!-- Video Option 3: Student testimonial -->
+        <div class="video-player-wrapper">
+          <div class="video-placeholder" onclick="playVideo3(event)">
+            <div class="play-icon">▶</div>
+            <div class="video-label">▶ Student Success Stories</div>
+            <div class="video-sublabel">Hear from real students</div>
+          </div>
+        </div>
+        <!-- Audio-only option -->
+        <div style="margin-top:16px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px;">
+          <div style="font-size:28px;">🎧</div>
+          <div>
+            <div style="font-size:14px; font-weight:700; margin-bottom:2px;">Prefer Audio?</div>
+            <div style="font-size:12px; color:var(--text-muted);">Listen to our 3-min podcast introduction.</div>
+          </div>
+          <button class="btn btn-secondary btn-small" onclick="playAudio()" style="margin-left:auto; flex-shrink:0;">▶ Play</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DONATE SECTION -->
+<section class="donate-section" id="donate">
+  <div class="container">
+    <div class="donate-card">
+      <div class="donate-icon">❤️</div>
+      <h2>Support Eloquenta</h2>
+      <p>
+        Eloquenta is a small, independent language school. Every donation helps us
+        keep lessons affordable, improve our curriculum, and bring quality English
+        education to students worldwide — especially those who need it most.
+      </p>
+      <div class="donate-buttons">
+        <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_ID" target="_blank" rel="noopener" class="btn-donate-large btn-paypal">
+          💳 PayPal
+        </a>
+        <a href="https://donate.stripe.com/YOUR_LINK" target="_blank" rel="noopener" class="btn-donate-large btn-stripe">
+          💰 Credit / Debit Card
+        </a>
+        <a href="https://www.gofundme.com/f/YOUR_CAMPAIGN" target="_blank" rel="noopener" class="btn-donate-large btn-gofundme">
+          🌱 GoFundMe
+        </a>
+        <a href="#crypto" onclick="document.getElementById('crypto-details').style.display='block'; return false;" class="btn-donate-large btn-crypto">
+          ₿ Crypto
+        </a>
+      </div>
+      <div id="crypto-details" style="display:none; margin-top:16px; padding:16px; background:var(--bg); border-radius:8px; text-align:left;">
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;"><strong style="color:var(--text);">Bitcoin (BTC):</strong></p>
+        <code style="font-size:11px; color:var(--amber); word-break:break-all;">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</code>
+        <p style="font-size:13px; color:var(--text-muted); margin:12px 0 8px;"><strong style="color:var(--text);">Ethereum (ETH):</strong></p>
+        <code style="font-size:11px; color:var(--amber); word-break:break-all;">0x71C7656EC7ab88b098defB751B7401B5f6d8976F</code>
+        <p style="font-size:11px; color:var(--text-dim); margin-top:12px;">⚠️ Replace these example addresses with your own before going live.</p>
+      </div>
+      <p class="donate-small">Any amount helps. Thank you for believing in what we do.</p>
+      <div class="donate-secure">
+        <span>🔒</span>
+        <span>Secure payments · No account required · Tax-deductible in Estonia</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOIP BANNER -->
+<div class="container">
+  <div class="voip-banner">
+    <div>
+      <h3>⚡ Reliable Lessons — No Matter What</h3>
+      <p>Google Meet is our primary platform. If it glitches, we instantly switch to Talky.io.</p>
+    </div>
+    <div class="voip-logos">
+      <div class="voip-badge primary">Google Meet</div>
+      <div class="voip-badge backup">+ Talky.io</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-title">
+      <h2>Choose Your Package</h2>
+      <p>Transparent EUR pricing. No hidden fees. Every 4-lesson block expires in 10 weeks.</p>
+    </div>
+
+    <!-- Beta Toggle -->
+    <div class="beta-toggle">
+      <span class="beta-toggle-label active" id="label-regular">Regular Pricing</span>
+      <div class="beta-switch" id="beta-switch" onclick="toggleBeta()"></div>
+      <span class="beta-toggle-label" id="label-beta">Beta Student 🔥</span>
+    </div>
+    <div class="beta-banner" id="beta-banner" style="display:none;">
+      🎉 <strong>Beta Pricing Active</strong> — 30% off all packages! Limited to the first 20 students.
+    </div>
+
+    <!-- Referral Code -->
+    <div class="referral-input">
+      <input type="text" id="referral-code" placeholder="Referral code (optional)" onkeydown="if(event.key==='Enter')applyReferral()">
+      <button class="btn btn-secondary btn-small" onclick="applyReferral()">Apply</button>
+    </div>
+    <div class="referral-msg" id="referral-msg"></div>
+
+    <div id="selected-package-display"></div>
+    <div class="pricing-grid">
+
+      <div class="price-card" data-package="single" onclick="selectPackage('single')">
+        <div class="check-icon">✓</div>
+        <div class="package-label">Try it out</div>
+        <h3>Single Lesson</h3>
+        <div class="price-amount" data-base="40"><span class="original" style="display:none"></span>€40 <span>/hr</span></div>
+        <div class="price-per">per lesson</div>
+        <ul class="price-features">
+          <li>60-minute 1-on-1 lesson</li>
+          <li>Live translations available</li>
+          <li>Lesson recording included</li>
+          <li>Valid for 10 weeks</li>
+        </ul>
+        <a href="#book" class="btn btn-secondary" style="width:100%">Select</a>
+      </div>
+
+      <div class="price-card popular selected" data-package="pack4" onclick="selectPackage('pack4')">
+        <div class="check-icon">✓</div>
+        <div class="popular-badge">Most Popular</div>
+        <div class="package-label">Best value start</div>
+        <h3>4-Lesson Pack</h3>
+        <div class="price-amount" data-base="144"><span class="original" style="display:none"></span>€144 <span>total</span></div>
+        <div class="price-per">€36/lesson</div>
+        <span class="price-save green" id="save-pack4">Save 10%</span>
+        <ul class="price-features">
+          <li>Save €16 vs. single lessons</li>
+          <li>End-of-block assessment</li>
+          <li>Progress report included</li>
+          <li>Priority scheduling</li>
+        </ul>
+        <a href="#book" class="btn btn-primary" style="width:100%">Select</a>
+      </div>
+
+      <div class="price-card" data-package="block16" onclick="selectPackage('block16')">
+        <div class="check-icon">✓</div>
+        <div class="package-label">Serious progress</div>
+        <h3>16-Lesson Block</h3>
+        <div class="price-amount" data-base="576"><span class="original" style="display:none"></span>€576 <span>total</span></div>
+        <div class="price-per">€36/lesson</div>
+        <span class="price-save green" id="save-block16">Save 10%</span>
+        <ul class="price-features">
+          <li>4 blocks x 10 weeks = 40 weeks</li>
+          <li>Placement test + assessments</li>
+          <li>Level-up certificate</li>
+          <li>Dedicated support channel</li>
+        </ul>
+        <a href="#book" class="btn btn-secondary" style="width:100%">Select</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; max-width:640px; margin-left:auto; margin-right:auto;">
+      <div class="price-card" style="padding:20px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; cursor:pointer;" data-package="block32" onclick="selectPackage('block32')">
+        <div style="text-align:left;">
+          <h3 style="font-size:16px; margin-bottom:4px;">🏆 32-Lesson Program</h3>
+          <div style="font-size:13px; color:var(--text-muted);">80 weeks - All assessments - Certificate</div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div class="price-amount" style="font-size:24px; margin:0;" data-base="1088"><span class="original" style="display:none"></span>€1,088</div>
+          <div class="price-save green" style="font-size:11px;" id="save-block32">Save 20% - €34/lesson</div>
+        </div>
+        <a href="#book" class="btn btn-secondary btn-small" style="flex-shrink:0;">Select</a>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; max-width:640px; margin-left:auto; margin-right:auto;">
+      <div class="price-card" style="padding:20px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-color:var(--amber); cursor:pointer;" data-package="block64" onclick="selectPackage('block64')">
+        <div style="text-align:left;">
+          <h3 style="font-size:16px; margin-bottom:4px;">👑 64-Lesson Mastery</h3>
+          <div style="font-size:13px; color:var(--text-muted);">160 weeks - Full fluency - C2</div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div class="price-amount" style="font-size:24px; margin:0;" data-base="1920"><span class="original" style="display:none"></span>€1,920</div>
+          <div class="price-save green" style="font-size:11px;" id="save-block64">Save 25% - €30/lesson</div>
+        </div>
+        <a href="#book" class="btn btn-primary btn-small" style="flex-shrink:0;">Select</a>
+      </div>
+    </div>
+
+    <p class="pricing-note" style="margin-top:24px;">
+      📅 Every 4 lessons must be used within 10 weeks. Exam intensives, young learner packages, and corporate plans available.
+    </p>
+  </div>
+</section>
+
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-title" style="padding: 0 24px;">
+    <h2>What Our Students Say</h2>
+    <p>Real feedback from real students</p>
+  </div>
+  <div class="testimonials-track">
+    <!-- Original set -->
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"William helped me go from B1 to C1 in 6 months. The live German translations made complex grammar finally click. I passed my IELTS with a 7.5!"</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Maria Schmidt</div>
+          <div class="testimonial-detail">🇩🇪 Germany · IELTS 7.5</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"My daughter was terrified of English class. Sarah made it fun — now she asks for extra lessons! The games and stories keep her engaged every session."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Priya Patel</div>
+          <div class="testimonial-detail">🇮🇳 India · Mother of 10yo student</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"James prepared me for a job interview at a UK company. We practiced for 3 sessions and I got the offer! His business English knowledge is incredible."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Kenji Tanaka</div>
+          <div class="testimonial-detail">🇯🇵 Japan · Software Engineer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"I needed TOEFL 90 for my university application. William's structured approach got me to 94 in 8 weeks. The translation feature saved me hours of confusion."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Ana Rodríguez</div>
+          <div class="testimonial-detail">🇪🇸 Spain · TOEFL 94</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"After 2 years of group classes with no progress, 3 months with William changed everything. 1-on-1 with translations is a game-changer."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Thomas Weber</div>
+          <div class="testimonial-detail">🇩🇪 Germany · B2 → C1</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"The dual-VoIP backup is genius. We never lost a lesson even when Meet crashed. Professional and reliable — exactly what I needed."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Li Wei Chen</div>
+          <div class="testimonial-detail">🇨🇳 China · Business English</div>
+        </div>
+      </div>
+    </div>
+    <!-- Duplicate set for seamless loop -->
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"William helped me go from B1 to C1 in 6 months. The live German translations made complex grammar finally click. I passed my IELTS with a 7.5!"</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Maria Schmidt</div>
+          <div class="testimonial-detail">🇩🇪 Germany · IELTS 7.5</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"My daughter was terrified of English class. Sarah made it fun — now she asks for extra lessons! The games and stories keep her engaged every session."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Priya Patel</div>
+          <div class="testimonial-detail">🇮🇳 India · Mother of 10yo student</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"James prepared me for a job interview at a UK company. We practiced for 3 sessions and I got the offer! His business English knowledge is incredible."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Kenji Tanaka</div>
+          <div class="testimonial-detail">🇯🇵 Japan · Software Engineer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"I needed TOEFL 90 for my university application. William's structured approach got me to 94 in 8 weeks. The translation feature saved me hours of confusion."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Ana Rodríguez</div>
+          <div class="testimonial-detail">🇪🇸 Spain · TOEFL 94</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"After 2 years of group classes with no progress, 3 months with William changed everything. 1-on-1 with translations is a game-changer."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Thomas Weber</div>
+          <div class="testimonial-detail">🇩🇪 Germany · B2 → C1</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text text-box">"The dual-VoIP backup is genius. We never lost a lesson even when Meet crashed. Professional and reliable — exactly what I needed."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&q=80" alt="">
+        <div>
+          <div class="testimonial-name">Li Wei Chen</div>
+          <div class="testimonial-detail">🇨🇳 China · Business English</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-title">
+      <h2>FAQ</h2>
+      <p>Everything you need to know</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item text-box">
+        <button class="faq-q">How do live translations work?</button>
+        <div class="faq-a"><p>During your lesson, the teacher explains key English concepts in your native language in real-time. For German and Spanish, translations come directly from the teacher. For other languages, we use AI-assisted translation (DeepL + Reverso Context) alongside bilingual glossaries we've built for every level.</p></div>
+      </div>
+      <div class="faq-item text-box">
+        <button class="faq-q">Which exams do you prepare for?</button>
+        <div class="faq-a"><p>We specialize in TOEFL, IELTS (Academic & General), OET (Healthcare), IGCSE English, and Business English. Each exam prep follows a structured block with practice tests, scoring rubrics, and targeted skill work.</p></div>
+      </div>
+      <div class="faq-item text-box">
+        <button class="faq-q">What if Google Meet isn't working?</button>
+        <div class="faq-a"><p>We've got you covered. Our system uses Google Meet as the primary platform with Talky.io as an automatic backup. If Meet glitches, the student dashboard instantly shows the Talky.io room. Both links are sent in the confirmation email too.</p></div>
+      </div>
+      <div class="faq-item text-box">
+        <button class="faq-q">Can I try before I buy?</button>
+        <div class="faq-a"><p>Yes! Every student gets a free 30-minute trial lesson. It includes a mini-placement assessment, a real lesson with live translations, and a recommendation for your learning path. No credit card required.</p></div>
+      </div>
+      <div class="faq-item text-box">
+        <button class="faq-q">What languages do you support for translations?</button>
+        <div class="faq-a"><p>Currently: German, Spanish (teacher-delivered), French, Italian, Portuguese, Japanese, Korean, and Mandarin (AI-assisted with human-reviewed glossaries). More languages coming as we grow.</p></div>
+      </div>
+      <div class="faq-item text-box">
+        <button class="faq-q">Do you offer corporate or group packages?</button>
+        <div class="faq-a"><p>Yes. We offer corporate packages for teams, immigration consultancies, and universities. Group classes (3-5 students) are available at reduced rates. Contact us for custom pricing.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING CTA -->
+<section class="cta-section" id="book">
+  <div class="container">
+    <h2>Book Your Free Trial</h2>
+    <p>No credit card required. 30 minutes. See if Eloquenta is right for you.</p>
+
+    <div style="max-width:700px; margin:0 auto;">
+
+      <!-- Step 1: Package Summary -->
+      <div id="checkout-step-1" class="text-box" style="padding:24px; margin-bottom:20px; text-align:left;">
+        <h3 style="font-size:16px; margin-bottom:12px;">📦 Selected Package</h3>
+        <div id="package-summary" style="font-size:14px; color:var(--text-muted);">
+          4-Lesson Pack — €144 total (€36/lesson)
+        </div>
+      </div>
+
+      <!-- Step 2: Booking Calendar -->
+      <div id="checkout-step-2" class="text-box" style="padding:24px; margin-bottom:20px; text-align:left;">
+        <h3 style="font-size:16px; margin-bottom:12px;">📅 Choose a Time</h3>
+        <!-- Cal.com inline embed — replace with your Cal.com username -->
+        <div id="cal-booking-frame" style="min-height:400px; background:var(--bg); border-radius:8px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+          <iframe
+            src="https://app.cal.com/william-o8lcqk"
+            style="width:100%;height:420px;border:0;border-radius:8px;"
+            frameborder="0"
+            title="Book a lesson">
+          </iframe>
+          <p style="font-size:12px; color:var(--text-dim); padding:0 24px;">
+            Don't see a time that works? <a href="mailto:hello@eloquent.ee">Email us</a> for scheduling.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3: Payment -->
+      <div id="checkout-step-3" class="text-box" style="padding:24px; margin-bottom:20px; text-align:left;">
+        <h3 style="font-size:16px; margin-bottom:12px;">💳 Payment</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+          Secure payment via Stripe. After payment, your teacher will receive the booking and prepare your session.
+        </p>
+
+        <!-- Stripe checkout button placeholder -->
+        <button id="stripe-checkout-btn" onclick="startCheckout()" class="btn btn-primary btn-large" style="width:100%;">
+          Pay Now — <span id="pay-amount">€144</span>
+        </button>
+        <p style="font-size:11px; color:var(--text-dim); margin-top:8px; text-align:center;">
+          🔒 Powered by Stripe · PCI compliant · 3D Secure
+        </p>
+      </div>
+
+<!-- Premium English Fluency -->
+      <div id="premium-section" style="margin-top:20px;">
+        <button id="premium-btn" onclick="togglePremium()" class="btn btn-secondary btn-large" style="width:100%;background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(167,139,250,.05));border-color:rgba(167,139,250,.3);color:#a78bfa;">
+          ⚡ Premium English Fluency Program
+        </button>
+        <div id="premium-info" class="text-box" style="padding:24px;margin-top:16px;text-align:left;border-color:rgba(167,139,250,.2);display:none;">
+          <h3 style="font-size:18px;font-weight:800;margin-bottom:12px;color:#a78bfa;">⚡ Premium English Fluency</h3>
+          <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.7;">
+            Your free trial isn't just a taste — it's the <strong>foundation of your entire learning path</strong>. Here's how we use it to build a course that's uniquely yours.
+          </p>
+
+          <div style="background:rgba(167,139,250,.08);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:10px;">📋 What happens in your 20-minute speaking assessment:</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:var(--bg-card);border-radius:8px;padding:12px;font-size:12px;color:var(--text-muted);">
+                <strong style="color:#fff;display:block;margin-bottom:4px;">🎯 Fluency & Accuracy</strong>
+                We measure your speaking speed, hesitation patterns, and error frequency to pinpoint exactly where you struggle.
+              </div>
+              <div style="background:var(--bg-card);border-radius:8px;padding:12px;font-size:12px;color:var(--text-muted);">
+                <strong style="color:#fff;display:block;margin-bottom:4px;">🗣️ Pronunciation</strong>
+                We identify specific sounds, stress patterns, and intonation issues that are unique to your first language.
+              </div>
+              <div style="background:var(--bg-card);border-radius:8px;padding:12px;font-size:12px;color:var(--text-muted);">
+                <strong style="color:#fff;display:block;margin-bottom:4px;">📚 Vocabulary Range</strong>
+                We assess your active vs. passive vocabulary, and identify the gaps between what you understand and what you can produce.
+              </div>
+              <div style="background:var(--bg-card);border-radius:8px;padding:12px;font-size:12px;color:var(--text-muted);">
+                <strong style="color:#fff;display:block;margin-bottom:4px;">🎪 Goals & Context</strong>
+                We learn your real-world needs — work presentations, daily conversation, exams, travel — so every lesson has purpose.
+              </div>
+            </div>
+          </div>
+
+          <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.12);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;color:#22d3ee;margin-bottom:10px;">🔬 How we build your custom course:</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-muted);">
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#22d3ee;font-weight:700;flex-shrink:0;">1.</span><span>Your assessment data generates a <strong style="color:#fff;">personal fluency profile</strong> — a detailed map of your strengths and weaknesses across 5 dimensions.</span></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#22d3ee;font-weight:700;flex-shrink:0;">2.</span><span>We match you with a <strong style="color:#fff;">teacher who specializes in your specific needs</strong> — whether that's business English, exam prep, or everyday fluency.</span></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#22d3ee;font-weight:700;flex-shrink:0;">3.</span><span>Your curriculum is <strong style="color:#fff;">built around your goals</strong>, not a generic textbook. Every exercise, every conversation topic, every piece of homework is chosen for you.</span></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#22d3ee;font-weight:700;flex-shrink:0;">4.</span><span>We <strong style="color:#fff;">re-assess every 4 weeks</strong> and adjust your plan. As you improve, the course evolves with you.</span></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+              <div style="font-size:20px;margin-bottom:6px">📊</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:4px">Progress Dashboard</div>
+              <div style="font-size:12px;color:var(--text-dim)">Visual tracking of your improvement across all 5 fluency dimensions. See exactly how far you've come.</div>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+              <div style="font-size:20px;margin-bottom:6px">🧠</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:4px">Smart Vocabulary</div>
+              <div style="font-size:12px;color:var(--text-dim)">AI-powered spaced repetition that focuses on YOUR weak words — not random lists from a textbook.</div>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+              <div style="font-size:20px;margin-bottom:6px">🗣️</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:4px">Speaking-Focused</div>
+              <div style="font-size:12px;color:var(--text-dim)">70% of every lesson is you speaking. Real conversation with targeted feedback, not passive listening.</div>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+              <div style="font-size:20px;margin-bottom:6px">📝</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:4px">Custom Materials</div>
+              <div style="font-size:12px;color:var(--text-dim)">Lesson slides, debate topics, and conversation questions tailored to your interests and profession.</div>
+            </div>
+          </div>
+
+          <div style="background:rgba(167,139,250,.08);border-radius:10px;padding:14px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:6px;">What's included:</div>
+            <ul style="font-size:13px;color:var(--text-muted);list-style:none;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ 3 × 60-minute lessons per week with your dedicated teacher</li>
+              <li>✓ Personal fluency profile from your trial assessment</li>
+              <li>✓ Custom curriculum built around your goals and weak points</li>
+              <li>✓ Weekly fluency re-assessment + progress report</li>
+              <li>✓ AI-powered vocabulary review between lessons</li>
+              <li>✓ Access to all speaking lesson slideshows & debate materials</li>
+              <li>✓ 24/7 chat support for questions between lessons</li>
+            </ul>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:24px;font-weight:900;color:#fff;margin-bottom:4px;">€149 <span style="font-size:14px;font-weight:500;color:var(--text-dim)">/month</span></div>
+            <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Cancel anytime. No contracts. Your trial assessment is always free.</div>
+            <button onclick="startPremiumCheckout()" class="btn" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;border:none;padding:14px 32px;font-size:15px;width:100%;">
+              Start Premium — First Week Free
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:24px;">
+        <div class="text-box" style="padding:12px 20px; font-size:12px; color:var(--text-muted);">
+          🌍 EUR · 🇪🇪 Estonian e-Residency
+        </div>
+        <div class="text-box" style="padding:12px 20px; font-size:12px; color:var(--text-muted);">
+          🔒 Secure payments · No account required
+        </div>
+        <div class="text-box" style="padding:12px 20px; font-size:12px; color:var(--text-muted);">
+          📅 Flexible rescheduling · Cancel 24h ahead
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING DATA & BOOKING JS -->
+<script>
+// Package data
+var PACKAGES = {
+  single: {name:'Single Lesson', total:40, per:'€40', lessons:1, valid:'10 weeks', desc:'Single Lesson — €40 total (€40/lesson)'},
+  pack4: {name:'4-Lesson Pack', total:144, per:'€36', lessons:4, valid:'10 weeks', desc:'4-Lesson Pack — €144 total (€36/lesson)'},
+  block16: {name:'16-Lesson Block', total:576, per:'€36', lessons:16, valid:'40 weeks', desc:'16-Lesson Block — €576 total (€36/lesson)'},
+  block32: {name:'32-Lesson Program', total:1088, per:'€34', lessons:32, valid:'80 weeks', desc:'32-Lesson Program — €1,088 total (€34/lesson)'},
+  block64: {name:'64-Lesson Mastery', total:1920, per:'€30', lessons:64, valid:'160 weeks', desc:'64-Lesson Mastery — €1,920 total (€30/lesson)'}
+};
+
+// Select package
+var selectedPkg = 'pack4';
+function selectPackage(pkg) {
+  selectedPkg = pkg;
+  var p = PACKAGES[pkg];
+  // Update card visuals
+  document.querySelectorAll('.price-card[data-package]').forEach(function(card) {
+    card.classList.toggle('selected', card.dataset.package === pkg);
+  });
+  // Update summary
+  var display = document.getElementById('selected-package-display');
+  if(display) display.textContent = 'Selected: ' + p.desc;
+  var summary = document.getElementById('package-summary');
+  if(summary) summary.textContent = p.desc;
+  var amount = document.getElementById('pay-amount');
+  if(amount) amount.textContent = '€' + p.total;
+}
+
+// Initialize
+selectPackage('pack4');
+
+// Stripe checkout (placeholder — replace with your Stripe publishable key)
+function startCheckout() {
+  var p = PACKAGES[selectedPkg];
+  // Option A: Stripe Payment Link (simplest — create at dashboard.stripe.com/payment-links)
+  window.open('https://buy.stripe.com/test_YOUR_LINK_HERE?prefilled_email=', '_blank');
+
+  // Option B: Stripe Checkout (requires backend)
+  // fetch('/api/create-checkout-session', {method:'POST', body: JSON.stringify({package: selectedPkg}) })
+  //   .then(r => r.json()).then(d => Stripe('pk_live_...').redirectToCheckout({sessionId: d.id}));
+}
+</script>
+
+<!-- RESULTS & PROOF -->
+<section class="results-section" id="results">
+  <div class="container">
+    <div class="section-title text-box">
+      <h2>Results That Speak</h2>
+      <p>Numbers don't lie. Our students achieve real, measurable progress.</p>
+    </div>
+    <div class="results-grid">
+      <div class="result-card text-box">
+        <div class="result-icon">🎓</div>
+        <div class="result-num cyan">94%</div>
+        <div class="result-label">Exam Pass Rate</div>
+        <div class="result-sub">TOEFL, IELTS, OET, IGCSE</div>
+      </div>
+      <div class="result-card text-box">
+        <div class="result-icon">📈</div>
+        <div class="result-num amber">2.3</div>
+        <div class="result-label">Avg. Level Jump</div>
+        <div class="result-sub">Per 14-session block</div>
+      </div>
+      <div class="result-card text-box">
+        <div class="result-icon">⭐</div>
+        <div class="result-num emerald">4.9/5</div>
+        <div class="result-label">Student Rating</div>
+        <div class="result-sub">From 500+ reviews</div>
+      </div>
+      <div class="result-card text-box">
+        <div class="result-icon">🌍</div>
+        <div class="result-num violet">28+</div>
+        <div class="result-label">Countries</div>
+        <div class="result-sub">Students worldwide</div>
+      </div>
+    </div>
+    <div class="results-testimonials">
+      <div class="result-quote">
+        <div class="result-quote-icon">💬</div>
+        <div>
+          <p class="result-quote-text">"I went from being unable to order food in English to giving a 20-minute presentation at work. William's method just works."</p>
+          <div class="result-quote-author">Carlos Mendez</div>
+          <div class="result-quote-role">🇧🇷 Brazil · FL2 → FL8 in 8 months</div>
+        </div>
+      </div>
+      <div class="result-quote">
+        <div class="result-quote-icon">💬</div>
+        <div>
+          <p class="result-quote-text">"Sarah is a miracle worker. My son went from hating English to reading Harry Potter in English. He's 11."</p>
+          <div class="result-quote-author">Fatima Al-Rashid</div>
+          <div class="result-quote-role">🇦🇪 UAE · Mother of 11yo student</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
+        <p>Premium English tutoring with live translations. Your teacher speaks your language.</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#curriculum">Curriculum</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#book">Book Trial</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#donate">❤️ Donate</a></li>
+          <li><a href="#">For Business</a></li>
+          <li><a href="recruit/">Become a Teacher</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">GDPR</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Eloquenta. All rights reserved. · <a href="#donate" style="color:var(--rose);">❤️ Donate</a></p>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <select class="lang-select">
+          <option value="en">EN</option>
+          <option value="de">DE</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+          <option value="it">IT</option>
+          <option value="pt">PT</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// FAQ toggle
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const ans = item.querySelector('.faq-a');
+    const isOpen = ans.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('active'));
+    // Toggle current
+    if (!isOpen) {
+      ans.classList.add('open');
+      btn.classList.add('active');
+    }
+  });
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ===== HERO IMAGE REEL =====
+let heroReelIndex = 0;
+const heroSlides = document.querySelectorAll('.hero-reel .reel-slide');
+const heroBars = document.querySelectorAll('.hero-reel-indicator .bar');
+const heroTotal = heroSlides.length;
+let heroInterval;
+
+function heroReelNext() {
+  // Remove active from current
+  heroSlides[heroReelIndex].classList.remove('active');
+  heroBars[heroReelIndex].classList.remove('active');
+  // Advance
+  heroReelIndex = (heroReelIndex + 1) % heroTotal;
+  // Add active to next
+  heroSlides[heroReelIndex].classList.add('active');
+  heroBars[heroReelIndex].classList.add('active');
+}
+
+function startHeroReel() {
+  heroInterval = setInterval(heroReelNext, 5000);
+}
+
+// Start the reel
+if (heroSlides.length > 0) {
+  startHeroReel();
+}
+
+// ===== KEN BURNS SLIDESHOW =====
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slideshow-slide');
+const dots = document.querySelectorAll('.slideshow-dot');
+const totalSlides = slides.length;
+
+function goToSlide(index) {
+  slides.forEach(s => s.classList.remove('active'));
+  dots.forEach(d => d.classList.remove('active'));
+  currentSlide = index;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
+
+function nextSlide() {
+  goToSlide((currentSlide + 1) % totalSlides);
+}
+
+let slideInterval = setInterval(nextSlide, 5000);
+
+// Pause on hover
+const slideshowContainer = document.getElementById('slideshow');
+if (slideshowContainer) {
+  slideshowContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
+  slideshowContainer.addEventListener('mouseleave', () => {
+    slideInterval = setInterval(nextSlide, 5000);
+  });
+}
+
+// ===== BETA PRICING & REFERRAL =====
+var isBeta = false;
+var referralDiscount = 0;
+var BETA_DISCOUNT = 30;
+var REFERRAL_DISCOUNT = 10;
+var VALID_REFERRALS = {
+  'BETA2026': 15,
+  'FRIEND10': 10,
+  'STUDENT20': 20,
+  'WILLIAM': 25
+};
+
+function toggleBeta() {
+  isBeta = !isBeta;
+  document.getElementById('beta-switch').classList.toggle('on', isBeta);
+  document.getElementById('label-regular').classList.toggle('active', !isBeta);
+  document.getElementById('label-beta').classList.toggle('active', isBeta);
+  document.getElementById('beta-banner').style.display = isBeta ? 'block' : 'none';
+  updatePricing();
+}
+
+function applyReferral() {
+  var code = document.getElementById('referral-code').value.trim().toUpperCase();
+  var msg = document.getElementById('referral-msg');
+  if (!code) { msg.textContent = ''; return; }
+  if (VALID_REFERRALS[code]) {
+    referralDiscount = VALID_REFERRALS[code];
+    msg.textContent = '✓ Code applied! Extra ' + referralDiscount + '% off.';
+    msg.className = 'referral-msg ok';
+  } else {
+    referralDiscount = 0;
+    msg.textContent = '✗ Invalid code. Try BETA2026, FRIEND10, STUDENT20, or WILLIAM.';
+    msg.className = 'referral-msg err';
+  }
+  updatePricing();
+}
+
+function updatePricing() {
+  var totalDiscount = (isBeta ? BETA_DISCOUNT : 0) + referralDiscount;
+  document.querySelectorAll('.price-amount[data-base]').forEach(function(el) {
+    var base = parseInt(el.dataset.base);
+    var discounted = Math.round(base * (1 - totalDiscount / 100));
+    var origSpan = el.querySelector('.original');
+    if (totalDiscount > 0) {
+      if (!origSpan) {
+        origSpan = document.createElement('span');
+        origSpan.className = 'original';
+        el.insertBefore(origSpan, el.firstChild);
+      }
+      origSpan.textContent = '€' + base;
+      origSpan.style.display = 'inline';
+      el.childNodes.forEach(function(n){ if(n.nodeType===3) el.removeChild(n); });
+      el.appendChild(document.createTextNode(' €' + discounted));
+    } else if (origSpan) {
+      origSpan.style.display = 'none';
+    }
+  });
+  var payEl = document.getElementById('pay-amount');
+  if (payEl && typeof selectedPkg !== 'undefined') {
+    var p = PACKAGES[selectedPkg];
+    if (p) payEl.textContent = '€' + Math.round(p.total * (1 - totalDiscount / 100));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', updatePricing);
+
+// ===== PREMIUM ENGLISH FLUENCY =====
+function togglePremium() {
+  var info = document.getElementById('premium-info');
+  var btn = document.getElementById('premium-btn');
+  if (info.style.display === 'none') {
+    info.style.display = 'block';
+    btn.textContent = '⚡ Premium English Fluency Program ▲';
+    info.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    info.style.display = 'none';
+    btn.textContent = '⚡ Premium English Fluency Program';
+  }
+}
+
+function startPremiumCheckout() {
+  // Replace with your Stripe Payment Link for premium
+  window.open('https://buy.stripe.com/test_PREMIUM_LINK', '_blank');
+}
+
+</script>
+</body>
+</html>

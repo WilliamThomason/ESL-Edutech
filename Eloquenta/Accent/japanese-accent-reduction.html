@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Japanese Business Consultant — Accent Reduction</title>
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-dim:#64748b;--text-muted:#94a3b8;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;
+  --violet:#a78bfa;--rose:#fb7185;
+  --accent:var(--cyan);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;height:100vh;width:100vw;font-size:22px}
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden;background:linear-gradient(160deg,#020617 0%,#0a1628 100%)}
+.slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:5vh 8vw 8vh;opacity:0;
+  transition:opacity .45s;pointer-events:none;
+}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-inner{width:100%;max-width:85vw;margin:0 auto}
+
+.slide.title{align-items:flex-start;justify-content:center;padding-left:8vw}
+.slide.title h1{font-size:4.5rem;font-weight:800;line-height:1.1;color:#fff;margin-bottom:1rem}
+.slide.title h1 em{color:var(--cyan);font-style:normal}
+.slide.title .subtitle{font-size:1.6rem;color:var(--text-muted);font-weight:400;margin-bottom:1.5rem}
+.slide.title .tagline{font-size:1rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;border-left:3px solid var(--cyan);padding-left:1rem;margin-bottom:.8rem}
+
+.slide.section h2{font-size:5.5rem;font-weight:800;color:#fff;margin-bottom:.5rem}
+.slide.section h2 em{color:var(--cyan);font-style:normal}
+.slide.section .bar{width:120px;height:6px;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:3px;margin-top:1rem}
+
+.slide h3{font-size:2.4rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+.slide h3 em{color:var(--cyan);font-style:normal}
+.slide h4{font-size:1.15rem;color:var(--text-muted);font-weight:400;margin-bottom:1.8rem;letter-spacing:.5px}
+
+.content-grid{display:grid;gap:1rem;margin-top:1rem}
+.content-grid.two{grid-template-columns:1fr 1fr}
+.content-grid.three{grid-template-columns:1fr 1fr 1fr}
+.content-grid.four{grid-template-columns:1fr 1fr 1fr 1fr}
+
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.6rem;transition:border-color .3s}
+.card:hover{border-color:var(--border-light)}
+.card .label{font-size:.85rem;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.5rem;font-weight:600}
+.card .value{font-size:1.05rem;color:#fff;line-height:1.6;font-weight:500}
+.card .value strong{color:var(--cyan);font-weight:600}
+.card .value em{color:var(--amber);font-style:normal;font-weight:600}
+.card .sub{font-size:.85rem;color:var(--text-dim);margin-top:.5rem;line-height:1.5}
+
+.callout{background:rgba(34,211,238,.05);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;padding:1.2rem 1.6rem;margin-top:1.2rem}
+.callout .cl-title{font-size:.9rem;color:var(--cyan);font-weight:700;margin-bottom:.4rem;letter-spacing:.5px}
+.callout .cl-body{font-size:1rem;color:var(--text);line-height:1.6}
+
+.ref{font-size:.8rem;color:var(--text-dim);margin-top:.5rem;line-height:1.6}
+
+.ph-table{width:100%;margin-top:.8rem;border-spacing:0}
+.ph-table th{font-size:.85rem;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--border-light);font-weight:600}
+.ph-table td{font-size:1.05rem;color:#fff;padding:.7rem .8rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55}
+.ph-table tr:last-child td{border-bottom:none}
+.ph-table td:first-child{color:var(--cyan);font-weight:700;font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:1.1rem;white-space:nowrap;min-width:100px}
+.ph-table td .jp{color:var(--rose);font-weight:600}
+.ph-table td .en{color:var(--emerald);font-weight:600}
+
+.flow{display:flex;gap:.8rem;margin-top:1rem;align-items:stretch}
+.flow-step{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1rem;text-align:center;position:relative}
+.flow-step .num{width:2rem;height:2rem;border-radius:50%;background:rgba(34,211,238,.15);color:var(--cyan);font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;margin:0 auto .6rem}
+.flow-step .fs-title{font-size:1rem;color:#fff;font-weight:700;margin-bottom:.4rem}
+.flow-step .fs-body{font-size:.82rem;color:var(--text-dim);line-height:1.5}
+.flow-arrow{display:flex;align-items:center;color:var(--text-dim);font-size:1.4rem;flex-shrink:0;padding-bottom:2rem}
+
+.mp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:.8rem}
+.mp{background:rgba(34,211,238,.04);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;text-align:center}
+.mp .ipa{font-family:'SF Mono',Monaco,monospace;font-size:1.2rem;color:#fff;margin-bottom:.3rem}
+.mp .ipa span.l{color:var(--cyan)}
+.mp .ipa span.r{color:var(--rose)}
+.mp .gloss{font-size:.75rem;color:var(--text-dim)}
+
+/* Audio player */
+.audio-player{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:1.4rem 1.8rem;margin-top:1rem}
+.ap-title{font-size:.85rem;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.7rem;font-weight:600}
+.ap-pair{display:flex;gap:1rem;margin-bottom:.8rem;align-items:center}
+.ap-word{font-size:1.6rem;font-weight:700;color:#fff;min-width:8rem;font-family:'SF Mono',Monaco,monospace}
+.ap-word.l-word{color:var(--cyan)}
+.ap-word.r-word{color:var(--rose)}
+.ap-vs{font-size:1rem;color:var(--text-dim);font-weight:600}
+.ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem}
+.ap-btn{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;
+  padding:.6rem .8rem;cursor:pointer;transition:all .2s;
+  color:#fff;font-size:.9rem;font-weight:500;
+}
+.ap-btn:hover{background:rgba(34,211,238,.1);border-color:var(--cyan)}
+.ap-btn:active{transform:scale(.97)}
+.ap-btn .flag{font-size:1.2rem}
+.ap-btn .aname{font-size:.8rem;font-weight:600;color:#fff}
+.ap-btn .adial{font-size:.7rem;color:var(--text-dim)}
+.ap-btn .play-icon{margin-left:auto;font-size:.9rem;color:var(--cyan)}
+.ap-btn.playing{background:rgba(34,211,238,.15);border-color:var(--cyan)}
+.ap-status{font-size:.85rem;color:var(--text-dim);margin-top:.6rem;min-height:1.2rem}
+.ap-status.active{color:var(--emerald)}
+
+/* Teacher section */
+.teach-step{display:flex;gap:1rem;align-items:flex-start;margin-bottom:.8rem;padding:.8rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:10px}
+.teach-step .ts-num{width:1.8rem;height:1.8rem;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#000;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.teach-step .ts-body{flex:1}
+.teach-step .ts-title{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+.teach-step .ts-desc{font-size:.9rem;color:var(--text-muted);line-height:1.55}
+.teach-step .ts-tip{font-size:.8rem;color:var(--amber);margin-top:.25rem;font-style:italic}
+
+/* Progress bar */
+#progress{position:fixed;top:0;left:0;height:6px;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:0 3px 3px 0;z-index:100;transition:width .3s;box-shadow:0 0 12px rgba(34,211,238,.5)}
+#nav{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1.2rem;z-index:100}
+#nav button{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);padding:.6rem 1.4rem;border-radius:8px;font-size:.9rem;cursor:pointer;transition:background .2s}
+#nav button:hover{background:rgba(255,255,255,.12)}
+#slide-count{font-size:.85rem;color:var(--text-dim);min-width:4rem;text-align:center}
+
+.deck-wrapper{width:100vw;height:100vh;overflow:hidden}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head><body><!-- Eloquenta Brand Bar --><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+
+<div class="deck-wrapper">
+<div class="deck">
+
+<!-- SLIDE 1: Title -->
+<div class="slide title active" id="s1">
+  <div class="tagline">Eloquenta Accent Reduction</div>
+  <h1>English Pronunciation<br>for <em>Japanese</em> Business Professionals</h1>
+  <div class="subtitle">Evidence-based accent reduction for consultants, executives &amp; client-facing teams</div>
+  <div class="tagline" style="border-left-color:var(--violet)">Empirical phonetics · Targeted drills · Measurable outcomes</div>
+</div>
+
+<!-- SLIDE 2: The Problem -->
+<div class="slide section" id="s2">
+  <h2>The <em>Core</em> Challenge</h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 3: L1 Transfer -->
+<div class="slide" id="s3">
+  <h3>Why Japanese Speakers Struggle with English</h3>
+  <h4>First-language (L1) phonological transfer — the science</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">Japanese Phonology</div>
+      <div class="value">5 vowels. 1 consonant liquid (the alveolar tap [ɾ]). Moraic syllable timing. Pitch accent — not stress accent. Devoicing of /i u/ between voiceless consonants. No syllable-final consonants.</div>
+      <div class="sub">Vance (1987); Japanese Phonology (Wikipedia)</div>
+    </div>
+    <div class="card">
+      <div class="label">English Phonology</div>
+      <div class="value">14+ vowels. 2 liquids (/l/ and /r/). Stress-timed rhythm. Contrastive voicing. Syllable-final consonants. No moraic structure. Schwa reduction in unstressed syllables.</div>
+      <div class="sub">Non-native Pronunciations of English (Wikipedia)</div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="cl-title">THE BOTTLENECK</div>
+    <div class="cl-body">Japanese has <strong>one liquid phoneme /r/</strong> (realized as [ɾ] or sometimes [l]). English has <strong>two</strong> — rhotic /r/ and lateral /l/. Goto (1971) found that adult Japanese speakers <strong>cannot reliably perceive the acoustic difference</strong> between them. No perception → no production.</div>
+  </div>
+</div>
+
+<!-- SLIDE 4: The Phonetic Gap -->
+<div class="slide" id="s4">
+  <h3>The Phonetic Gap</h3>
+  <h4>Japanese speakers lack these English sounds entirely</h4>
+  <table class="ph-table">
+    <tr><th>Sound</th><th>Japanese Substitute</th><th>Result</th></tr>
+    <tr><td>/r/ [ɹ]</td><td>Alveolar tap [ɾ] — tongue taps ridge once</td><td>Sounds like /l/ or /d/ to English ears</td></tr>
+    <tr><td>/l/ [l]</td><td>No dedicated /l/ phoneme — allophonic variant of /r/</td><td>Sounds like /r/ — "light" → "right"</td></tr>
+    <tr><td>/θ/ /ð/ (th)</td><td>No dental fricatives — replaced by [s] or [z]</td><td>"think" → "sink", "this" → "zis"</td></tr>
+    <tr><td>/f/ /v/</td><td>/f/ → bilabial [ɸ]; /v/ → [b]</td><td>"very" → "bery", "video" → "bideo"</td></tr>
+    <tr><td>/w/</td><td>Japanese /w/ is compressed-lip [w͍] — narrower aperture</td><td>Close but perceptually marked</td></tr>
+    <tr><td>Vowel reduction</td><td>Every vowel fully pronounced — no schwa /ə/</td><td>"decoration" → [dekoɾeːɕoɴ], not [dekəreɪʃn]</td></tr>
+  </table>
+  <div class="ref">Hallé, Best &amp; Levitt (1999); Best &amp; Strange (1992); Non-native Pronunciations of English (Wikipedia)</div>
+</div>
+
+<!-- SLIDE 5: R/L — The Deep Dive -->
+<div class="slide section" id="s5">
+  <h2>The <em>R/L</em> Problem</h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 6: Minimal Pairs -->
+<div class="slide" id="s6">
+  <h3>Minimal Pairs — R vs L</h3>
+  <h4>Words that differ by only one sound. Critical for business communication.</h4>
+  <div class="mp-grid">
+    <div class="mp"><div class="ipa"><span class="l">l</span>ight / <span class="r">r</span>ight</div><div class="gloss">Direction / Correct</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>oad / <span class="r">r</span>oad</div><div class="gloss">Carry / Street</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>ock / <span class="r">r</span>ock</div><div class="gloss">Secure / Stone</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>ed / <span class="r">r</span>ed</div><div class="gloss">Past lead / Colour</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>amb / <span class="r">r</span>am</div><div class="gloss">Sheep / Impact</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>ow / <span class="r">r</span>ow</div><div class="gloss">Height / Argument</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>iver / <span class="r">r</span>iver</div><div class="gloss">Organ / Waterway</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>ight / <span class="r">r</span>ate</div><div class="gloss">Illumination / Speed</div></div>
+    <div class="mp"><div class="ipa"><span class="l">l</span>ice / <span class="r">r</span>ice</div><div class="gloss">Frozen water / Grain</div></div>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    <div class="cl-title">REAL-WORLD CONSEQUENCES</div>
+    <div class="cl-body">Gift shop Otaru: "decoration" → "decolation". Yodobashi Camera: "frame" vs "flame". Irish pub Sapporo: "Cuba libre" → "Cuba ribre". These are not jokes — they illustrate the perceptual reality in everyday Japanese English.</div>
+  </div>
+  <div class="ref">Kuzniak &amp; Zapf (2004); Wikipedia / Non-native Pronunciations of English</div>
+</div>
+
+<!-- SLIDE 7: Audio Player — 7 Native Accents -->
+<div class="slide" id="s7">
+  <h3>Listen: <em>light</em> vs <em>right</em> — 7 Native English Accents</h3>
+  <h4>Click a flag button to hear native pronunciation. Compare your recording against these models.</h4>
+  <div class="audio-player">
+    <div class="ap-title">Minimal Pair: light / right — Select Accent</div>
+    <div class="ap-pair">
+      <div class="ap-word l-word">/laɪt/</div>
+      <div class="ap-vs">vs</div>
+      <div class="ap-word r-word">/raɪt/</div>
+    </div>
+    <div class="ap-grid" id="ap-grid">
+      <!-- Buttons injected by JS -->
+    </div>
+    <div class="ap-status" id="ap-status">Select an accent above to play both words.</div>
+  </div>
+  <div class="callout" style="margin-top:16px">
+    <div class="cl-title">HOW TO USE THIS PLAYER</div>
+    <div class="cl-body">
+      The player uses your browser's built-in text-to-speech with <strong>locale-specific voices</strong> (en-US, en-GB, en-AU, en-ZA, en-IN, en-IE, en-SC).
+      On desktop Chrome/Edge, all 7 locales are typically available. On Safari, some voices may require a download prompt.
+      Record yourself saying each word and compare directly. For production deployment, integrate Google Cloud TTS / AWS Polly for higher-quality native voice samples.
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: L/R Formation — Practical Technique -->
+<div class="slide" id="s8">
+  <h3>Forming /r/ and /l/ Correctly</h3>
+  <h4>Practical articulatory training — what to do with your tongue</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">English /r/ — Postalveolar Approximant [ɹ]</div>
+      <div class="value">
+        <strong>1.</strong> Curl the tip of your tongue <strong>BACK toward the roof</strong> — but <em>do not touch</em> the alveolar ridge.<br><br>
+        <strong>2.</strong> Slightly round your lips (think "oo" shape).<br><br>
+        <strong>3.</strong> The sides of your tongue touch your upper molars. The tip stays <strong>suspended in the air</em>.<br><br>
+        <em>Drill: Say "rrrrr" — if your tongue tips forward and taps the ridge, you're making Japanese [ɾ]. Curl back. Lift the tip off the ridge.</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">English /l/ — Alveolar Lateral [l]</div>
+      <div class="value">
+        <strong>1.</strong> Press the tip of your tongue <strong>firmly AGAINST</strong> the alveolar ridge (bumpy area behind upper front teeth).<br><br>
+        <strong>2.</strong> Keep the tip pressed while letting air flow around the <strong>sides</strong> of the tongue ("lateral" air).<br><br>
+        <strong>3.</strong> Do NOT curl the tongue back. Keep it flat and forward.<br><br>
+        <em>Drill: Say "lllll" and slowly curl the tongue back — you'll hear /l/ degrade into /r/. The curl-back is exactly what causes the confusion. Prevent it.</em>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="cl-title">THE KEY INSIGHT</div>
+    <div class="cl-body">The two sounds are nearly identical in tongue POSITION — the difference is 5mm of tip placement and whether it touches or hovers. This is invisible to Japanese ears. <strong>Articulatory training, not just listening, is what works</strong> (Goto 1971; McClelland, Fiez &amp; McCandliss 2002).</div>
+  </div>
+</div>
+
+<!-- SLIDE 9: What the Research Says -->
+<div class="slide section" id="s9">
+  <h2>What the <em>Research</em> Says</h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 10: Key Studies -->
+<div class="slide" id="s10">
+  <h3>Landmark Studies on R/L Acquisition</h3>
+  <h4>50 years of empirical evidence</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">Goto (1971) — The Foundation</div>
+      <div class="value">Adult Japanese L2 learners <strong>cannot perceive</strong> the /r/-/l/ acoustic difference — yet some <strong>learned to produce</strong> it through articulatory training alone, without hearing it. Perception and production can be trained separately.</div>
+      <div class="sub">Neuropsychologia, 9(3), 317-323</div>
+    </div>
+    <div class="card">
+      <div class="label">Miyawaki et al. (1975) — The Surprise</div>
+      <div class="value">When /r/ and /l/ were acoustically manipulated to sound <strong>less like speech</strong> (formant removal), Japanese speakers could distinguish them <strong>as well as native English speakers</strong>. The problem is phonological processing, not auditory ability.</div>
+      <div class="sub">Perception &amp; Psychophysics, 18(5), 331-340</div>
+    </div>
+    <div class="card">
+      <div class="label">Bradlow et al. (1997) — Transfer</div>
+      <div class="value">Perceptual /r/-/l/ training <strong>transferred to improved production</strong> — but with wide individual variation. Some learners improved dramatically; others showed minimal production gains despite perceptual progress. Production drills are still needed.</div>
+      <div class="sub">JASA, 101(4), 2299-2310</div>
+    </div>
+    <div class="card">
+      <div class="label">Takagi &amp; Mann (1995) — The Limit</div>
+      <div class="value">Even Japanese speakers with <strong>12+ years in the US</strong> still identify /r/ and /l/ less accurately than natives. Extended naturalistic exposure alone <strong>is not sufficient</strong>. Structured training is required.</div>
+      <div class="sub">Applied Psycholinguistics, 16(4), 379-405</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Training That Works -->
+<div class="slide" id="s11">
+  <h3>Evidence-Based Training Protocols</h3>
+  <h4>Methods validated by controlled studies</h4>
+  <div class="flow">
+    <div class="flow-step"><div class="num">1</div><div class="fs-title">High-Variability Training</div><div class="fs-body">Lively et al. (1993): Train with <strong>multiple speakers</strong> in few contexts. Beats single-talker training.</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="num">2</div><div class="fs-title">Minimal Pairs + Feedback</div><div class="fs-body">Lively et al. (1994): 3-week protocol. rock/lock, rice/lice. 5 speakers. Feedback. Results <strong>persisted at follow-up</strong>.</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="num">3</div><div class="fs-title">Articulatory Training</div><div class="fs-body">Goto (1971): Physical placement — tongue position, lip rounding. Effective <strong>even when perception fails</strong>.</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="num">4</div><div class="fs-title">Production Practice</div><div class="fs-body">Bradlow et al. (1997): Perceptual gains transfer to production. <strong>Add focused production drills</strong> with phonetic feedback.</div></div>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    <div class="cl-title">PRIORITY NOTE</div>
+    <div class="cl-body">Guion et al. (2000): Japanese speakers improve <strong>more on /r/ than on /l/</strong>. English /l/ is perceptually closer to Japanese /r/ than /r/ is. Allocate <strong>more training time to /l/</strong> in weeks 1-2.</div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Teacher Section Intro -->
+<div class="slide section" id="s12">
+  <h2>For <em>Teachers</em></h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 13: Teaching Accent Reduction -->
+<div class="slide" id="s13">
+  <h3>Teaching Accent Reduction: A Teacher's Guide</h3>
+  <h4>How to run effective sessions with Japanese business professionals</h4>
+  <div class="teach-step">
+    <div class="ts-num">1</div>
+    <div class="ts-body">
+      <div class="ts-title">Diagnose Before You Teach</div>
+      <div class="ts-desc">Record a 2-minute spontaneous speaking sample (client meeting role-play). Identify the student's specific error pattern: Is it R/L? TH? Vowels? Epenthesis? Prosody? Every Japanese learner has a different profile. Don't use a one-size-fits-all curriculum.</div>
+      <div class="ts-tip">💡 Tip: Use the 9-question diagnostic at slide 15. Takes 10 minutes and gives you a precise starting point.</div>
+    </div>
+  </div>
+  <div class="teach-step">
+    <div class="ts-num">2</div>
+    <div class="ts-body">
+      <div class="ts-title">Separate Perception from Production</div>
+      <div class="ts-desc">Don't jump to production drills before the student can <em>hear</em> the difference. Spend session 1 on perception: minimal pair identification with feedback. Use 5+ speaker recordings (Lively et al. 1993). The 7-accent audio player on slide 7 is your primary tool here.</div>
+      <div class="ts-tip">💡 Tip: If a student can't hear the /r/-/l/ difference after 3 sessions, switch to articulatory-only training (Goto 1971 method). It works without perception.</div>
+    </div>
+  </div>
+  <div class="teach-step">
+    <div class="ts-num">3</div>
+    <div class="ts-body">
+      <div class="ts-title">Use the Mirror — Always</div>
+      <div class="ts-desc">Articulatory training requires visual feedback. Every student must see their own tongue position. For /r/: tongue tip curled back, not touching. For /l/: tip pressed to ridge. For TH: tongue between teeth. For F/V: upper teeth on lower lip. Group classes need a mirror per student or phone selfie camera.</div>
+      <div class="ts-tip">💡 Tip: Have students place a finger lightly on their chin. For /r/, the chin drops slightly. For /l/, it stays still. Kinesthetic feedback accelerates learning.</div>
+    </div>
+  </div>
+  <div class="teach-step">
+    <div class="ts-num">4</div>
+    <div class="ts-body">
+      <div class="ts-title">Prioritise by Business Impact</div>
+      <div class="ts-desc">Not all errors are equal. In client-facing roles, the priority order is: (1) Eliminate epenthesis — "risuku" damages intelligibility instantly. (2) Fix vowel reduction — schwa is the #1 predictor of foreign accent (Flege et al. 1996). (3) Train R/L — visible, embarrassing errors. (4) Stress and prosody — the hidden accent that exhausts listeners.</div>
+      <div class="ts-tip">💡 Tip: Use the student's actual client emails and meeting transcripts as drilling material. Authentic content > generic textbook sentences.</div>
+    </div>
+  </div>
+  <div class="teach-step">
+    <div class="ts-num">5</div>
+    <div class="ts-body">
+      <div class="ts-title">Record, Compare, Repeat</div>
+      <div class="ts-desc">Every session: record the student on Day 1 phrases. Re-record in Weeks 2, 4, 6. Play both recordings side by side. This is the most powerful motivator — students hear their own improvement. It also provides objective data for the "measuring progress" component (slide 20).</div>
+      <div class="ts-tip">💡 Tip: Use a consistent 10-phrase benchmark set each time: "I think we should review the contract. Let's schedule a call with our partners in London. The next step is to finalize our proposal."</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: Teaching Scripts -->
+<div class="slide" id="s14">
+  <h3>Teaching Accent Reduction: Scripts &amp; Drills</h3>
+  <h4>Ready-to-use classroom scripts for teachers</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">Warm-Up Script (5 min)</div>
+      <div class="value">
+        "Today we're going to retrain how your tongue makes two sounds. Watch my mouth — [demonstrate /r/ vs /l/ slowly]. Put your hand under your chin. For R, your tongue pulls back and your chin drops slightly. For L, your tongue presses forward and up. Try it — [l]ight... [r]ight... again..."<br><br>
+        <em>Before any drill, do 20 repetitions with mouth open and tongue visible. Slow-motion first.</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Perception Drill Script</div>
+      <div class="value">
+        "You'll hear two words. Tell me: same or different. [Play 'light' then 'right'] — different. [Play 'light' then 'light'] — same. You get 10 rounds. I'll go faster each time."<br><br>
+        <em>Use the 7-accent player. Start with USA/UK (most difference), end with accents where /l/ and /r/ are closer (SC, IRE).</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Epenthesis Drill Script</div>
+      <div class="value">
+        "Japanese wants to add a vowel after every consonant. English doesn't. Say 'next' — one syllable. Don't say 'nekusuto'. [Student tries]. Good. Now 'risk' — one syllable. Don't say 'risuku'. Let's count: nek-su-to = 3 syllables = wrong. Next = 1 = right."<br><br>
+        <em>Practice: text, script, product, strength, strict. The harder the cluster, the more satisfying the success.</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Prosody Script</div>
+      <div class="value">
+        "In English, important words are LOUDER and LONGER. Listen: 'we need to RE-view the con-TRACT.' Two words in caps — those get stress. Now try it. Make RE and CONTRACT louder. [Student tries]. Yes! The other words — 'we need to' — say them fast and quiet, like [schwa sounds]."</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Assessment Grid -->
+<div class="slide" id="s15">
+  <h3>Assessment: 9-Point Diagnostic</h3>
+  <h4>Use this in Session 1 to identify the student's profile</h4>
+  <table class="ph-table">
+    <tr><th>#</th><th>Test</th><th>What You're Checking</th><th>Score (1-5)</th></tr>
+    <tr><td>1</td><td>Minimal pair: light/right, load/road, lock/rock</td><td>R/L perception</td><td></td></tr>
+    <tr><td>2</td><td>Production: "The river flows slowly" (3 /r/, 2 /l/)</td><td>R/L production accuracy</td><td></td></tr>
+    <tr><td>3</td><td>"I THINK this is THROUGH" — 4 TH sounds</td><td>Dental fricative /θ/</td><td></td></tr>
+    <tr><td>4</td><td>"Very FINE, we have FIVE options"</td><td>/f/ vs /v/ and /b/</td><td></td></tr>
+    <tr><td>5</td><td>Read: "next, risk, text, product, strength"</td><td>Epenthesis frequency</td><td></td></tr>
+    <tr><td>6</td><td>Read: "the decoration of the apartment"</td><td>Schwa /ə/ reduction</td><td></td></tr>
+    <tr><td>7</td><td>Saying: "The PROposal is aBOVE budget"</td><td>Stress placement</td><td></td></tr>
+    <tr><td>8</td><td>Spontaneous: "Tell me about your current project"</td><td>Overall intelligibility</td><td></td></tr>
+    <tr><td>9</td><td>Intonation at sentence boundaries</td><td>Pitch/rise-fall patterns</td><td></td></tr>
+  </table>
+  <div class="callout">
+    <div class="cl-title">HOW TO SCORE</div>
+    <div class="cl-body">1 = no ability, 3 = inconsistent, 5 = near-native. Sum scores 1-5 = priority focus areas (fix these first). Scores above 30/45 = maintain and refine. Below 15 = intensive work needed across all domains. Re-test at Weeks 4 and 8.</div>
+  </div>
+</div>
+
+<!-- SLIDE 16: Beyond R/L -->
+<div class="slide section" id="s16">
+  <h2>Beyond <em>R/L</em></h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 17: TH, F/V, Syllable Structure -->
+<div class="slide" id="s17">
+  <h3>TH, F/V, and Syllable-Final Consonants</h3>
+  <h4>Three high-frequency business pronunciation challenges</h4>
+  <div class="content-grid three">
+    <div class="card">
+      <div class="label">/θ/ /ð/ — "TH" Sounds</div>
+      <div class="value">Japanese lacks dental fricatives. "Think" → "sink", "this" → "zis", "through" → "suru".</div>
+      <div class="sub">Drill: Bite tongue tip gently. Blow air. Mirror check. <em>"I think this is the right path through the data."</em></div>
+    </div>
+    <div class="card">
+      <div class="label">/f/ /v/</div>
+      <div class="value">/f/ → bilabial [ɸ] (blow through lips, not teeth). /v/ → [b] (no voicing distinction without teeth-lip contact).</div>
+      <div class="sub">Drill: Bite lower lip with upper teeth. <em>"We have five viable alternatives."</em> Feel teeth-lip contact on every /f/ and /v/.</div>
+    </div>
+    <div class="card">
+      <div class="label">Vowel Epenthesis</div>
+      <div class="value">Vowel insertion after consonants: "product" → "purodakuto", "risk" → "risuku". Destroys English rhythm entirely.</div>
+      <div class="sub">Drill: Consonant clusters without vowels. <em>"Sixths" [sɪksθs] — one syllable, five consonants. Feel each consonant connect without a vowel gap between them.</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18: Rhythm and Prosody -->
+<div class="slide" id="s18">
+  <h3>Rhythm, Stress and Prosody</h3>
+  <h4>The hidden accent — why Japanese English sounds "flat" to English ears</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">Mora-Timed → Stress-Timed</div>
+      <div class="value">Japanese is <strong>mora-timed</strong> — equal syllable duration. English is <strong>stress-timed</strong> — content words (nouns, verbs, adjectives) are <strong>louder, longer, higher-pitched</strong>; function words (the, of, to) are reduced to schwa or lost entirely.</div>
+    </div>
+    <div class="card">
+      <div class="label">Pitch Accent → Stress Accent</div>
+      <div class="value">Japanese uses <strong>pitch</strong> to define words (<em>hashi</em> = chopsticks vs bridge). English uses <strong>loudness and length</strong> (<em>REcord</em> vs <em>reCORD</em>). Japanese speakers apply pitch where English expects stress, sounding monotone.</div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="cl-title">WHY THIS MATTERS IN BUSINESS</div>
+    <div class="cl-body">Stressed syllables carry <strong>information and emphasis</strong>. "We need to reVIEW the conTRACT" — stress shows which words matter. Without it, English listeners report fatigue. In a pitch: "We have a proPOSAL from our partNER" — lost stress = lost impact.</div>
+  </div>
+</div>
+
+<!-- SLIDE 19: Vowel Reduction -->
+<div class="slide" id="s19">
+  <h3>Schwa and Vowel Reduction</h3>
+  <h4>The single biggest predictor of perceived foreign accent</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">The Schwa /ə/</div>
+      <div class="value">English unstressed syllables reduce to a neutral [ə]. Japanese speakers pronounce the <strong>written vowel</strong>: "decoration" → [dekoɾeːɕoɴ] with full vowels instead of [dekəreɪʃn].</div>
+      <div class="sub">This is the #1 predictor of perceived foreign accent — not consonants (Flege et al. 1996).</div>
+    </div>
+    <div class="card">
+      <div class="label">5 Vowels vs 14+</div>
+      <div class="value">Japanese 5 monophthongs collapse English vowels: /æ/ and /ʌ/ → /a/, /ɪ/ and /iː/ → /i/, /ʊ/ and /uː/ → /uː/. Pairs to master: trap [æ] vs cup [ʌ]; ship [ɪ] vs sheep [iː]; pull [ʊ] vs pool [uː].</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20: Program Structure -->
+<div class="slide section" id="s20">
+  <h2>The <em>Program</em></h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 21: Course Outline -->
+<div class="slide" id="s21">
+  <h3>8-Week Intensive — Course Outline</h3>
+  <h4>Prioritised by research-backed impact on intelligibility</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">Weeks 1-2: Perception Training</div>
+      <div class="value">High-variability minimal pair training (Lively et al. 1994 protocol). 5 speakers, feedback, multiple sessions. Focus: /r/-/l/, /θ/-/s/, /v/-/b/, vowel pairs. Build accurate perception before production.</div>
+    </div>
+    <div class="card">
+      <div class="label">Weeks 3-4: Articulatory Foundation</div>
+      <div class="value">Physical placement training with mirror. Tongue position drills. Lip rounding for /r/. Teeth-lip contact for /f v/. TH with tongue between teeth. Epenthesis elimination: consonant cluster practice.</div>
+    </div>
+    <div class="card">
+      <div class="label">Weeks 5-6: Prosody and Rhythm</div>
+      <div class="value">Stress-timed rhythm drills. Content vs function word exercises. Schwa reduction practice. Sentence-level emphasis. Business phrase drilling: "Let me clarify our position on this matter."</div>
+    </div>
+    <div class="card">
+      <div class="label">Weeks 7-8: Business Application</div>
+      <div class="value">Client meeting role-plays with accent focus. Presentation rehearsal with recording and review. Email-to-speech: reading business documents aloud. Self-assessment with before/after recordings.</div>
+    </div>
+  </div>
+  <div class="ref">Protocol informed by: Lively et al. (1993, 1994); Bradlow et al. (1997); Goto (1971); McClelland et al. (2002); Guion et al. (2000)</div>
+</div>
+
+<!-- SLIDE 22: Measuring Progress -->
+<div class="slide" id="s22">
+  <h3>Measuring Progress</h3>
+  <h4>Objective benchmarks — not subjective impressions</h4>
+  <div class="content-grid three">
+    <div class="card">
+      <div class="label">Acoustic Analysis</div>
+      <div class="value">Track F2/F3 formant values for /r/ and /l/ (Kuzniak &amp; Zapf 2004). Compare to native speaker ranges. Measure progress in Hertz, not feelings.</div>
+    </div>
+    <div class="card">
+      <div class="label">Native Listener Rating</div>
+      <div class="value">Native English speakers rate recordings on 9-point scale (1 = heavy accent, 9 = native-like). Use multiple listeners to average out bias.</div>
+    </div>
+    <div class="card">
+      <div class="label">Communicative Intelligibility</div>
+      <div class="value">Dictation tests: native listeners transcribe what they hear. Target: &gt;90% word accuracy in controlled conversation. This is the metric that matters in business.</div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="cl-title">EXPECTED OUTCOMES</div>
+    <div class="cl-body">Lively et al. (1994): <strong>significant improvement after just 3 weeks</strong> of targeted training. Takagi &amp; Mann (1995): 12 years in-country without training still falls short of native performance. Structured training delivers results that natural exposure cannot. For a business consultant, every intelligibility gain = credibility in client interactions.</div>
+  </div>
+</div>
+
+<!-- SLIDE 23: Summary -->
+<div class="slide section" id="s23">
+  <h2>The <em>Summary</em></h2>
+  <div class="bar"></div>
+</div>
+
+<!-- SLIDE 24: Key Takeaways -->
+<div class="slide" id="s24">
+  <h3>Six Evidence-Based Principles</h3>
+  <h4>For Japanese business English improvement</h4>
+  <div class="content-grid two">
+    <div class="card">
+      <div class="label">1 · R/L Is Phonological, Not Auditory</div>
+      <div class="value">The problem isn't hearing — it's categorical perception. Miyawaki et al. (1975): Japanese ears CAN hear the difference acoustically. The brain maps both to one category. Training creates two new categories.</div>
+    </div>
+    <div class="card">
+      <div class="label">2 · Production Needs Articulatory Training</div>
+      <div class="value">Goto (1971): You can produce /r/ and /l/ through physical placement alone — even without perceiving the difference. Mirror and tongue-position drills are essential.</div>
+    </div>
+    <div class="card">
+      <div class="label">3 · Vowels Matter More Than Consonants</div>
+      <div class="value">Schwa reduction and vowel quality account for more perceived accent than any consonant (Flege et al. 1996). The 5-vowel vs 14+ gap must be explicitly trained.</div>
+    </div>
+    <div class="card">
+      <div class="label">4 · Epenthesis Is the Intelligibility Killer</div>
+      <div class="value">"Nekusuto" instead of "next." Added vowels break word recognition. Eliminating epenthesis gives the fastest intelligibility return of any single intervention.</div>
+    </div>
+    <div class="card">
+      <div class="label">5 · Training Beats Exposure</div>
+      <div class="value">12 years in-country ≠ native-like R/L (Takagi &amp; Mann 1995). 3 weeks of targeted training = significant gains (Lively et al. 1994). Method matters more than duration.</div>
+    </div>
+    <div class="card">
+      <div class="label">6 · Prosody Is Business Critical</div>
+      <div class="value">Consonant accuracy without stress still sounds foreign. Prosody carries information, emphasis, and engagement. In client meetings, how you sound = how you're perceived.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 25: References -->
+<div class="slide" id="s25">
+  <h3>References</h3>
+  <h4>Empirical sources informing this program</h4>
+  <div class="ref" style="font-size:13px;line-height:1.8;color:var(--text-muted);margin-top:16px">
+    Best, C. &amp; Strange, W. (1992). <em>Journal of Phonetics</em>, 20(3), 305-330.
+    Bradlow, A. et al. (1997). <em>JASA</em>, 101(4), 2299-2310.
+    Flege, J.E. et al. (1996). <em>JASA</em>, 99(2), 1161-1173.
+    Goto, H. (1971). <em>Neuropsychologia</em>, 9(3), 317-323.
+    Guion, S. et al. (2000). <em>JASA</em>, 107(5), 2711-2724.
+    Kuzniak, K. &amp; Zapf, J. (2004). <em>IU Linguistic Club Working Papers</em>, 4.
+    Lively, S. et al. (1993). <em>JASA</em>, 94(3), 1242-1255.
+    Lively, S. et al. (1994). <em>JASA</em>, 96(4), 2076-2087.
+    McClelland, J.L. et al. (2002). <em>Physiology &amp; Behavior</em>, 77(4-5), 657-662.
+    Miyawaki, K. et al. (1975). <em>Perception &amp; Psychophysics</em>, 18(5), 331-340.
+    Takagi, N. &amp; Mann, V. (1995). <em>Applied Psycholinguistics</em>, 16(4), 379-405.
+    Vance, T. (1987). <em>An Introduction to Japanese Phonology</em>, SUNY Press.
+    <br>Wikipedia: Japanese Phonology · Perception of English /r/ and /l/ by Japanese Speakers · Non-native Pronunciations of English (May 2026)
+  </div>
+</div>
+
+<!-- SLIDE 26: Closing -->
+<div class="slide title" id="s26">
+  <div class="tagline">Eloquenta Accent Reduction</div>
+  <h1>Let's Build Your<br><em>Accent Program</em></h1>
+  <div class="subtitle">Evidence-based · Business-focused · Measurable</div>
+  <div style="margin-top:40px;font-size:16px;color:var(--text-dim);border-left:3px solid var(--cyan);padding-left:16px">
+    Assessment → Targeted Training → Measurable Progress
+  </div>
+</div>
+
+</div><!-- /deck -->
+</div><!-- /deck-wrapper -->
+
+<div id="progress"></div>
+<div id="nav">
+  <button onclick="prev()">← Prev</button>
+  <span id="slide-count">1 / 26</span>
+  <button onclick="next()">Next →</button>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // --- Audio Player ---
+  var accents = [
+    {code:'en-US', flag:'🇺🇸', name:'American',  dialect:'General American', locale:'en-US'},
+    {code:'en-GB', flag:'🇬🇧', name:'British',   dialect:'Received Pronunciation', locale:'en-GB'},
+    {code:'en-AU', flag:'🇦🇺', name:'Australian',dialect:'General Australian', locale:'en-AU'},
+    {code:'en-ZA', flag:'🇿🇦', name:'S. African',dialect:'South African English', locale:'en-ZA'},
+    {code:'en-IN', flag:'🇮🇳', name:'Indian',    dialect:'Indian English', locale:'en-IN'},
+    {code:'en-IE', flag:'🇮🇪', name:'Irish',     dialect:'Irish English', locale:'en-IE'},
+    {code:'en-SC', flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', name:'Scottish',dialect:'Scottish English', locale:'en-GB-scotland'},
+  ];
+
+  var audioGrid = document.getElementById('ap-grid');
+  var statusEl = document.getElementById('ap-status');
+  var currentUtterance = null;
+
+  function buildPlayer(){
+    if(!('speechSynthesis' in window)){
+      audioGrid.innerHTML = '<div style="color:var(--rose);font-size:14px">Speech synthesis not supported in this browser. Use Chrome or Edge for full functionality.</div>';
+      return;
+    }
+    audioGrid.innerHTML = '';
+    accents.forEach(function(a, i){
+      var btn = document.createElement('button');
+      btn.className = 'ap-btn';
+      btn.dataset.index = i;
+      btn.innerHTML = '<span class="flag">'+a.flag+'</span><div><div class="aname">'+a.name+'</div><div class="adial">'+a.dialect+'</div></div><span class="play-icon">▶</span>';
+      btn.onclick = function(){ playAccent(i); };
+      audioGrid.appendChild(btn);
+    });
+  }
+
+  function playAccent(index){
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+
+    // Reset all buttons
+    var btns = audioGrid.querySelectorAll('.ap-btn');
+    btns.forEach(function(b){ b.classList.remove('playing'); });
+
+    var a = accents[index];
+    var btn = btns[index];
+    btn.classList.add('playing');
+    statusEl.textContent = 'Playing: ' + a.flag + ' ' + a.name + ' — "/laɪt/"';
+    statusEl.className = 'ap-status active';
+
+    function speak(text, cb){
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = a.locale;
+      // Try to find a matching voice
+      var voices = speechSynthesis.getVoices();
+      var match = voices.filter(function(v){ return v.lang === a.locale || v.lang.indexOf(a.code) === 0; });
+      if(match.length > 0) u.voice = match[0];
+      u.rate = 0.8; // slightly slower for clarity
+      u.onend = cb || function(){};
+      u.onerror = function(){ statusEl.textContent = 'Error playing. Try another accent.'; };
+      speechSynthesis.speak(u);
+      currentUtterance = u;
+    }
+
+    // Play "light" then "right"
+    speak('light', function(){
+      statusEl.textContent = 'Playing: ' + a.flag + ' ' + a.name + ' — "/raɪt/"';
+      speak('right', function(){
+        statusEl.textContent = a.flag + ' ' + a.name + ' — light / right played.';
+        statusEl.className = 'ap-status';
+        btn.classList.remove('playing');
+      });
+    });
+  }
+
+  // Chrome loads voices asynchronously
+  if('speechSynthesis' in window){
+    speechSynthesis.onvoiceschanged = buildPlayer;
+    // Also try immediately (Firefox loads synchronously)
+    if(speechSynthesis.getVoices().length > 0) buildPlayer();
+    // And after a short delay for Chrome
+    setTimeout(buildPlayer, 300);
+  }
+
+  // --- Slide Navigation ---
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+  var SK = 'accentReduxDeckV2';
+
+  function show(n){
+    n = (n + total) % total;
+    for(var i = 0; i < total; i++){
+      slides[i].classList.toggle('active', i === n);
+    }
+    current = n;
+    document.getElementById('slide-count').textContent = (n + 1) + ' / ' + total;
+    document.getElementById('progress').style.width = ((n + 1) / total * 100).toFixed(1) + '%';
+    try { localStorage.setItem(SK, n); } catch(e){}
+    // Pause audio when leaving slide 7
+    if(n !== 6) speechSynthesis.cancel();
+  }
+  function next(){ show(current + 1); }
+  function prev(){ show(current - 1); }
+  window.next = next;
+  window.prev = prev;
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'Backspace'){ e.preventDefault(); prev(); }
+    else if(e.key === 'Home'){ e.preventDefault(); show(0); }
+    else if(e.key === 'End'){ e.preventDefault(); show(total - 1); }
+  });
+
+  var touchStartX = 0;
+  document.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].clientX; });
+  document.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+  });
+
+  try { var s = localStorage.getItem(SK); if(s !== null) current = parseInt(s, 10) || 0; } catch(e){}
+  show(current);
+})();
+</script>
+</body></html>

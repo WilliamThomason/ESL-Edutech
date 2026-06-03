@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Eloquenta — Eloquence Levels Curriculum</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../Curriculum/eloquent-branding.css">
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --gold:#fbbf24;--cyan:#22d3ee;--emerald:#34d399;--violet:#a78bfa;--rose:#fb7185;--orange:#f97316;
+  --band-a:#22d3ee;--band-b:#a78bfa;--band-c:#fbbf24;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;padding-top:48px}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ═══ HERO ═══ */
+.hero{position:relative;min-height:320px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 20px 40px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.3) saturate(1.1)}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(2,6,23,.7) 0%,rgba(2,6,23,.95) 100%)}
+.hero-content{position:relative;z-index:2}
+.hero h1{font-family:'Playfair Display',serif;font-size:3.2rem;font-weight:900;color:var(--gold);letter-spacing:-1px}
+.hero h1 .o{color:var(--cyan)}
+.hero .subtitle{font-size:1.1rem;color:var(--text-muted);margin-top:12px;font-weight:400}
+.hero .tagline{font-size:.75rem;color:var(--text-dim);margin-top:8px;letter-spacing:3px;text-transform:uppercase}
+.hero-cta{display:flex;gap:12px;margin-top:24px;justify-content:center;flex-wrap:wrap}
+.hero-cta a{padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all .15s}
+.hero-cta .cta-primary{background:var(--gold);color:#000}
+.hero-cta .cta-primary:hover{background:#fcd34d;transform:translateY(-1px)}
+.hero-cta .cta-secondary{border:1px solid var(--border-light);color:var(--text)}
+.hero-cta .cta-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* ═══ NAV ═══ */
+.curriculum-nav{display:flex;justify-content:center;gap:8px;padding:20px 20px 30px;flex-wrap:wrap}
+.band-btn{padding:8px 20px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:1px}
+.band-btn:hover{border-color:var(--gold);color:var(--gold)}
+.band-btn.active{background:rgba(251,191,36,.1);border-color:var(--gold);color:var(--gold)}
+
+/* ═══ LEVEL GRID ═══ */
+.levels{max-width:1060px;margin:0 auto;padding:0 20px 60px}
+.level-section{margin-bottom:48px}
+.level-section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:20px;padding-left:4px}
+
+/* ═══ LEVEL CARD ═══ */
+.level-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;margin-bottom:16px;overflow:hidden;transition:all .2s;position:relative}
+.level-card:hover{border-color:var(--border-light);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.level-header{padding:20px 24px;display:flex;align-items:flex-start;gap:16px;cursor:pointer;user-select:none}
+.level-header:hover{background:var(--bg-hover)}
+
+/* Badge with level-colored accent */
+.level-badge{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0;text-align:center;line-height:1.2;position:relative;overflow:hidden}
+.level-badge::before{content:'';position:absolute;inset:0;opacity:.15}
+.level-badge::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.level-badge.a1m{background:#0c4a6e;color:#67e8f9}.level-badge.a1m::after{background:#22d3ee}
+.level-badge.a1{background:#164e63;color:#67e8f9}.level-badge.a1::after{background:#22d3ee}
+.level-badge.a1p{background:#0c4a6e;color:#67e8f9}.level-badge.a1p::after{background:#22d3ee}
+.level-badge.a2m{background:#064e3b;color:#6ee7b7}.level-badge.a2m::after{background:#34d399}
+.level-badge.a2{background:#065f46;color:#6ee7b7}.level-badge.a2::after{background:#34d399}
+.level-badge.a2p{background:#064e3b;color:#6ee7b7}.level-badge.a2p::after{background:#34d399}
+.level-badge.b1m{background:#3b1f7e;color:#c4b5fd}.level-badge.b1m::after{background:#a78bfa}
+.level-badge.b1{background:#4c1d95;color:#c4b5fd}.level-badge.b1::after{background:#a78bfa}
+.level-badge.b1p{background:#3b1f7e;color:#c4b5fd}.level-badge.b1p::after{background:#a78bfa}
+.level-badge.b2m{background:#881337;color:#fda4af}.level-badge.b2m::after{background:#fb7185}
+.level-badge.b2{background:#9f1239;color:#fda4af}.level-badge.b2::after{background:#fb7185}
+.level-badge.b2p{background:#881337;color:#fda4af}.level-badge.b2p::after{background:#fb7185}
+.level-badge.c1m{background:#78350f;color:#fcd34d}.level-badge.c1m::after{background:#fbbf24}
+.level-badge.c1{background:#92400e;color:#fcd34d}.level-badge.c1::after{background:#fbbf24}
+.level-badge.c1p{background:#78350f;color:#fcd34d}.level-badge.c1p::after{background:#fbbf24}
+
+.level-info{flex:1}
+.level-info h3{font-size:1.1rem;font-weight:700;margin-bottom:2px}
+.level-info h3 .level-code{font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--bg-hover);border:1px solid var(--border);font-family:'Monaco',monospace;letter-spacing:0;margin-right:8px;flex-shrink:0}
+.level-info h3 .level-name{font-weight:400;color:var(--text-muted);font-size:.9rem;margin-left:6px}
+.level-info .cefr{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.level-info .focus{font-size:.85rem;color:var(--text-muted)}
+.level-arrow{font-size:1.4rem;color:var(--text-dim);transition:transform .2s;align-self:center}
+.level-arrow.open{transform:rotate(180deg)}
+
+/* LEVEL BODY */
+.level-body{display:none;padding:0 24px 24px;border-top:1px solid var(--border)}
+.level-body.open{display:block}
+
+/* SECTIONS */
+.sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:20px}
+.section{background:var(--bg);border-radius:12px;padding:16px;border:1px solid var(--border)}
+.section h4{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;color:var(--gold);margin-bottom:10px}
+.section ul{list-style:none;padding:0}
+.section li{padding:4px 0;font-size:.85rem;color:var(--text-muted);line-height:1.7}
+.section li::before{content:"·";margin-right:8px;color:var(--text-dim)}
+.section p{font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:6px}
+
+/* KEY TEST */
+.key-test{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:12px;padding:16px;margin-top:20px}
+.key-test h4{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.key-test p{font-size:.85rem;color:var(--text-muted);line-height:1.7}
+.key-test .test-label{color:var(--gold);font-weight:600}
+
+/* LEVEL STATS BAR */
+.level-stats{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.stat-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-dim)}
+.stat-chip strong{color:var(--text);font-weight:600}
+
+/* ═══ WELL DONE / CTA SECTION ═══ */
+.well-done{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:1px solid var(--border);border-radius:20px;padding:48px 32px;text-align:center;margin:40px 0}
+.well-done h2{font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;margin-bottom:8px}
+.well-done h2 .o{color:var(--cyan)}
+.well-done p{color:var(--text-muted);font-size:1rem;max-width:500px;margin:0 auto 24px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s}
+.cta-btn:hover{text-decoration:none;transform:translateY(-2px)}
+.cta-btn.primary{background:var(--gold);color:#000}
+.cta-btn.primary:hover{background:#fcd34d;box-shadow:0 4px 20px rgba(251,191,36,.3)}
+.cta-btn.secondary{border:1px solid var(--border-light);color:var(--text)}
+.cta-btn.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+.cta-btn.outline{border:1px solid var(--cyan);color:var(--cyan)}
+.cta-btn.outline:hover{background:rgba(34,211,238,.1)}
+
+/* ═══ FIDGET ═══ */
+.fidget{position:relative;overflow:hidden}
+.fidget::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.03) 50%,transparent 60%);animation:fidgetShimmer 3s ease-in-out infinite;pointer-events:none}
+@keyframes fidgetShimmer{0%,100%{transform:translateX(-30%) translateY(-30%)}50%{transform:translateX(30%) translateY(30%)}}
+
+/* ═══ COMPARISON ═══ */
+.comparison{max-width:960px;margin:0 auto;padding:0 24px 60px}
+.comparison h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;text-align:center;margin-bottom:8px}
+.comparison .comp-sub{text-align:center;color:var(--text-muted);font-size:.85rem;margin-bottom:30px}
+.comp-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.comp-table th,.comp-table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.comp-table th{color:var(--text-muted);font-size:.65rem;text-transform:uppercase;letter-spacing:1px;font-weight:600;background:var(--bg-card)}
+.comp-table tr:hover{background:var(--bg-hover)}
+.comp-table .level-code{font-weight:700;font-family:'Monaco',monospace;font-size:.8rem}
+.comp-table .our-level{color:var(--gold);font-weight:700}
+
+/* ═══ FOOTER ═══ */
+.footer{text-align:center;padding:40px 20px;border-top:1px solid var(--border)}
+.footer p{font-size:.8rem;color:var(--text-dim)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .hero h1{font-size:2.2rem}
+  .hero{min-height:260px}
+  .level-header{padding:16px}
+  .level-badge{width:48px;height:48px;font-size:.7rem}
+  .sections{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Eloquenta Branded Top Bar -->
+<div class="elo-bar">
+  <a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
+  <span class="elo-tagline">Curriculum</span>
+  <div class="elo-menu">
+    <a href="../Extras/landing.html" class="elo-menu-link">Home</a>
+    <a href="../Extras/dashboard.html" class="elo-menu-link">Dashboard</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">Lessons</a>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-bg" style="background-image:url(https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80)"></div>
+  <div class="hero-content">
+    <h1>Eloquence Levels</h1>
+    <div class="subtitle">Precision English Education — From First Sound to Distinguished Speaker</div>
+    <div class="tagline">16 Micro-Levels · 3 Bands · Conversation-First Method</div>
+    <div class="hero-cta">
+      <a href="../Extras/cal-com-bio.html" class="cta-primary">Book Free Lesson</a>
+      <a href="#levels-container" class="cta-secondary">Explore Levels</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<div class="curriculum-nav">
+  <button class="band-btn active" onclick="showBand('a',this)">Band A — Foundation</button>
+  <button class="band-btn" onclick="showBand('b',this)">Band B — Intermediate</button>
+  <button class="band-btn" onclick="showBand('c',this)">Band C — Advanced</button>
+  <button class="band-btn" onclick="showBand('all',this)">All Levels</button>
+  <button class="band-btn" onclick="showComparison(this)">Compare</button>
+</div>
+
+<!-- ═══ LEVELS ═══ -->
+<div class="levels" id="levels-container">
+
+<div class="band-section" data-band="a">
+<div class="level-section-title" style="color:var(--band-a)">Band A — Foundation (6 Levels)</div>
+
+<!-- A1- -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge a1m">A1-<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">Pre-A1 · Sound Starter</div>
+      <h3>First Sounds<span class="level-name">Survival English & Listening</span></h3>
+      <div class="focus">Vowel sounds · Word stress · Question intonation</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~40</strong> words</div>
+      <div class="stat-chip"><strong>5 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Survive basic exchanges</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Point to objects and name them</li><li>Ask and answer "What is this?"</li><li>Say prices and count to 20</li><li>Use "this/that/these/those"</li><li>Identify singular vs. plural</li></ul></div>
+      <div class="section"><h4>Phonetics Focus</h4><p>Vowel sounds (ship vs sheep, cat vs cut)</p><p>Word stress in basic nouns (WA-ter, com-PU-ter)</p><p>Rising intonation for questions</p></div>
+      <div class="section"><h4>Key Phrases</h4><p>"What is this?"<br>"How much is it?"<br>"There is / there are"<br>"It's 7 euros."</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- A1 -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge a1">A1<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">A1 · First Contact</div>
+      <h3>Introductions<span class="level-name">Identity & Daily Life</span></h3>
+      <div class="focus">To be · Have/has · Present simple · Telling time</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~120</strong> words</div>
+      <div class="stat-chip"><strong>2 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Introduce yourself fully</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Introduce yourself and others</li><li>Say where you're from and your job</li><li>Describe your daily routine</li><li>Tell the time and make arrangements</li><li>Ask about someone's day</li></ul></div>
+      <div class="section"><h4>Phonetics Focus</h4><p>The alphabet — spelling names clearly</p><p>-s/-es endings (/s/ vs /z/ vs /ɪz/)</p><p>Silent letters (knife, Wednesday)</p></div>
+      <div class="section"><h4>Key Phrases</h4><p>"My name is... I'm from... I work as..."<br>"I usually get up at..."<br>"Let's meet on Tuesday at 3."</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- A1+ -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge a1p">A1+<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">A1+ · Social Echo</div>
+      <h3>Conversations<span class="level-name">Opinions, Likes & Arrangements</span></h3>
+      <div class="focus">Like/love/hate + gerund · Can/can't · Present continuous</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~200</strong> words total</div>
+      <div class="stat-chip"><strong>3 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Have a basic social conversation</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Express likes, dislikes, and preferences</li><li>Talk about abilities (I can swim / I can't drive)</li><li>Describe what's happening now</li><li>Make social plans and agree on details</li><li>Respond naturally in conversation</li></ul></div>
+      <div class="section"><h4>Phonetics Focus</h4><p>-ing ending (/ɪŋ/ not /ɪng/)</p><p>th sounds: think /θ/ vs this /ð/</p><p>Contrastive stress: "I LIKE coffee, not tea"</p></div>
+      <div class="section"><h4>Key Phrases</h4><p>"I like playing..." / "I can't swim but..."<br>"How about Wednesday at 7?"<br>"Sounds good! Where should we meet?"</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- A2- -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge a2m">A2-<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">A2- · Short Hops</div>
+      <h3>Stories & Numbers<span class="level-name">Past Events, Dates & Quantities</span></h3>
+      <div class="focus">Past simple (regular & irregular) · How much/many · Numbers to 1000</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~350</strong> words total</div>
+      <div class="stat-chip"><strong>5 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Tell a story about the past</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Talk about past events using correct verbs</li><li>Use numbers 101-1000, dates, and ordinals</li><li>Ask about quantities (how much/many)</li><li>Give instructions and make requests</li><li>Order food in a restaurant</li></ul></div>
+      <div class="section"><h4>Phonetics Focus</h4><p>-ed endings: walked /t/, wanted /ɪd/, played /d/</p><p>Connected speech: "did you" → /dɪdʒu/</p></div>
+      <div class="section"><h4>Key Phrases</h4><p>"Last weekend I went to..."<br>"How much fruit do you eat a week?"<br>"I'd like to order the steak, please."</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- A2 -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge a2">A2<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">A2 · Bridge Builder</div>
+      <h3>Plans & Comparisons<span class="level-name">Future, Obligation & Advice</span></h3>
+      <div class="focus">Going to / Will · Comparatives · Must/should · Superlatives</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~500</strong> words total</div>
+      <div class="stat-chip"><strong>7 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Discuss plans and compare options</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Talk about future plans and intentions</li><li>Compare places, things, and experiences</li><li>Give advice and express obligation</li><li>Use superlatives (the best, the worst)</li><li>Describe weather and shopping</li></ul></div>
+      <div class="section"><h4>Key Phrases</h4><p>"I'm going to visit..." / "I'll probably..."<br>"Portugal is smaller than Germany."<br>"You should try the local food."</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- A2+ -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge a2p">A2+<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">A2+ · Connected Flow</div>
+      <h3>Experiences & Directions<span class="level-name">Present Perfect, Travel & Phrasal Verbs</span></h3>
+      <div class="focus">Have you ever? · Already/yet/just · Directions · Phrasal verbs</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~700</strong> words total</div>
+      <div class="stat-chip"><strong>10 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Share life experiences fluently</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Talk about life experiences (Have you ever?)</li><li>Use already, yet, and just correctly</li><li>Give and follow directions</li><li>Use basic phrasal verbs (take off, put on)</li><li>Describe where you were born</li></ul></div>
+      <div class="section"><h4>Key Phrases</h4><p>"Have you ever been to Japan?"<br>"Turn left at the roundabout."<br>"I've already finished the report."</p></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end band-a -->
+
+<div class="band-section" data-band="b">
+<div class="level-section-title" style="color:var(--band-b)">Band B — Intermediate (6 Levels)</div>
+
+<!-- B1- -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge b1m">B1-<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">B1- · Story Stringer</div>
+      <h3>Narratives & Media<span class="level-name">Past Tenses, Reported Speech & Passive</span></h3>
+      <div class="focus">30 irregular verbs · Past continuous · Reported speech</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~1000</strong> words total</div>
+      <div class="stat-chip"><strong>30 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Narrate complex stories</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Tell detailed stories using all past tenses</li><li>Report what someone said</li><li>Use passive voice in basic forms</li><li>Understand news stories and media</li><li>Use "whose" for possession</li></ul></div>
+      <div class="section"><h4>Phonetics Focus</h4><p>Weak forms: was /wəz/, were /wə/</p><p>-ed in connected speech</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- B1 -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge b1">B1<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">B1 · Full Circle</div>
+      <h3>Opinions & Conditions<span class="level-name">Time Frames, Habits & First Conditional</span></h3>
+      <div class="focus">Present perfect vs. past · Used to · First conditional</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~1400</strong> words total</div>
+      <div class="stat-chip"><strong>~30 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Express opinions with nuance</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Contrast completed vs. ongoing time frames</li><li>Describe past habits vs. present routines</li><li>Use first conditional for real possibilities</li><li>Compare with "as...as"</li><li>Express opinions with reasons</li></ul></div>
+      <div class="section"><h4>Phonetics Focus</h4><p>Intonation: falling (certainty) vs rising (doubt)</p><p>"used to" /juːst tə/</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- B1+ -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge b1p">B1+<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">B1+ · Content Weaver</div>
+      <h3>Persuasion & Business<span class="level-name">Hypotheticals, Complaints & Indirect Questions</span></h3>
+      <div class="focus">Second conditional · Too/enough · Linking words</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~1800</strong> words total</div>
+      <div class="stat-chip"><strong>~45 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Persuade and negotiate</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Discuss hypothetical situations</li><li>Make complaints diplomatically</li><li>Use indirect questions politely</li><li>Link ideas with connectors</li><li>End questions with prepositions naturally</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- B2- -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge b2m">B2-<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">B2- · Deeper Roots</div>
+      <h3>Complex Past & Deduction<span class="level-name">Past Perfect, Modals of Deduction & Relative Clauses</span></h3>
+      <div class="focus">Past perfect · Must be/can't be · Relative clauses</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~2200</strong> words total</div>
+      <div class="stat-chip"><strong>~60 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Argue with evidence and deduction</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Talk about events before other past events</li><li>Express deductions ("He must be...")</li><li>Use relative clauses to add detail</li><li>Give indirect commands with modals</li><li>Link complex sentences</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- B2 -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge b2">B2<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">B2 · Nuance Navigator</div>
+      <h3>Precision & Debate<span class="level-name">Third Conditional, Wishes & Complex Verb Patterns</span></h3>
+      <div class="focus">Third conditional · Mixed conditionals · Wish/If only</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~2800</strong> words total</div>
+      <div class="stat-chip"><strong>~60 min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Debate with precision and register</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Discuss impossible alternative pasts</li><li>Use mixed conditionals</li><li>Express wishes about past and present</li><li>Distinguish formal from informal register</li><li>Use advanced verb patterns</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- B2+ -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge b2p">B2+<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">B2+ · Influence Artist</div>
+      <h3>Leadership & Negotiation<span class="level-name">All Conditionals, Reported Speech & Future Perfect</span></h3>
+      <div class="focus">All conditionals mixed · Reported speech · Unless/as long as</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~3500</strong> words total</div>
+      <div class="stat-chip"><strong>60+ min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Lead negotiations fluently</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Use all conditionals fluidly in speech</li><li>Relay messages accurately (reported speech)</li><li>Negotiate with unless/as long as/even if</li><li>Talk about future events before other events</li><li>Lead complex discussions</li></ul></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end band-b -->
+
+<div class="band-section" data-band="c">
+<div class="level-section-title" style="color:var(--band-c)">Band C — Advanced (3 Levels)</div>
+
+<!-- C1- -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge c1m">C1-<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">C1- · Expert Explorer</div>
+      <h3>Sophisticated Expression<span class="level-name">Idioms, Collocations & Complex Topics</span></h3>
+      <div class="focus">All passive tenses · Past modals · Word building · Advanced collocations</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~4500</strong> words total</div>
+      <div class="stat-chip"><strong>60+ min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Debate complex societal topics</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Debate economics, politics, environment</li><li>Use idioms and collocations naturally</li><li>Build words from roots (-less, -ship, -ness)</li><li>Understand and discuss complex texts</li><li>Express past obligation and deduction</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- C1 -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge c1">C1<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">C1 · Command Crafter</div>
+      <h3>Natural Complex Grammar<span class="level-name">Extended Discourse, Data & Professional Communication</span></h3>
+      <div class="focus">Passive + modals · Would rather/had better · Get + participle</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~5500</strong> words total</div>
+      <div class="stat-chip"><strong>60+ min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Present professionally with data</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Use complex grammar naturally in speech</li><li>Deliver presentations with charts/data</li><li>Discuss societal issues in depth</li><li>Write professional emails and reports</li><li>Handle everyday problems fluently</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- C1+ -->
+<div class="level-card">
+  <div class="level-header" onclick="toggleLevel(this)">
+    <div class="level-badge c1p">C1+<span style="font-size:.6em;opacity:.7">✦</span></div>
+    <div class="level-info">
+      <div class="cefr">C1+ · Distinguished Speaker</div>
+      <h3>Mastery<span class="level-name">Near-Native Fluency & Leadership Communication</span></h3>
+      <div class="focus">All grammar at mastery · Advanced connectors · Idioms</div>
+    </div>
+    <div class="level-arrow">▾</div>
+  </div>
+  <div class="level-body">
+    <div class="level-stats">
+      <div class="stat-chip"><strong>~6500</strong>+ words</div>
+      <div class="stat-chip"><strong>60+ min</strong> speaking</div>
+      <div class="stat-chip"><strong>Goal:</strong> Near-native fluency and leadership</div>
+    </div>
+    <div class="sections">
+      <div class="section"><h4>You Can</h4><ul><li>Speak at near-native fluency</li><li>Tell jokes and stories with timing</li><li>Deliver compelling presentations</li><li>Debate any topic with precision</li><li>Understand cultural references and evolving English</li></ul></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end band-c -->
+
+</div><!-- end levels -->
+
+<!-- ═══ WELL DONE / CTA ═══ -->
+<div class="container">
+<div class="well-done">
+  <h2>Ready to Start?</h2>
+  <p>Every Eloquenta student begins with a free 30-minute assessment lesson. We identify your exact Eloquence Level, then match you with a tutor who fits your goals, schedule, and learning style.</p>
+  <div class="cta-row">
+    <a href="../Extras/cal-com-bio.html" class="cta-btn primary">Book Your Free Assessment</a>
+    <a href="speaking-practice-slideshows.html" class="cta-btn secondary">Browse Free Lessons</a>
+  </div>
+</div>
+</div>
+
+<!-- ═══ COMPARISON TABLE ═══ -->
+<div class="comparison" id="comparison-section" style="display:none">
+<h2>Level Comparison</h2>
+<div class="comp-sub">Eloquence Levels vs CEFR vs traditional systems</div>
+<table class="comp-table">
+<tr><th>Our Level</th><th>Name</th><th>CEFR</th><th>Traditional</th><th>Speaking Goal</th></tr>
+<tr><td class="our-level">A1-</td><td>Sound Starter</td><td>Pre-A1</td><td>Beginner</td><td>5-minute exchanges</td></tr>
+<tr><td class="our-level">A1</td><td>First Contact</td><td>A1</td><td>Elementary</td><td>Full introduction, 2 min</td></tr>
+<tr><td class="our-level">A1+</td><td>Social Echo</td><td>A1+</td><td>Elementary+</td><td>Social conversation, 3 min</td></tr>
+<tr><td class="our-level">A2-</td><td>Short Hops</td><td>A2-</td><td>Pre-Intermediate</td><td>Tell past stories, 5 min</td></tr>
+<tr><td class="our-level">A2</td><td>Bridge Builder</td><td>A2</td><td>Intermediate</td><td>Plans and comparisons, 7 min</td></tr>
+<tr><td class="our-level">A2+</td><td>Connected Flow</td><td>A2+</td><td>Intermediate+</td><td>Life experiences, 10 min</td></tr>
+<tr><td class="our-level">B1-</td><td>Story Stringer</td><td>B1-</td><td>Upper-Intermediate</td><td>Complex narratives, 30 min</td></tr>
+<tr><td class="our-level">B1</td><td>Full Circle</td><td>B1</td><td>Upper-Intermediate</td><td>Opinions with nuance, 30 min</td></tr>
+<tr><td class="our-level">B1+</td><td>Content Weaver</td><td>B1+</td><td>Upper-Intermediate+</td><td>Persuade and negotiate, 45 min</td></tr>
+<tr><td class="our-level">B2-</td><td>Deeper Roots</td><td>B2-</td><td>Advanced</td><td>Argue with evidence, 60 min</td></tr>
+<tr><td class="our-level">B2</td><td>Nuance Navigator</td><td>B2</td><td>Advanced</td><td>Debate with precision, 60 min</td></tr>
+<tr><td class="our-level">B2+</td><td>Influence Artist</td><td>B2+</td><td>Advanced+</td><td>Lead negotiations, 60 min</td></tr>
+<tr><td class="our-level">C1-</td><td>Expert Explorer</td><td>C1-</td><td>Proficiency</td><td>Debate complex topics, 60 min</td></tr>
+<tr><td class="our-level">C1</td><td>Command Crafter</td><td>C1</td><td>Proficiency</td><td>Professional presentations, 60 min</td></tr>
+<tr><td class="our-level">C1+</td><td>Distinguished Speaker</td><td>C1+</td><td>Mastery</td><td>Near-native leadership, 60 min</td></tr>
+</table>
+</div>
+
+<div class="footer">
+  <p><a href="../Extras/landing.html" style="color:#fff;font-weight:700;text-decoration:none">El<span style="color:#22d3ee">o</span>quenta</a> — Eloquence Levels Curriculum · 16 Micro-Levels · Conversation-First Method</p>
+</div>
+
+<script>
+function toggleLevel(header){
+  var body=header.nextElementSibling;
+  var arrow=header.querySelector('.level-arrow');
+  var isOpen=body.classList.contains('open');
+  document.querySelectorAll('.level-body').forEach(function(b){b.classList.remove('open')});
+  document.querySelectorAll('.level-arrow').forEach(function(a){a.classList.remove('open')});
+  if(!isOpen){body.classList.add('open');arrow.classList.add('open')}
+}
+
+function showBand(band,btn){
+  document.querySelectorAll('.band-section').forEach(function(s){
+    s.style.display=(band==='all'||s.dataset.band===band)?'block':'none'
+  });
+  document.getElementById('comparison-section').style.display='none';
+  document.querySelectorAll('.band-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn) btn.classList.add('active');
+}
+
+function showComparison(btn){
+  document.querySelectorAll('.band-section').forEach(function(s){s.style.display='none'});
+  document.getElementById('comparison-section').style.display='block';
+  document.querySelectorAll('.band-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn) btn.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IELTS Speaking Band Scores — Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="eloquent-branding.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow:hidden;height:100vh;padding-top:48px}
+.slide{display:none;width:100vw;height:100vh;position:relative;flex-direction:column;justify-content:center;align-items:center;padding-top:48px}
+.slide.active{display:flex}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.25) saturate(1.2)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.5) 100%)}
+.slide-content{position:relative;z-index:2;max-width:900px;padding:32px;text-align:center;max-height:calc(100vh - 120px);overflow-y:auto}
+.slide-number{position:absolute;top:64px;right:28px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase}
+.slide-category{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;border:1px solid}
+.slide h1{font-size:2.6rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:6px}
+.slide h2{font-size:1.2rem;font-weight:600;line-height:1.4;margin-bottom:14px;color:rgba(255,255,255,.85)}
+.slide h3{font-size:1rem;font-weight:700;color:#fbbf24;margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px}
+.slide p{font-size:1rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:640px;margin:0 auto}
+.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:8px;align-items:center}
+.nav-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{background:rgba(255,255,255,.25)}
+.nav-dots{display:flex;gap:5px;align-items:center;padding:0 8px;max-width:300px;flex-wrap:wrap;justify-content:center}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.4)}
+.progress{position:fixed;top:48px;left:0;right:0;z-index:60;background:rgba(255,255,255,.06);height:8px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa);transition:width .4s ease-out;border-radius:0 4px 4px 0}
+
+/* Band score comparison table */
+.band-table{display:flex;gap:8px;max-width:860px;margin:14px auto 0;flex-wrap:wrap;justify-content:center}
+.band-col{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;min-width:130px;max-width:150px;flex:1}
+.band-col .b-score{font-size:22px;font-weight:900;margin-bottom:4px}
+.band-col .b-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:6px}
+.band-col .b-desc{font-size:11px;color:rgba(255,255,255,.6);line-height:1.5}
+.band-col .b-example{font-size:10px;color:#22d3ee;margin-top:6px;font-style:italic;line-height:1.4}
+.band-col.highlight{background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
+.band-col.highlight .b-score{color:#22d3ee}
+
+/* Dialogue box */
+.dialogue-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 20px;max-width:680px;margin:12px auto 0;text-align:left;font-size:14px;line-height:1.8}
+.dialogue-box .speaker{font-weight:700;margin-right:6px}
+.dialogue-box .examiner{color:#22d3ee}
+.dialogue-box .candidate{color:#34d399}
+.dialogue-box .note{color:rgba(255,255,255,.35);font-size:11px;margin-top:8px;font-style:italic;border-top:1px solid rgba(255,255,255,.06);padding-top:6px}
+
+/* Two column comparison */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:12px auto 0;text-align:left}
+.compare-col{background:rgba(255,255,255,.04);border-radius:10px;padding:14px 16px}
+.compare-col.bad{border:1px solid rgba(251,113,133,.2)}
+.compare-col.good{border:1px solid rgba(52,211,153,.2)}
+.compare-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.compare-col.bad h4{color:#fb7185}
+.compare-col.good h4{color:#34d399}
+.compare-col p{font-size:12px;color:rgba(255,255,255,.6);line-height:1.6}
+.compare-col .example{font-style:italic;color:rgba(255,255,255,.45);margin-top:6px;font-size:11px}
+
+/* Grammar examples */
+.grammar-box{max-width:680px;margin:10px auto 0;text-align:left}
+.grammar-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:13px}
+.grammar-row .band-badge{min-width:32px;text-align:center;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:800;margin-top:2px}
+.grammar-row .badge-low{background:rgba(251,113,133,.15);color:#fb7185}
+.grammar-row .badge-mid{background:rgba(251,191,36,.15);color:#fbbf24}
+.grammar-row .badge-high{background:rgba(52,211,153,.15);color:#34d399}
+.grammar-row .badge-top{background:rgba(34,211,238,.15);color:#22d3ee}
+.grammar-row .ex{flex:1;color:rgba(255,255,255,.7);line-height:1.5}
+
+/* Tips box */
+.tips-box{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:14px 18px;max-width:640px;margin:12px auto 0;text-align:left}
+.tips-box h4{font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.tips-box ul{list-style:none;padding:0}
+.tips-box li{font-size:13px;color:rgba(255,255,255,.65);padding:3px 0;line-height:1.5}
+.tips-box li::before{content:"→ ";color:#a78bfa;font-weight:700}
+
+/* Score circle */
+.score-circle{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;border:3px solid}
+
+/* Quick nav */
+.quick-nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:4px}
+.qn-btn{padding:4px 10px;border-radius:6px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.5);color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;text-align:center}
+.qn-btn:hover{color:#22d3ee;border-color:rgba(34,211,230,.3)}
+.qn-btn.active{background:rgba(34,211,238,.1);color:#22d3ee;border-color:rgba(34,211,238,.3)}
+
+.slide-footer{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.2);letter-spacing:1px}
+.logo{color:#fff;font-weight:700;letter-spacing:.5px}.logo .o{color:#22d3ee}
+.vocab-word{border-bottom:2px dotted rgba(34,211,238,.5);cursor:help;color:#22d3ee;font-weight:600;position:relative}
+.vocab-word:hover{border-bottom-color:#22d3ee}
+.vocab-word .tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 14px;min-width:200px;max-width:300px;font-size:13px;font-weight:400;color:#e2e8f0;line-height:1.5;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;transition:opacity .3s;pointer-events:none}
+.vocab-word .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#334155}
+.vocab-word:hover .tooltip{visibility:visible;opacity:1}
+
+@media(max-width:640px){
+  .slide h1{font-size:1.8rem}
+  .slide h2{font-size:1rem}
+  .slide-content{padding:16px}
+  .band-table{flex-direction:column;align-items:center}
+  .compare{grid-template-columns:1fr}
+  .quick-nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="elo-bar">
+  <a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
+  <span class="elo-tagline">IELTS Speaking</span>
+  <div class="elo-menu">
+    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 Lessons</a>
+  </div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div id="slides-container"></div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<div class="quick-nav" id="quickNav"></div>
+
+<script>
+var SLIDES=[
+
+/* ═══════════════════════════════════════════
+   SECTION 1: INTRODUCTION
+   ═══════════════════════════════════════════ */
+
+// SLIDE 0: Title
+{
+  bg:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80",
+  cat:"IELTS Speaking",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Band Score Criteria",subtitle:"Understanding what the examiner is looking for",
+  text:"Simple English explanations with grammar examples for each band score.",
+  isTitle:true
+},
+
+// SLIDE 1: What is IELTS Speaking?
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80",
+  cat:"Overview",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"The IELTS Speaking Test",subtitle:"",
+  text:"The speaking test has 3 parts. It takes 11-14 minutes. The examiner listens and gives you a score from 0 to 9.",
+  isAim:true,
+  goals:[
+    {icon:"🗣️",label:"Part 1 — Interview",desc:"4-5 minutes. The examiner asks about familiar topics: home, work, hobbies, daily life."},
+    {icon:"📝",label:"Part 2 — Long Turn",desc:"3-4 minutes. You speak alone for 1-2 minutes about a given topic. You get 1 minute to prepare."},
+    {icon:"💬",label:"Part 3 — Discussion",desc:"4-5 minutes. Deeper questions about the same topic as Part 2. More abstract ideas."}
+  ]
+},
+
+// SLIDE 2: The 4 Criteria
+{
+  bg:"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80",
+  cat:"The 4 Criteria",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"4 Things the Examiner Scores",subtitle:"Each one is worth 25% of your total speaking score",
+  text:"",
+  isAim:true,
+  goals:[
+    {icon:"🔗",label:"1. Fluency & Coherence",desc:"Can you speak smoothly without stopping too much? Do your ideas connect logically?"},
+    {icon:"📚",label:"2. Lexical Resource",desc:"Do you use a wide range of vocabulary? Can you use words precisely?"},
+    {icon:"📐",label:"3. Grammatical Range & Accuracy",desc:"Do you use different grammar structures? Are they correct?"},
+    {icon:"🔊",label:"4. Pronunciation",desc:"Can people understand you easily? Do you use stress and intonation naturally?"}
+  ]
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 2: FLUENCY & COHERENCE
+   ═══════════════════════════════════════════ */
+
+// SLIDE 3: Fluency overview
+{
+  bg:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80",
+  cat:"Criterion 1",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Fluency & Coherence",subtitle:"How smoothly and logically do you speak?",
+  text:"<strong>Fluency</strong> = speaking without too many pauses or self-corrections.<br><strong>Coherence</strong> = your ideas are easy to follow and well-organised.",
+  isTitle:true
+},
+
+// SLIDE 4: Fluency band comparison
+{
+  bg:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80",
+  cat:"Fluency",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Fluency: Band 4 vs Band 6 vs Band 8",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">4</div><div class="b-label">Limited</div><div class="b-desc">Long pauses. Can only speak in short phrases. Very slow.</div><div class="b-example">"I... I like... um... the city is... big. Many people."</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#fbbf24">5</div><div class="b-label">Modest</div><div class="b-desc">Usually maintains flow but loses coherence at times. Uses simple connectors.</div><div class="b-example">"I like the city because it is big and there are many things to do. Also, the food is good."</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Competent</div><div class="b-desc">Willing to speak at length but coherence may be lost. Uses connectors but not always appropriately.</div><div class="b-example">"I really enjoy living in a big city. There are always things to do, and the food scene is incredible. However, it can be quite expensive."</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good</div><div class="b-desc">Speaks at length without noticeable effort. Uses a range of connectives and discourse markers.</div><div class="b-example">"Living in a big city has its advantages — there is always something happening, and you have access to world-class restaurants. That said, the cost of living can be a real challenge."</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Speaks fluently with only rare repetition or self-correction. Fully coherent with fully appropriate cohesive features.</div><div class="b-example">"The appeal of city living lies in its constant energy and diversity. You are never short of cultural experiences, and the culinary options are endless. The trade-off, of course, is the higher cost of living and the fast pace, which is not for everyone."</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 5: Fluency dialogue example
+{
+  bg:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80",
+  cat:"Fluency Example",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Listen to the Difference",subtitle:"Question: Do you prefer living in a city or the countryside?",
+  text:"",
+  custom:function(){
+    return '<div class="compare">'+
+      '<div class="compare-col bad"><h4>Band 5 Answer</h4><p>"I like city. Is very... um... exciting. Many things to do. I go to restaurant and... shopping. Is good."</p><div class="example">Problems: Short phrases, pauses (um), no connectors, simple vocabulary, incomplete sentences.</div></div>'+
+      '<div class="compare-col good"><h4>Band 7 Answer</h4><p>"I definitely prefer city life. There is always something happening — whether it is a new restaurant opening or a cultural event. Having said that, I do miss the peace and quiet of the countryside sometimes."</p><div class="example">Strengths: Connectors (whether, having said that), complex sentences, natural flow, balanced opinion.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 6: Fluency tips
+{
+  bg:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80",
+  cat:"Fluency Tips",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"How to Improve Fluency",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="tips-box"><h4>Key Strategies</h4><ul>'+
+      '<li>Use linking words: <strong>however, although, moreover, on the other hand, as a result</strong></li>'+
+      '<li>Give reasons: <strong>"...because...", "...since...", "...due to the fact that..."</strong></li>'+
+      '<li>Add examples: <strong>"For example...", "For instance...", "Such as..."</strong></li>'+
+      '<li>It is OK to pause briefly. Do not rush. Think before you speak.</li>'+
+      '<li>If you make a mistake, correct yourself naturally: <strong>"What I mean is...", "Let me rephrase that"</strong></li>'+
+      '<li>Practice speaking for 2 minutes without stopping. Use a timer.</li>'+
+    '</ul></div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 3: LEXICAL RESOURCE
+   ═══════════════════════════════════════════ */
+
+// SLIDE 7: Lexical overview
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Criterion 2",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Lexical Resource",subtitle:"How wide and accurate is your vocabulary?",
+  text:"<strong>Lexical</strong> = words and phrases. The examiner listens for: range of vocabulary, precision, use of <span class="vocab-word">idiomatic language<span class="tooltip">Natural phrases that native speakers use, like "it rings a bell" or "at the end of the day"</span></span>, and ability to <span class="vocab-word">paraphrase<span class="tooltip">Say the same thing using different words. Example: "big" → "enormous / massive / considerable"</span></span>.",
+  isTitle:true
+},
+
+// SLIDE 8: Lexical band comparison
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Lexical Resource",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Vocabulary: Band 5 vs Band 7 vs Band 9",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">5</div><div class="b-label">Limited Range</div><div class="b-desc">Basic vocabulary only. Repeats the same words. Cannot paraphrase.</div><div class="b-example">"The food is very good. The food is very nice. I like the food."</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Adequate</div><div class="b-desc">Enough vocabulary for familiar topics. Some inaccuracy but meaning is clear. Can paraphrase with effort.</div><div class="b-example">"The food is really delicious. The dishes are quite tasty. I enjoy eating there."</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good Range</div><div class="b-desc">Uses vocabulary flexibly. Uses some less common words and idiomatic language. Effective paraphrasing.</div><div class="b-example">"The cuisine is absolutely superb. The menu is incredibly diverse, and the flavours are exquisite."</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Precise vocabulary on any topic. Natural use of idiomatic language. Very rare errors.</div><div class="b-example">"The gastronomy in this city is second to none. Every neighbourhood has its own culinary identity, from street food to fine dining."</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 9: Lexical upgrade examples
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Vocabulary Upgrade",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Upgrade Your Words",subtitle:"Replace simple words with better ones",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">good → <strong style="color:#34d399">excellent, superb, outstanding, remarkable</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">bad → <strong style="color:#34d399">terrible, awful, detrimental, harmful</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">big → <strong style="color:#34d399">enormous, massive, substantial, significant</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">important → <strong style="color:#34d399">crucial, essential, vital, paramount</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">think → <strong style="color:#34d399">believe, consider, reckon, am of the opinion that</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">like → <strong style="color:#34d399">enjoy, appreciate, am fond of, am keen on</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">a lot of → <strong style="color:#34d399">a great deal of, numerous, countless, an abundance of</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Basic</span><span class="ex">very → <strong style="color:#34d399">extremely, incredibly, remarkably, exceptionally</strong></span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 10: Paraphrasing practice
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Paraphrasing",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Paraphrasing = Higher Score",subtitle:"Never repeat the question word-for-word. Say it differently.",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Examiner:</span> Do you think technology is important in education?</p>'+
+      '<p style="margin-top:8px"><span class="speaker candidate">Candidate (Band 5):</span> "Yes, I think technology is very important in education. Technology is very useful for students."</p>'+
+      '<p class="note">Problem: Repeats "technology" and "important" from the question. No paraphrase.</p>'+
+      '<p style="margin-top:12px"><span class="speaker candidate">Candidate (Band 7):</span> "Absolutely. I believe <strong>digital tools</strong> play a <strong>crucial role</strong> in modern education. <strong>They</strong> make learning more interactive and accessible."</p>'+
+      '<p class="note">Strength: "technology" → "digital tools", "important" → "crucial role", uses pronoun "they" to avoid repetition.</p>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 4: GRAMMATICAL RANGE & ACCURACY
+   ═══════════════════════════════════════════ */
+
+// SLIDE 11: Grammar overview
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Criterion 3",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Grammatical Range & Accuracy",subtitle:"Do you use different grammar structures? Are they correct?",
+  text:"<strong>Range</strong> = using simple AND complex sentences.<br><strong>Accuracy</strong> = how many mistakes you make.<br><br>You need BOTH. Only simple sentences = low range. Many complex sentences with many errors = low accuracy.",
+  isTitle:true
+},
+
+// SLIDE 12: Grammar structures by band
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Grammar by Band",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Grammar Structures at Each Level",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Band 5</span><span class="ex">Simple present/past: <strong>"I go to school. I went to the shop yesterday."</strong><br>Simple connectors: and, but, because, so</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-mid">Band 6</span><span class="ex">Present perfect: <strong>"I have lived here for 5 years."</strong><br>Conditionals (1st & 2nd): <strong>"If I have time, I will..." / "If I had money, I would..."</strong><br>Comparatives: <strong>"Cities are noisier than villages."</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-high">Band 7</span><span class="ex">Mixed conditionals: <strong>"If I had studied harder, I would have passed."</strong><br>Relative clauses: <strong>"The city where I grew up has changed a lot."</strong><br>Passive voice: <strong>"The government should invest more in public transport."</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-top">Band 8-9</span><span class="ex">Inversion: <strong>"Not only is it expensive, but it is also crowded."</strong><br>Cleft sentences: <strong>"What I find most challenging is the cost of living."</strong><br>Subjunctive: <strong>"It is essential that the government invest more."</strong></span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 13: Grammar dialogue comparison
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Grammar Example",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Grammar in Action",subtitle:"Question: How has your hometown changed in recent years?",
+  text:"",
+  custom:function(){
+    return '<div class="compare">'+
+      '<div class="compare-col bad"><h4>Band 5 — Simple Only</h4><p>"My hometown change a lot. Before it is very quiet. Now many buildings. Many people come. I think is good but also bad."</p><div class="example">Errors: "change" (no -s), "it is" (wrong tense), "I think is good" (missing subject). Only simple sentences.</div></div>'+
+      '<div class="compare-col good"><h4>Band 7 — Complex & Accurate</h4><p>"My hometown has changed dramatically over the past decade. When I was growing up, it was a quiet, sleepy town. However, since the new highway was built, it has attracted a lot of investment. While I welcome the economic growth, I do miss the peaceful atmosphere it once had."</p><div class="example">Strengths: Present perfect, passive voice, relative clause, concessive clause ("while"), natural flow.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 14: Common grammar mistakes
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Common Mistakes",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Mistakes That Lower Your Score",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Wrong</span><span class="ex"><strong style="color:#fb7185">"I am agree with this."</strong> → <strong style="color:#34d399">Correct: "I agree with this."</strong><br><span style="color:rgba(255,255,255,.4)">"Agree" is a verb, not an adjective. Do not use "am" before it.</span></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Wrong</span><span class="ex"><strong style="color:#fb7185">"He go to school every day."</strong> → <strong style="color:#34d399">Correct: "He goes to school every day."</strong><br><span style="color:rgba(255,255,255,.4)">Third person singular needs -s: he/she/it + verb-s.</span></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Wrong</span><span class="ex"><strong style="color:#fb7185">"I have been there 5 years ago."</strong> → <strong style="color:#34d399">Correct: "I went there 5 years ago."</strong><span style="color:rgba(255,255,255,.4)">"Ago" = past simple. "Have been" = present perfect (no specific time).</span></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Wrong</span><span class="ex"><strong style="color:#fb7185">"There have many people."</strong> → <strong style="color:#34d399">Correct: "There are many people."</strong><span style="color:rgba(255,255,255,.4)">"There is/are" for existence. "Have" needs a subject: "The city has many people."</span></span></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 5: PRONUNCIATION
+   ═══════════════════════════════════════════ */
+
+// SLIDE 15: Pronunciation overview
+{
+  bg:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1920&q=80",
+  cat:"Criterion 4",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Pronunciation",subtitle:"Can the examiner understand you easily?",
+  text:"It is NOT about having a British or American accent. It is about being <strong>clear</strong> and <strong>natural</strong>. The examiner listens for: word stress, sentence stress, intonation (music of speech), and chunking (natural pauses).",
+  isTitle:true
+},
+
+// SLIDE 16: Pronunciation features
+{
+  bg:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1920&q=80",
+  cat:"Pronunciation",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"4 Key Features",subtitle:"",
+  text:"",
+  isAim:true,
+  goals:[
+    {icon:"🎯",label:"Word Stress",desc:"PhoTOgraphy vs phoTOGraphy vs photoGRAPHic. Wrong stress = hard to understand."},
+    {icon:"📈",label:"Sentence Stress",desc:"Stress the important words: \"I REALLY enjoyed it\" vs \"I really enjoyed IT\""},
+    {icon:"🎵",label:"Intonation",desc":"Your voice goes up for questions, down for statements. Flat intonation = boring and unclear."},
+    {icon:"⏸️",label:"Chunking",desc":"Speak in natural groups of words, not word by word. \"I grew up in a small town / which was very quiet.\""}
+  ]
+},
+
+// SLIDE 17: Pronunciation by band
+{
+  bg:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1920&q=80",
+  cat:"Pronunciation",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Pronunciation: Band 5 vs Band 7 vs Band 9",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">5</div><div class="b-label">Limited</div><div class="b-desc">Frequent mispronunciation. Examiner often needs to ask for repetition. Flat intonation.</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Adequate</div><div class="b-desc">Generally clear. Some mispronunciation but rarely causes misunderstanding. Uses some stress and intonation.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good</div><div class="b-desc">Shows all features of Band 6. Uses stress and intonation effectively. Easy to understand throughout.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Uses a full range of pronunciation features naturally. Effortless to understand. Uses features to add meaning.</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 6: OVERALL BAND COMPARISON
+   ═══════════════════════════════════════════ */
+
+// SLIDE 18: Full band overview
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4270?w=1920&q=80",
+  cat:"All Bands",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"All Band Scores at a Glance",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table" style="max-width:880px">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185;font-size:18px">4</div><div class="b-label">Limited User</div><div class="b-desc" style="font-size:10px">Can only communicate in familiar situations. Frequent problems in understanding.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#fbbf24;font-size:18px">5</div><div class="b-label">Modest User</div><div class="b-desc" style="font-size:10px">Partial command. Can manage overall meaning but many mistakes. Limited flexibility.</div></div>'+
+      '<div class="band-col highlight"><div class="b-score" style="font-size:18px">6</div><div class="b-label">Competent User</div><div class="b-desc" style="font-size:10px">Generally effective command. Some inaccuracy and misunderstanding. Can use complex language.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399;font-size:18px">7</div><div class="b-label">Good User</div><div class="b-desc" style="font-size:10px">Operational command. Occasional inaccuracies. Handles complex language well. Detailed reasoning.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee;font-size:18px">8</div><div class="b-label">Very Good User</div><div class="b-desc" style="font-size:10px">Fully operational command. Rare errors. Handles complex, detailed argumentation well.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#a78bfa;font-size:18px">9</div><div class="b-label">Expert User</div><div class="b-desc" style="font-size:10px">Complete command. Appropriate, accurate, fluent. Full flexibility. Native-like.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 19: What examiners listen for
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4270?w=1920&q=80",
+  cat:"Summary",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"What the Examiner Listens For",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="tips-box"><h4>Quick Checklist — Ask Yourself</h4><ul>'+
+      '<li><strong>Fluency:</strong> Did I speak smoothly? Did I use linking words? Did I give full answers?</li>'+
+      '<li><strong>Vocabulary:</strong> Did I use a range of words? Did I paraphrase? Did I use any idiomatic phrases?</li>'+
+      '<li><strong>Grammar:</strong> Did I use different tenses? Did I use complex sentences? Were they mostly correct?</li>'+
+      '<li><strong>Pronunciation:</strong> Was I clear? Did I stress the right words? Did my voice go up and down naturally?</li>'+
+    '</ul></div>'+
+    '<div style="margin-top:16px;text-align:center"><p style="color:rgba(255,255,255,.5);font-size:13px">Remember: You do not need a perfect accent. You need to be <strong style="color:#22d3ee">clear</strong> and <strong style="color:#22d3ee">natural</strong>.</p></div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 7: SPEAKING QUESTIONS (PRIMARY IELTS LESSON)
+   ═══════════════════════════════════════════ */
+
+// SLIDE 20: Speaking questions intro
+{
+  bg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80",
+  cat:"Practice Questions",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"IELTS Speaking Practice",subtitle:"Real questions for your primary IELTS lesson",
+  text:"Practice these questions with a partner. Try to speak for 2 minutes per question. Use the band score criteria you just learned.",
+  isTitle:true
+},
+
+// SLIDE 21: Part 1 questions
+{
+  bg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80",
+  cat:"Part 1 — Interview",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Part 1 Questions",subtitle:"Answer in 2-3 sentences. Be natural and friendly.",
+  text:"",
+  custom:function(){
+    return '<div class="q-list" style="max-width:700px;margin:12px auto 0;text-align:left;display:flex;flex-direction:column;gap:8px">'+
+      '<div class="q-item"><span class="q-text">1. Where do you live? What do you like about your area?</span></div>'+
+      '<div class="q-item"><span class="q-text">2. Do you work or are you a student? What do you enjoy about it?</span></div>'+
+      '<div class="q-item"><span class="q-text">3. What do you like to do in your free time?</span></div>'+
+      '<div class="q-item"><span class="q-text">4. Do you prefer spending time indoors or outdoors? Why?</span></div>'+
+      '<div class="q-item"><span class="q-text">5. How often do you use the internet? What do you use it for?</span></div>'+
+      '<div class="q-item"><span class="q-text">6. Do you like cooking? What is your favourite dish to make?</span></div>'+
+      '<div class="q-item"><span class="q-text">7. What kind of music do you enjoy listening to?</span></div>'+
+      '<div class="q-item"><span class="q-text">8. Do you prefer living in a city or the countryside? Why?</span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 22: Part 1 model answers
+{
+  bg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80",
+  cat:"Part 1 — Model Answers",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Model Answers (Band 7+)",subtitle:"Notice the grammar, vocabulary, and natural flow",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Q:</span> Do you prefer living in a city or the countryside?</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Band 5:</span> "I like city. Is very exciting. Many things to do."</p>'+
+      '<p style="margin-top:10px"><span class="speaker candidate">Band 7:</span> "I would have to say I prefer city life, mainly because of the convenience. Everything is within reach — shops, restaurants, public transport. That said, I do appreciate getting out into the countryside from time to time to recharge."</p>'+
+      '<p class="note">Grammar: "would have to say" (hedging), "mainly because of" (reason), "That said" (contrast), "from time to time" (idiomatic)</p>'+
+      '<p style="margin-top:12px"><span class="speaker examiner">Q:</span> What do you like to do in your free time?</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Band 5:</span> "I like watch TV. Sometimes I go park."</p>'+
+      '<p style="margin-top:10px"><span class="speaker candidate">Band 7:</span> "Well, I am really into hiking at the moment. I try to get out to the mountains at least once a month. It is a great way to disconnect from the daily grind and clear my head."</p>'+
+      '<p class="note">Vocabulary: "really into" (idiomatic), "disconnect from the daily grind" (idiomatic), "clear my head" (idiomatic)</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 23: Part 2 task card
+{
+  bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",
+  cat:"Part 2 — Long Turn",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Part 2: Describe a Place",subtitle:"You have 1 minute to prepare. Speak for 1-2 minutes.",
+  text:"",
+  custom:function(){
+    return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 24px;max-width:640px;margin:12px auto 0;text-align:left">'+
+      '<p style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700">Task Card</p>'+
+      '<p style="font-size:16px;line-height:1.7;color:#fff">Describe <strong>a place you have visited</strong> that you found interesting.</p>'+
+      '<p style="font-size:14px;color:rgba(255,255,255,.7);margin-top:12px">You should say:</p>'+
+      '<ul style="font-size:14px;color:rgba(255,255,255,.6);margin-top:6px;padding-left:20px;line-height:2">'+
+        '<li>Where it was</li>'+
+        '<li>When you went there</li>'+
+        '<li>What you did there</li>'+
+        '<li>And explain why you found it interesting</li>'+
+      '</ul>'+
+    '</div>'+
+    '<div class="tips-box" style="margin-top:14px"><h4>Tips for Part 2</h4><ul>'+
+      '<li>Use your 1 minute to write KEY WORDS only — not full sentences</li>'+
+      '<li>Tell it like a story: First... Then... After that... Finally...</li>'+
+      '<li>Include how you felt: "I was amazed by...", "What struck me was..."</li>'+
+      '<li>If you do not know the exact word, describe it: "It is a kind of... / You use it for..."</li>'+
+    '</ul></div>';
+  }
+},
+
+// SLIDE 24: Part 2 model answer
+{
+  bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",
+  cat:"Part 2 — Model Answer",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Model Answer (Band 7+)",subtitle:"Describe a place you have visited that you found interesting",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker candidate">Band 7 Answer:</span></p>'+
+      '<p style="margin-top:8px;color:rgba(255,255,255,.7);line-height:1.8;font-size:14px">'+
+        '"I would like to talk about a trip I took to <strong>Cape Town</strong> in South Africa, which was about three years ago. I went there with my family during the summer holidays, and we spent about ten days exploring the area.<br><br>'+
+        'The thing that really <strong>stood out</strong> for me was Table Mountain. We took the cable car to the top, and the view was absolutely <strong>breathtaking</strong>. You could see the entire city, the harbour, and the ocean stretching out to the horizon. It was one of those moments where you just <strong>stand there in awe</strong>.<br><br>'+
+        'We also visited the V&A Waterfront, which is a bustling area with shops, restaurants, and street performers. What I found particularly interesting was the mix of cultures — you could hear different languages, try food from all over the world, and see architecture from different periods.<br><br>'+
+        'The reason I found Cape Town so fascinating is that it has this unique combination of natural beauty and cultural diversity. It is not often you find a city where you can hike a mountain in the morning and visit world-class galleries in the afternoon. It really <strong>left a lasting impression</strong> on me."'+
+      '</p>'+
+      '<p class="note">Grammar highlights: past simple, relative clauses ("which was...", "where you..."), cleft-like emphasis ("The thing that really stood out...")<br>Vocabulary highlights: stood out, breathtaking, in awe, bustling, left a lasting impression (all idiomatic)</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 25: Part 3 questions
+{
+  bg:"https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&q=80",
+  cat:"Part 3 — Discussion",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"Part 3 Questions",subtitle:"Deeper questions about the same topic. Give your opinion and explain it.",
+  text:"",
+  custom:function(){
+    return '<div class="q-list" style="max-width:720px;margin:12px auto 0;text-align:left;display:flex;flex-direction:column;gap:8px">'+
+      '<div class="q-item"><span class="q-text">1. Why do you think people enjoy travelling to new places?</span></div>'+
+      '<div class="q-item"><span class="q-text">2. How has tourism changed in your country in recent years?</span></div>'+
+      '<div class="q-item"><span class="q-text">3. Do you think international tourism is mostly positive or negative? Why?</span></div>'+
+      '<div class="q-item"><span class="q-text">4. How might tourism change in the future?</span></div>'+
+      '<div class="q-item"><span class="q-text">5. Should governments limit the number of tourists in popular areas?</span></div>'+
+      '<div class="q-item"><span class="q-text">6. What are the advantages of travelling alone versus travelling with others?</span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 26: Part 3 model answer
+{
+  bg:"https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&q=80",
+  cat:"Part 3 — Model Answer",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"Model Answer (Band 7+)",subtitle:"Do you think international tourism is mostly positive or negative?",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker candidate">Band 5:</span> "I think is good. Many people get job. Tourist spend money. But also is bad because too many people and pollution."</p>'+
+      '<p class="note">Simple. No complex grammar. No hedging. No examples.</p>'+
+      '<p style="margin-top:14px"><span class="speaker candidate">Band 7:</span> "Well, I think it is a double-edged sword. On the one hand, tourism can be a real boost to the local economy — it creates jobs, supports small businesses, and can lead to better infrastructure. On the other hand, overtourism can put enormous strain on local resources and damage fragile ecosystems. I think the key is sustainable tourism, where governments and communities work together to manage visitor numbers and ensure that the benefits are shared fairly."</p>'+
+      '<p class="note">Strengths: "double-edged sword" (idiom), "on the one hand... on the other hand" (structure), "put strain on" (collocation), "sustainable tourism" (topic vocabulary), hedging ("I think", "can be")</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 27: Final tips
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4270?w=1920&q=80",
+  cat:"Final Tips",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Your Action Plan",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="tips-box"><h4>Before Your Test</h4><ul>'+
+      '<li><strong>Record yourself</strong> answering IELTS questions. Listen back. Notice your pauses and errors.</li>'+
+      '<li><strong>Learn 5 idiomatic phrases</strong> you can use naturally: "at the end of the day", "it depends on", "the thing is", "to a certain extent", "when it comes to"</li>'+
+      '<li><strong>Practice Part 2</strong> with a timer. Speak for exactly 2 minutes. Do this every day.</li>'+
+      '<li><strong>Do not memorise answers.</strong> Examiners can tell. They will give you a lower score.</li>'+
+      '<li><strong>Be honest and natural.</strong> It is OK to say "I am not sure about that, but I think..."</li>'+
+      '<li><strong>Ask for clarification</strong> if you do not understand: "Could you rephrase that, please?" This is NOT penalised.</li>'+
+    '</ul></div>'+
+    '<div style="margin-top:16px"><p style="font-size:18px;color:#fff;font-weight:700">Good luck with your IELTS exam! 🎯</p></div>';
+  }
+},
+
+// SLIDE 28: Well done
+{
+  bg:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80",
+  cat:"Complete",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Well Done!",subtitle:"You now understand the IELTS Speaking band criteria",
+  text:"Use this knowledge in your next practice session. Focus on one criterion at a time.",
+  isTitle:true
+}
+
+];
+
+/* ═══════════════════════════════════════════
+   RENDER ENGINE
+   ═══════════════════════════════════════════ */
+
+function renderSlides(){
+  var container=document.getElementById('slides-container');
+  var dots=document.getElementById('navDots');
+  var qnav=document.getElementById('quickNav');
+  var html='';
+  var dotsHtml='';
+  var qnavHtml='';
+  var currentSection='';
+
+  SLIDES.forEach(function(s,i){
+    // Quick nav sections
+    if(s.cat && s.cat!==currentSection && !s.isTitle){
+      currentSection=s.cat;
+      qnavHtml+='<div class="qn-btn" onclick="goToSlide('+i+')">'+s.cat.substring(0,12)+'</div>';
+    }
+
+    html+='<div class="slide'+(i===0?' active':'')+'" id="slide'+i+'">';
+    html+='<div class="slide-bg" style="background-image:url(\''+s.bg+'\')"></div>';
+    html+='<div class="slide-content">';
+    html+='<div class="slide-number">'+(i+1)+' / '+SLIDES.length+'</div>';
+    html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+
+    if(s.isTitle){
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+    } else if(s.isAim){
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+      if(s.goals){
+        html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;max-width:750px;margin:16px auto 0;text-align:left">';
+        s.goals.forEach(function(g){
+          html+='<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px">';
+          html+='<div style="font-size:13px;font-weight:700;margin-bottom:4px">'+g.icon+' '+g.label+'</div>';
+          html+='<div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">'+g.desc+'</div>';
+          html+='</div>';
+        });
+        html+='</div>';
+      }
+    } else if(s.custom){
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+      html+=s.custom();
+    } else {
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+    }
+
+    html+='<div class="slide-footer"><span class="logo">El<span class="o">o</span>quenta</span> — IELTS Speaking</div>';
+    html+='</div></div>';
+    dotsHtml+='<div class="nav-dot'+(i===0?' active':'')+'" onclick="goToSlide('+i+')"></div>';
+  });
+
+  container.innerHTML=html;
+  dots.innerHTML=dotsHtml;
+  qnav.innerHTML=qnavHtml;
+}
+
+var currentSlide=0;
+function goToSlide(n){
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-dot').forEach(function(d){d.classList.remove('active')});
+  document.getElementById('slide'+n).classList.add('active');
+  document.querySelectorAll('.nav-dot')[n].classList.add('active');
+  currentSlide=n;
+  document.getElementById('progressBar').style.width=((n+1)/SLIDES.length*100)+'%';
+}
+function nextSlide(){if(currentSlide<SLIDES.length-1)goToSlide(currentSlide+1);}
+function prevSlide(){if(currentSlide>0)goToSlide(currentSlide-1);}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' ')nextSlide();
+  if(e.key==='ArrowLeft')prevSlide();
+});
+
+renderSlides();
+</script>
+</body>
+</html>

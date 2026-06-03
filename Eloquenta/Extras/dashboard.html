@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Student Dashboard</title>
+<style>
+:root {
+  --bg: #020617;
+  --bg-card: #0f172a;
+  --bg-hover: #1e293b;
+  --border: #1e293b;
+  --border-light: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,0.12);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,0.12);
+  --emerald: #34d399;
+  --emerald-dim: rgba(52,211,153,0.12);
+  --violet: #a78bfa;
+  --rose: #fb7185;
+  --rose-dim: rgba(251,113,133,0.12);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* LAYOUT */
+.app { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px; min-width: 240px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; bottom: 0; left: 0;
+  z-index: 50;
+}
+.sidebar-logo {
+  padding: 20px 24px; font-size: 18px; font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .l { color: var(--text); }
+.sidebar-logo .r { color: var(--cyan); }
+.sidebar-nav { flex: 1; padding: 16px 12px; }
+.sidebar-nav ul { list-style: none; }
+.sidebar-nav li { margin-bottom: 2px; }
+.sidebar-nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 8px;
+  color: var(--text-muted); font-size: 14px; font-weight: 500;
+  text-decoration: none;
+}
+.sidebar-nav a:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar-nav a.active { background: var(--cyan-dim); color: var(--cyan); }
+.sidebar-nav .nav-label {
+  padding: 16px 14px 8px; font-size: 11px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+}
+.sidebar-user {
+  padding: 16px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.user-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--cyan-dim); color: var(--cyan);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+}
+.user-info { font-size: 13px; }
+.user-name { font-weight: 600; color: var(--text); }
+.user-level { color: var(--text-dim); font-size: 11px; }
+
+/* MAIN */
+.main { flex: 1; margin-left: 240px; }
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(2,6,23,0.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar h1 { font-size: 18px; font-weight: 700; }
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.content { padding: 32px; max-width: 1000px; }
+
+/* CARDS */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px;
+  margin-bottom: 20px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 15px; font-weight: 700; }
+
+/* PROGRESS */
+.progress-card { text-align: center; }
+.progress-ring {
+  width: 120px; height: 120px; margin: 0 auto 16px;
+  position: relative;
+}
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring circle {
+  fill: none; stroke-width: 8;
+  stroke-linecap: round;
+}
+.progress-ring .bg { stroke: var(--border); }
+.progress-ring .fill { stroke: var(--cyan); transition: stroke-dashoffset 0.5s; }
+.progress-label {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px; font-weight: 800;
+}
+.progress-detail { font-size: 14px; color: var(--text-muted); }
+.progress-detail strong { color: var(--text); }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-box {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px; text-align: center;
+}
+.stat-num { font-size: 24px; font-weight: 800; color: var(--cyan); }
+.stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+/* LESSON LIST */
+.lesson-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px; border-bottom: 1px solid var(--border);
+}
+.lesson-item:last-child { border-bottom: none; }
+.lesson-date {
+  width: 48px; text-align: center; flex-shrink: 0;
+}
+.lesson-date .day { font-size: 20px; font-weight: 800; line-height: 1.1; }
+.lesson-date .month { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+.lesson-info { flex: 1; }
+.lesson-type { font-size: 14px; font-weight: 600; }
+.lesson-meta { font-size: 12px; color: var(--text-muted); }
+.lesson-status {
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.status-upcoming { background: var(--amber-dim); color: var(--amber); }
+.status-completed { background: var(--emerald-dim); color: var(--emerald); }
+.status-today { background: var(--cyan-dim); color: var(--cyan); }
+
+/* JOIN BUTTON */
+.join-section { margin-top: 16px; display: flex; gap: 8px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: 8px; font-size: 14px;
+  font-weight: 600; cursor: pointer; border: none;
+  text-decoration: none; transition: all 0.2s;
+}
+.btn:hover { text-decoration: none; }
+.btn-primary { background: var(--cyan); color: var(--bg); }
+.btn-primary:hover { background: #67e8f9; }
+.btn-success { background: var(--emerald); color: #020617; }
+.btn-success:hover { background: #6ee7b7; }
+.btn-secondary {
+  background: transparent; color: var(--text-muted);
+  border: 1px solid var(--border-light); padding: 8px 16px;
+}
+.btn-secondary:hover { background: var(--bg-hover); color: var(--text); }
+.btn-large { padding: 14px 28px; font-size: 15px; }
+.btn-danger { background: var(--rose); color: #020617; }
+.btn-danger:hover { background: #fda4af; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* VOIP CARD */
+.voip-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.voip-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.voip-title { font-size: 16px; font-weight: 700; }
+.voip-status {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600;
+}
+.voip-status .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--emerald);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+  .voip-options { display: none } /* no longer used — single join button */
+
+/* HEALTH CHECK */
+.health-check {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 600;
+  margin-bottom: 12px;
+}
+.health-ok { background: var(--emerald-dim); color: var(--emerald); }
+.health-fail { background: var(--rose-dim); color: var(--rose); }
+.health-check .spinner {
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* LEVEL PROGRESS */
+.level-track { display: flex; gap: 4px; margin: 16px 0; }
+.level-dot {
+  flex: 1; height: 6px; border-radius: 3px;
+  background: var(--border);
+}
+.level-dot.completed { background: var(--emerald); }
+.level-dot.current { background: var(--cyan); }
+.level-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); }
+
+/* BADGE */
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 11px; font-weight: 700;
+}
+.badge-beginner { background: rgba(52,211,153,0.15); color: var(--emerald); }
+.badge-intermediate { background: rgba(251,191,36,0.15); color: var(--amber); }
+.badge-advanced { background: rgba(34,211,238,0.15); color: var(--cyan); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .voip-card { padding: 20px; }
+}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home" style="padding:0"><span class="elo-wordmark" style="font-size:18px">Eloqu<span class="o">e</span>nta</span></a></div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="#" class="active" onclick="showPage('dashboard')">📊 Dashboard</a></li>
+        <li><a href="#" onclick="showPage('lessons')">📅 My Lessons</a></li>
+        <li><a href="#" onclick="showPage('progress')">📈 Progress</a></li>
+        <li><a href="#" onclick="showPage('materials')">📚 Materials</a></li>
+        <li><a href="#" onclick="showPage('bookmarks')">🔖 Bookmarks</a></li>
+      </ul>
+      <div class="nav-label">Account</div>
+      <ul>
+        <li><a href="#" onclick="showPage('settings')">⚙️ Settings</a></li>
+        <li><a href="#" onclick="showPage('billing')">💳 Billing</a></li>
+        <li><a href="#">🚪 Log Out</a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">M</div>
+      <div class="user-info">
+        <div class="user-name">Maria Schmidt</div>
+        <div class="user-level">FL4 — Intermediate (B1)</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+<!-- Header with Dynamic Lesson Status -->
+      <div style="display:flex; align-items:center; gap:16px;">
+        <div>
+          <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px;">
+            <span id="lesson-status-pulse" class="pulse-dot"></span> <span id="lesson-status-text">Lesson Pending</span>
+          </div>
+          <h1 id="page-title" style="display:flex; align-items:center; gap:8px;">
+            <span id="student-greeting">👋 Hi, Maria!</span>
+          </h1>
+        </div>
+      </div>
+<style>
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text-dim); transition: background 0.3s;
+  }
+  .pulse-dot.live {
+    background: var(--emerald); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
+    animation: pulse-green 2s infinite;
+  }
+  @keyframes pulse-green {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  }
+</style>
+<script>
+  // Simulate active lesson
+  setTimeout(() => {
+    document.getElementById('lesson-status-pulse').classList.add('live');
+    document.getElementById('lesson-status-text').textContent = 'LIVE LESSON IN PROGRESS';
+    document.getElementById('lesson-status-text').style.color = 'var(--emerald)';
+  }, 2000);
+</script>
+      <div class="topbar-actions">
+        <select class="lang-select" style="background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);padding:6px 10px;border-radius:6px;font-size:13px;">
+          <option>🇬🇧 English</option>
+          <option>🇩🇪 Deutsch</option>
+          <option>🇪🇸 Español</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ======== DASHBOARD PAGE ======== -->
+      <div id="page-dashboard" class="page">
+
+        <!-- Next Lesson Card (most important) -->
+        <div class="voip-card">
+          <div class="voip-header">
+            <div>
+              <div class="voip-title">🎯 Next Lesson — Today at 14:00</div>
+              <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">
+                FL4 Session 3/14 — Present Perfect vs Past Simple · 60 min · Teacher: William
+              </div>
+            </div>
+            <div class="voip-status">
+              <div class="dot"></div>
+              Starting in 23 min
+            </div>
+          </div>
+
+          <!-- Connection status (hidden backend check) -->
+          <div id="health-result"></div>
+
+          <!-- Single branded join — student sees only this -->
+          <div style="text-align:center; padding:12px 0 4px;">
+            <button class="btn btn-success btn-large" id="btn-join-lesson" style="font-size:16px; padding:16px 40px; border-radius:12px;" onclick="joinLesson()">
+              <span style="font-size:20px; margin-right:8px;">🚀</span> Join Lesson
+            </button>
+            <div style="margin-top:14px; font-size:12px; color:var(--text-dim);">
+              <span id="join-status-text">Checking connection...</span>
+            </div>
+          </div>
+
+          <!-- Hidden: backend failover config (not shown to student) -->
+          <!-- Backend picks Google Meet or Talky.io automatically. Student always uses Eloquenta classroom. -->
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-num">12</div>
+            <div class="stat-label">Lessons Done</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">3</div>
+            <div class="stat-label">This Block</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">FL4</div>
+            <div class="stat-label">Current Level</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">B1</div>
+            <div class="stat-label">CEFR Level</div>
+          </div>
+        </div>
+
+        <!-- Level Progress -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Level Progress — FL4 Intermediate</div>
+            <span class="badge badge-intermediate">3 / 14 sessions</span>
+          </div>
+          <div class="level-track">
+            <div class="level-dot completed"></div>
+            <div class="level-dot completed"></div>
+            <div class="level-dot completed"></div>
+            <div class="level-dot current"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+            <div class="level-dot"></div>
+          </div>
+          <div class="level-labels">
+            <span>Session 1</span>
+            <span>Session 14 → Assessment</span>
+          </div>
+          <div style="margin-top:16px; font-size:13px; color:var(--text-muted);">
+            <strong style="color:var(--text)">Next:</strong> Present Perfect vs Past Simple — with German translations for key grammar terms.
+          </div>
+        </div>
+
+        <!-- Upcoming Lessons -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Upcoming Lessons</div>
+            <a href="#" class="btn btn-secondary" style="padding:6px 12px; font-size:12px;">View All</a>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date">
+              <div class="day">21</div>
+              <div class="month">May</div>
+            </div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 3: Present Perfect vs Past Simple</div>
+              <div class="lesson-meta">Today · 14:00-15:00 CET · William</div>
+            </div>
+            <span class="lesson-status status-today">TODAY</span>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date">
+              <div class="day">23</div>
+              <div class="month">May</div>
+            </div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 4: Adverbs (already, yet, just, still)</div>
+              <div class="lesson-meta">Thu · 14:00-15:00 CET · William</div>
+            </div>
+            <span class="lesson-status status-upcoming">UPCOMING</span>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date">
+              <div class="day">26</div>
+              <div class="month">May</div>
+            </div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 5: Relative Clauses</div>
+              <div class="lesson-meta">Mon · 14:00-15:00 CET · William</div>
+            </div>
+            <span class="lesson-status status-upcoming">UPCOMING</span>
+          </div>
+        </div>
+
+        <!-- Recent Recordings -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Recordings</div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 2: Present Perfect Introduction</div>
+              <div class="lesson-meta">May 19 · 58 min · 🇩🇪 German translations used</div>
+            </div>
+            <a href="#" class="btn btn-secondary" style="padding:6px 12px; font-size:12px;">▶ Watch</a>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 1: Review & Goal Setting</div>
+              <div class="lesson-meta">May 16 · 60 min · 🇩🇪 German translations used</div>
+            </div>
+            <a href="#" class="btn btn-secondary" style="padding:6px 12px; font-size:12px;">▶ Watch</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== LESSONS PAGE ======== -->
+      <div id="page-lessons" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All Lessons</div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date"><div class="day">21</div><div class="month">May</div></div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 3: Present Perfect vs Past Simple</div>
+              <div class="lesson-meta">Today · 14:00-15:00 CET · William</div>
+            </div>
+            <span class="lesson-status status-today">TODAY</span>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date"><div class="day">23</div><div class="month">May</div></div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 4: Adverbs</div>
+              <div class="lesson-meta">Thu · 14:00-15:00 CET · William</div>
+            </div>
+            <span class="lesson-status status-upcoming">UPCOMING</span>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date"><div class="day">19</div><div class="month">May</div></div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 2: Present Perfect Introduction</div>
+              <div class="lesson-meta">May 19 · 58 min · Completed</div>
+            </div>
+            <span class="lesson-status status-completed">DONE</span>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date"><div class="day">16</div><div class="month">May</div></div>
+            <div class="lesson-info">
+              <div class="lesson-type">FL4 — Session 1: Review & Goal Setting</div>
+              <div class="lesson-meta">May 16 · 60 min · Completed</div>
+            </div>
+            <span class="lesson-status status-completed">DONE</span>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-date"><div class="day">14</div><div class="month">May</div></div>
+            <div class="lesson-info">
+              <div class="lesson-type">Placement Test</div>
+              <div class="lesson-meta">May 14 · 30 min · Assigned FL4</div>
+            </div>
+            <span class="lesson-status status-completed">DONE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== PROGRESS PAGE ======== -->
+      <div id="page-progress" class="page" style="display:none;">
+        <div class="card progress-card">
+          <div class="progress-ring">
+            
+            <div class="progress-label">21%</div>
+          </div>
+          <div class="progress-detail">
+            <strong>FL4 — Intermediate (B1)</strong><br>
+            3 of 14 sessions completed
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Skills Breakdown</div>
+          <div style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span>Grammar</span><span style="color:var(--emerald)">Strong</span>
+            </div>
+            <div style="height:6px; background:var(--border); border-radius:3px;">
+              <div style="width:72%; height:100%; background:var(--emerald); border-radius:3px;"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span>Vocabulary</span><span style="color:var(--amber)">Improving</span>
+            </div>
+            <div style="height:6px; background:var(--border); border-radius:3px;">
+              <div style="width:58%; height:100%; background:var(--amber); border-radius:3px;"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span>Speaking</span><span style="color:var(--cyan)">Good</span>
+            </div>
+            <div style="height:6px; background:var(--border); border-radius:3px;">
+              <div style="width:65%; height:100%; background:var(--cyan); border-radius:3px;"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span>Listening</span><span style="color:var(--emerald)">Strong</span>
+            </div>
+            <div style="height:6px; background:var(--border); border-radius:3px;">
+              <div style="width:78%; height:100%; background:var(--emerald); border-radius:3px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span>Writing</span><span style="color:var(--amber)">Improving</span>
+            </div>
+            <div style="height:6px; background:var(--border); border-radius:3px;">
+              <div style="width:55%; height:100%; background:var(--amber); border-radius:3px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== MATERIALS PAGE ======== -->
+      <div id="page-materials" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">FL4 — Intermediate Materials</div>
+            <span class="badge badge-intermediate">Current Level</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px;">
+              <div style="font-size:13px; font-weight:600; margin-bottom:4px;">📝 Session 3: Present Perfect</div>
+              <div style="font-size:12px; color:var(--text-muted);">Key terms + German translations</div>
+              <a href="#" style="font-size:12px; margin-top:8px; display:block;">Download PDF →</a>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px;">
+              <div style="font-size:13px; font-weight:600; margin-bottom:4px;">📝 Session 2: Present Perfect Intro</div>
+              <div style="font-size:12px; color:var(--text-muted);">Key terms + German translations</div>
+              <a href="#" style="font-size:12px; margin-top:8px; display:block;">Download PDF →</a>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px;">
+              <div style="font-size:13px; font-weight:600; margin-bottom:4px;">📚 FL4 Vocabulary List</div>
+              <div style="font-size:12px; color:var(--text-muted);">All key terms for this level</div>
+              <a href="#" style="font-size:12px; margin-top:8px; display:block;">Download PDF →</a>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px;">
+              <div style="font-size:13px; font-weight:600; margin-bottom:4px;">🎯 FL4 Assessment Prep</div>
+              <div style="font-size:12px; color:var(--text-muted);">Practice test for end of block</div>
+              <a href="#" style="font-size:12px; margin-top:8px; display:block;">Download PDF →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== SETTINGS PAGE ======== -->
+      <div id="page-settings" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Settings</div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Preferred Translation Language</label>
+            <select style="width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); color:var(--text); border-radius:8px; font-size:14px;">
+              <option>🇩🇪 German (Deutsch)</option>
+              <option>🇪🇸 Spanish (Español)</option>
+              <option>🇫🇷 French (Français)</option>
+              <option>🇮🇹 Italian (Italiano)</option>
+              <option>🇧🇷 Portuguese (Português)</option>
+              <option>🇯🇵 Japanese (日本語)</option>
+              <option>🇰🇷 Korean (한국어)</option>
+              <option>🇨🇳 Mandarin (中文)</option>
+            </select>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Timezone</label>
+            <select style="width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); color:var(--text); border-radius:8px; font-size:14px;">
+              <option>Central Europe (CET/CEST)</option>
+              <option>Japan (JST)</option>
+              <option>Korea (KST)</option>
+              <option>Brazil (BRT)</option>
+            </select>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Email Notifications</label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); margin-bottom:6px;">
+              <input type="checkbox" checked> Lesson reminders (24h + 1h before)
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); margin-bottom:6px;">
+              <input type="checkbox" checked> New materials available
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted);">
+              <input type="checkbox"> Marketing & tips
+            </label>
+          </div>
+          <button class="btn btn-primary">Save Settings</button>
+        </div>
+      </div>
+
+      <!-- ======== BILLING PAGE ======== -->
+      <div id="page-billing" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Current Plan</div>
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:15px; font-weight:700;">5-Lesson Pack</div>
+                <div style="font-size:13px; color:var(--text-muted);">3 lessons remaining</div>
+              </div>
+              <span style="font-size:14px; font-weight:700; color:var(--emerald);">$270 paid</span>
+            </div>
+          </div>
+          <div style="font-size:13px; color:var(--text-muted);">
+            Next pack: <a href="#">Buy another 5-Lesson Pack →</a>
+          </div>
+        </div>
+      </div>
+
+<!-- ======== BOOKMARKS PAGE ======== -->
+      <div id="page-bookmarks" class="page" style="display:none;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:22px; font-weight:800; margin-bottom:4px;">🔖 My Bookmarks</h2>
+            <p style="font-size:13px; color:var(--text-muted);">Save and organize links shared by your teacher. Retrieved by lesson date or category.</p>
+          </div>
+          <button class="btn btn-primary btn-small" onclick="toggleAddBookmark()">+ Add Bookmark</button>
+        </div>
+
+        <!-- Add Bookmark Form (hidden by default) -->
+        <div id="add-bookmark-form" style="display:none; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:24px;">
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:16px;">Add New Bookmark</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div>
+              <label style="font-size:12px; font-weight:600; color:var(--text-dim); display:block; margin-bottom:4px;">Title</label>
+              <input type="text" id="bm-title" placeholder="e.g. Grammar exercise" style="width:100%; padding:10px 14px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:600; color:var(--text-dim); display:block; margin-bottom:4px;">URL</label>
+              <input type="url" id="bm-url" placeholder="https://..." style="width:100%; padding:10px 14px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div>
+              <label style="font-size:12px; font-weight:600; color:var(--text-dim); display:block; margin-bottom:4px;">Lesson Date</label>
+              <input type="date" id="bm-date" style="width:100%; padding:10px 14px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:600; color:var(--text-dim); display:block; margin-bottom:4px;">Category</label>
+              <select id="bm-category" style="width:100%; padding:10px 14px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
+                <option value="grammar">📝 Grammar</option>
+                <option value="vocabulary">📚 Vocabulary</option>
+                <option value="listening">🎧 Listening</option>
+                <option value="speaking">🗣️ Speaking</option>
+                <option value="reading">📖 Reading</option>
+                <option value="writing">✏️ Writing</option>
+                <option value="exam">🎯 Exam Prep</option>
+                <option value="fun">🎮 Fun &amp; Games</option>
+                <option value="other">📎 Other</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-secondary btn-small" onclick="toggleAddBookmark()">Cancel</button>
+            <button class="btn btn-primary btn-small" onclick="saveBookmark()">Save Bookmark</button>
+          </div>
+        </div>
+
+        <!-- Filter / Sort bar -->
+        <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
+          <select id="bm-filter-cat" onchange="renderBookmarks()" style="padding:8px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:13px;">
+            <option value="all">All Categories</option>
+            <option value="grammar">📝 Grammar</option>
+            <option value="vocabulary">📚 Vocabulary</option>
+            <option value="listening">🎧 Listening</option>
+            <option value="speaking">🗣️ Speaking</option>
+            <option value="reading">📖 Reading</option>
+            <option value="writing">✏️ Writing</option>
+            <option value="exam">🎯 Exam Prep</option>
+            <option value="fun">🎮 Fun &amp; Games</option>
+            <option value="other">📎 Other</option>
+          </select>
+          <select id="bm-sort" onchange="renderBookmarks()" style="padding:8px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:13px;">
+            <option value="date-desc">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="title">By Title</option>
+            <option value="category">By Category</option>
+            <option value="lesson-date">By Lesson Date</option>
+          </select>
+          <input type="text" id="bm-search" placeholder="Search bookmarks..." oninput="renderBookmarks()" style="flex:1; min-width:160px; padding:8px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:13px;">
+          <span id="bm-count" style="font-size:12px; color:var(--text-dim); white-space:nowrap;">0 bookmarks</span>
+        </div>
+
+        <!-- Bookmarks list -->
+        <div id="bookmarks-list">
+          <div style="text-align:center; padding:48px 24px; color:var(--text-dim);">
+            <div style="font-size:3rem; margin-bottom:12px;">🔖</div>
+            <p style="font-size:15px; font-weight:600; margin-bottom:4px;">No bookmarks yet</p>
+            <p style="font-size:13px;">Save links shared by your teacher during lessons. They'll appear here organized by date and category.</p>
+          </div>
+        </div>
+      </div><!-- end page-bookmarks -->
+
+    </div>
+  </main>
+</div>
+
+<script>
+// Bookmarks data (persisted to localStorage)
+var STORAGE_KEY_BM = 'eloquenta_bookmarks';
+function loadBookmarks() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY_BM);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+function saveBookmarks(bms) {
+  try { localStorage.setItem(STORAGE_KEY_BM, JSON.stringify(bms)); } catch(e) {}}
+function toggleAddBookmark() {
+  var form = document.getElementById('add-bookmark-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+function saveBookmark() {
+  var title = document.getElementById('bm-title').value.trim();
+  var url = document.getElementById('bm-url').value.trim();
+  var date = document.getElementById('bm-date').value;
+  var category = document.getElementById('bm-category').value;
+  if(!title || !url) { alert('Please enter a title and URL'); return; }
+  var bms = loadBookmarks();
+  bms.push({ id: Date.now(), title: title, url: url, date: date, category: category, created: new Date().toISOString() });
+  saveBookmarks(bms);
+  document.getElementById('bm-title').value = '';
+  document.getElementById('bm-url').value = '';
+  document.getElementById('bm-date').value = '';
+  toggleAddBookmark();
+  renderBookmarks();
+}
+function deleteBookmark(id) {
+  if(!confirm('Delete this bookmark?')) return;
+  var bms = loadBookmarks().filter(function(b){ return b.id !== id; });
+  saveBookmarks(bms);
+  renderBookmarks();
+}
+function renderBookmarks() {
+  var bms = loadBookmarks();
+  var filterCat = document.getElementById('bm-filter-cat').value;
+  var sortBy = document.getElementById('bm-sort').value;
+  var search = document.getElementById('bm-search').value.toLowerCase();
+
+  // Filter
+  if(filterCat !== 'all') bms = bms.filter(function(b){ return b.category === filterCat; });
+  if(search) bms = bms.filter(function(b){ return b.title.toLowerCase().indexOf(search) !== -1 || b.url.toLowerCase().indexOf(search) !== -1; });
+
+  // Sort
+  bms.sort(function(a,b){
+    if(sortBy === 'date-desc') return new Date(b.created) - new Date(a.created);
+    if(sortBy === 'date-asc') return new Date(a.created) - new Date(b.created);
+    if(sortBy === 'title') return a.title.localeCompare(b.title);
+    if(sortBy === 'category') return a.category.localeCompare(b.category);
+    if(sortBy === 'lesson-date') return (b.date||'').localeCompare(a.date||'');
+    return 0;
+  });
+
+  // Cat labels
+  var catLabels = { grammar:'📝 Grammar', vocabulary:'📚 Vocabulary', listening:'🎧 Listening', speaking:'🗣️ Speaking', reading:'📖 Reading', writing:'✏️ Writing', exam:'🎯 Exam Prep', fun:'🎮 Fun & Games', other:'📎 Other' };
+
+  // Render
+  document.getElementById('bm-count').textContent = bms.length + ' bookmark' + (bms.length!==1?'s':'');
+  var container = document.getElementById('bookmarks-list');
+  if(bms.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:48px 24px; color:var(--text-dim);"><div style="font-size:3rem; margin-bottom:12px;">🔖</div><p style="font-size:15px; font-weight:600; margin-bottom:4px;">No bookmarks found</p><p style="font-size:13px;">Try adjusting your filters or add a new bookmark.</p></div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<bms.length;i++){
+    var bm = bms[i];
+    var dateStr = bm.date ? new Date(bm.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'No date';
+    html += '<div class="card" style="padding:16px 20px; margin-bottom:12px;">' +
+      '<div style="display:flex; align-items:flex-start; gap:12px;">' +
+        '<div style="flex:1; min-width:0;">' +
+          '<div style="font-size:14px; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + bm.title + '</div>' +
+          '<a href="' + bm.url + '" target="_blank" style="font-size:12px; color:var(--cyan); word-break:break-all; display:block; margin-bottom:6px;">' + bm.url + '</a>' +
+          '<div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">' +
+            '<span style="font-size:11px; padding:2px 8px; border-radius:10px; background:var(--cyan-dim); color:var(--cyan);">' + (catLabels[bm.category]||bm.category) + '</span>' +
+            '<span style="font-size:11px; color:var(--text-dim);">📅 ' + dateStr + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex; gap:4px; flex-shrink:0;">' +
+          '<a href="' + bm.url + '" target="_blank" class="btn btn-secondary btn-small" style="padding:6px 12px; font-size:12px;">Open</a>' +
+          '<button class="btn btn-secondary btn-small" style="padding:6px 12px; font-size:12px; color:var(--rose);" onclick="deleteBookmark(' + bm.id + ')">✕</button>' +
+        '</div>' +
+      '</div></div>';
+  }
+  container.innerHTML = html;
+}
+
+// Page navigation
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById('page-' + page).style.display = 'block';
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  event.target.classList.add('active');
+  const titles = {
+    dashboard: '👋 Hi, Maria!', lessons: '📅 My Lessons', progress: '📈 Progress',
+    materials: '📚 Materials', bookmarks: '🔖 Bookmarks', settings: '⚙️ Settings', billing: '💳 Billing'
+  };
+  var titleEl = document.getElementById('page-title');
+  if(titleEl) titleEl.textContent = titles[page] || 'Dashboard';
+  if(page === 'bookmarks') renderBookmarks();
+}
+
+// VoIP — student always sees only "Join Lesson"
+// Backend silently picks best platform. Failover is invisible.
+function joinLesson() {
+  var btn = document.getElementById('btn-join-lesson');
+  var statusText = document.getElementById('join-status-text');
+  var resultDiv = document.getElementById('health-result');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span style="font-size:18px; margin-right:8px;">⏳</span> Connecting...';
+  if (statusText) statusText.textContent = 'Preparing your classroom...';
+  if (resultDiv) resultDiv.innerHTML = '<div class="health-check"><div class="spinner"></div> Setting up your lesson room...</div>';
+
+  // Backend connection check (simulated — in production, ping your server)
+  setTimeout(function() {
+    // In production: your server returns which backend to use
+    // For now, always open our branded classroom
+    if (resultDiv) resultDiv.innerHTML = '<div class="health-check health-ok">✓ Classroom ready. Launching...</div>';
+    if (statusText) statusText.textContent = '';
+
+    // Reset button
+    btn.disabled = false;
+    btn.innerHTML = '<span style="font-size:20px; margin-right:8px;">🚀</span> Join Lesson';
+
+    // Open the branded Eloquenta classroom overlay
+    openClassroom();
+  }, 1800);
+}
+
+function openClassroom() {
+  // Open voip.html as a full-page overlay (same tab for seamless experience)
+  // Student sees ONLY the Eloquenta-branded classroom — no Meet/Talky branding
+  window.location.href = 'voip.html';
+}
+
+// Auto-run connection check on page load (silent — no platform names shown)
+window.addEventListener('load', function() {
+  var resultDiv = document.getElementById('health-result');
+  if (!resultDiv) return;
+  // Silent pre-check: just verify your server is reachable
+  // No mention of Meet or Talky to the student
+  setTimeout(function() {
+    resultDiv.innerHTML = '<div class="health-check health-ok" style="font-size:12px; padding:8px 14px;">✓ All systems ready · Lesson room will be available at scheduled time</div>';
+  }, 2000);
+});
+</script>
+</body>
+</html>

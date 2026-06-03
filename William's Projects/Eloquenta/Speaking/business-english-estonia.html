@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Business English: Estonia e-Residency</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.12);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.12);--emerald:#34d399;--emerald-dim:rgba(52,211,153,.12);--violet:#a78bfa;--violet-dim:rgba(167,139,250,.12);--rose:#fb7185;--rose-dim:rgba(251,113,133,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif}
+.container{max-width:900px;margin:0 auto;padding:40px 24px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:20px}
+.card.highlight{background:rgba(34,211,238,.04);border-color:rgba(34,211,238,.2)}
+.card.accent{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2)}
+.card.violet{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.2)}
+.card.amber{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2)}
+.card.rose{background:rgba(251,113,133,.04);border-color:rgba(251,113,133,.2)}
+.text-box{background:rgba(160,180,200,.12);backdrop-filter:blur(8px);border:1px solid rgba(160,180,200,.18);border-radius:14px;padding:18px 24px;margin:12px 0}
+label{display:block;font-size:.85rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+input,textarea,select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--cyan)}
+textarea{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--cyan);color:#020617}
+.btn-primary:hover{background:#67e8f9}
+.btn-secondary{background:var(--bg-hover);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
+.badge-emerald{background:rgba(52,211,153,.12);color:var(--emerald)}
+.badge-violet{background:rgba(167,139,250,.12);color:var(--violet)}
+.badge-amber{background:rgba(251,191,36,.12);color:var(--amber)}
+.badge-rose{background:rgba(251,113,133,.12);color:var(--rose)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+/* Vocab tooltip */
+.vocab{border-bottom:2px dotted var(--cyan);cursor:help;position:relative}
+.vocab:hover::after{content:attr(data-def);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.8rem;color:var(--text);white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+/* Question styles */
+.q-num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:var(--cyan);margin-bottom:8px}
+.q-text{font-weight:600;font-size:1.05rem;margin-bottom:12px}
+.q-hint{font-size:.85rem;color:var(--text-dim);font-style:italic;margin-top:8px}
+.opts{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.opt{padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:.9rem}
+.opt:hover{border-color:var(--cyan);background:rgba(34,211,238,.05)}
+.opt.selected{border-color:var(--cyan);background:rgba(34,211,238,.1)}
+.opt.correct{border-color:var(--emerald);background:rgba(52,211,153,.1)}
+.opt.wrong{border-color:var(--rose);background:rgba(251,113,133,.1)}
+/* Progress */
+.progress-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;margin:20px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--emerald));transition:width .3s}
+/* Section divider */
+.divider{height:1px;background:var(--border);margin:40px 0}
+/* Print*/
+@media print{.btn,.no-print{display:none}body{background:#fff;color:#000}}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark" style="font-size:16px">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div style="text-align:center;margin-bottom:40px">
+    <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--cyan),var(--emerald));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 16px;color:#020617;font-weight:900">E</div>
+    <h1 style="font-size:2rem;margin-bottom:4px">Business English</h1>
+    <p style="color:var(--text-muted);font-size:1.1rem">Estonia e-Residency — Reading, Vocabulary & Discussion</p>
+    <div style="margin-top:16px">
+      <span class="badge badge-cyan">B2-C1</span>
+      <span class="badge badge-amber">Business</span>
+      <span class="badge badge-violet">Reading</span>
+      <span class="badge badge-emerald">Discussion</span>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+  <!-- ═══ SECTION 1: READING ═══ -->
+  <h2 style="font-size:1.4rem;margin-bottom:20px">📖 Part 1: Reading Comprehension</h2>
+  
+  <div class="card">
+    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:12px">Read the following text about Estonia's e-Residency program. As you read, notice the <span class="vocab" data-def="Key business term — hover to see definition">vocabulary</span> words highlighted in blue.</p>
+    
+    <div class="text-box" style="line-height:1.9;font-size:1.05rem">
+      <p><strong>User experiences with starting a business in Estonia via e-Residency are mixed</strong>, highlighting a significant gap between the government's marketing of a fully digital process and the practical realities of compliance and banking.</p>
+      
+      <p style="margin-top:16px">Positive experiences emphasize the ability to incorporate a company 100% online without physical presence, which appeals to digital nomads and non-EU entrepreneurs seeking a European legal entity. Users report that using specialized <span class="vocab" data-def="A company that provides specific services, often on behalf of other businesses">service providers</span> (like Xolo, Unicount, or TuneUp) can streamline the setup, allowing founders to manage operations remotely.</p>
+      
+      <p style="margin-top:16px">Negative experiences often cite that the process is more complex and costly than advertised, particularly for <span class="vocab" data-def="Starting a business with minimal external funding, using personal savings">bootstrapped</span> founders. Common pain points include:</p>
+      
+      <p style="margin-top:16px"><strong>Hidden Costs:</strong> Monthly fees for registered addresses, accounting, and <span class="vocab" data-def="The process of following rules and regulations set by authorities">compliance</span> services can range from €50 to over €100, making it expensive for low-revenue businesses.</p>
+      
+      <p style="margin-top:16px"><strong>Banking Friction:</strong> Opening a business bank account or <span class="vocab" data-def="A service that processes electronic payments for businesses">payment gateway</span> is difficult, often requiring extensive verification that delays launch.</p>
+      
+      <p style="margin-top:16px"><strong>Tax Complexity:</strong> Securing a full <span class="vocab" data-def="VAT Information Exchange System — EU system for validating VAT numbers">VIES VAT ID</span> (required for intra-community trade and avoiding extra VAT on services like Apple/Google) is increasingly difficult for non-EU residents without physical substance, potentially leading to higher tax burdens.</p>
+      
+      <p style="margin-top:16px"><strong>Perceived Risk:</strong> Some users describe the ecosystem as a "marketing gimmick" that creates more administrative hassle than it resolves, especially compared to simpler structures like US LLCs for certain global business models.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 2: VOCABULARY ═══ -->
+  <div class="divider"></div>
+  <h2 style="font-size:1.4rem;margin-bottom:20px">📝 Part 2: Vocabulary Exercise</h2>
+  
+  <div class="card">
+    <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:16px">Match each word or phrase from the text with its correct definition.</p>
+    
+    <div id="vocab-quiz">
+      <div class="grid-2">
+        <div class="card" style="padding:16px">
+          <div class="q-num">1</div>
+          <div class="q-text">Bootstrapped</div>
+          <div class="opts">
+            <div class="opt" onclick="checkVocab(this,'a')">A. Starting a business with minimal external funding</div>
+            <div class="opt" onclick="checkVocab(this,'b')">B. A type of shoe fastener</div>
+            <div class="opt" onclick="checkVocab(this,'c')">C. A government grant program</div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div class="q-num">2</div>
+          <div class="q-text">Compliance</div>
+          <div class="opts">
+            <div class="opt" onclick="checkVocab(this,'a')">A. A type of business loan</div>
+            <div class="opt" onclick="checkVocab(this,'b')">B. The process of following rules and regulations</div>
+            <div class="opt" onclick="checkVocab(this,'c')">C. A marketing strategy</div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div class="q-num">3</div>
+          <div class="q-text">Payment gateway</div>
+          <div class="opts">
+            <div class="opt" onclick="checkVocab(this,'a')">A. A physical location where payments are made</div>
+            <div class="opt" onclick="checkVocab(this,'b')">B. A type of bank account</div>
+            <div class="opt" onclick="checkVocab(this,'c')">C. A service that processes electronic payments</div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div class="q-num">4</div>
+          <div class="q-text">Service provider</div>
+          <div class="opts">
+            <div class="opt" onclick="checkVocab(this,'a')">A. A company that provides specific services for other businesses</div>
+            <div class="opt" onclick="checkVocab(this,'b')">B. A government employee</div>
+            <div class="opt" onclick="checkVocab(this,'c')">C. A type of insurance</div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div class="q-num">5</div>
+          <div class="q-text">VIES VAT ID</div>
+          <div class="opts">
+            <div class="opt" onclick="checkVocab(this,'a')">A. A type of business license</div>
+            <div class="opt" onclick="checkVocab(this,'b')">B. EU system for validating VAT numbers</div>
+            <div class="opt" onclick="checkVocab(this,'c')">C. A personal identification number</div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div class="q-num">6</div>
+          <div class="q-text">Marketing gimmick</div>
+          <div class="opts">
+            <div class="opt" onclick="checkVocab(this,'a')">A. A clever but potentially misleading promotional tactic</div>
+            <div class="opt" onclick="checkVocab(this,'b')">B. A type of advertising agency</div>
+            <div class="opt" onclick="checkVocab(this,'c')">C. A social media platform</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 3: COMPREHENSION QUESTIONS ═══ -->
+  <div class="divider"></div>
+  <h2 style="font-size:1.4rem;margin-bottom:20px">❓ Part 3: Comprehension Questions</h2>
+  
+  <div class="card">
+    <div class="q-num">1</div>
+    <div class="q-text">What does the text mean by "mixed" user experiences?</div>
+    <div class="opts">
+      <div class="opt" onclick="checkComp(this,'a')">A. Users had both positive and negative experiences</div>
+      <div class="opt" onclick="checkComp(this,'b')">B. Users were confused about how to use the program</div>
+      <div class="opt" onclick="checkComp(this,'c')">C. Users mixed up Estonia with other countries</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="q-num">2</div>
+    <div class="q-text">What is one positive aspect of Estonia's e-Residency program mentioned in the text?</div>
+    <div class="opts">
+      <div class="opt" onclick="checkComp(this,'a')">A. It's completely free to set up</div>
+      <div class="opt" onclick="checkComp(this,'b')">B. You can incorporate a company 100% online without physical presence</div>
+      <div class="opt" onclick="checkComp(this,'c')">C. Banking is very easy and fast</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="q-num">3</div>
+    <div class="q-text">What does "bootstrapped" mean in the context of the text?</div>
+    <div class="opts">
+      <div class="opt" onclick="checkComp(this,'a')">A. A founder who uses external investors</div>
+      <div class="opt" onclick="checkComp(this,'b')">B. A founder who starts with minimal external funding</div>
+      <div class="opt" onclick="checkComp(this,'c')">C. A founder who has no business experience</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="q-num">4</div>
+    <div class="q-text">What is "banking friction" according to the text?</div>
+    <div class="opts">
+      <div class="opt" onclick="checkComp(this,'a')">A. Physical friction between bank employees</div>
+      <div class="opt" onclick="checkComp(this,'b')">B. Difficulty and delays in opening business bank accounts</div>
+      <div class="opt" onclick="checkComp(this,'c')">C. A type of bank fee</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="q-num">5</div>
+    <div class="q-text">Why is securing a VIES VAT ID difficult for non-EU residents?</div>
+    <div class="opts">
+      <div class="opt" onclick="checkComp(this,'a')">A. They don't speak Estonian</div>
+      <div class="opt" onclick="checkComp(this,'b')">B. They lack physical substance in the EU</div>
+      <div class="opt" onclick="checkComp(this,'c')">C. The application form is too long</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="q-num">6</div>
+    <div class="q-text">What alternative business structure does the text mention as being simpler?</div>
+    <div class="opts">
+      <div class="opt" onclick="checkComp(this,'a')">A. UK Limited Company</div>
+      <div class="opt" onclick="checkComp(this,'b')">B. German GmbH</div>
+      <div class="opt" onclick="checkComp(this,'c')">C. US LLC</div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 4: DISCUSSION QUESTIONS ═══ -->
+  <div class="divider"></div>
+  <h2 style="font-size:1.4rem;margin-bottom:20px">💬 Part 4: Discussion Questions</h2>
+  <p style="color:var(--text-muted);margin-bottom:20px">Discuss these questions with your teacher or study partner. There are no right or wrong answers — the goal is to practice expressing your opinions in English.</p>
+  
+  <div class="card highlight">
+    <div class="q-num">1</div>
+    <div class="q-text">Would you consider setting up an Estonian e-Residency company for your business? Why or why not?</div>
+    <textarea placeholder="Write your answer here... (3-5 sentences)" style="min-height:100px"></textarea>
+  </div>
+
+  <div class="card highlight">
+    <div class="q-num">2</div>
+    <div class="q-text">The text mentions "hidden costs" as a pain point. Have you ever experienced hidden costs when starting a business or signing up for a service? What happened?</div>
+    <textarea placeholder="Write your answer here... (3-5 sentences)" style="min-height:100px"></textarea>
+  </div>
+
+  <div class="card highlight">
+    <div class="q-num">3</div>
+    <div class="q-text">What are the advantages and disadvantages of running a business in a country where you don't physically live?</div>
+    <textarea placeholder="Write your answer here... (3-5 sentences)" style="min-height:100px"></textarea>
+  </div>
+
+  <div class="card highlight">
+    <div class="q-num">4</div>
+    <div class="q-text">The text compares Estonia's e-Residency to US LLCs. Which structure do you think is better for a global online business? Why?</div>
+    <textarea placeholder="Write your answer here... (3-5 sentences)" style="min-height:100px"></textarea>
+  </div>
+
+  <div class="card highlight">
+    <div class="q-num">5</div>
+    <div class="q-text">If you were advising a friend who wanted to start an online business, what three things would they need to research before choosing a business structure?</div>
+    <textarea placeholder="Write your answer here... (3-5 sentences)" style="min-height:100px"></textarea>
+  </div>
+
+  <!-- ═══ SECTION 5: FILL THE GAP ═══ -->
+  <div class="divider"></div>
+  <h2 style="font-size:1.4rem;margin-bottom:20px">✏️ Part 5: Fill the Gap</h2>
+  <p style="color:var(--text-muted);margin-bottom:20px">Complete each sentence with the correct word from the box.</p>
+  
+  <div class="card">
+    <div class="text-box" style="text-align:center;font-weight:600">
+      bootstrapped · compliance · payment gateway · service provider · VIES VAT ID · marketing gimmick · banking friction · hidden costs
+    </div>
+    
+    <div style="margin-top:20px">
+      <p style="margin-bottom:8px"><strong>1.</strong> Many entrepreneurs start with minimal funding — they are <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span>.</p>
+      
+      <p style="margin-bottom:8px"><strong>2.</strong> Before launching, make sure you understand all the <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span> — not just the advertised price.</p>
+      
+      <p style="margin-bottom:8px"><strong>3.</strong> Setting up a <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span> can take weeks due to extensive verification requirements.</p>
+      
+      <p style="margin-bottom:8px"><strong>4.</strong> You need a <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span> to process credit card payments from international customers.</p>
+      
+      <p style="margin-bottom:8px"><strong>5.</strong> Some people think e-Residency is just a <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span> that doesn't deliver real value.</p>
+      
+      <p style="margin-bottom:8px"><strong>6.</strong> <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span> with opening business accounts can delay your launch by months.</p>
+      
+      <p style="margin-bottom:8px"><strong>7.</strong> A <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span> like Xolo can handle your accounting and legal paperwork remotely.</p>
+      
+      <p style="margin-bottom:8px"><strong>8.</strong> Without a <span style="border-bottom:2px solid var(--cyan);min-width:120px;display:inline-block;text-align:center" contenteditable="true">________</span>, you may pay extra VAT on digital services sold to EU customers.</p>
+    </div>
+    
+    <button class="btn btn-secondary btn-sm" style="margin-top:16px" onclick="showAnswers()">👁️ Show Answers</button>
+    <div id="gap-answers" class="hidden" style="margin-top:12px;padding:16px;background:var(--bg);border-radius:8px;font-size:.9rem">
+      <p>1. bootstrapped · 2. hidden costs · 3. banking friction · 4. payment gateway · 5. marketing gimmick · 6. Banking friction · 7. service provider · 8. VIES VAT ID</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 6: ROLE PLAY ═══ -->
+  <div class="divider"></div>
+  <h2 style="font-size:1.4rem;margin-bottom:20px">🎭 Part 6: Role Play</h2>
+  <p style="color:var(--text-muted);margin-bottom:20px">Practice this scenario with your teacher or a study partner.</p>
+  
+  <div class="grid-2">
+    <div class="card accent">
+      <h3 style="color:var(--emerald);margin-bottom:8px">👤 Student A: Entrepreneur</h3>
+      <p style="font-size:.9rem;color:var(--text-muted)">You want to start an online business selling digital products globally. You're considering Estonia e-Residency but you're not sure. Ask your advisor about:</p>
+      <ul style="font-size:.85rem;color:var(--text-muted);margin-top:8px">
+        <li>What are the real costs?</li>
+        <li>How long does setup take?</li>
+        <li>What about banking?</li>
+        <li>Is it worth it vs. a US LLC?</li>
+      </ul>
+    </div>
+    <div class="card violet">
+      <h3 style="color:var(--violet);margin-bottom:8px">👤 Student B: Business Advisor</h3>
+      <p style="font-size:.9rem;color:var(--text-muted)">You advise entrepreneurs on international business structures. Based on the reading, explain:</p>
+      <ul style="font-size:.85rem;color:var(--text-muted);margin-top:8px">
+        <li>The pros and cons of e-Residency</li>
+        <li>Hidden costs they should know about</li>
+        <li>Banking challenges and solutions</li>
+        <li>Your honest recommendation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="divider"></div>
+  <div style="text-align:center;padding:20px 0">
+    <p style="color:var(--text-dim);font-size:.85rem">Eloquenta Business English · B2-C1 Level · <span id="score"></span></p>
+  </div>
+
+</div>
+
+<script>
+var score = 0;
+var total = 0;
+
+function checkVocab(el, answer) {
+  var correct = {'1':'a','2':'b','3':'c','4':'a','5':'b','6':'a'};
+  var q = el.closest('.card').querySelector('.q-num').textContent;
+  if (answer === correct[q]) {
+    el.classList.add('correct');
+    score++;
+  } else {
+    el.classList.add('wrong');
+  }
+  total++;
+  updateProgress();
+}
+
+function checkComp(el, answer) {
+  var correct = {'1':'a','2':'b','3':'b','4':'b','5':'b','6':'c'};
+  var q = el.closest('.card').querySelector('.q-num').textContent;
+  if (answer === correct[q]) {
+    el.classList.add('correct');
+    score++;
+  } else {
+    el.classList.add('wrong');
+  }
+  total++;
+  updateProgress();
+}
+
+function updateProgress() {
+  var pct = total > 0 ? (score / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('score').textContent = score + '/' + total + ' correct';
+}
+
+function showAnswers() {
+  document.getElementById('gap-answers').classList.remove('hidden');
+}
+
+// Shift+wheel for horizontal scroll (side scrolling)
+document.addEventListener('wheel',function(e){
+  if(e.shiftKey){
+    e.preventDefault();
+    window.scrollBy(e.deltaY, 0);
+  }
+},{passive:false});
+</script>
+</body>
+</html>

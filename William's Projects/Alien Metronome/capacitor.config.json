@@ -1,0 +1,44 @@
+{
+  "appId": "com.eloquenta.alienmetronome",
+  "appName": "Alien Metronome",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "scheme": "Alien Metronome",
+    "contentInset": "automatic",
+    "backgroundColor": "#0a0e1a",
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": true,
+    "appBoundDomains": []
+  },
+  "android": {
+    "backgroundColor": "#0a0e1a",
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0a0e1a",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP"
+    },
+    "StatusBar": {
+      "style": "light",
+      "backgroundColor": "#0a0e1a"
+    },
+    "CapacitorCookies": {
+      "enabled": true
+    },
+    "Haptics": {
+      "enabled": true
+    },
+    "Keyboard": {
+      "resize": "none",
+      "resizeOnFullScreen": false
+    }
+  }
+}

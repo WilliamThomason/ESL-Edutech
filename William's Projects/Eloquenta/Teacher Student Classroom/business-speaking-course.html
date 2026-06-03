@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Business Presentation & Public Speaking Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.header h1{font-size:16px;font-weight:800;color:var(--cyan)}
+.header span{font-size:12px;color:var(--muted)}
+.container{max-width:900px;margin:0 auto;padding:30px 24px}
+.progress-bar{height:4px;background:var(--bg3);border-radius:2px;margin-bottom:28px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:2px;transition:width .4s;width:0%}
+
+/* Module nav */
+.mod-nav{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap}
+.mod-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.mod-btn:hover{color:var(--text);border-color:var(--text-dim)}
+.mod-btn.active{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+.mod-btn.done{background:rgba(52,211,153,.08);border-color:var(--green);color:var(--green)}
+
+/* Content */
+.content-area{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:24px}
+.content-area h2{font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px}
+.content-area h3{font-size:17px;font-weight:700;color:var(--cyan);margin:24px 0 10px}
+.content-area h4{font-size:15px;font-weight:700;color:var(--text);margin:18px 0 8px}
+.content-area p{color:var(--dim);margin-bottom:12px;font-size:14px}
+.content-area ul{margin:8px 0 16px 20px;color:var(--dim);font-size:14px}
+.content-area li{margin-bottom:6px}
+.box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0;font-size:14px;color:var(--dim)}
+.box strong{color:var(--text)}
+.box.tip{border-left:3px solid var(--cyan)}
+.box.psych{border-left:3px solid var(--violet)}
+.box.grammar{border-left:3px solid var(--green)}
+.box.warning{border-left:3px solid var(--amber)}
+.box.quote{border-left:3px solid var(--amber);font-style:italic}
+.box p:last-child{margin-bottom:0}
+
+/* Tables */
+.comp-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.comp-table th,.comp-table td{padding:10px 12px;border:1px solid var(--border);text-align:left}
+.comp-table th{background:var(--bg3);color:(--text);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.comp-table td{color:var(--dim)}
+
+/* Activity boxes */
+.activity-box{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.activity-box h4{color:var(--cyan);margin-top:0}
+.activity-box .task{background:rgba(0,0,0,.2);border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:(--dim)}
+.activity-box .task strong{color:(--text)}
+.activity-box textarea{width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:13px;resize:vertical;font-family:inherit;outline:none;margin-top:8px}
+.activity-box textarea:focus{border-color:var(--cyan)}
+.activity-box .char-count{font-size:10px;color:var(--muted);text-align:right;margin-top:2px}
+.activity-box .submit-btn{margin-top:10px;padding:8px 20px;border-radius:8px;border:none;background:var(--cyan);color:var(--bg);font-size:12px;font-weight:700;cursor:pointer}
+.activity-box .submit-btn:hover{filter:brightness(1.1)}
+.activity-box .feedback{display:none;margin-top:12px;padding:12px;background:rgba(52,211,153,.08);border-radius:8px;font-size:13px;color:var(--green)}
+.activity-box .feedback.show{display:block}
+
+/* Case study */
+.case-study{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.case-study .case-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:8px}
+.case-study .case-source{font-size:11px;color:var(--muted);margin-top:10px;font-style:italic}
+
+/* Quiz */
+.quiz-area{display:none}
+.quiz-area.visible{display:block}
+.quiz-q{margin-bottom:20px}
+.q-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px}
+.q-num{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt-btn{padding:12px 16px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;transition:all .2s}
+.opt-btn:hover:not(:disabled){border-color:var(--cyan);background:rgba(34,211,238,.06)}
+.opt-btn.correct{border-color:var(--green);background:rgba(52,211,153,.1);color:var(--green)}
+.opt-btn.incorrect{border-color:var(--rose);background:rgba(251,113,133,.1);color:var(--rose)}
+.opt-btn:disabled{opacity:.6;cursor:default}
+
+/* Results */
+.results-area{display:none;text-align:center;padding:20px 0}
+.results-area.visible{display:block}
+.results-icon{font-size:48px;margin-bottom:12px}
+.results-title{font-size:22px;font-weight:800;margin-bottom:6px}
+.results-sub{font-size:13px;color:(--muted);margin-bottom:20px}
+.results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 8px}
+.stat-val{font-size:22px;font-weight:800}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:4px}
+
+/* Buttons */
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{padding:10px 22px;border-radius:10px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--text-dim)}
+
+/* Example phrases */
+.phrase-list{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.phrase-item{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:var(--bg3);border-radius:8px;font-size:13px}
+.phrase-item .phrase{font-weight:600;color:var(--text);flex:1}
+.phrase-item .context{font-size:11px;color:var(--muted);flex:1}
+.phrase-item .level{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;text-transform:uppercase;flex-shrink:0}
+.level.beginner{background:rgba(52,211,153,.15);color:var(--green)}
+.level.intermediate{background:rgba(251,191,36,.15);color:var(--amber)}
+.level.advanced{background:rgba(167,139,250,.15);color:var(--violet)}
+
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🎤 Business Presentation & Public Speaking Mastery</h1>
+  <span id="progressText">Module 1 of 8</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="container">
+  <div class="mod-nav" id="modNav"></div>
+  <div class="content-area" id="contentArea">
+    <div id="moduleContent"></div>
+    <div id="quizArea" class="quiz-area"></div>
+    <div id="resultsArea" class="results-area"></div>
+  </div>
+</div>
+
+<script>
+// ═══ COURSE DATA ══=
+var MODULES=[
+  {
+    id:1,title:"Confidence & Mindset",icon:"🧠",
+    theory:`
+      <h2>Module 1: Confidence & Mindset</h2>
+      <p>Before we touch a single word of vocabulary, we need to address the number one barrier to effective public speaking: <strong>fear</strong>. This module gives you the psychological tools to walk onto any stage — physical or virtual — with calm authority.</p>
+
+      <h3>Why Public Speaking Feels Threatening</h3>
+      <p>Your brain cannot distinguish between a real threat (a predator) and a social threat (being judged by an audience). Both trigger the same <strong>fight-or-flight response</strong>: racing heart, sweaty palms, dry mouth, mental blank. Understanding this is your first weapon — the fear is biological, not a character flaw.</p>
+
+      <div class="box psych"><strong>Psychological Insight — The Spotlight Effect:</strong> Research by Gilovich, Medvec & Savitsky (2000) at Cornell University demonstrated that people consistently overestimate how much others notice their mistakes. In public speaking terms: the audience notices far less than you think. A small stumble that feels enormous to you is likely invisible to 90% of listeners.</div>
+
+      <h3>The 3 Breathing Techniques That Work</h3>
+      <p>Breathing is the only autonomic function you can consciously control. Use it to override panic:</p>
+      <ul>
+        <li><strong>Box Breathing (4-4-4-4):</strong> Inhale 4 seconds, hold 4, exhale 4, hold 4. Used by Navy SEALs before high-stakes operations. Do 4 cycles before stepping on stage.</li>
+        <li><strong>4-7-8 Breathing:</strong> Inhale 4 seconds, hold 7, exhale 8. The extended exhale activates the parasympathetic nervous system, physically slowing your heart rate.</li>
+        <li><strong>Physiological Sigh:</strong> Two quick inhales through the nose (the second tops off the lungs), followed by a long slow exhale through the mouth. Research by Andrew Huberman at Stanford (2023) confirmed this is the fastest known method to reduce real-time physiological stress.</li>
+      </ul>
+
+      <div class="box tip"><strong>Technique in Practice:</strong> Before your next meeting or presentation, spend 90 seconds doing box breathing in a private space. Your heart rate will measurably decrease. Your voice will be steadier. Your thoughts will be clearer. This is not placebo — it is measurable physiology.</div>
+
+      <h3>Reframing Nervousness as Energy</h3>
+      <p>Harvard Business School researcher Alison Wood Brooks (2014) conducted a landmark study where participants were told to say "I am excited" rather than "I am calm" before public speaking. The "excited" group were rated by independent judges as more competent, more persuasive, and more confident.</p>
+      <p>The insight: anxiety and excitement produce nearly identical physical symptoms (elevated heart rate, adrenaline, heightened alertness). The difference is your <em>interpretation</em>. Telling yourself "I'm excited to share this" versus "I'm terrified of being judged" redirects the same energy toward performance.</p>
+
+      <div class="box quote">"The brain believes what you tell it. Reframe the narrative from 'I might fail' to 'I have something valuable to share and I'm energized by the opportunity.'"</div>
+
+      <h3>The Power Posing Debate — What Actually Works</h3>
+      <p>Amy Cuddy's 2012 TED Talk on "power posing" went viral (over 70 million views — one of the most-watched ever). The original research suggested that expansive postures increased testosterone and decreased cortisol. However, subsequent replication studies (Ranehill et al., 2015; Garrison et al., 2016) failed to reproduce the hormonal effects.</p>
+      <p>What <em>does</em> hold up: expansive postures do increase <em>subjective feelings</em> of power and confidence. Even if the hormonal mechanism is disputed, feeling more confident improves performance. The practical takeaway: before speaking, stand tall, shoulders back, head up. Not because it changes your hormones — because it changes your psychology.</p>
+
+      <div class="box grammar"><strong>Language Tip — Eliminate Uncertainty Markers:</strong> Nervous speakers pepper their language with hedging phrases that undermine authority. Avoid: "I think maybe..." / "This might be wrong, but..." / "I'm not sure, but perhaps..." Replace with: "The evidence suggests..." / "Based on my experience..." / "Here's what I recommend..." Removing hedging language instantly makes you sound more confident — and feeling more confident in your words creates a positive feedback loop.</div>
+    `,
+    activity:{
+      title:"Pre-Speech Anxiety Audit",
+      instructions:"Think about the last time you felt nervous before speaking in front of others (a meeting, presentation, or even a social event). Answer the following questions honestly — this is for your eyes only.",
+      prompts:[
+        "What specifically were you afraid would happen? (e.g., 'I'll forget my words,' 'People will judge me,' 'I'll look stupid')",
+        "Looking back with the 'spotlight effect' in mind — how many people in the audience actually noticed what you were worried about?",
+        "Write a 2-3 sentence 'reframe' for next time, converting your fear into excitement. Example: 'Instead of fearing judgment, I'm excited to share my perspective with people who want to hear it.'"
+      ],
+      feedback:"Great work. Awareness is the first step. Next time you feel pre-speech anxiety, use the 4-7-8 breathing technique for 90 seconds, then apply your reframe. Notice the difference."
+    },
+    caseStudy:{
+      title:"Case Study: Warren Buffett's Fear of Public Speaking",
+      source:"From Buffett's biography 'The Snowball' by Alice Schroeder and his 2008 CBS interview",
+      content:"Warren Buffett — one of the most successful investors in history — was so terrified of public speaking in his youth that he would physically avoid classes that required presentations. He said: 'I was terrified of public speaking. I would throw up.' Buffett credits a Dale Carnegie public speaking course at age 21 as the single most important investment he ever made — more valuable than any stock pick. The certificate from that course hangs in his office, not his university diploma. He practiced deliberately, started with small groups, and used the principle of 'acting confident until confidence arrived.' Today he commands audiences of 40,000+ at Berkshire Hathaway shareholder meetings with humor, warmth, and the steady calm of someone who mastered fear through practice."
+    },
+    quiz:[
+      {q:"According to research by Gilovich, Medvec & Savitsky (2000), what is the 'spotlight effect'?",opts:["The tendency to perform better when you know you're being watched","The tendency to overestimate how much others notice your mistakes","The biological response triggered by bright stage lights on speakers","The effect of audience size on speaker anxiety levels"],a:1},
+      {q:"Alison Wood Brooks' 2014 Harvard study found that saying 'I am excited' before public speaking improved performance because:",opts:["It tricks the body into producing less adrenaline","Anxiety and excitement share similar physical symptoms, so reframing redirects the energy","It signals to the audience that you are emotionally invested in the topic","It activates different regions of the brain associated with positive memories"],a:1},
+      {q:"Which breathing pattern did Andrew Huberman's Stanford research (2023) identify as the fastest method to reduce real-time physiological stress?",opts:["Box breathing: inhale 4s, hold 4s, exhale 4s, hold 4s","Alternate nostril breathing for 5 minutes","Physiological sigh: two quick nasal inhales followed by a long slow exhale","Extended inhale of 8 seconds followed by a 4-second exhale"],a:2},
+      {q:"What is the key lesson from Warren Buffett's experience with public speaking?",opts:["That successful people are naturally gifted at public speaking from an early age","That enrolling in an expensive course is the only effective way to overcome speech anxiety","That public speaking fear can be overcome through deliberate practice and gradual exposure","That reading from notes is an acceptable substitute for confident delivery"],a:2},
+      {q:"Why should speakers eliminate hedging language like 'I think maybe' or 'this might be wrong'?",opts:["Because it makes sentences too long and difficult for audiences to follow","Because it undermines the speaker's authority and creates a negative confidence feedback loop","Because audiences expect speakers to be 100% certain about everything they say","Because hedging language is grammatically incorrect in professional contexts"],a:1}
+    ]
+  },
+  {
+    id:2,title:"Greetings & Introductions",icon:"🤝",
+    theory:`
+      <h2>Module 2: Greetings & Introductions</h2>
+      <p>The first 30 seconds of any presentation determine whether your audience leans in or checks out. This module gives you precise language for every greeting and introduction scenario — from formal boardrooms to casual team meetings.</p>
+
+      <h3>The Psychology of First Impressions</h3>
+      <p>Research by Willis & Todorov (2006) at Princeton University showed that people form judgments about trustworthiness, competence, and likability within <strong>100 milliseconds</strong> of seeing a face. By the time you say your first word, the audience has already started evaluating you. Your greeting either confirms or overrides that snap judgment.</p>
+      <p>The acoustic properties of your voice matter as much as your words. Research by Klofstad, Anderson & Peters (2012) at the University of Miami found that speakers with lower-pitched voices are perceived as more competent and electable. This doesn't mean forcing an unnatural baritone — it means speaking from your chest, not your throat, and opening with a warm, full tone.</p>
+
+      <h3>Greeting Vocabulary — From Formal to Casual</h3>
+
+      <h4>Opening a Formal Presentation</h4>
+      <div class="phrase-list">
+        <div class="phrase-item"><span class="phrase">"Good morning/afternoon. Thank you all for being here today."</span><span class="context">Universal, professional, warm</span><span class="level beginner">Beginner</span></div>
+        <div class="phrase-item"><span class="phrase">"It's a privilege to address this group on such a critical topic."</span><span class="context">Board meetings, conferences</span><span class="level intermediate">Intermediate</span></div>
+        <div class="phrase-item"><span class="phrase">"Thank you [Name] for that generous introduction. I'm honoured to follow [previous speaker's] excellent remarks."</span><span class="context">Multi-speaker events</span><span class="level advanced">Advanced</span></div>
+        <div class="phrase-item"><span class="phrase">"Before I begin, I'd like to acknowledge the elephant in the room..."</span><span class="context">Addressing tension directly</span><span class="level advanced">Advanced</span></div>
+      </div>
+
+      <h4>Opening an Internal Team Meeting</h4>
+      <div class="phrase-list">
+        <div class="phrase-item"><span class="phrase">"Thanks everyone for making time. I know schedules are tight, so I'll keep this focused."</span><span class="context">Respects time, builds goodwill</span><span class="level beginner">Beginner</span></div>
+        <div class="phrase-item"><span class="phrase">"I've called this meeting because we need to make a decision on [topic]. By the end, I want us to agree on [specific outcome]."</span><span class="context">Sets clear purpose and goal</span><span class="level intermediate">Intermediate</span></div>
+        <div class="phrase-item"><span class="phrase">"Let me share where we are, where we need to be, and what I need from each of you to get us there."</span><span class="context">Leadership framing</span><span class="level advanced">Advanced</span></div>
+      </div>
+
+      <h3>Introducing Another Speaker</h3>
+      <p>Introducing a guest speaker is one of the highest-stakes communication moments. A great introduction builds credibility, creates anticipation, and transfers trust from you to the speaker. A poor one undermines both of you.</p>
+      <p><strong>The 3-Part Introduction Formula:</strong></p>
+      <ul>
+        <li><strong>Credibility:</strong> Who are they and why should the audience listen? (Keep it relevant — not a full CV)</li>
+        <li><strong>Connection:</strong> Why is this topic relevant to <em>this</em> audience?</li>
+        <li><strong>Anticipation:</strong> A single teaser that makes people want to hear more.</li>
+      </ul>
+
+      <div class="box example"><strong>Example Introduction:</strong><br><br>
+      "Our next speaker needs little introduction to anyone in the tech industry, but I'll give you the highlights. Sarah Chen led product development at [Company] through one of the most successful platform launches in the sector, growing their user base from 2 million to 18 million in 18 months. What makes Sarah particularly relevant to our challenge today is that she did it with a team half the size and a quarter of the budget that we're working with. She's here to share the framework they used — and I suspect a few war stories along the way. Please join me in welcoming Sarah Chen."</div>
+
+      <div class="box grammar"><strong>Grammar Tip — Subject-Verb Agreement in Formal Introductions:</strong><br><br>
+      ❌ "I'd like to welcome someone whose work in the field of sustainable energy have transformed..."<br>
+      ✅ "I'd like to welcome someone whose work in the field of sustainable energy <strong>has</strong> transformed..."<br><br>
+      The subject is "work" (singular), not "energy." In complex relative clauses, identify the true subject before choosing the verb form.</div>
+
+      <h3>Introducing Chapters, Sections & Events</h3>
+      <p>Transitioning between sections is where most speakers lose their audience. These phrases act as signposts, helping listeners follow your structure:</p>
+
+      <table class="comp-table">
+        <tr><th>Situation</th><th>Transition Phrases</th></tr>
+        <tr><td>Moving to next topic</td><td>"That brings me to my next point..." / "This leads naturally to..." / "With that foundation in place, let's turn to..."</td></tr>
+        <tr><td>Introducing a case study</td><td>"To illustrate this, consider the case of..." / "This isn't just theory. Let me show you what happened when..." / "Here's where it gets interesting..."</td></tr>
+        <tr><td>Returning to agenda</td><td>"Let me bring us back to our main thread..." / "As I mentioned at the start, our goal today is..."</td></tr>
+        <tr><td>Introducing Q&A</td><td>"I've covered a lot of ground. Before I close, I'd like to open the floor for..." / "I want to make sure we have time for your questions, so let me pause here..."</td></tr>
+      </table>
+    `,
+    activity:{
+      title:"Write a Speaker Introduction",
+      instructions:"You are introducing Dr. Maria Santos at a healthcare innovation conference. She is a former surgeon who developed a low-cost surgical robot now deployed in 47 hospitals across sub-Saharan Africa. Her keynote is on practical innovation under resource constraints. Write a 3-part introduction (credibility + connection + anticipation) using the formula from this module.",
+      prompts:[
+        "Write your introduction here (aim for 4-6 sentences):"
+      ],
+      feedback:"A strong introduction would: (1) Establish her credibility as a surgeon and innovator with real-world impact, (2) Connect her work to the audience's healthcare innovation interests, (3) Tease a specific insight or story that creates anticipation."
+    },
+    caseStudy:{
+      title:"Case Study: Barack Obama's 2004 DNC Keynote Introduction",
+      source:"Obama's keynote address, Democratic National Convention, July 27, 2004",
+      content:"When Barack Obama walked onto the stage at the 2004 Democratic National Convention, he was a relatively unknown state senator from Illinois. The introduction he received from the convention chair was brief but effective: it established his unique biography (son of a Kenyan father and Kansas mother, community organizer, constitutional law professor), connected him to the convention's theme of hope and opportunity, and created anticipation by framing him as the future of American politics. The audience didn't know who he was — but after 30 seconds of introduction, they were ready to listen to someone important. Obama's own opening line then mirrored this energy: 'Tonight is a particular honor for me because, let me face it, my presence on this stage is pretty unlikely.' Within 10 minutes, he had the entire convention on their feet. Within 4 years, he was President. The lesson: a great introduction transfers authority and creates momentum before the speaker even begins."
+    },
+    quiz:[
+      {q:"According to Willis & Todorov's 2006 Princeton research, how quickly do people form judgments about a speaker?",opts:["After hearing the first complete sentence","Within 100 milliseconds of seeing the speaker's face","Within 5 seconds of the first spoken word","After the first 30 seconds of the presentation"],a:1},
+      {q:"What are the three components of an effective speaker introduction?",opts:["Name, job title, and educational background","Where they're from, what they've achieved, and a personal anecdote","Credibility, connection to the audience, and anticipation","A humorous story, their key achievement, and a callback to the event theme"],a:2},
+      {q:"Which greeting best respects a busy audience's time while setting clear expectations?",opts:["Good morning everyone. I have a lot to cover today so I'll try to get through it all quickly.","Thanks everyone for making time. I know schedules are tight, so I'll keep this focused.","Hello. I'm going to present the quarterly results now. Please hold questions until the end.","Good afternoon. I hope you're all having a great day. Let's dive right in."],a:1},
+      {q:"Which sentence demonstrates correct subject-verb agreement in a complex relative clause?",opts:["Our speaker today is someone whose contributions to renewable energy has been recognized globally.","Our speaker today is someone whose contributions to renewable energy have been recognized globally.","Our speaker today is someone whose contributions to renewable energy was recognized globally.","Our speaker today is someone whose contributions to renewable energy is being recognized globally."],a:1},
+      {q:"Why is signaling transitions between sections ('That brings me to my next point...') important?",opts:["It gives the speaker time to check their notes and remember what comes next","It helps the audience follow the presentation structure and re-engage at each new section","It ensures the presentation stays within the allocated time limit","It demonstrates the speaker's command of professional transition vocabulary"],a:1}
+    ]
+  },
+  {
+    id:3,title:"Cohesives & Flow",icon:"🔗",
+    theory:`
+      <h2>Module 3: Cohesives & Flow</h2>
+      <p>A great presentation isn't a collection of good points — it's a <em>journey</em> where each point leads inevitably to the next. This module teaches you the linguistic and structural tools to create seamless flow.</p>
+
+      <h3>Halliday & Hasan's Cohesion Theory</h3>
+      <p>In their foundational 1976 work <em>Cohesion in English</em>, M.A.K. Halliday and Ruqaiya Hasan identified five types of linguistic cohesion that make text (and speech) feel unified rather than fragmented:</p>
+
+      <table class="comp-table">
+        <tr><th>Type</th><th>Description</th><th>Examples in Speech</th></tr>
+        <tr><td>Reference</td><td>Pointing back to something already mentioned</td><td>"This approach..." / "As I mentioned earlier..." / "The data I just showed you..."</td></tr>
+        <tr><td>Substitution</td><td>Replacing a repeated element</td><td>"one/such" — "We tried a new strategy. Such an approach requires..."</td></tr>
+        <tr><td>Conjunction</td><td>Logical connectors between ideas</td><td>"however," "moreover," "consequently," "on the other hand"</td></tr>
+        <tr><td>Lexical cohesion</td><td>Related words that create thematic links</td><td>"investment" → "returns" → "portfolio" → "diversification"</td></tr>
+        <tr><td>Ellipsis</td><td>Omitting words understood from context</td><td>"We expected approval and we received [approval]."</td></tr>
+      </table>
+
+      <h3>The Art of the Transition</h3>
+      <p>Transitions are the glue of effective presentations. Without them, even brilliant points feel disconnected. Here are transition types with examples:</p>
+
+      <h4>Additive Transitions (building on a point)</h4>
+      <div class="phrase-list">
+        <div class="phrase-item"><span class="phrase">"Building on that idea..." / "Furthermore..." / "What's more..." / "In the same vein..."</span></div>
+      </div>
+
+      <h4>Contrastive Transitions (acknowledging complexity)</h4>
+      <div class="phrase-list">
+        <div class="phrase-item"><span class="phrase">"That said..." / "On the flip side..." / "However, we should also consider..." / "The counterargument is..."</span></div>
+        <div class="box grammar"><strong>Grammar Point — Sentence Adverbs vs. Conjunctions:</strong><br><br>
+        "However" can be used two ways. As a conjunction linking two independent clauses: "We planned carefully. However, things went wrong." As a sentence adverb interrupting a clause: "We planned carefully; things, however, went wrong." Both are correct, but the sentence adverb form sounds more sophisticated and gives you a natural pause — useful for controlling pacing in speech.</div>
+      </div>
+
+      <h4>Causal Transitions (showing consequence)</h4>
+      <div class="phrase-list">
+        <div class="phrase-item"><span class="phrase">"As a result..." / "This means that..." / "The implication is..." / "What follows from this is..."</span></div>
+      </div>
+
+      <h4>Sequential Transitions (guiding through time or logic)</h4>
+      <div class="phrase-list">
+        <div class="phrase-item"><span class="phrase">"Let's move from theory to practice..." / "Step one is... Step two..." / "Fast forward to today..." / "Rewinding for a moment..."</span></div>
+      </div>
+
+      <h3>Signposting Language</h3>
+      <p>Signposting tells the audience where they are in your structure. Research by Flowerdew & Miller (1997) showed that listeners retain significantly more information when speakers use explicit signposting.</p>
+
+      <div class="box tip"><strong>Signposting Formula: Number + Scope + Purpose</strong><br><br>
+      Example: "I'm going to cover <strong>three key areas</strong> (number). The first is <strong>our market position</strong> (scope), which will explain <strong>why we need to act now</strong> (purpose). Second is <strong>the competitive landscape</strong>..."</div>
+
+      <h3>The Herringbone Technique for Narrative Flow</h3>
+      <p>When presenting complex information, use a "herringbone" pattern: state the main point, provide supporting evidence, then link back to the thesis before transitioning to the next point. This creates a satisfying rhythm that keeps audiences oriented.</p>
+      <p><strong>Pattern:</strong> Thesis → Evidence → Implication → Link backward → Transition forward → Next thesis...</p>
+
+      <div class="box psych"><strong>Psychological Insight — The Serial Position Effect:</strong><br><br>
+      Research by Ebbinghaus (1885) and confirmed by subsequent studies (Murdock, 1962) shows a U-shaped recall curve: audiences remember the first and last items in a sequence best, with the middle suffering from "position effect decay." Practical implication: put your strongest points at the beginning and end. The middle section should contain supporting detail, not your most critical message.</div>
+    `,
+    activity:{
+      title:"Cohesion Rewrite Exercise",
+      instructions:"The following paragraph has good content but poor cohesion. Rewrite it using appropriate transitions, signposting, and cohesive devices from this module. Aim for 6-8 sentences.",
+      prompts:[
+        "We have a problem with customer retention. Our churn rate increased 15% last quarter. The main cause is response time. Our average support response time is 4.2 hours compared to the industry benchmark of 1 hour. We are losing customers to competitors who offer faster support. I propose we invest in an AI-powered support system. This would reduce response time to under 30 minutes. The estimated cost is R2.3 million. The projected ROI based on retained customers is 340% over 24 months. The payback period is 7 months."
+      ],
+      feedback:"Check your rewrite for: (1) Opening signpost that frames the problem, (2) Causal transitions between the problem and its cause, (3) Contrastive transitions when comparing your data to benchmarks, (4) Sequential transitions when walking through the proposal, (5) A strong closing that links back to the opening problem. Professional speakers typically use 2-3 cohesive devices per paragraph."
+    },
+    caseStudy:{
+      title:"Case Study: Steve Jobs' iPhone Launch (2007)",
+      source:"Apple Keynote, Macworld Conference, January 9, 2007",
+      content:"Steve Jobs' iPhone launch is studied in business schools as a masterclass in cohesion and flow. He used a simple three-part signpost structure: 'Today Apple is going to reinvent the phone. We're going to make history today.' He then introduced three products — 'a widescreen iPod with touch controls, a revolutionary mobile phone, and a breakthrough internet communications device' — only to reveal they were all one device. Every transition was carefully crafted: 'So, three things... But we're going to do it all in one.' The repetition of 'Every once in a while, a revolutionary product comes along that changes everything' created lexical cohesion that anchored 75 minutes of technical content into a memorable narrative arc. The result: a presentation that wasn't just persuasive — it was unforgettable."
+    },
+    quiz:[
+      {q:"According to Halliday & Hasan (1976), which type of cohesion is demonstrated by 'The data I just showed you...'?",opts:["Lexical cohesion","Reference","Conjunction","Ellipsis"],a:1},
+      {q:"What makes 'things, however, went wrong' sound more sophisticated than 'However, things went wrong'?",opts:["It uses a more formal vocabulary word","The sentence adverb placement creates a natural pause and emphasis","It demonstrates higher-level vocabulary knowledge","The conjunction form is grammatically incorrect in formal English"],a:1},
+      {q:"According to the Serial Position Effect (Ebbinghaus, 1885), where should you place your strongest points in a presentation?",opts:["Evenly distributed throughout to maintain consistent engagement","In the middle, where audiences are most relaxed","At the beginning and end, where recall is strongest","Near the end, to finish with maximum impact"],a:2},
+      {q:"What is the 'herringbone' technique for narrative flow?",opts:["A pattern of alternating between two contrasting ideas throughout the presentation","Thesis → Evidence → Implication → Link backward → Transition forward","Opening with a provocative question and answering it at the end","Using humor after every serious point to reset audience attention"],a:1},
+      {q:"When Steve Jobs said 'Today Apple is going to reinvent the phone,' what cohesive purpose did this opening serve?",opts:["It demonstrated lexical cohesion by using technical vocabulary","It provided a reference point that all subsequent points could link back to","It established an ellipsis that would be resolved later","It used substitution to avoid repeating the word 'iPhone'"],a:1}
+    ]
+  },
+  {
+    id:4,title:"Pacing & Rhythm",icon:"🎵",
+    theory:`
+      <h2>Module 4: Pacing & Rhythm</h2>
+      <p>The speed at which you speak is one of your most powerful — and most underused — tools. This module teaches you how to use pace, pause, and rhythm to command attention, build tension, and drive your message home.</p>
+
+      <h3>The Science of Speaking Rate</h3>
+      <p>The average English speaker produces 120-150 words per minute (WPM) in casual conversation. For public speaking, the optimal range is slightly slower: <strong>100-130 WPM</strong> for clarity and authority. However, the best speakers constantly vary their pace:</p>
+
+      <table class="comp-table">
+        <tr><th>Speaking Rate</th><th>When to Use It</th><th>Effect</th></tr>
+        <tr><td>80-100 WPM (slow)</td><td>Key points, conclusions, emotional moments</td><td>Signals importance. Gives audience time to absorb. Creates gravity.</td></tr>
+        <tr><td>120-140 WPM (moderate)</td><td>Explanations, transitions, standard content</td><td>Baseline rhythm. Comfortable for listening.</td></tr>
+        <tr><td>160-180 WPM (fast)</td><td>Building excitement, lists, humor, creating momentum</td><td>Creates energy. Signals enthusiasm. Builds urgency.</td></tr>
+      </table>
+
+      <div class="box psych"><strong>Psychological Insight — Processing Fluency:</strong> Research by Reber, Schwarz & Winkielman (2004) showed that information that is easier to process is judged as more truthful, more likable, and more confident. Speaking at a rate that matches your audience's processing ability makes your content more persuasive. For non-native English audiences, slower pacing (90-110 WPM) significantly increases both comprehension and perceived speaker competence.</div>
+
+      <h3>The Power of the Pause</h3>
+      <p>Most beginning speakers are terrified of silence. Experienced speakers use pauses as their most potent weapon. A well-timed pause can:</p>
+      <ul>
+        <li><strong>Create anticipation:</strong> "And the result was..." [2-second pause] "...nothing short of transformational."</li>
+        <li><strong>Signal importance:</strong> "If you remember one thing from this presentation..." [pause] "...let it be this."</li>
+        <li><strong>Give listeners time to process:</strong> After presenting key data, pause 3 seconds before explaining its significance.</li>
+        <li><strong>Replace filler words:</strong> Instead of "um," "uh," "so," "like" — use silence. Silence sounds thoughtful. Filler sounds nervous.</li>
+      </ul>
+
+      <div class="box tip"><strong>Practical Exercise — The 3-Second Rule:</strong> After making your next important point in a meeting or presentation, count silently to 3 before continuing. The silence will feel excruciatingly long to you. To the audience, it will feel like a confident speaker letting an important idea land.</div>
+
+      <h3>How to Speak Slower (Without Sounding Slow)</h3>
+      <p>Slowing down doesn't mean being boring. Here are specific techniques:</p>
+      <ul>
+        <li><strong>Elongate key words:</strong> "This is <em>sig-ni-fi-cant</em>..." (not the whole sentence, just the anchor word)</li>
+        <li><strong>Use chunking:</strong> Break long sentences into shorter phrases with pauses between them</li>
+        <li><strong>Drop your pitch:</strong> Ending statements with a lower pitch signals authority. Ending with a higher pitch (uptalk) signals uncertainty.</li>
+        <li><strong>Breathe between thoughts:</strong> Inhaling creates a natural pause and re-centers you</li>
+      </ul>
+
+      <h3>How to Speak Fast (Without Sounding Anxious)</h3>
+      <p>Speed works when it signals enthusiasm or builds momentum. The key is <em>control</em>:</p>
+      <ul>
+        <li><strong>Use it for lists:</strong> "We improved response time, reduced costs, increased satisfaction, and expanded reach—all in one quarter."</li>
+        <li><strong>Speed up during humor:</strong> A faster pace during a funny anecdote increases the energy and signals "this is entertaining, not a serious claim"</li>
+        <li><strong>Slow down for the punchline:</strong> The contrast between fast setup and slow punchline amplifies humor</li>
+      </ul>
+
+      <div class="box grammar"><strong>Grammar Tip — Parallel Structure in Speeches:</strong><br><br>
+      When delivering lists or series, maintain parallel grammatical structure. This creates rhythm and makes your points easier to follow.<br><br>
+      ❌ "Our goals are to increase revenue, reducing costs, and we want to improve morale."<br>
+      ✅ "Our goals are <strong>to increase</strong> revenue, <strong>to reduce</strong> costs, and <strong>to improve</strong> morale."<br><br>
+      Both Kennedy ("Ask not what your country can do for you...") and Martin Luther King Jr. ("I have a dream that one day...") used masterful parallel structure to create unforgettable rhythm.</div>
+
+    `,
+    activity:{
+      title:"Pacing Recording Exercise",
+      instructions:"Record yourself (phone is fine) delivering the following 3 versions of the same content. Listen back and compare. Use the tips from this module.",
+      prompts:[
+        "Version A (Slow — 90 WPM): Deliver this key point slowly for emphasis: 'This decision will define our company for the next decade. We cannot afford to get it wrong.' Pause 2 seconds after 'decade.'",
+        "Version B (Fast — 160 WPM): Deliver this list with energy: 'We launched in three countries, onboarded forty-two enterprise clients, generated two million in revenue, and hired a team of fifteen.'",
+        "Version C (Varied): Combine both — start slow for the problem, speed up for achievements, slow down for the conclusion."
+      ],
+      feedback:"Listen for: (1) In Version A, did the pauses feel impactful or awkward? (2) In Version B, could you understand every word at speed? (3) In Version C, did the contrast between fast and slow sections create energy? Professional speakers typically vary their pace by 40-60% between their slowest and fastest sections."
+    },
+    caseStudy:{
+      title:"Case Study: Martin Luther King Jr.'s 'I Have a Dream' Speech",
+      source:"March on Washington, August 28, 1969. Analysis by various communication scholars.",
+      content:"MLK's speech is the gold standard for pacing and rhythm in public speaking. He varied his pace from approximately 90 WPM during the 'I have a dream' refrain (slow, deliberate, prophetic) to over 150 WPM during the catalog of injustices (rapid, building urgency). His pauses were legendary — he would stop completely for 3-5 seconds at key moments, letting silence amplify his words. The repetitions ('I have a dream...', 'Let freedom ring...', 'Free at last...') used parallel structure to create a musical quality that made the speech unforgettable. Communication scholar David Bobb (DePaul University) notes: 'King didn't just deliver a speech — he composed a piece of music with words.' The lesson: your voice is an instrument. Vary the tempo."
+    },
+    quiz:[
+      {q:"What is the optimal speaking rate range for most public speaking situations?",opts:["80-100 WPM — slower is always better for comprehension","120-150 WPM — matching casual conversation pace","100-130 WPM — slightly slower than conversation, with deliberate variation","160-180 WPM — matching the audience's thought speed"],a:2},
+      {q:"Research by Reber, Schwarz & Winkielman (2004) on processing fluency suggests that:",opts:["Audiences prefer speakers who use complex vocabulary to demonstrate expertise","Information that is easier to process is judged as more truthful and likable","Fast-speaking presenters are perceived as more competent","Pauses should be minimized to maintain audience engagement"],a:1},
+      {q:"What is the primary psychological effect of a well-timed 2-3 second pause after making a key point?",opts::"["It gives the speaker time to check their notes and prepare the next section","It creates discomfort that forces audience attention","It signals importance and gives the audience time to absorb the message","It allows the audience to mentally transition to listening mode"],a:2},
+      {q:"Why does parallel structure ('to increase... to reduce... to improve') create better rhythm in speeches?",opts:["It reduces the total word count of the presentation","The repeated grammatical pattern creates a musical quality that audiences find satisfying and memorable","It eliminates the need for transitions between points","It allows the speaker to deliver content more quickly"],a:1},
+      {q:"In MLK's 'I Have a Dream' speech, how did varying his pace between the slow refrains and faster passages contribute to the impact?",opts:["It made the speech shorter and easier to deliver","The contrast between slow prophetic sections and fast urgent passages created dramatic tension and release","It prevented the audience from getting bored during a long speech","It demonstrated his ability to memorize large amounts of content"],a:1}
+    ]
+  }
+];
+
+var currentModule=0;
+var completedModules=[];
+var quizAnswers={};
+
+function loadState(){
+  try{
+    var s=localStorage.getItem('bpspeaking_course');
+    if(s){var d=JSON.parse(s);completedModules=d.completed||[];quizAnswers=d.answers||{};}
+  }catch(e){}
+}
+function saveState(){
+  try{localStorage.setItem('bpspeaking_course',JSON.stringify({completed:completedModules,answers:quizAnswers}));}catch(e){}
+}
+
+function renderNav(){
+  var nav=document.getElementById('modNav');
+  var html='';
+  MODULES.forEach(function(m,i){
+    var isDone=completedModules.indexOf(m.id)>=0;
+    var isCurrent=currentModule===i;
+    var cls='mod-btn';
+    if(isCurrent)cls+=' active';
+    if(isDone)cls+=' done';
+    html+='<button class="'+cls+'" onclick="openModule('+i+')">'+m.icon+' '+m.title+'</button>';
+  });
+  nav.innerHTML=html;
+  var pct=Math.round((completedModules.length/MODULES.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressText').textContent='Module '+(currentModule+1)+' of '+MODULES.length;
+}
+
+function openModule(i){
+  currentModule=i;
+  var m=MODULES[i];
+  var html=m.theory;
+
+  // Activity
+  if(m.activity){
+    html+='<div class="activity-box"><h4>✏️ Activity: '+m.activity.title+'</h4>'+m.activity.instructions;
+    m.activity.prompts.forEach(function(p,j){
+      var saved=quizAnswers['act_'+m.id+'_'+j]||'';
+      html+='<div class="task"><strong>'+p+'</strong>';
+      html+='<textarea id="act_'+m.id+'_'+j+'" oninput="autoSaveActivity('+m.id+','+j+')">'+saved+'</textarea>';
+      html+='<div class="char-count"><span id="cc_'+m.id+'_'+j+'">'+saved.length+'</span> characters</div>';
+      html+='</div>';
+    });
+    html+='<button class="submit-btn" onclick="submitActivity('+m.id+')">Submit</button>';
+    html+='<div class="feedback" id="actfb_'+m.id+'"><strong>Feedback:</strong> '+m.activity.feedback+'</div>';
+    html+='</div>';
+  }
+
+  // Case study
+  if(m.caseStudy){
+    html+='<div class="case-study"><div class="case-label">📋 '+m.caseStudy.title+'</div>'+m.caseStudy.content+'<div class="case-source">Source: '+m.caseStudy.source+'</div></div>';
+  }
+
+  // Quiz button
+  if(m.quiz&&m.quiz.length>0){
+    html+='<div class="btn-row"><button class="btn btn-primary" onclick="startQuiz()">📝 Take Module Quiz</button></div>';
+  }
+
+  document.getElementById('moduleContent').innerHTML=html;
+  document.getElementById('moduleContent').classList.remove('hidden');
+  document.getElementById('quizArea').classList.remove('visible');
+  document.getElementById('resultsArea').classList.remove('visible');
+  renderNav();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function autoSaveActivity(modId,promptIdx){
+  var val=document.getElementById('act_'+modId+'_'+promptIdx).value;
+  document.getElementById('cc_'+modId+'_'+promptIdx).textContent=val.length;
+  quizAnswers['act_'+modId+'_'+promptIdx]=val;
+  saveState();
+}
+
+function submitActivity(modId){
+  document.getElementById('actfb_'+modId).classList.add('show');
+}
+
+function startQuiz(){
+  var m=MODULES[currentModule];
+  document.getElementById('moduleContent').classList.add('hidden');
+  document.getElementById('quizArea').classList.add('visible');
+  renderQuiz(m.quiz,0);
+}
+
+function renderQuiz(quiz,qIdx){
+  var area=document.getElementById('quizArea');
+  var q=quiz[qIdx];
+  var html='<div class="quiz-q"><div class="q-num">Question '+(qIdx+1)+' of '+quiz.length+'</div><div class="q-text">'+q.q+'</div><div class="opts">';
+  q.opts.forEach(function(opt,i){
+    html+='<button class="opt-btn" onclick="answerQuiz('+i+',this,'+qIdx+')">'+String.fromCharCode(65+i)+'. '+opt+'</button>';
+  });
+  html+='</div></div>';
+  html+='<div class="btn-row"><button class="btn btn-secondary" onclick="cancelQuiz()">Back to Module</button></div>';
+  area.innerHTML=html;
+}
+
+function answerQuiz(idx,btn,qIdx){
+  var m=MODULES[currentModule];
+  var quiz=m.quiz;
+  var area=document.getElementById('quizArea');
+  var btns=area.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var q=quiz[qIdx];
+  quizAnswers['q_'+m.id+'_'+qIdx]=(idx===q.a);
+  saveState();
+  if(idx===q.a){
+    btn.classList.add('correct');
+  }else{
+    btn.classList.add('incorrect');
+    btns[q.a].classList.add('correct');
+  }
+  setTimeout(function(){
+    var nextQ=qIdx+1;
+    if(nextQ>=quiz.length){
+      finishQuiz();
+    }else{
+      renderQuiz(quiz,nextQ);
+    }
+  },1200);
+}
+
+function finishQuiz(){
+  var m=MODULES[currentModule];
+  var correct=0;
+  m.quiz.forEach(function(q,i){
+    if(quizAnswers['q_'+m.id+'_'+i])correct++;
+  });
+  var pct=Math.round((correct/m.quiz.length)*100);
+  var passed=pct>=70;
+
+  if(passed&&completedModules.indexOf(m.id)<0){
+    completedModules.push(m.id);
+    saveState();
+  }
+
+  document.getElementById('quizArea').classList.remove('visible');
+  document.getElementById('resultsArea').classList.add('visible');
+  var html='';
+  if(passed){
+    html+='<div class="results-icon">✓</div>';
+    html+='<div class="results-title" style="color:var(--green)">Module Passed!</div>';
+    html+='<div class="results-sub">You scored '+correct+' out of '+m.quiz.length+' ('+pct+'%)</div>';
+    html+='<div class="results-stats"><div class="stat-box"><div class="stat-val" style="color:var(--green)">'+correct+'</div><div class="stat-label">Correct</div></div><div class="stat-box"><div class="stat-val" style="color:var(--rose)">'+(m.quiz.length-correct)+'</div><div class="stat-label">Incorrect</div></div><div class="stat-box"><div class="stat-val" style="color:var(--accent)">'+pct+'%</div><div class="stat-label">Score</div></div></div>';
+    if(currentModule<MODULES.length-1){
+      html+='<div class="btn-row"><button class="btn btn-primary" onclick="openModule('+(currentModule+1)+')">Next Module →</button></div>';
+    }else{
+      html+='<div class="btn-row"><button class="btn btn-primary" onclick="openModule(0)">Restart Course</button></div>';
+    }
+  }else{
+    html+='<div class="results-icon">✗</div>';
+    html+='<div class="results-title" style="color:var(--rose)">Not Yet Passed</div>';
+    html+='<div class="results-sub">You scored '+correct+' out of '+m.quiz.length+' ('+pct+'%). You need 70% to pass.</div>';
+    html+='<div class="btn-row"><button class="btn btn-primary" onclick="startQuiz()">Retry Quiz</button><button class="btn btn-secondary" onclick="openModule('+currentModule+')">Review Module</button></div>';
+  }
+  document.getElementById('resultsArea').innerHTML=html;
+  renderNav();
+}
+
+function cancelQuiz(){
+  document.getElementById('quizArea').classList.remove('visible');
+  document.getElementById('moduleContent').classList.remove('hidden');
+}
+
+// ═══ INIT ══=
+loadState();
+renderNav();
+if(completedModules.length>0){
+  openModule(Math.min(completedModules.length,MODULES.length-1));
+}else{
+  openModule(0);
+}
+
+// Shift+wheel for horizontal scroll (side scrolling)
+document.addEventListener('wheel',function(e){
+  if(e.shiftKey){
+    e.preventDefault();
+    window.scrollBy(e.deltaY, 0);
+  }
+},{passive:false});
+</script>
+</body>
+</html>

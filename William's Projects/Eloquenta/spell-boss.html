@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spell Boss — English Spelling for Romanian Students Who Struggle With Spelling</title>
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-dim:#64748b;--text-muted:#94a3b8;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;
+  --violet:#a78bfa;--rose:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:22px;line-height:1.65;min-height:100vh}
+.page{max-width:1000px;margin:0 auto;padding:2.5rem 2rem 6rem}
+
+/* Hero */
+.hero{text-align:center;margin-bottom:3rem}
+.hero-sport{font-size:4rem;margin-bottom:.5rem}
+.hero h1{font-size:2.8rem;font-weight:800;color:#fff;line-height:1.15;margin-bottom:.5rem}
+.hero h1 em{color:var(--cyan);font-style:normal}
+.hero-sub{font-size:1.15rem;color:var(--text-muted);max-width:600px;margin:0 auto 1.5rem}
+.hero-stats{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+.stat{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.4rem;text-align:center}
+.stat-num{font-size:1.8rem;font-weight:800;color:var(--cyan)}
+.stat-lbl{font-size:.75rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
+
+/* Nav tabs */
+.tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:2px solid var(--border);overflow-x:auto}
+.tab{
+  padding:.8rem 1.4rem;font-size:.95rem;font-weight:600;color:var(--text-dim);
+  cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;
+  transition:all .2s;white-space:nowrap;
+}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+
+/* Sections */
+.section{display:none}.section.active{display:block}
+
+/* Typography */
+h2{font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:.6rem;line-height:1.2}
+h2 em{color:var(--cyan);font-style:normal}
+h3{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.5rem;margin-top:1.4rem}
+p,li{font-size:1.02rem;color:var(--text-muted);line-height:1.65}
+ul{padding-left:1.4rem;margin-bottom:.8rem}
+li{margin-bottom:.4rem;margin-top:.4rem}
+
+/* Cards */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.8rem;margin:1rem 0}
+.card-warn{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.25);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0}
+.card-warn h3{color:var(--rose)}
+.card-warn p{color:#e2e8f0}
+.card-win{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.25);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0}
+.card-win h3{color:var(--emerald)}
+.card-tip{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0}
+.card-tip h3{color:var(--amber)}
+
+/* Accordion */
+.acc{margin-bottom:.8rem;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.acc-head{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg-card);padding:1rem 1.4rem;cursor:pointer;transition:background .2s;
+}
+.acc-head:hover{background:var(--bg-hover)}
+.acc-head.open{border-radius:10px 10px 0 0}
+.acc-icon{font-size:1.4rem}
+.acc-title{font-size:1.1rem;font-weight:600;color:#fff;flex:1}
+.acc-arrow{font-size:1rem;color:var(--text-dim);transition:transform .25s}
+.acc-head.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{display:none;background:var(--bg-card);padding:.5rem 1.4rem 1.4rem;border-top:1px solid var(--border)}
+.acc-body.open{display:block}
+.acc-body p,.acc-body li{font-size:.95rem}
+
+/* Vocab builder */
+.vocab-grid{display:grid;gap:10px;margin:1rem 0}
+@media(min-width:600px){.vocab-grid{grid-template-columns:1fr 1fr}}
+.vocab-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--border-light)}
+.vocab-card.done{border-color:var(--emerald);background:rgba(52,211,153,.04)}
+.vc-word{font-size:1.25rem;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-phonetic{font-size:.8rem;color:var(--text-dim);font-family:'SF Mono',Monaco,monospace}
+.vc-hint{font-size:.85rem;color:var(--text-muted);margin-top:6px}
+.vc-status{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:6px}
+.vc-status.new{background:rgba(34,211,238,.1);color:var(--cyan)}
+.vc-status.practicing{background:rgba(251,191,36,.1);color:var(--amber)}
+.vc-status.learned{background:rgba(52,211,153,.1);color:var(--emerald)}
+
+/* Exercise styles */
+.exercise{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1.8rem;margin:1.2rem 0}
+.ex-title{font-size:1.1rem;font-weight:700;color:var(--cyan);margin-bottom:.3rem}
+.ex-instr{font-size:.9rem;color:var(--text-dim);margin-bottom:1rem}
+
+/* Spelling check */
+.spell-input{
+  width:100%;padding:.7rem 1rem;background:var(--bg);border:2px solid var(--border);
+  border-radius:8px;color:#fff;font-size:1.1rem;font-family:inherit;
+  margin-bottom:.5rem;outline:none;transition:border-color .2s;
+}
+.spell-input:focus{border-color:var(--cyan)}
+.spell-input.correct{border-color:var(--emerald);background:rgba(52,211,153,.05)}
+.spell-input.wrong{border-color:var(--rose);background:rgba(251,113,133,.05)}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:.6rem 1.2rem;border:1px solid var(--border);border-radius:8px;
+  background:rgba(255,255,255,.04);color:#fff;font-size:.9rem;
+  font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.btn:hover{background:rgba(34,211,238,.1);border-color:var(--cyan)}
+.btn-primary{background:rgba(34,211,238,.15);border-color:var(--cyan);color:var(--cyan)}
+.btn-primary:hover{background:rgba(34,211,238,.25)}
+
+.feedback{font-size:.9rem;margin-top:.3rem;min-height:1.4rem}
+.feedback.ok{color:var(--emerald)}
+.feedback.bad{color:var(--rose)}
+
+/* MCQ */
+.mcq-opt{
+  display:block;width:100%;text-align:left;
+  padding:.6rem 1rem;margin:.4rem 0;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg-card);
+  color:var(--text);font-size:.95rem;cursor:pointer;
+  transition:all .2s;font-family:inherit;
+}
+.mcq-opt:hover{border-color:var(--violet)}
+.mcq-opt.correct{border-color:var(--emerald);background:rgba(52,211,153,.1);color:var(--emerald)}
+.mcq-opt.wrong{border-color:var(--rose);background:rgba(251,113,133,.1);color:var(--rose)}
+
+/* Progress */
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:.5px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:4px;transition:width .4s}
+.progress-text{font-size:.8rem;color:var(--text-dim);margin-top:.4rem}
+
+/* Writing challenge */
+.write-area{
+  width:100%;min-height:200px;padding:1rem;background:var(--bg);
+  border:2px solid var(--border);border-radius:8px;color:#fff;
+  font-size:1.05rem;font-family:inherit;resize:vertical;outline:none;
+  line-height:1.7;
+}
+.write-area:focus{border-color:var(--cyan)}
+.word-count{font-size:.85rem;color:var(--text-dim);text-align:right;margin-top:.3rem}
+.word-count.over{color:var(--rose)}
+.word-count.ok{color:var(--emerald)}
+
+.hint-box{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.hint-box h4{font-size:.95rem;color:var(--violet);margin-bottom:.4rem}
+.hint-box li{font-size:.9rem;color:var(--text-muted)}
+
+.strategy-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:1rem}
+.strategy-step .ss-num{width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#000;font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.strategy-step .ss-body h4{font-size:1rem;font-weight:700;color:#fff;margin-bottom:2px}
+.strategy-step .ss-body p{font-size:.95rem;color:var(--text-muted)}
+
+/* Footer */
+.footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);text-align:center;font-size:.85rem;color:var(--text-dim)}
+
+/* Basketball decorations */
+.bb{font-size:1.4rem}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head><body><!-- Eloquenta Brand Bar --><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+
+<div class="page">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-sport">🏀</div>
+    <h1>Spell <em>Boss</em></h1>
+    <p class="hero-sub">English spelling training made for learner who struggles with spellings. Built by a basketball fan, for basketball fans. Science-backed, frustration-free, and it actually works.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Sections</div></div>
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-lbl">Hard Words</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Exercises</div></div>
+      <div class="stat"><div class="stat-num">1</div><div class="stat-lbl">Writing Challenge</div></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showSection(0)">🧠 Learn Why</div>
+    <div class="tab" onclick="showSection(1)">📝 Common Mistakes</div>
+    <div class="tab" onclick="showSection(2)">📚 Word Bank</div>
+    <div class="tab" onclick="showSection(3)">🎯 Practice</div>
+    <div class="tab" onclick="showSection(4)">✍️ Write It</div>
+  </div>
+
+  <!-- SECTION 0: Learn Why -->
+  <div class="section active" id="sec-0">
+    <h2>Why English Spelling Is So Weird <em>(and That's Not Your Fault)</em></h2>
+    <p>You already know more than you think. English spelling is genuinely one of the hardest in the world — even native speakers struggle. Here is what is really going on.</p>
+
+    <div class="card-tip">
+      <h3>🏀 The Basketball Analogy</h3>
+      <p>Think of English spelling like a playbook with plays from multiple coaches. Some plays come from Old English (Germanic). Some from French (after 1066). Some from Latin and Greek. Each "coach" had different spelling rules. When they were combined into one playbook, nobody went back and fixed the inconsistencies. That is English. <strong>It is not you — it is the language.</strong></p>
+    </div>
+
+    <h3>Why Spelling Is Hard Makes Spelling Harder</h3>
+    <p>Spelling difficulties affect approximately <strong>1 in 5 people</strong> (National Institutes of Health). It has nothing to do with intelligence — it is a neurological difference in how your brain processes written language. Specifically:</p>
+    <ul>
+      <li><strong>Your brain stores letter-sounds differently.</strong> Research by Sally Shaywitz (Yale) shows that readers who struggle with spelling use different neural pathways. Your brain works harder to decode written words — this is measurable on brain scans (fMRI studies, Ramus et al. 2018).</li>
+      <li><strong>Phonological processing is affected.</strong> Converting letters to sounds takes more effort (Snowling, 2013). This means spelling English — which has highly irregular letter-sound mappings — is like playing basketball on a court where the hoop keeps moving.</li>
+      <li><strong>Working memory is often lower.</strong> Susan Pickering's research (2012) shows that readers who struggle with spelling tend to hold fewer "chunks" of information in working memory. Long, irregular words are harder to keep in your head while you write them.</li>
+      <li><strong>It is genetic.</strong> Studies by Pennington & Peterson (2012) show that spelling difficulties often run in families. If a parent struggles with spelling, their child is more likely to as well. This is biology, not laziness.</li>
+    </ul>
+
+    <div class="card-win">
+      <h3>🏆 Your Superpower</h3>
+      <p>"Students who struggle with spelling often have above-average spatial reasoning, creative thinking, and big-picture processing." — Scientific American (Mathew, 2014). Many successful athletes, entrepreneurs, and creators have spelling difficulties. Your brain is not broken — it is <strong>different</strong>. This training works WITH your brain, not against it.</p>
+    </div>
+
+    <h3>The Romanian Bonus Challenge</h3>
+    <p>Your native language, Romanian, has a <strong>much more regular spelling system</strong> than English. Romanian is highly phonetic — letters and sounds match up predictably (with only a few exceptions like "â" vs "î" which both represent /ɨ/). This is actually GOOD news because:</p>
+    <ul>
+      <li><strong>You already have strong phonological skills.</strong> In a 2014 study, Navas et al. found that learners from regular-orthography languages (like Romanian) have strong letter-sound correspondence skills — they just haven't been trained on English's irregular patterns yet.</li>
+      <li><strong>Your problem is vocabulary, not decoding.</strong> You can sound out most English words. Your challenge is memorizing the irregular ones (the "rule-breakers").</li>
+      <li><strong>Romanian gives you a head start on some English sounds.</strong> Romanian /ʃ/ (ș), /tʃ/ (c+e/i), and /dʒ/ (g+e/i) are similar to English. You already have the articulatory skills.</li>
+    </ul>
+
+    <h3>What NOT to Do (Common Mistakes Teachers Make) 🚫</h3>
+    <div class="card-warn">
+      <h3>"Just Read More" Does NOT Fix Spelling</h3>
+      <p>This is the #1 myth. Research by Snowling (2013, Journal of Child Psychology and Psychiatry) shows that <strong>passive reading does NOT improve spelling difficulties</strong>. You need active, structured phonics instruction. Reading a lot without explicit spelling instruction will frustrate you without results.</p>
+    </div>
+    <div class="card-warn">
+      <h3>Writing Words 50 Times Is Ineffective</h3>
+      <p>Studies by the International Spelling Challenges Association show that <strong>mindless repetition without a strategy</strong> does not build neural pathways for spelling. You need multisensory methods (see our strategies below).</p>
+    </div>
+    <div class="card-warn">
+      <h3>"Spelling Challenges Fonts" Are Not a Solution</h3>
+      <p>A well-designed 2018 study (Kuster et al., Annals of Spelling Challenges) tested "Spelling Challenges Font" with 400+ children and found <strong>no significant benefit</strong> for reading or spelling. Font choice does not address the neurological basis of dyslexia.</p>
+    </div>
+    <div class="card-warn">
+      <h3>Colored Overlays Are Overhyped</h3>
+      <p>Handler et al. (2011, Pediatrics) conducted a systematic review and found <strong>limited evidence</strong> that colored overlays improve reading for students with spelling difficulties. They may help with visual stress (a separate condition), but they do not treat the core phonological deficit.</p>
+    </div>
+
+    <h3>Evidence-Based Reading & Spelling Strategies</h3>
+    <p>These methods are backed by the International Spelling Challenges Association, the Lancet (Peterson & Pennington, 2012), and 20+ years of neuroscience research. These work:</p>
+
+    <div class="strategy-step">
+      <div class="ss-num">1</div>
+      <div class="ss-body">
+        <h4>🧩 Multisensory Learning (Orton-Gillingham)</h4>
+        <p>Engage multiple senses at once: SAY the word aloud, TRACE the letters with your finger, WRITE it in the air, LISTEN to yourself. The more senses involved, the more neural pathways are created. This is the gold standard for learner who struggles with spellings per the International Spelling Challenges Association.</p>
+      </div>
+    </div>
+    <div class="strategy-step">
+      <div class="ss-num">2</div>
+      <div class="ss-body">
+        <h4>🔤 Chunk It (Morphology Method)</h4>
+        <p>Break long words into meaningful pieces (prefix + root + suffix). "Un-be-liev-a-ble": un- (not) + believe (Latin root) + -able (can be). Research by Bowers et al. shows that teaching morphology improves spelling accuracy by 25-40% in learner who struggles with spellings.</p>
+      </div>
+    </div>
+    <div class="strategy-step">
+      <div class="ss-num">3</div>
+      <div class="ss-body">
+        <h4>🎵 Mnemonic Memory Hooks</h3>
+        <p>Create a silly image or sentence. "BE-LIE-VE: Big Elephants Love Ice-cream, Visit Everywhere." A 2007 study in Applied Psycholinguistics found that mnemonic techniques improved recall of irregular words by 45% in 12-15 year olds with dyslexia.</p>
+      </div>
+    </div>
+    <div class="strategy-step">
+      <div class="ss-num">4</div>
+      <div class="ss-body">
+        <h4>📊 Look-Say-Cover-Write-Check (LSCWC)</h4>
+        <p>The most researched strategy for spelling difficulties. Step by step: LOOK at the word. SAY it aloud. COVER it completely. WRITE it from memory. CHECK it. Repeat until correct 3 times. (Thomson, 2009, The Psychology of Spelling Challenges.)</p>
+      </div>
+    </div>
+    <div class="strategy-step">
+      <div class="ss-num">5</div>
+      <div class="ss-body">
+        <h4>📖 Graded Reading Approach</h4>
+        <p>Start with easier texts and work up. Juel (1988) found that a single negative reading experience can set a child back by a year. Your confidence matters. Read things you ENJOY — basketball magazines, game recaps, player bios, sports journalism. Motivation accelerates learning (Schulte-Korne, 2010).</p>
+      </div>
+    </div>
+
+    <div class="card-tip">
+      <h3>🏀 Tip: Use Basketball English</h3>
+      <p>Instead of boring spelling lists, practice with words from YOUR world: <em>championship, professional, substitution, qualification, exhibition, coordinator, backcourt, free-throw</em>. These are harder words that you actually WANT to know. You will remember them faster because they matter to you.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: Romanian-Specific Common Mistakes -->
+  <div class="section" id="sec-1">
+    <h2>Romanian-to-English: <em>Your</em> Common Mistakes</h2>
+    <p>Because Romanian and English are very different languages, Romanian speakers make predictable errors when writing English. Knowing these in advance lets you spot and fix them before they become habits.</p>
+
+    <div class="card">
+      <h3>Silent Letters — Romanian vs English</h3>
+      <p>Romanian is very phonetic — almost every letter is pronounced. English is NOT. The #1 frustration for Romanian learners is <strong>silent letters</strong>. These letters are written but never said:</p>
+      <table style="width:100%;border-spacing:0;margin-top:.8rem">
+        <tr><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">Word</td><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">Silent Letter</td><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">Your Brain Wants to...</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff;font-weight:600">know</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--amber)">k</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)">"nok" or "kno" — the k is SILENT</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff;font-weight:600">write</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--amber)">w</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)">"writ" — the w is SILENT</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff;font-weight:600">listen</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--amber)">t</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)">"listen" — the t is SILENT</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff;font-weight:600">hour</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--amber)">h</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)">"our" — the h is SILENT</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff;font-weight:600">doubt</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--amber)">b</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)">"dout" — the b is SILENT</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>The "C" and "G" Trap</h3>
+      <p>Romanian rules for C and G are COMPLETELY different from English. In Romanian: C = /k/ always (before a, o, u), C = /tʃ/ (before e, i). In English: C = /k/ before a/o/u, C = /s/ before e/i/y (city, center). In Romanian: G = /ɡ/ always (before a, o, u), G = /dʒ/ (before e, i). In English: G = /ɡ/ before a/o/u, G = /dʒ/ before e/i/y <em>OR /ɡ/</em> (get, give, girl). English G before e/i is <strong>unpredictable</strong>.</p>
+    </div>
+
+    <div class="card">
+      <h3>Double Consonant Confusion</h3>
+      <p>Romanian uses double consonants to indicate a geminate (longer) sound: "copii" (children), "școală" (school). In English, double consonants change the VOWEL SOUND, not the consonant length:</p>
+      <ul>
+        <li><strong>hop</strong> /hɒp/ ≠ <strong>hope</strong> /hoʊp/ (single consonant after long vowel)</li>
+        <li><strong>if</strong> /ɪf/ ≠ <strong>off</strong> /ɒf/ (double F = short vowel)</li>
+        <li><strong>later</strong> /ˈleɪtər/ ≠ <strong>latter</strong> /ˈlætər/ (single vs double = different vowel)</li>
+        <li><strong>rope</strong> /roʊp/ ≠ <strong>roped</strong>? No — <strong>riding</strong> /ˈraɪdɪŋ/ ≠ <strong>writing</strong> /ˈraɪtɪŋ/</li>
+      </ul>
+      <p><strong>Mnemonic:</strong> Double consonant = short, "screaming" vowel. Single consonant + e = calm, "saying its name" vowel.</p>
+    </div>
+
+    <div class="card">
+      <h3>Romanian Sounds That Differ</h3>
+      <table style="width:100%;border-spacing:0;margin-top:.8rem">
+        <tr><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">Sound</td><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">Romanian Version</td><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">English Target</td><td style="font-size:.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:.4rem;border-bottom:2px solid var(--border-light)">Common Mistake</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);font-weight:600;color:var(--amber)">W</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)"><em>Does not exist</em></td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff">/w/ (lips rounded, NOT touching)</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--rose)">Writes "yu" for you; pronounces /j/</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);font-weight:600;color:var(--amber)">TH /θ ð/</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)"><em>Does not exist</em></td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff">Tongue BETWEEN teeth</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--rose)">Writes "tink" for think, "bruder" for brother</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);font-weight:600;color:var(--amber)">/ʒ/ (vision, pleasure)</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)"><em>Does not exist</em></td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff">Soft J, voiced ʃ</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--rose)">Writes "pleasir" for pleasure</td></tr>
+        <tr><td style="padding:.4rem;border-bottom:1px solid var(--border);font-weight:600;color:var(--amber)">Open /æ/ (cat, bad)</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--text-muted)">Romanian has /a/</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:#fff">/æ/ — mouth wide open, jaw dropped</td><td style="padding:.4rem;border-bottom:1px solid var(--border);color:var(--rose)">Writes "bed" for bad, "men" for man</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Spelling "Y" and "I" — A Romanian Nightmare</h3>
+      <p>Romanian does not have the same Y/I alternation. In English, the letter Y often represents /aɪ/ when stressed (try, fly) and /ɪ/ unstressed (gym, symbol). Romanian writers often confuse these with I. Common errors:</p>
+      <ul>
+        <li>✗ "becouse" ✓ "because" (mnemonic: big elephants can't always use small exits)</li>
+        <li>✗ "definately" ✓ "definitely" (mnemonic: definite = finite)</li>
+        <li>✗ "ocurence" ✓ "occurrence" (double r, ence not ance)</li>
+        <li>✗ "wich" ✓ "which" (which + h)</li>
+        <li>✗ "goverment" ✓ "government" (silent n before m)</li>
+      </ul>
+    </div>
+
+    <div class="card-warn">
+      <h3>🚫 The "Comma Below" Trap (Ș and Ț)</h3>
+      <p>Your brain learned that letters have special marks (Ș, Ț in Romanian). In English, NO letter has marks. When you write English, you may unintentionally add diacritics or accent marks because your fingers are trained to do this. <strong>English letters are clean — no dots, no bars, no commas.</strong></p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Word Bank -->
+  <div class="section" id="sec-2">
+    <h2>Hard-to-Spell <em>Word Bank</em></h2>
+    <p>These 50+ words break English spelling rules. Each one has a trick to help you remember. Click a word to mark it as "learned" — track your progress below.</p>
+
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-text" id="prog-text">0 / 50 words learned</div>
+
+    <div style="display:flex;gap:8px;margin:1rem 0;flex-wrap:wrap">
+      <span class="btn btn-primary" onclick="filterVocab('all')">All</span>
+      <span class="btn" onclick="filterVocab('sports')">🏀 Sports</span>
+      <span class="btn" onclick="filterVocab('silent')">🤫 Silent Letters</span>
+      <span class="btn" onclick="filterVocab('homophone')">🔊 Homophones</span>
+      <span class="btn" onclick="filterVocab('rulebreak')">💥 Rule-Breakers</span>
+    </div>
+
+    <div class="vocab-grid" id="vocab-grid"></div>
+    <input type="hidden" id="vocab-data" value="words-here">
+  </div>
+
+  <!-- SECTION 3: Practice -->
+  <div class="section" id="sec-3">
+    <h2><em>Practice</em> Zone</h2>
+    <p>Train your spelling with interactive exercises. Each one uses the Look-Say-Cover-Write-Check strategy adapted for your screen.</p>
+
+    <!-- Exercise 1: Spot the typo -->
+    <div class="exercise">
+      <div class="ex-title">🏀 Exercise 1: Spot the Imposter</div>
+      <div class="ex-instr">Three of these four basketball-related words are spelled correctly. Find the one that is WRONG.</div>
+      <div id="ex1-container"></div>
+    </div>
+
+    <!-- Exercise 2: Type the word -->
+    <div class="exercise">
+      <div class="ex-title">✍️ Exercise 2: Type It Out</div>
+      <div class="ex-instr">Read the definition, then type the correct spelling. You will get instant feedback.</div>
+      <div id="ex2-container"></div>
+    </div>
+
+    <!-- Exercise 3: Homophone choice -->
+    <div class="exercise">
+      <div class="ex-title">🔊 Exercise 3: Homophone Challenge</div>
+      <div class="ex-instr">Which word fits the sentence? They sound the same but are spelled differently.</div>
+      <div id="ex3-container"></div>
+    </div>
+
+    <!-- Exercise 4: Unscramble -->
+    <div class="exercise">
+      <div class="ex-title">🧩 Exercise 4: Unscramble the Word</div>
+      <div class="ex-instr">The letters are scrambled. Drag them back in order (just type the correct word).</div>
+      <div id="ex4-container"></div>
+    </div>
+
+    <!-- Exercise 5: Romanian interference -->
+    <div class="exercise">
+      <div class="ex-title">🇷🇴 Exercise 5: Romanian Trap Detection</div>
+      <div class="ex-instr">These are words Romanian speakers frequently misspell. Type the correct English spelling.</div>
+      <div id="ex5-container"></div>
+    </div>
+
+    <!-- Exercise 6: Chunk it -->
+    <div class="exercise">
+      <div class="ex-title">🧱 Exercise 6: Build the Word from Chunks</div>
+      <div class="ex-instr">Combine the prefix + root + suffix to spell the word. This is the morphology method in action.</div>
+      <div id="ex6-container"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Writing Challenge -->
+  <div class="section" id="sec-4">
+    <h2>200-Word <em>Writing Challenge</em></h2>
+
+    <div class="card-tip">
+      <h3>🏀 B1 Opinion Essay: Your Voice Matters</h3>
+      <p>You are going to write a 200-word opinion essay. This is the kind of writing you will do in school and eventually in real life. Here is your topic:</p>
+    </div>
+
+    <div class="card" style="border-color:var(--violet)">
+      <h3 style="color:var(--violet)">📝 Prompt:</h3>
+      <p style="font-size:1.1rem;color:#fff;font-style:italic">"Should professional athletes be paid more than doctors? Give your opinion and explain why. Use specific examples from sports or real life. Write approximately 200 words."</p>
+    </div>
+
+    <div class="hint-box">
+      <h4>🧠 Spelling Strategies to Use While Writing</h4>
+      <ul>
+        <li><strong>Step 1 — Plan first.</strong> Jot down 3 reasons for your opinion. Do NOT worry about spelling in the plan.</li>
+        <li><strong>Step 2 — Write freely.</strong> Type your essay. Get your ideas down. Do not stop to check spelling yet.</li>
+        <li><strong>Step 3 — Check with LSCWC.</strong> Go back and check each word you are unsure of: LOOK, SAY, COVER, WRITE, CHECK.</li>
+        <li><strong>Step 4 — Common trap check.</strong> Did you use "becouse" (WRONG — use "because")? Did you use "definately" (WRONG — use "definitely")? Check your personal error list.</li>
+      </ul>
+    </div>
+
+    <textarea class="write-area" id="essay-area" placeholder="Start writing your opinion essay here...
+
+Example opening: In my opinion, doctors should be paid more than athletes because..."></textarea>
+    <div class="word-count" id="word-count">0 / 200 words</div>
+    <div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
+      <span class="btn btn-primary" onclick="checkEssay()">✅ Check Spelling</span>
+      <span class="btn" onclick="clearEssay()">🗑️ Clear</span>
+      <span class="btn" onclick="saveEssay()">💾 Save Draft</span>
+    </div>
+
+    <div id="essay-feedback" style="margin-top:1rem"></div>
+
+    <div class="hint-box" style="margin-top:1.5rem">
+      <h4>📝 B1 Writing Checklist (before you submit)</h4>
+      <ul>
+        <li>☐ Did you state your opinion clearly in the first sentence?</li>
+        <li>☐ Did you give at least 2 reasons with examples?</li>
+        <li>☐ Did you use linking words? (because, however, for example, in my opinion)</li>
+        <li>☐ Is your conclusion a restatement of your opinion (not new information)?</li>
+        <li>☐ Did you check for common misspellings? (because, definitely, believe, which, congratulations)</li>
+        <li>☐ Is your essay between 180-220 words?</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Spell Boss — English Spelling for Romanian Students Who Struggle With Spelling · Eloquenta · 2026</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ========== TAB NAVIGATION ========== */
+  window.showSection = function(idx){
+    document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===idx); });
+    document.querySelectorAll('.section').forEach(function(s,i){ s.classList.toggle('active',i===idx); });
+    if(idx===3) buildExercises();
+    if(idx===2) buildVocab();
+  }
+
+  /* ========== VOCAB BUILDER ========== */
+  var vocabWords = [
+    {word:'because', phonetic:'/bɪˈkɒz/', hint:'Big Elephants Can\'t Always Use Small Exits', cat:'rulebreak'},
+    {word:'definitely', phonetic:'/ˈdefɪnətli/', hint:'Has "finite" inside it', cat:'rulebreak'},
+    {word:'separate', phonetic:'/ˈseprət/', hint:'Look: there is "a rat" in sePARATE', cat:'rulebreak'},
+    {word:'necessary', phonetic:'/ˈnesəsəri/', hint:'1 Collar, 2 Sleeves = 1 C, 2 S', cat:'rulebreak'},
+    {word:'occurrence', phonetic:'/əˈkʌrəns/', hint:'Double R before -ence', cat:'rulebreak'},
+    {word:'accommodate', phonetic:'/əˈkɒmədeɪt/', hint:'Double C, Double M', cat:'rulebreak'},
+    {word:'believe', phonetic:'/bɪˈliːv/', hint:'i before e, except after c (but BELIEVE is the exception!)', cat:'rulebreak'},
+    {word:'conscience', phonetic:'/ˈkɒnʃəns/', hint:'Has "con" + "science" inside', cat:'rulebreak'},
+    {word:'weird', phonetic:'/wɪəd/', hint:'The exception to "i before e" — weird!', cat:'rulebreak'},
+    {word:'rhythm', phonetic:'/ˈrɪðəm/', hint:'No vowels — Rhythm Has Your Two Hips Moving', cat:'rulebreak'},
+    {word:'congratulations', phonetic:'/kənˌɡrætʃuˈleɪʃənz/', hint:'Not "grad" — it starts with CON-GRAT', cat:'rulebreak'},
+    {word:'knowledge', phonetic:'/ˈnɒlɪdʒ/', hint:'K-N-O-W — the K is silent', cat:'silent'},
+    {word:'doubt', phonetic:'/daʊt/', hint:'The B is silent — "douht" doesn\'t work in English', cat:'silent'},
+    {word:'island', phonetic:'/ˈaɪlənd/', hint:'The S is silent — think "isle-land"', cat:'silent'},
+    {word:'honest', phonetic:'/ˈɒnɪst/', hint:'The H is silent — "onest"', cat:'silent'},
+    {word:'answer', phonetic:'/ˈɑːnsər/', hint:'The W is silent — A-N-S-W-E-R', cat:'silent'},
+    {word:'whose', phonetic:'/huːz/', hint:'Who\'s = who is. Whose = possession (belonging to who)', cat:'homophone'},
+    {word:'there', phonetic:'/ðeər/', hint:'THERE = place. THEIR = possession. THEY\'RE = they are', cat:'homophone'},
+    {word:'which', phonetic:'/wɪtʃ/', hint:'W-H-I-C-H (not wich). The H makes the difference!', cat:'homophone'},
+    {word:'through', phonetic:'/θruː/', hint:'THROUGH (done!) / THREW (past of throw) / THOUGH (however)', cat:'homophone'},
+    {word:'receive', phonetic:'/rɪˈsiːv/', hint:'I before E EXCEPT AFTER C — re-CEI-ve', cat:'rulebreak'},
+    {word:'weird', phonetic:'/wɪəd/', hint:'The famous exception: W-E-I-R-D', cat:'rulebreak'},
+    {word:'championship', phonetic:'/ˈtʃæmpiənʃɪp/', hint:'CHAMP + ION + SHIP (suffix)', cat:'sports'},
+    {word:'professional', phonetic:'/prəˈfeʃənəl/', hint:'PRO + FES + SION + AL', cat:'sports'},
+    {word:'substitution', phonetic:'/ˌsʌbstɪˈtjuːʃən/', hint:'SUB + STI + TU + TION', cat:'sports'},
+    {word:'qualification', phonetic:'/ˌkwɒlɪfɪˈkeɪʃən/', hint:'QUALI + FI + CA + TION', cat:'sports'},
+    {word:'referee', phonetic:'/ˌrefəˈriː/', hint:'Double R, double E at end', cat:'sports'},
+    {word:'completely', phonetic:'/kəmˈpliːtli/', hint:'COMPLETE + LY (keep the E before LY)', cat:'rulebreak'},
+    {word:'disappear', phonetic:'/ˌdɪsəˈpɪə/', hint:'DIS + APPEAR (double P)', cat:'rulebreak'},
+    {word:'embarrass', phonetic:'/ɪmˈbærəs/', hint:'Double R, double S — EMBARRASS', cat:'rulebreak'},
+    {word:'exaggerate', phonetic:/ɪɡˈzædʒəreɪt/, hint:'EX + AG + GER + ATE (double G)', cat:'rulebreak'},
+    {word:'millennium', phonetic:'/mɪˈleniəm/', hint:'Double L, double N — not "millenium"', cat:'rulebreak'},
+    {word:'successful', phonetic:'/səkˈsesfəl/', hint:'SUC + CESS + FUL (double C, double S)', cat:'rulebreak'},
+    {word:'recommend', phonetic:'/ˌrekəˈmend/', hint:'RE + COM + MEND (1 C, 2 M)', cat:'rulebreak'},
+    {word:'appreciate', phonetic:'/əˈpriːʃieɪt/', hint:'AP + PRE + CI + ATE (double P)', cat:'rulebreak'},
+    {word:'guarantee', phonetic:'/ˌɡærənˈtiː/', hint:'GUAR + AN + TEE (U after G!)', cat:'rulebreak'},
+    {word:'immediately', phonetic:'/ɪˈmiːdiətli/', hint:'IM + MEDI + ATE + LY (keep the E)', cat:'rulebreak'},
+    {word:'independent', phonetic:'/ˌɪndɪˈpendənt/', hint:'IN + DE + PEN + DENT (ends in -ENT not -ANT)', cat:'rulebreak'},
+    {word:'environment', phonetic:'/ɪnˈvaɪrənmənt/', hint:'EN + VIRON + MENT (NOT "enviroment"!)', cat:'rulebreak'},
+    {word:'government', phonetic:'/ˈɡʌvənmənt/', hint:'GOVERN + MENT (NOT "goverment"!)', cat:'rulebreak'},
+    {word:'knowledge', phonetic:'/ˈnɒlɪdʒ/', hint:'KNOW + LEDGE (KN silent — the W is)', cat:'rulebreak'},
+    {word:'pronunciation', phonetic:'/prəˌnʌnsiˈeɪʃən/', hint:'Not "pronounciation" — the root is "NOUNCE"', cat:'rulebreak'},
+    {word:'committee', phonetic:'/kəˈmɪti/', hint:'Double M, double T, double E — COMMITTEE', cat:'rulebreak'},
+    {word:'business', phonetic:'/ˈbɪznəs/', hint:'BUS + I + NESS (the I is easily forgotten!)', cat:'rulebreak'},
+    {word:'excellent', phonetic:'/ˈeksələnt/', hint:'EX + CEL + LENT (double L)', cat:'rulebreak'},
+    {word:'assassination', phonetic:/əˌsæsɪˈneɪʃən/, hint:'AS + SAS + SIN + ATION (double S x2)', cat:'rulebreak'},
+    {word:'maintenance', phonetic:'/ˈmeɪtənəns/', hint:'MAIN + TEN + ANCE (NOT "maintainance"!)', cat:'rulebreak'},
+    {word:'pursue', phonhetic:/pəˈsjuː/, hint:'PUR + SUE (not "persue" — that\'s a different word)', cat:'rulebreak'},
+    {word:'supersede', phonetic:'/ˌsuːpəˈsiːd/', hint:'Only English word ending in -SCEDE (not "supercede")', cat:'rulebreak'},
+    {word:'correlation', phonetic:/ˌkɒrəˈleɪʃən/, hint:'Double R before ELATION', cat:'rulebreak'},
+    {word:'comparison', phonetic:'/kəmˈpærɪsən/', hint:'COM + PAR + I + SON', cat:'rulebreak'}
+  ];
+
+  var vocabState = {};
+  try { vocabState = JSON.parse(localStorage.getItem('spellBossVocab') || '{}'); } catch(e){}
+
+  window.buildVocab = function(){
+    var grid = document.getElementById('vocab-grid');
+    if(grid.children.length > 0) return;
+    vocabWords.forEach(function(v){
+      var div = document.createElement('div');
+      div.className = 'vocab-card' + (vocabState[v.word] === 'learned' ? ' done' : '');
+      div.dataset.cat = v.cat;
+      div.dataset.word = v.word;
+      div.innerHTML = '<div class="vc-word">' + v.word + '</div>' +
+        '<div class="vc-phonetic">' + v.phonetic + '</div>' +
+        '<div class="vc-hint">💡 ' + v.hint + '</div>' +
+        '<div class="vc-status ' + (vocabState[v.word] === 'learned' ? 'learned' : 'new') + '">' +
+          (vocabState[v.word] === 'learned' ? '✓ Learned' : '🔵 New') + '</div>';
+      div.onclick = function(){
+        var st = vocabState[v.word] === 'learned' ? 'new' : 'learned';
+        vocabState[v.word] = st;
+        try { localStorage.setItem('spellBossVocab', JSON.stringify(vocabState)); } catch(e){}
+        updateVocabUI();
+        buildVocab();
+      };
+      grid.appendChild(div);
+    });
+    updateVocabUI();
+  };
+
+  window.filterVocab = function(cat){
+    document.querySelectorAll('.vocab-card').forEach(function(c){
+      c.style.display = (cat === 'all' || c.dataset.cat === cat) ? '' : 'none';
+    });
+  };
+
+  function updateVocabUI(){
+    var learned = Object.keys(vocabState).filter(function(k){ return vocabState[k] === 'learned'; }).length;
+    var total = vocabWords.length;
+    document.getElementById('prog-fill').style.width = (learned/total*100) + '%';
+    document.getElementById('prog-text').textContent = learned + ' / ' + total + ' words learned';
+  }
+
+  /* ========== EXERCISES ========== */
+  window.buildExercises = function(){
+    buildEx1(); buildEx2(); buildEx3(); buildEx4(); buildEx5(); buildEx6();
+  };
+
+  // Ex 1: Spot the imposter (typo detection)
+  function buildEx1(){
+    var container = document.getElementById('ex1-container');
+    if(!container || container.children.length > 0) return;
+    var sets = [
+      {words:['basketball','bascketball','basketbal','backetball'], wrong:1},
+      {words:['championship','championship','champoinship','championchip'], wrong:2},
+      {words:['professional','proffesional','professional','profesional'], wrong:1},
+      {words:['oportunity','opportunity','oppurtunity','oportunety'], wrong:0}
+    ];
+    sets.forEach(function(set, si){
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:1rem;border:1px solid var(--border);border-radius:10px;margin-bottom:1rem';
+      div.innerHTML = '<p style="font-weight:600;color:#fff;margin-bottom:.6rem">Set ' + (si+1) + '. Find the wrong word:</p>';
+      set.words.forEach(function(w, wi){
+        var btn = document.createElement('button');
+        btn.className = 'mcq-opt';
+        btn.style.width = 'auto';
+        btn.style.marginRight = '8px';
+        btn.textContent = w;
+        btn.onclick = function(){
+          if(wi === set.wrong){ btn.classList.add('correct'); }
+          else { btn.classList.add('wrong'); }
+          div.querySelectorAll('.mcq-opt').forEach(function(b){ b.style.pointerEvents='none'; });
+        };
+        div.appendChild(btn);
+      });
+      container.appendChild(div);
+    });
+  }
+
+  // Ex 2: Type the word
+  function buildEx2(){
+    var container = document.getElementById('ex2-container');
+    if(!container || container.children.length > 0) return;
+    var items = [
+      {def:'A person who agrees with you (starts with C)', answer:'concede'},
+      {def:'More than one person', answer:'people'},
+      {def:'Where you keep money', answer:'money'},
+      {def:'To say sorry', answer:'apology'},
+      {def:'Not easy', answer:'difficult'},
+      {def:'Something you earn at work', answer:'salary'}
+    ];
+    items.forEach(function(item, ii){
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:1rem';
+      div.innerHTML = '<p style="color:#fff;font-weight:600;margin-bottom:.4rem">' + (ii+1) + '. ' + item.def + '</p>';
+      var inp = document.createElement('input');
+      inp.className = 'spell-input';
+      inp.placeholder = 'Type the word here...';
+      var fb = document.createElement('div');
+      fb.className = 'feedback';
+      inp.addEventListener('blur', function(){
+        var val = inp.value.trim().toLowerCase();
+        if(val === item.answer.toLowerCase()){
+          inp.className = 'spell-input correct';
+          fb.className = 'feedback ok';
+          fb.textContent = '✓ Perfect! "' + item.answer + '" is correct!';
+        } else {
+          inp.className = 'spell-input wrong';
+          fb.className = 'feedback bad';
+          fb.textContent = '✗ Not quite. The correct spelling is: ' + item.answer;
+        }
+      });
+      div.appendChild(inp);
+      div.appendChild(fb);
+      container.appendChild(div);
+    });
+  }
+
+  // Ex 3: Homophone choice
+  function buildEx3(){
+    var container = document.getElementById('ex3-container');
+    if(!container || container.children.length > 0) return;
+    var items = [
+      {sentence:'I ___ the answer (no)', options:['know','now','new'], answer:0},
+      {sentence:'She ___ the ball (threw)', options:['through','threw','though'], answer:1},
+      {sentence:'___ going to the game (They\'re)', options:['There','Their','They\'re','Theyre'], answer:2},
+      {sentence:'___ shoes are brown (Their)', options:['There','Their','They\'re','There\'s'], answer:1}
+    ];
+    items.forEach(function(item, ii){
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:1rem';
+      div.innerHTML = '<p style="color:#fff;font-weight:600;margin-bottom:.4rem">' + (ii+1) + '. Complete the sentence:</p>' +
+        '<p style="color:var(--cyan);font-size:1.1rem;margin-bottom:.6rem">' + item.sentence + '</p>';
+      item.options.forEach(function(opt, oi){
+        var btn = document.createElement('button');
+        btn.className = 'mcq-opt';
+        btn.textContent = opt;
+        btn.dataset.answer = oi;
+        btn.onclick = function(){
+          if(oi === item.answer) btn.classList.add('correct');
+          else btn.classList.add('wrong');
+          div.querySelectorAll('.mcq-opt').forEach(function(b){ b.style.pointerEvents='none'; });
+        };
+        div.appendChild(btn);
+      });
+      container.appendChild(div);
+    });
+  }
+
+  // Ex 4: Unscramble
+  function buildEx4(){
+    var container = document.getElementById('ex4-container');
+    if(!container || container.children.length > 0) return;
+    var items = [
+      {scrambled:'ekil', answer:'like', hint:'I ___ basketball'},
+      {scrambled:'waylal', answer:'always', hint:'I ___ try my best'},
+      {scrambled:'nrgae', answer:'range', hint:'Three-point ___'},
+      {scrambled:'dneirf', answer:'friend', hint:'My best ___'}
+    ];
+    items.forEach(function(item, ii){
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:1rem';
+      div.innerHTML = '<p style="color:#fff;font-weight:600;margin-bottom:.4rem">' + (ii+1) + '. <span style="color:var(--amber);font-family:monospace">' + item.scrambled.toUpperCase() + '</span> — ' + item.hint + '</p>';
+      var inp = document.createElement('input');
+      inp.className = 'spell-input';
+      inp.placeholder = 'Unscramble this word...';
+      var fb = document.createElement('div');
+      fb.className = 'feedback';
+      inp.addEventListener('blur', function(){
+        var val = inp.value.trim().toLowerCase();
+        if(val === item.answer){
+          inp.className = 'spell-input correct';
+          fb.className = 'feedback ok';
+          fb.textContent = '✓ Great job!';
+        } else {
+          inp.className = 'spell-input wrong';
+          fb.className = 'feedback bad';
+          fb.textContent = '✗ The word is: ' + item.answer;
+        }
+      });
+      div.appendChild(inp);
+      div.appendChild(fb);
+      container.appendChild(div);
+    });
+  }
+
+  // Ex 5: Romanian trap detection
+  function buildEx5(){
+    var container = document.getElementById('ex5-container');
+    if(!container || container.children.length > 0) return;
+    var items = [
+      {def:'Romanian speakers often write "becouse". The correct spelling is:', answer:'because', trap:'becouse'},
+      {def:'Romanian speakers often write "definately". The correct spelling is:', answer:'definitely', trap:'definately'},
+      {def:'Romanian speakers often write "wich". The correct spelling is:', answer:'which', trap:'wich'},
+      {def:'Romanian speakers often write "goverment". The correct spelling is:', answer:'government', trap:'goverment'},
+      {def:'Romanian speakers often write "enviroment". The correct spelling is:', answer:'environment', trap:'enviroment'}
+    ];
+    items.forEach(function(item, ii){
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:1rem';
+      div.innerHTML = '<p style="color:#fff;font-weight:600;margin-bottom:.4rem">' + (ii+1) + '. ' + item.def + '</p>' +
+        '<p style="color:var(--rose);font-size:.85rem;margin-bottom:.4rem">Trap: "' + item.trap + '" ← this is WRONG</p>';
+      var inp = document.createElement('input');
+      inp.className = 'spell-input';
+      inp.placeholder = 'Correct spelling...';
+      var fb = document.createElement('div');
+      fb.className = 'feedback';
+      inp.addEventListener('blur', function(){
+        var val = inp.value.trim().toLowerCase();
+        if(val === item.answer){
+          inp.className = 'spell-input correct';
+          fb.className = 'feedback ok';
+          fb.textContent = '✓ Perfect! "' + item.answer + '" — you avoided the trap!';
+        } else if(val === item.trap){
+          inp.className = 'spell-input wrong';
+          fb.className = 'feedback bad';
+          fb.textContent = '✗ That\'s the trap! The correct spelling is: ' + item.answer;
+        } else {
+          inp.className = 'spell-input wrong';
+          fb.className = 'feedback bad';
+          fb.textContent = '✗ Close! The correct spelling is: ' + item.answer;
+        }
+      });
+      div.appendChild(inp);
+      div.appendChild(fb);
+      container.appendChild(div);
+    });
+  }
+
+  // Ex 6: Chunk it (morphology)
+  function buildEx6(){
+    var container = document.getElementById('ex6-container');
+    if(!container || container.children.length > 0) return;
+    var items = [
+      {chunks:['un-', 'believ(e)', '-able'], answer:'unbelievable', hint:'"not" + "can accept as true" = '},
+      {chunks:['dis-', 'appear'], answer:'disappear', hint:'"not" + "be visible" = '},
+      {chunks:['success', '-ful'], answer:'successful', hint:'"with achievement" + "full of" = '},
+      {chunks:['main(t)', '-tain', '-ance'], answer:'maintenance', hint:'"note" + "hold" + "state of" = '}
+    ];
+    items.forEach(function(item, ii){
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:1rem';
+      div.innerHTML = '<p style="color:#fff;font-weight:600;margin-bottom:.4rem">' + (ii+1) + '. Combine the chunks:</p>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">' +
+          item.chunks.map(function(c){ return '<span style="background:rgba(34,211,238,.1);border:1px solid var(--border);padding:4px 10px;border-radius:6px;color:var(--cyan);font-weight:600;font-family:monospace">' + c + '</span>'; }).join('') +
+        '</div>' +
+        '<p style="color:var(--text-dim);font-size:.9rem;margin-bottom:.6rem">' + item.hint + '</p>';
+      var inp = document.createElement('input');
+      inp.className = 'spell-input';
+      inp.placeholder = 'Write the full word...';
+      var fb = document.createElement('div');
+      fb.className = 'feedback';
+      inp.addEventListener('blur', function(){
+        var val = inp.value.trim().toLowerCase();
+        if(val === item.answer){
+          inp.className = 'spell-input correct';
+          fb.className = 'feedback ok';
+          fb.textContent = '✓ Yes! ' + item.answer;
+        } else {
+          inp.className = 'spell-input wrong';
+          fb.className = 'feedback bad';
+          fb.textContent = '✗ The correct word is: ' + item.answer;
+        }
+      });
+      div.appendChild(inp);
+      div.appendChild(fb);
+      container.appendChild(div);
+    });
+  }
+
+  /* ========== ESSAY ========== */
+  var textarea = document.getElementById('essay-area');
+  textarea.addEventListener('input', function(){
+    var txt = textarea.value.trim();
+    var words = txt.split(/\s+/).filter(function(w){ return w.length > 0; });
+    var count = words.length;
+    var el = document.getElementById('word-count');
+    el.textContent = count + ' / 200 words';
+    el.className = 'word-count ' + (count > 250 ? 'over' : (count >= 180 && count <= 220 ? 'ok' : ''));
+  });
+
+  window.checkEssay = function(){
+    var txt = textarea.value.trim();
+    if(!txt){ document.getElementById('essay-feedback').innerHTML = '<p style="color:var(--rose)">Write something first!</p>'; return; }
+    var words = txt.split(/\s+/).filter(function(w){ return w.length > 0; });
+    var count = words.length;
+
+    // Common misspelling check
+    var commonMisspellings = {
+      'becouse':'because',
+      'definately':'definitely',
+      'seperate':'separate',
+      'occured':'occurred',
+      'wich':'which',
+      'goverment':'government',
+      'enviroment':'environment',
+      'untill':'until',
+      'recieve':'receive',
+      'thier':'their',
+      'alot':'a lot',
+      'truely':'truly',
+      'wich':'which',
+      'freind':'friend',
+      'beleive':'believe',
+      'proffesional':'professional',
+      'champoinship':'championship',
+      'backetball':'basketball',
+      'abasement':'abasement'
+    };
+    var foundErrors = [];
+    var lowerTxt = txt.toLowerCase();
+    Object.keys(commonMisspellings).forEach(function(wrong){
+      if(lowerTxt.indexOf(wrong) >= 0){
+        foundErrors.push('"' + wrong + '" → should be "' + commonMisspellings[wrong] + '"');
+      }
+    });
+
+    var fb = document.getElementById('essay-feedback');
+    var html = '<div style="background:rgba(34,211,238,.06);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem">';
+    html += '<p style="font-weight:700;color:#fff;margin-bottom:.5rem">📊 Essay Report</p>';
+    html += '<p style="margin-bottom:.4rem">📝 Word count: <strong style="color:var(--cyan)">' + count + '</strong> (target: 180-220)</p>';
+
+    if(foundErrors.length > 0){
+      html += '<p style="color:var(--rose);margin-bottom:.4rem">⚠ Found ' + foundErrors.length + ' possible misspelling(s):</p><ul style="padding-left:1.4rem">';
+      foundErrors.forEach(function(e){ html += '<li style="color:var(--rose);font-size:.95rem">' + e + '</li>'; });
+      html += '</ul>';
+    } else {
+      html += '<p style="color:var(--emerald);margin-bottom:.4rem">✓ No common misspellings detected. Great job!</p>';
+    }
+
+    // B1 checklist feedback
+    var hasLinkers = /because|however|for example|in my opinion|firstly|on the other hand|furthermore|although/i.test(txt);
+    var hasOpinion = /i think|in my opinion|i believe|my view/i.test(txt);
+    html += '<p style="margin-top:.6rem;border-top:1px solid var(--border);padding-top:.6rem;font-size:.9rem;color:var(--text-dim)">';
+    html += 'Linking words detected: ' + (hasLinkers ? '<span style="color:var(--emerald)">Yes</span>' : '<span style="color:var(--amber)">Try adding some</span>') + '<br>';
+    html += 'Opinion stated: ' + (hasOpinion ? '<span style="color:var(--emerald)">Yes</span>' : '<span style="color:var(--amber)">Make sure your first sentence states your opinion</span>');
+    html += '</p>';
+
+    html += '</div>';
+    fb.innerHTML = html;
+  };
+
+  window.clearEssay = function(){
+    if(confirm('Clear your essay? This cannot be undone.')){
+      textarea.value = '';
+      document.getElementById('word-count').textContent = '0 / 200 words';
+      document.getElementById('essay-feedback').innerHTML = '';
+    }
+  };
+
+  window.saveEssay = function(){
+    var draft = textarea.value;
+    if(!draft.trim()){ alert('Nothing to save yet!'); return; }
+    try {
+      localStorage.setItem('spellBossDraft', draft);
+      alert('Draft saved!');
+    } catch(e){ alert('Could not save. Your essay may be too long.'); }
+  };
+
+  // Load saved draft
+  try {
+    var saved = localStorage.getItem('spellBossDraft');
+    if(saved){ textarea.value = saved; textarea.dispatchEvent(new Event('input')); }
+  } catch(e){}
+
+})();
+</script>
+</body></html>

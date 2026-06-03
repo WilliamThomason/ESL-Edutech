@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Train Your Ear — Understand Any English Accent</title>
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-dim:#64748b;--text-muted:#94a3b8;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;
+  --violet:#a78bfa;--rose:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:22px;line-height:1.6;
+  min-height:100vh;
+}
+.page{max-width:1100px;margin:0 auto;padding:3rem 2rem 6rem}
+.page h1{font-size:3rem;font-weight:800;color:#fff;margin-bottom:.5rem;line-height:1.15}
+.page h1 em{color:var(--cyan);font-style:normal}
+.page h2{font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+.page h3{font-size:1.2rem;font-weight:600;color:#fff;margin-bottom:.3rem}
+.page p{font-size:1.05rem;color:var(--text-muted);line-height:1.65;margin-bottom:1rem}
+
+.tagline{font-size:.9rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;border-left:3px solid var(--cyan);padding-left:1rem;margin-bottom:2.5rem}
+
+.intro{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:1px solid var(--border);border-radius:14px;padding:2rem 2.2rem;margin-bottom:3rem}
+.intro p{font-size:1.1rem;color:var(--text);line-height:1.7;margin-bottom:.8rem}
+.intro p:last-child{margin-bottom:0}
+
+/* L1 Section */
+.l1-section{margin-bottom:2.5rem;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.l1-head{
+  display:flex;align-items:center;gap:16px;
+  background:var(--bg-card);padding:1.4rem 1.8rem;cursor:pointer;transition:background .2s;
+}
+.l1-head:hover{background:var(--bg-hover)}
+.l1-flag{font-size:2.4rem;flex-shrink:0}
+.l1-name{font-size:1.6rem;font-weight:700;color:#fff}
+.l1-hint{font-size:.85rem;color:var(--text-dim);margin-top:2px}
+.l1-arrow{margin-left:auto;font-size:1.2rem;color:var(--text-dim);transition:transform .25s}
+.l1-head.open .l1-arrow{transform:rotate(180deg)}
+
+.l1-body{display:none;background:var(--bg-card);padding:0 2rem 2rem}
+.l1-body.open{display:block}
+.l1-body p,.l1-body li{font-size:1rem;color:var(--text-muted);line-height:1.6}
+.l1-body ul{padding-left:1.4rem;margin-bottom:.8rem}
+.l1-body li{margin-bottom:.3rem}
+
+/* Audio player — per accent */
+.audio-block{background:rgba(34,211,238,.04);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.8rem;margin:1.2rem 0}
+.ab-title{font-size:.95rem;font-weight:700;color:var(--cyan);margin-bottom:.4rem}
+.ab-desc{font-size:.9rem;color:var(--text-dim);margin-bottom:.8rem}
+.ab-word-row{display:flex;gap:12px;align-items:center;margin-bottom:.8rem;flex-wrap:wrap}
+.ab-word{font-size:1.4rem;font-weight:700;color:#fff;font-family:'SF Mono',Monaco,monospace}
+.ab-word.c-l{color:var(--cyan)}
+.ab-word.c-r{color:var(--rose)}
+.ab-word.c-a{color:var(--amber)}
+.ab-word.c-b{color:var(--violet)}
+.ab-vs{font-size:1rem;color:var(--text-dim);font-weight:600}
+.ab-grid{display:flex;gap:8px;flex-wrap:wrap}
+.ab-btn{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;
+  padding:8px 14px;cursor:pointer;transition:all .2s;
+  color:#fff;font-size:.85rem;font-weight:500;font-family:inherit;
+}
+.ab-btn:hover{background:rgba(34,211,238,.1);border-color:var(--cyan)}
+.ab-btn .flag{font-size:1.1rem}
+.ab-btn .play-icon{color:var(--cyan);font-size:.75rem;margin-left:4px}
+.ab-btn.playing{background:rgba(34,211,238,.15);border-color:var(--cyan)}
+.ab-status{font-size:.8rem;color:var(--text-dim);margin-top:.5rem;min-height:1.2rem}
+.ab-status.active{color:var(--emerald)}
+
+/* WRONG/RIGHT side-by-side player */
+.wr-row{display:flex;align-items:center;gap:10px;margin-bottom:.6rem;flex-wrap:wrap;flex:1}
+.wr-play{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;
+  padding:8px 14px;cursor:pointer;transition:all .2s;
+  color:#fff;font-size:1rem;font-weight:600;font-family:'SF Mono',Monaco,monospace;
+  white-space:nowrap;
+}
+.wr-play:hover{border-color:var(--cyan);background:rgba(34,211,238,.08)}
+.wr-play.playing{border-color:var(--cyan);background:rgba(34,211,238,.15)}
+.wr-correct .wr-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--emerald);display:block;line-height:1;margin-bottom:2px}
+.wr-wrong .wr-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--rose);display:block;line-height:1;margin-bottom:2px}
+.wr-speaker{font-size:1.1rem;flex-shrink:0}
+.wr-vs-text{font-size:.8rem;color:var(--text-dim);font-weight:600;padding:0 4px;flex-shrink:0}
+.wr-word-text{font-size:1.15rem;white-space:nowrap}
+.wr-grid{display:flex;flex-direction:column;gap:8px;margin:.4rem 0 .8rem}
+
+/* Drill box */
+.drill-box{background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:1.2rem 1.5rem;margin:1rem 0}
+.drill-box .dt{font-size:1rem;font-weight:700;color:var(--emerald);margin-bottom:.4rem}
+.dill-box p{font-size:.95rem;color:var(--text)}
+
+/* Comprehension Q */
+.qa-block{background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.2);border-radius:10px;padding:1.2rem 1.5rem;margin:1rem 0}
+.qa-block .qt{font-size:1rem;font-weight:700;color:var(--violet);margin-bottom:.5rem}
+.qa-block .qq{font-size:1rem;color:#fff;margin-bottom:.4rem;cursor:pointer}
+.qq-option{
+  display:block;padding:.4rem .8rem;margin:.3rem 0;border-radius:6px;
+  border:1px solid var(--border);cursor:pointer;transition:all .2s;
+  font-size:.95rem;color:var(--text-muted);
+}
+.qq-option:hover{border-color:var(--violet)}
+.qq-option.correct{background:rgba(52,211,153,.1);border-color:var(--emerald);color:var(--emerald)}
+.qq-option.wrong{background:rgba(251,113,133,.1);border-color:var(--rose);color:var(--rose)}
+
+/* Phonetic TTS — inline IPA notation */
+.ph{
+  display:inline-flex;align-items:center;gap:3px;
+  background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);
+  border-radius:5px;padding:1px 6px;margin:0 2px;cursor:pointer;
+  font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:.95em;
+  color:var(--cyan);transition:all .15s;user-select:none;
+}
+.ph:hover{background:rgba(34,211,238,.14);border-color:var(--cyan)}
+.ph:active{transform:scale(.95)}
+.ph .ph-ico{font-size:.7rem;margin-right:2px}
+.ph.playing{background:rgba(34,211,238,.2);border-color:var(--cyan)}
+
+/* Footer */
+.footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);text-align:center;font-size:.85rem;color:var(--text-dim)}
+
+@media(max-width:700px){
+  .page{padding:1.5rem 1rem 4rem}
+  .page h1{font-size:2rem}
+  .l1-body{padding:0 1.2rem 1.5rem}
+  .l1-head{padding:1rem 1.2rem}
+  .l1-flag{font-size:1.8rem}
+  .l1-name{font-size:1.3rem}
+}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head><body><!-- Eloquenta Brand Bar --><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+
+<div class="page">
+  <div class="tagline">Eloquenta Student Guide</div>
+  <h1>Train Your Ear: Understand <em>Any</em> English Accent</h1>
+  <h2 style="color:var(--text-dim);font-weight:400;font-size:1.3rem;margin-bottom:1.5rem">Thai · Vietnamese · Chinese · Spanish · Indian</h2>
+
+  <div class="intro">
+    <p><strong>You already understand more English than you think.</strong> When someone speaks English with a strong accent, your brain is working hard to decode sounds that are organized differently from what you are used to. This guide will teach you <em>how</em> those accents work — so you can understand anyone, from anywhere.</p>
+    <p>Each section covers a different accent group. Click the flag to expand. Listen to real pronunciation examples, learn what to expect, and test your comprehension.</p>
+    <p><strong>How to use this guide:</strong> Open a section → Listen to the audio examples → Read the "What to Listen For" tips → Do the comprehension quiz → Review the key takeaway.</p>
+    <p style="margin-bottom:0;font-size:.95rem;color:var(--amber)"><strong>🔊 Audio note:</strong> Each word pair has two play buttons — <strong style="color:var(--emerald)"> green = correct English</strong> and <strong style="color:var(--rose)"> red = accented pronunciation</strong>. Tap both to hear the difference. Best in Chrome or Edge (full voice support).</p>
+  </div>
+
+  <!-- ==================== THAI ==================== -->
+  <div class="l1-section">
+    <div class="l1-head" onclick="toggle(this)">
+      <span class="l1-flag">🇹🇭</span>
+      <div>
+        <div class="l1-name">Thai English Accent</div>
+        <div class="l1-hint">Tonal language — sounds are shaped by pitch</div>
+      </div>
+      <span class="l1-arrow">▾</span>
+    </div>
+    <div class="l1-body">
+      <p><strong>Thai English</strong> sounds unique because Thai is a tonal language — the same syllable can mean five different things depending on pitch. When Thai speakers use English, some of those pitch patterns come through. Here is what to listen for.</p>
+
+      <h3 style="margin-top:1.2rem">What to Listen For</h3>
+      <ul>
+        <li><strong>Flat rhythm:</strong> Thai is syllable-timed — every syllable gets the same length. English native speakers stretch some syllables and compress others. Thai English sounds very even, almost like a drum beat.</li>
+        <li><strong>Word endings dropped:</strong> Thai only allows a few consonants at the end of a syllable (/p/, /t/, /k/, /m/, /n/). Thai speakers may not pronounce final /l/, /r/, /s/, /f/, or /v/. "People" may sound like "pee-po". "Love" may sound like "lu". This is the #1 thing that makes Thai English hard to understand.</li>
+        <li><strong>TH becomes T or S:</strong> Thai does not have the "th" sound. "Think" sounds like "tink" or "sink". "This" sounds like "dis" or "tis".</li>
+        <li><strong>/v/ becomes /w/:</strong> "Very" may sound like "wery". "Video" may sound like "wideo".</li>
+        <li><strong>Consonant clusters simplified:</strong> Thai does not have consonant clusters like "str" or "spl". "Straight" may become "sitet" — extra vowels are inserted.</li>
+      </ul>
+
+      <!-- Audio: Thai accent examples -->
+      <div class="audio-block" data-l1="thai">
+        <div class="ab-title">🔊 Listen: Thai Speaker Saying Common English Words</div>
+        <div class="ab-desc">Click each button to hear. Pay attention to: the missing final consonants, the rhythm, and the TH sound.</div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">think</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">tink</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">very</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">wery</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">people</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">peopo</span>
+        </div>
+        <div class="ab-grid" id="audiothai"></div>
+        <div class="ab-status" id="statusthai"></div>
+      </div>
+
+      <div class="drill-box">
+        <div class="dt">👂 Your Turn: Train Your Ear</div>
+        <p>Listen to the word "elephant". A Thai speaker might say it as "ele-phan" (final /t/ is unreleased — cut short). Can you still understand it? <strong>Your brain is better at this than you think.</strong> With practice, your ears will auto-correct. The trick is: focus on the stressed syllable — "E-le-phant" — and let your brain fill in the rest.</p>
+      </div>
+
+      <!-- Comprehension quiz -->
+      <div class="qa-block" id="q-thai">
+        <div class="qt">📝 Quick Quiz: Thai English</div>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:.5rem">Test what you just learned. Click your answer.</p>
+      </div>
+
+      <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+        <h3>Key Takeaway</h3>
+        <p><strong>The most important thing:</strong> When you cannot understand a Thai speaker, it is usually because <em>final consonants are missing</em>. Train your brain to expect this. If you hear "ba" and the sentence is about an animal, it is probably "bad" or "bat". Context fills in the gap.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VIETNAMESE ==================== -->
+  <div class="l1-section">
+    <div class="l1-head" onclick="toggle(this)">
+      <span class="l1-flag">🇻🇳</span>
+      <div>
+        <div class="l1-name">Vietnamese English Accent</div>
+        <div class="l1-hint">Tonal · different in the North vs South</div>
+      </div>
+      <span class="l1-arrow">▾</span>
+    </div>
+    <div class="l1-body">
+      <p><strong>Vietnamese English</strong> varies a lot depending on the speaker's region. Northern Vietnamese (Hanoi area) and Southern Vietnamese (Ho Chi Minh City area) have very different pronunciation patterns. But some features are consistent across all Vietnamese speakers.</p>
+
+      <h3 style="margin-top:1.2rem">What to Listen For</h3>
+      <ul>
+        <li><strong>Final consonants are the biggest challenge:</strong> Vietnamese has very few final consonants. "Old" may sound like "oh do". "Risk" may sound like "ri". Listen for a word that seems to end too early — the final consonant might be there but very soft, or missing entirely.</li>
+        <li><strong>TH becomes T or S:</strong> Same as Thai and Chinese. "Three" sounds like "tree" or "sree".</li>
+        <li><strong>No puff of air on P, T, K:</strong> Vietnamese /p t k/ are not aspirated (no puff of air). This means "pin" and "bin" can sound identical to Vietnamese speakers. English listeners rely on that puff — Vietnamese speakers do not produce it.</li>
+        <li><strong>/tr/ becomes /ch/:</strong> "Travel" may sound like "chavel". "Train" sounds like "chain" or "chane".</li>
+        <li><strong>Regional difference — South vs North:</strong> Southern speakers drop /l/ entirely ("feel" → "fee"). Northern speakers change /s/ to "sh" ("sit" → "ship"). Ask where your speaker is from to narrow it down.</li>
+        <li><strong>/v/ → /j/ in the South:</strong> "Very" sounds like "jerry" (Southern Vietnamese only).</li>
+      </ul>
+
+      <div class="audio-block" data-l1="viet">
+        <div class="ab-title">🔊 Listen: Vietnamese Speaker Saying Common English Words</div>
+        <div class="ab-desc">Listen for dropped final consonants and the /tr/ → /ch/ change.</div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">travel</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">chavel</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">feel</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">fee</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">think</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">tink</span>
+        </div>
+        <div class="ab-grid" id="audioviet"></div>
+        <div class="ab-status" id="statusviet"></div>
+      </div>
+
+      <div class="drill-box">
+        <div class="dt">👂 Your Turn: Pin vs Bin</div>
+        <p>Put a tissue in front of your mouth. Say "pin" — the tissue should move (aspirated puff). Now say "bin" — the tissue should barely move. Vietnamese speakers do not make this distinction. <strong>When listening to Vietnamese English, do NOT rely on hearing a difference between "pin" and "bin" — use context instead.</strong></p>
+      </div>
+
+      <div class="qa-block" id="q-viet">
+        <div class="qt">📝 Quick Quiz: Vietnamese English</div>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:.5rem">Test what you just learned.</p>
+      </div>
+
+      <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+        <h3>Key Takeaway</h3>
+        <p><strong>The most important thing:</strong> Vietnamese speakers drop final consonants more than any other group on this list. If a Vietnamese speaker says something that sounds like one word but the context demands another, <em>mentally add a final consonant</em>. "I ri the ri" = "I write the right". Context is your best tool.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHINESE ==================== -->
+  <div class="l1-section">
+    <div class="l1-head" onclick="toggle(this)">
+      <span class="l1-flag">🇨🇳</span>
+      <div>
+        <div class="l1-name">Chinese English Accent (Mandarin &amp; Cantonese)</div>
+        <div class="l1-hint">Many dialects — but some patterns are universal</div>
+      </div>
+      <span class="l1-arrow">▾</span>
+    </div>
+    <div class="l1-body">
+      <p><strong>Chinese English</strong> varies enormously between Mandarin and Cantonese speakers. But there are patterns that apply to almost all Chinese speakers. Understanding these will help you follow the conversation even when individual sounds are unclear.</p>
+
+      <h3 style="margin-top:1.2rem">What to Listen For</h3>
+      <ul>
+        <li><strong>L and R are often swapped or merged:</strong> This is the most famous Chinese-English challenge. "Flight" may sound like "Fright". "Long" may sound like "wrong". The problem is worse for Southern Chinese and some Mandarin speakers — Cantonese speakers are usually better at this distinction.</li>
+        <li><strong>No consonant clusters:</strong> Chinese syllables are almost always Consonant + Voneel. Clusters like "str", "spl", "cts" do not exist. "Breakfast" becomes "Bek-fas". "Test" becomes "Tes". "Worlds" becomes "wor-yi" or "word". Listen for extra vowels inserted where you do not expect them.</li>
+        <li><strong>TH becomes S or D:</strong> "Think" → "sink" or "tink". "The" → "de" or "ze".</p>
+        <li><strong>Final //l/ dropped or changed:</strong> "Small" → "smao" (the /l/ becomes a vowel-like sound) or "School" → "schoo".</li>
+        <li><strong>Flat intonation (Mandarin):</strong> Mandarin uses pitch to distinguish words, not sentence emotion. A Mandarin speaker asking a question might not raise their voice at the end. Listen to the <em>words</em>, not the melody.</li>
+        <li><strong>Flat or nasal intonation (Cantonese):</strong> Cantonese has 6 tones — speakers may carry some tonal patterns into English, giving their speech a distinctive melodic quality.</li>
+      </ul>
+
+      <div class="audio-block" data-l1="chinese">
+        <div class="ab-title">🔊 Listen: Chinese Speaker Saying Common English Words</div>
+        <div class="ab-desc">Listen for L/R confusion, added vowels, and the missing TH.</div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">long</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">wrong</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">breakfast</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">bekfas</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">think</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">sink</span>
+        </div>
+        <div class="ab-grid" id="audiochinese"></div>
+        <div class="ab-status" id="statuschinese"></div>
+      </div>
+
+      <div class="drill-box">
+        <div class="dt">👂 Your Turn: L or R?</div>
+        <p>When you hear a Chinese speaker say a word that could be "light" or "right", "long" or "wrong", "load" or "road" — <strong>use context.</strong> "The ___ is red" = light. "Turn ___" = right. "That is the ___ one" = long. Your brain already knows — you just need to give it permission to guess.</p>
+      </div>
+
+      <div class="qa-block" id="q-chinese">
+        <div class="qt">📝 Quick Quiz: Chinese English</div>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:.5rem">Test what you just learned.</p>
+      </div>
+
+      <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+        <h3>Key Takeaway</h3>
+        <p><strong>The most important thing:</strong> When listening to a Chinese speaker, <em>focus on the stressed syllable</em>. Chinese English tends to compress all syllables to equal length. The stressed syllable still carries the most information — train your ear to pick it out. "im-POR-tant" not "im-por-tant" (equal weight).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SPANISH ==================== -->
+  <div class="l1-section">
+    <div class="l1-head" onclick="toggle(this)">
+      <span class="l1-flag">🇪🇸</span>
+      <div>
+        <div class="l1-name">Spanish English Accent</div>
+        <div class="l1-hint">5 vowels · B and V are the same sound</div>
+      </div>
+      <span class="l1-arrow">▾</span>
+    </div>
+    <div class="l1-body">
+      <p><strong>Spanish English</strong> is one of the most common accents in the world. Spanish phonology is very systematic — once you learn the rules, you can predict exactly what a Spanish speaker will say. This makes Spanish English one of the easier accents to decode.</p>
+
+      <h3 style="margin-top:1.2rem">What to Listen For</h3>
+      <ul>
+        <li><strong>B and V are the same sound:</strong> This is the hallmark of Spanish English. "Very" sounds exactly like "berry". "Ban" = "van". "Robe" = "rove". Spanish speakers literally cannot hear the difference — the two sounds do not exist as separate units in their language. <em>When you hear "berry", the speaker probably said "very".</em></li>
+        <li><strong>"Es-" before S + consonant:</strong> Spanish cannot start a word with "s" + consonant. "Stop" → "e-stop". "School" → "e-school". "Speak" → "e-speak". That little "e" at the beginning is a dead giveaway. Do not let it confuse you — just ignore it.</li>
+        <li><strong>/s/ and /z/ are the same:</strong> Spanish does not have "z" as a separate sound. "Sip" and "zip" sound identical. "Rice" and "rise" sound identical. "Dogs" ends with an /s/ sound (not /z/). Use context to figure out which word was meant.</li>
+        <li><strong>/ð/ (the in "the") becomes /d/:</strong> "The" → "de". "This" → "dis". "That" → "dat". Very consistent. Easy to predict.</li>
+        <li><strong>TH → T or S (Latin America) or TH → TH (Spain):</strong> If the speaker is from Spain — they DO have the TH sound. If from Latin America — they replace it with /t/ or /s/. Know the difference.</li>
+        <li><strong>Vowel quality:</strong> Spanish has only 5 vowels (/a/, /e/, /i/, /o/, /u/). Spanish speakers use these five for ALL English vowel sounds. "Ship" and "sheep" may sound similar. "Full" and "fool" may sound identical. Listen for the <em>consonants</em> to disambiguate.</li>
+      </ul>
+
+      <div class="audio-block" data-l1="spanish">
+        <div class="ab-title">🔊 Listen: Spanish Speaker Saying Common English Words</div>
+        <div class="ab-desc">Listen for the B/V merger, the added "e", and the missing Z sound.</div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">very</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">berry</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">stop</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">e-stop</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">the</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">de</span>
+        </div>
+        <div class="ab-grid" id="audiospanish"></div>
+        <div class="ab-status" id="statusspanish"></div>
+      </div>
+
+      <div class="drill-box">
+        <div class="dt">👂 Your Turn: The Berry/Very Rule</div>
+        <p>Next time you hear a Spanish speaker, count how many times they say something that could be "very" OR "berry", "vest" OR "best", "vine" OR "bine". The rule is simple: <strong>if the sentence calls for a verb/modifier, it is V. If it calls for a noun, it is B.</strong> "That is very good" → V. "I love berry pie" → B.</p>
+      </div>
+
+      <div class="qa-block" id="q-spanish">
+        <div class="qt">📝 Quick Quiz: Spanish English</div>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:.5rem">Test what you just learned.</p>
+      </div>
+
+      <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+        <h3>Key Takeaway</h3>
+        <p><strong>The most important thing:</strong> Spanish English is highly predictable. Learn the 5 rules above and you will understand 90% of what a Spanish speaker says. The remaining 10% is just context and practice.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INDIAN ==================== -->
+  <div class="l1-section">
+    <div class="l1-head" onclick="toggle(this)">
+      <span class="l1-flag">🇮🇳</span>
+      <div>
+        <div class="l1-name">Indian English Accent</div>
+        <div class="l1-hint">15+ languages · "machine-gun" rhythm · retroflex sounds</div>
+      </div>
+      <span class="l1-arrow">▾</span>
+    </div>
+    <div class="l1-body">
+      <p><strong>Indian English</strong> comes from speakers of Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, and dozens of other languages. It is the most varied accent on this list — but it is also systematic. Indian English has several unique features that, once understood, make it surprisingly easy to follow.</p>
+
+      <h3 style="margin-top:1.2rem">What to Listen For</h3>
+      <ul>
+        <li><strong>"Retroflex" T and D:</strong> The tongue curls back to make these sounds, giving Indian-accented /t/ and /d/ a deep, drum-like quality. "Ten" sounds different from an English "ten" — it has a heavier, more resonant quality. This is the most identifiable feature of Indian English.</li>
+        <li><strong>/v/ → /w/ and /f/ → /p/:</strong> Many Indian languages lack /v/. "Very" sounds like "wery". "Fine" may sound like "pine" or "phine" (with extra aspiration). Some speakers can pronounce /v/ perfectly — it depends on their specific home language.</li>
+        <li><strong>/z/ → /j/ or /dʒ/:</strong> "Zero" sounds like "jero" or "zero" with a soft "j" sound. "Rose" sounds like "roje".</li>
+        <li><strong>TH → dental T or D:</strong> Indian languages have "dental" stops (tongue touches teeth) where English has TH (tongue between teeth). "Think" sounds like a crisp "tink" — not a lazy one. It is a deliberate, sharp sound.</li>
+        <li><strong>"Machine-gun" rhythm:</strong> Indian English is syllable-timed — every syllable gets roughly equal stress. This creates a distinctive staccato rhythm. "DEVELOPMENT" has 4 equal beats: "de-vel-op-ment". Native English would stress "VEL" loudly. Train your ear to hear all syllables equally.</li>
+        <li><strong>Spelling pronunciation:</strong> Indians tend to pronounce English exactly as written. "Of" is pronounced with /f/ (not the native /əv/). "Knight" may include a /k/ sound. "Island" may include an /s/. This is not an error — it is a spelling rule from their L1 phonetic writing systems.</li>
+      </ul>
+
+      <div class="audio-block" data-l1="indian">
+        <div class="ab-title">🔊 Listen: Indian Speaker Saying Common English Words</div>
+        <div class="ab-desc">Listen for the retroflex T/D, the "machine-gun" rhythm, and how /v/ becomes /w/.</div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">ten</span>
+          <span class="ab-vs">→ sounds like (retroflex T) →</span>
+          <span class="ab-word c-b">ʈen</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">very</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">wery</span>
+        </div>
+        <div class="ab-word-row">
+          <span class="ab-word c-a">development</span>
+          <span class="ab-vs">→ sounds like →</span>
+          <span class="ab-word c-b">de-vel-op-ment</span>
+        </div>
+        <div class="ab-grid" id="audioindian"></div>
+        <div class="ab-status" id="statusindian"></div>
+      </div>
+
+      <div class="drill-box">
+        <div class="dt">👂 Your Turn: The Clapping Game</div>
+        <p>Indian English has a very clear, even rhythm — like a metronome. Next time you hear an Indian speaker, <strong>clap along with their syllables.</strong> You will notice every syllable gets one clap. Native English speakers compress small words (the, of, to) — Indian English does not. This evenness is actually an <em>advantage</em> for comprehension. Lean into it.</p>
+      </div>
+
+      <div class="qa-block" id="q-indian">
+        <div class="qt">📝 Quick Quiz: Indian English</div>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:.5rem">Test what you just learned.</p>
+      </div>
+
+      <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+        <h3>Key Takeaway</h3>
+        <p><strong>The most important thing:</strong> Indian English is NOT lazy or careless. It follows clear, regular rules. Once you know that /v/ = /w/, /z/ = /j/, TH = dental T, and all syllables are equal — <strong>it becomes one of the easiest non-native accents to understand.</strong> Focus on the retroflex T/D — that is your anchor sound.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUICK REFERENCE ==================== -->
+  <h1 style="margin-top:3rem;font-size:2.2rem">Quick <em>Reference</em> Card</h1>
+  <p style="margin-bottom:1.5rem">Print this or save it. At-a-glance cheat sheet for all five accents.</p>
+
+  <table class="comp-table" style="width:100%;border-spacing:0;margin:.8rem 0">
+    <thead>
+      <tr>
+        <th style="font-size:.8rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;text-align:left;padding:.5rem .7rem;border-bottom:2px solid var(--border-light);font-weight:600">What You Hear</th>
+        <th style="font-size:.75rem;color:var(--text-dim);text-align:center;padding:.5rem .4rem;border-bottom:2px solid var(--border-light);font-weight:600">🇹🇭</th>
+        <th style="font-size:.75rem;color:var(--text-dim);text-align:center;padding:.5rem .4rem;border-bottom:2px solid var(--border-light);font-weight:600">🇻🇳</th>
+        <th style="font-size:.75rem;color:var(--text-dim);text-align:center;padding:.5rem .4rem;border-bottom:2px solid var(--border-light);font-weight:600">🇨🇳</th>
+        <th style="font-size:.75rem;color:var(--text-dim);text-align:center;padding:.5rem .4rem;border-bottom:2px solid var(--border-light);font-weight:600">🇪🇸</th>
+        <th style="font-size:.75rem;color:var(--text-dim);text-align:center;padding:.5rem .4rem;border-bottom:2px solid var(--border-light);font-weight:600">🇮🇳</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">TH (think, the)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">tink / dis</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">tink / dis</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">sink / de</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">tink / de (LAm); think (Spain)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">sharp "tink" (dental)</td></tr>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">V (very)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">wery</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">wery / jerry (South)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">OK usually</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)"><em>berry</em> (=B)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">wery</td></tr>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">Z (zero, dogs)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">sero, dog-s</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">sero, dog-s</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">OK usually</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">sero, dog-s</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">jero, dog-s</td></tr>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">L / R</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Merged</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Usually OK</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Often swapped</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">OK</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">OK</td></tr>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">Word endings</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Dropped</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Dropped (heavily)</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">/l/ dropped</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">OK</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">OK (spelling pron.)</td></tr>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">S + consonant</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Extra vowel</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Extra vowel</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Extra vowel</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)"><em>e-</em> prefix</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border)">Usually OK</td></tr>
+      <tr><td style="font-size:.95rem;color:var(--cyan);font-weight:600;padding:.5rem .7rem;border-bottom:1px solid var(--border)">Rhythm</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border);font-style:italic">Even drum beat</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border);font-style:italic">Even drum beat</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border);font-style:italic">Even drum beat</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border);font-style:italic">Even drum beat</td><td style="font-size:.9rem;color:#fff;padding:.5rem .4rem;text-align:center;border-bottom:1px solid var(--border);font-style:italic">Machine-gun</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="margin-top:1.5rem">
+    <p><strong>Universal tip:</strong> ALL five of these accents share <strong>syllable-timed rhythm</strong> — every syllable gets equal weight. Native English speakers compress small words (the, of, to, a). Non-native speakers do not. This is the #1 thing that makes English sound "foreign". Train your ear to <em>expect</em> even rhythm, and these accents become much easier to follow.</p>
+  </div>
+
+  <div class="footer">
+    <p>Eloquenta Student Guide · English Accent Comprehension · Thai · Vietnamese · Chinese · Spanish · Indian · May 2026</p>
+  </div>
+</div>
+
+<script>
+function toggle(head){
+  var body = head.nextElementSibling;
+  var wasOpen = body.classList.contains('open');
+  document.querySelectorAll('.l1-head').forEach(function(h){ h.classList.remove('open'); });
+  document.querySelectorAll('.l1-body').forEach(function(b){ b.classList.remove('open'); });
+  if(!wasOpen){
+    head.classList.add('open');
+    body.classList.add('open');
+    setTimeout(function(){ body.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+    // Build audio buttons + quiz when first opened
+    buildSection(body);
+  }
+}
+
+/* ---------- Audio per L1 ---------- */
+var phrases = {
+  thai: [
+    {word:'think', ipa:'tɪŋk', note:'Sounds like "tink" (T replaces TH)'},
+    {word:'very', ipa:'ˈwɛri', note:'V becomes W'},
+    {word:'people', ipa:'ˈpiːpoʊ', note:'Final /l/ dropped'},
+    {word:'stop', ipa:'stɒp', note:'Consonant clusters OK in Thai'},
+    {word:'world', ipa:'wɜːd', note:'Final /l/ often dropped → "word" or "wor"'},
+    {word:'money', ipa:'ˈmʌni', note:'Sounds clear — good reference word'}
+  ],
+  viet: [
+    {word:'travel', ipa:'ˈtʃrævəl', note:'/tr/ → /ch/ in North'},
+    {word:'feel', ipa:'fiː', note:'Final /l/ dropped'},
+    {word:'think', ipa:'tɪŋk', note:'TH → T'},
+    {word:'big', ipa:'bɪ', note:'Final /g/ often dropped'},
+    {word:'can', ipa:'kæn', note:'Clear reference'},
+    {word:'happy', ipa:'ˈhæpi', note:'Clear reference'}
+  ],
+  chinese: [
+    {word:'long', ipa:'rɒŋ', note:'L → R (may sound like "wrong")'},
+    {word:'breakfast', ipa:'ˈbrɛkfəs', note:'Clusters simplified → "bek-fas"'},
+    {word:'think', ipa:'sɪŋk', note:'TH → S in Mandarin'},
+    {word:'small', ipa:'smɔː', note:'Final /l/ dropped'},
+    {word:'person', ipa:'ˈpɜːsən', note:'Clear reference'},
+    {word:'need', ipa:'niːd', note:'Clear reference'}
+  ],
+  spanish: [
+    {word:'very', ipa:'ˈbɛri', note:'V = B (merger — sounds like "berry")'},
+    {word:'stop', ipa:'ɛsˈtɒp', note:'Extra "e" added before s+C'},
+    {word:'the', ipa:'də', note:'TH → D'},
+    {word:'sip', ipa:'sɪp', note:'/s/ and /z/ sound identical'},
+    {word:'here', ipa:'hiːr', note:'Clear reference'},
+    {word:'help', ipa:'hɛlp', note:'Clear reference'}
+  ],
+  indian: [
+    {word:'ten', ipa:'ʈɛn', note:'Retroflex T — tongue curls back, drum-like'},
+    {word:'very', ipa:'ˈwɛri', note:'V → W'},
+    {word:'zero', ipa:'ˈdʒiːroʊ', note:'Z → soft J ("jero")'},
+    {word:'think', ipa:'t̪ʰɪŋk', note:'Dental T — tongue to teeth (sharp, crisp)'},
+    {word:'old', ipa:'oʊld', note:'Usually good (Indian languages allow many finals)'},
+    {word:'lot', ipa:'lɒʈ', note:'Retroflex T at end too'}
+  ]
+};
+
+var quizData = {
+  thai: [
+    {q:'A Thai speaker says "ba" in the context "That was ba___". What did they probably say?', opts:['back','bad','bat','ban'], answer:2, explain:'Final /d/ and /k/ are both allowed in Thai. Context decides: "bad" is the likely word.'},
+    {q:'A Thai speaker says something that sounds like "tink". What is the correct English word?', opts:['thing','think','sink','pink'], answer:1, explain:'Thai replaces TH with T (or sometimes S). "Tink" = "think".'},
+    {q:'Why does Thai English sound very even, like a drum?', opts:['They speak slowly','Every syllable gets equal stress','They whisper','They use a low voice'], answer:1, explain:'Thai is syllable-timed. Every syllable gets the same length and weight.'}
+  ],
+  viet: [
+    {q:'A Vietnamese speaker says "chavel". What word did they say?', opts:['travel','shavel','channel','trouble'], answer:0, explain:'Vietnamese /tr/ often becomes /ch/. "Chavel" = travel.'},
+    {q:'A Southern Vietnamese speaker says "The jerry good product". What did they actually say?', opts:['The very good project','The very good product','The berry good product','The carry good product'], answer:1, explain:'Southern /v/ → /j/. "Jerry" = "very".'},
+    {q:'Why does "pin" and "bin" sound the same from a Vietnamese speaker?', opts:['Their English is bad','Vietnamese P and B are not different in the same way as English','They have a hearing problem','Vietnamese does not have P or B'], answer:1, explain:'Vietnamese has no aspiration difference. "Pin" and "bin" are distinguished by a puff of air in English — Vietnamese does not produce it.'}
+  ],
+  chinese: [
+    {q:'A Chinese speaker says "I want to fyy a kite". What did they say?', opts:['fly a kite','fight a kite','find a kite','fix a kite'], answer:0, explain:'Final /l/ is often dropped after /aɪ/ ("fyy" = fly).'},
+    {q:'A Chinese speaker says something that sounds like "frown". It could be "flight" or "flown". What is one way to tell?', opts:['Look at their mouth','Use context in the sentence','Ask them to repeat it','Check if it rhymes with "down"'], answer:1, explain:'L and R are merged for many Chinese speakers. Context is the only reliable way to tell.'},
+    {q:'A Mandarin speaker says "ze big one". What did they say?', opts:['The big one','A big one','Some big one','This big one'], answer:0, explain:'Mandarin TH → S or D. "Ze" = "the".'}
+  ],
+  spanish: [
+    {q:'A Spanish speaker says "berry". What is the MOST likely word?', opts:['very','berry','bury','berry (the fruit)'], answer:0, explain:'Spanish V = B. In almost every sentence context, "berry" as a fruit would not fit — "very" is far more likely.'},
+    {q:'A Spanish speaker says "e-speak". What did they say?', opts:['speak','a speak','I speak','the speak'], answer:0, explain:'Spanish phonotactics inserts /e/ before s+consonant. Drop the "e" to find the word.'},
+    {q:'A Latin American Spanish speaker says "de". What are they most likely saying?', opts:['the','day','they','D'], answer:0, explain:'Spanish TH → D (or /ð/ between vowels). "De" = "the".'}
+  ],
+  indian: [
+    {q:'An Indian speaker says "wery". What did they say?', opts:['very','wary','where','worry'], answer:0, explain:'Many Indian languages lack /v/. "Wery" = "very".'},
+    {q:'An Indian speaker says "jero o\'clock". What did they say?', opts:['zero o\'clock','hero o\'clock','zero hour','zero hundred'], answer:3, explain:'Indian /z/ → /dʒ/ (soft J sound). "Jero hundred" = "zero hundred."'},
+    {q:'What does "retroflex" mean?', opts:['The voice is very high','The tongue curls back to make the sound','The speaker talks backwards','The speaker uses very formal English'], answer:1, explain:'Retroflex = tongue tip curled backward. Indian T and D are retroflex — giving them a deep, drum-like quality.'}
+  ]
+};
+
+/* ---------- Wrong/Right Side-by-Side Audio ---------- */
+/* Each entry: { correct: "word", wrong: "what it sounds like", wrongWord: "how TTS should say the wrong version" } */
+var wrongRight = {
+  thai: [
+    {correct:'think', wrong:'tink', wrongSay:'tink', label:'TH → T'},
+    {correct:'very', wrong:'wery', wrongSay:'wery', label:'V → W'},
+    {correct:'people', wrong:'pee-po', wrongSay:'pee po', label:'Final /l/ dropped'},
+    {correct:'this', wrong:'dis', wrongSay:'dis', label:'TH → D'},
+    {correct:'love', wrong:'luh', wrongSay:'luv', label:'Final /v/ dropped'},
+    {correct:'straight', wrong:'sit-right', wrongSay:'sit right', label:'Cluster simplified'}
+  ],
+  viet: [
+    {correct:'travel', wrong:'chavel', wrongSay:'chavel', label:'/tr/ → /ch/'},
+    {correct:'feel', wrong:'fee', wrongSay:'fee', label:'Final /l/ dropped'},
+    {correct:'think', wrong:'tink', wrongSay:'tink', label:'TH → T'},
+    {correct:'big', wrong:'bee', wrongSay:'bee', label:'Final /g/ dropped'},
+    {correct:'three', wrong:'tree', wrongSay:'tree', label:'TH → T'},
+    {correct:'very', wrong:'jerry', wrongSay:'jerry', label:'South: V → J'}
+  ],
+  chinese: [
+    {correct:'long', wrong:'wrong', wrongSay:'wrong', label:'L → R'},
+    {correct:'breakfast', wrong:'bek-fas', wrongSay:'bek fas', label:'Cluster simplified'},
+    {correct:'think', wrong:'sink', wrongSay:'sink', label:'TH → S'},
+    {correct:'small', wrong:'smao', wrongSay:'smow', label:'Final /l/ → vowel'},
+    {correct:'right', wrong:'light', wrongSay:'light', label:'R → L'},
+    {correct:'the', wrong:'ze', wrongSay:'zee', label:'TH → Z'}
+  ],
+  spanish: [
+    {correct:'very', wrong:'berry', wrongSay:'berry', label:'V = B merger'},
+    {correct:'stop', wrong:'e-stop', wrongSay:'eh stop', label:'Es- added before s+C'},
+    {correct:'the', wrong:'de', wrongSay:'de', label:'TH → D'},
+    {correct:'zero', wrong:'sero', wrongSay:'sero', label:'Z → S'},
+    {correct:'sip', wrong:'zip', wrongSay:'sip', label:'/s/ and /z/ same'},
+    {correct:'here', wrong:'hear (no H dropped)', wrongSay:'eer', label:'Some drop initial H'}
+  ],
+  indian: [
+    {correct:'ten', wrong:'ʈen (retroflex)', wrongSay:'ten', label:'Retroflex T — tongue curls back'},
+    {correct:'very', wrong:'wery', wrongSay:'wery', label:'V → W'},
+    {correct:'zero', wrong:'jero', wrongSay:'jero', label:'Z → soft J'},
+    {correct:'think', wrong:'tink', wrongSay:'tink', label:'Dental TH → T'},
+    {correct:'development', wrong:'de-vel-op-ment', wrongSay:'de vel op ment', label:'Equal syllable stress'},
+    {correct:'of', wrong:'off', wrongSay:'off', label:'Spelling pronunciation'}
+  ]
+};
+
+var built = {};
+function buildSection(body){
+  var l1 = body.closest('.l1-section').querySelector('.audio-block').dataset.l1;
+  if(built[l1]) return;
+  built[l1] = true;
+
+  // Build wrong/right side-by-side player
+  if(wrongRight[l1]){
+    var audBlock = body.querySelector('.audio-block');
+    var wrGrid = document.createElement('div');
+    wrGrid.className = 'wr-grid';
+    var wrTitle = document.createElement('div');
+    wrTitle.style.cssText = 'font-size:.85rem;font-weight:700;color:#fff;margin-bottom:.4rem';
+    wrTitle.textContent = '▶ Tap each button — hear correct vs. accented pronunciation:';
+    wrGrid.appendChild(wrTitle);
+
+    wrongRight[l1].forEach(function(entry){
+      var row = document.createElement('div');
+      row.className = 'wr-row';
+
+      // Correct button
+      var btnCorrect = document.createElement('button');
+      btnCorrect.className = 'wr-play wr-correct';
+      btnCorrect.innerHTML = '<span class="wr-speaker">🔊</span><span><span class="wr-label">Correct</span><span class="wr-word-text">' + entry.correct + '</span></span>';
+      btnCorrect.onclick = function(){
+        document.querySelectorAll('.wr-play').forEach(function(b){ b.classList.remove('playing'); });
+        btnCorrect.classList.add('playing');
+        speakWord(l1, entry.correct, true, function(){ btnCorrect.classList.remove('playing'); });
+      };
+
+      // VS text
+      var vs = document.createElement('span');
+      vs.className = 'wr-vs-text';
+      vs.textContent = 'vs';
+
+      // Wrong button
+      var btnWrong = document.createElement('button');
+      btnWrong.className = 'wr-play wr-wrong';
+      btnWrong.innerHTML = '<span class="wr-speaker">🔊</span><span><span class="wr-label">Accent</span><span class="wr-word-text">' + entry.wrong + '</span></span>';
+      btnWrong.onclick = function(){
+        document.querySelectorAll('.wr-play').forEach(function(b){ b.classList.remove('playing'); });
+        btnWrong.classList.add('playing');
+        speakWord(l1, entry.wrongSay, false, function(){ btnWrong.classList.remove('playing'); });
+      };
+
+      // Label
+      var lbl = document.createElement('span');
+      lbl.style.cssText = 'font-size:.75rem;color:var(--text-dim);font-style:italic;margin-left:auto';
+      lbl.textContent = entry.label;
+
+      row.appendChild(btnCorrect);
+      row.appendChild(vs);
+      row.appendChild(btnWrong);
+      row.appendChild(lbl);
+      wrGrid.appendChild(row);
+    });
+
+    audBlock.insertBefore(wrGrid, audBlock.querySelector('.ab-grid'));
+  }
+
+  // Build audio buttons
+  var grid = body.querySelector('.ab-grid');
+  var status = body.querySelector('.ab-status');
+  var phs = phrases[l1] || [];
+  phs.forEach(function(p){
+    var btn = document.createElement('button');
+    btn.className = 'ab-btn';
+    btn.innerHTML = '<span>' + p.word + '</span><span class="play-icon">▶</span>';
+    btn.onclick = function(){
+      speakPhrase(l1, p.word, p.note);
+      grid.querySelectorAll('.ab-btn').forEach(function(b){ b.classList.remove('playing'); });
+      btn.classList.add('playing');
+      status.textContent = p.word + ': ' + p.note;
+      status.classList.add('active');
+    };
+    grid.appendChild(btn);
+  });
+
+  // Build quiz
+  var qa = body.querySelector('.qa-block');
+  if(qa && quizData[l1]){
+    quizData[l1].forEach(function(q, qi){
+      var qDiv = document.createElement('div');
+      qDiv.style.marginBottom = '1rem';
+      var qText = document.createElement('p');
+      qText.style.cssText = 'font-size:1rem;color:#fff;margin-bottom:.5rem;font-weight:500';
+      qText.textContent = (qi+1) + '. ' + q.q;
+      qDiv.appendChild(qText);
+
+      q.opts.forEach(function(opt, oi){
+        var btn = document.createElement('button');
+        btn.className = 'qq-option';
+        btn.style.display = 'block';
+        btn.style.width = '100%';
+        btn.style.textAlign = 'left';
+        btn.style.fontFamily = 'inherit';
+        btn.textContent = opt;
+        btn.onclick = function(){
+          if(oi === q.answer){
+            btn.classList.add('correct');
+            var exp = document.createElement('p');
+            exp.style.cssText = 'font-size:.9rem;color:var(--emerald);margin-top:.4rem';
+            exp.textContent = '✓ ' + q.explain;
+            qDiv.appendChild(exp);
+          } else {
+            btn.classList.add('wrong');
+          }
+          // disable siblings
+          qDiv.querySelectorAll('.qq-option').forEach(function(b){ b.style.pointerEvents = 'none'; });
+        };
+        qDiv.appendChild(btn);
+      });
+      qa.appendChild(qDiv);
+    });
+  }
+}
+
+function speakWord(l1, word, isCorrect, onEnd){
+  if(!('speechSynthesis' in window)){
+    alert('Text-to-speech not supported. Use Chrome or Edge.');
+    if(onEnd) onEnd();
+    return;
+  }
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(word);
+  var voices = speechSynthesis.getVoices();
+
+  if(isCorrect){
+    // Always use en-US for correct pronunciation
+    u.lang = 'en-US';
+    u.rate = 0.75;
+    var enVoice = voices.filter(function(v){ return v.lang === 'en-US' || v.lang === 'en-GB'; });
+    if(enVoice.length) u.voice = enVoice[0];
+  } else {
+    // Use accent locale for the "wrong" version
+    var localeMap = {thai:'th-TH', viet:'vi-VN', chinese:'zh-CN', spanish:'es-ES', indian:'en-IN'};
+    u.lang = localeMap[l1] || 'en-US';
+    u.rate = 0.7;
+    var accentVoice = voices.filter(function(v){
+      var prefix = localeMap[l1] ? localeMap[l1].split('-')[0] : 'en';
+      return v.lang.indexOf(prefix) === 0;
+    });
+    // If we found an accent voice, use it — it will naturally mispronounce English
+    // If not, fall back to en-US but slower to approximate
+    if(accentVoice.length){
+      u.voice = accentVoice[0];
+    } else {
+      var enVoice = voices.filter(function(v){ return v.lang.indexOf('en') === 0; });
+      if(enVoice.length) u.voice = enVoice[0];
+      u.rate = 0.65;
+    }
+  }
+
+  if(onEnd){
+    u.onend = onEnd;
+    u.onerror = onEnd;
+  }
+  speechSynthesis.speak(u);
+}
+
+function speakPhrase(l1, word, note){
+  if(!('speechSynthesis' in window)){
+    alert('Text-to-speech not supported. Use Chrome or Edge.');
+    return;
+  }
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(word);
+  var localeMap = {thai:'th-TH', viet:'vi-VN', chinese:'zh-CN', spanish:'es-ES', indian:'en-IN'};
+  u.lang = localeMap[l1] || 'en-US';
+  // Try to find matching voice
+  var voices = speechSynthesis.getVoices();
+  var match = voices.filter(function(v){ return v.lang.indexOf(l1 === 'thai' ? 'th' : l1 === 'viet' ? 'vi' : l1 === 'chinese' ? 'zh' : l1 === 'spanish' ? 'es' : 'en-IN') === 0; });
+  if(match.length) u.voice = match[0];
+  u.rate = 0.75; // slower for learning
+  speechSynthesis.speak(u);
+}
+
+// Chrome loads voices async
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = function(){ speechSynthesis.getVoices(); };
+}
+
+/* ---------- Inline Phonetic TTS ---------- */
+function processPhonetics(container){
+  // Find all text nodes containing /.../ IPA notation
+  var walker = document.createTreeWalker(container || document.body, NodeFilter.SHOW_TEXT, null, false);
+  var nodes = [];
+  while(walker.nextNode()){
+    if(walker.currentNode.textContent.match(/\/[^\/]+\//)){
+      nodes.push(walker.currentNode);
+    }
+  }
+  nodes.forEach(function(node){
+    var text = node.textContent;
+    // Split on IPA patterns: /.../
+    var parts = text.split(/(\/[ā-ʯa-zA-Zˈːˌθðʃʒŋɹɾʔɭɽʈɖɡəɛɪɔʊæɐ]+[ˈːˌ θðʃʒŋɹɾʔɭɽʈɖɡəɛɪɔʊæɐ\/]*)/);
+    // Simpler: split on /.../
+    var parts2 = text.split(/(\/[^\/\n]{1,30}\/)/g);
+    if(parts2.length <= 1) return;
+    var frag = document.createDocumentFragment();
+    parts2.forEach(function(part){
+      if(part.match(/^\/[^\/]+\/$/)){
+        // This is an IPA notation
+        var ipa = part.slice(1, -1); // strip slashes
+        var span = document.createElement('span');
+        span.className = 'ph';
+        span.innerHTML = '<span class="ph-ico">🔊</span>' + ipa;
+        span.title = 'Click to hear ' + ipa;
+        span.addEventListener('click', function(ev){
+          ev.stopPropagation();
+          speakIPA(this, ipa);
+        });
+        frag.appendChild(span);
+      } else {
+        frag.appendChild(document.createTextNode(part));
+      }
+    });
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+
+function speakIPA(el, ipa){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  // Reset all .ph playing state
+  document.querySelectorAll('.ph.playing').forEach(function(p){ p.classList.remove('playing'); });
+  el.classList.add('playing');
+
+  // Try to map IPA to a readable word for TTS
+  var readable = ipaToWord(ipa);
+  var u = new SpeechSynthesisUtterance(readable);
+  u.lang = 'en-US';
+  u.rate = 0.75;
+
+  // Try to find a good English voice
+  var voices = speechSynthesis.getVoices();
+  var enVoice = voices.filter(function(v){ return v.lang.indexOf('en') === 0; });
+  if(enVoice.length) u.voice = enVoice[0];
+
+  u.onend = function(){ el.classList.remove('playing'); };
+  u.onerror = function(){ el.classList.remove('playing'); };
+  speechSynthesis.speak(u);
+}
+
+// Map common IPA strings to English words that TTS can pronounce
+function ipaToWord(ipa){
+  // Remove IPA diacritics and map to closest English word
+  var clean = ipa.replace(/[ˈːˌ]/g, '');
+  var map = {
+    'θ':'th','ð':'th','ʃ':'sh','ʒ':'zh','ŋ':'ng','tʃ':'ch','dʒ':'j',
+    'ɪ':'i','ʊ':'u','ɛ':'e','ɜ':'er','ɔ':'o','æ':'a','ɐ':'a',
+    'ɹ':'r','ɾ':'r','ʔ':'ʔ','ɭ':'l','ʈ':'t','ɖ':'d','ɡ':'g',
+    'j':'y','w':'w','ʋ':'v'
+  };
+  // Replace IPA chars
+  var result = '';
+  for(var i = 0; i < clean.length; i++){
+    result += map[clean[i]] || clean[i];
+  }
+  // If result is mostly gibberish, use placeholder
+  if(result.length > 20 || result.match(/[ʾʿˈːˌɕʑɤɦχβ]/)) return ipa;
+  // Clean up
+  result = result.replace(/\//g, '');
+  if(!result) return ipa;
+  return result;
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', function(){
+  processPhonetics();
+});
+
+/* ---------- Prefill first section ---------- */
+document.querySelector('.l1-head').click();
+</script>
+</body></html>

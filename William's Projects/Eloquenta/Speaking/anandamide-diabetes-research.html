@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anandamide & Diabetes — Research Insights</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;
+  --violet:#a78bfa;--rose:#fb7185;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow:hidden;height:100vh}
+.slide{display:none;width:100vw;height:100vh;position:relative;flex-direction:column;justify-content:center;align-items:center}
+.slide.active{display:flex}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.22) saturate(1.15)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(2,6,23,.92) 0%,rgba(2,6,23,.3) 40%,rgba(2,6,23,.6) 100%)}
+.slide-content{position:relative;z-index:2;max-width:900px;padding:40px;max-height:calc(100vh - 80px);overflow-y:auto}
+.slide-number{position:absolute;top:20px;left:28px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase;z-index:3}
+.slide-category{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;border:1px solid}
+h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+h2{font-size:1.2rem;font-weight:600;line-height:1.4;margin-bottom:14px;color:rgba(255,255,255,.85)}
+h3{font-size:.95rem;font-weight:700;color:var(--amber);margin:16px 0 8px;text-transform:uppercase;letter-spacing:1px}
+p{font-size:.95rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:700px;margin:0 auto 10px}
+ul{font-size:.93rem;color:rgba(255,255,255,.65);line-height:1.8;max-width:680px;margin:8px auto 12px;padding-left:20px}
+li{margin-bottom:6px}
+.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px;align-items:center}
+.nav-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{background:rgba(255,255,255,.2)}
+.nav-dots{display:flex;gap:4px;align-items:center;padding:0 6px;max-width:280px;flex-wrap:wrap;justify-content:center}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:var(--cyan);box-shadow:0 0 6px rgba(34,211,238,.4)}
+.progress{position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(255,255,255,.04);height:4px}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .3s ease-out;border-radius:0 2px 2px 0}
+.ref{font-size:.75rem;color:rgba(255,255,255,.35);font-style:italic;margin-top:12px;padding:8px 12px;border-left:2px solid var(--border-light);background:rgba(255,255,255,.02)}
+.highlight{color:var(--amber);font-weight:600}
+.key-box{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:14px 18px;margin:12px 0;max-width:680px}
+.key-box p{color:rgba(255,255,255,.75);font-size:.9rem;margin-bottom:0}
+.warning-box{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.2);border-radius:10px;padding:14px 18px;margin:12px 0;max-width:680px}
+.warning-box p{color:rgba(255,255,255,.75);font-size:.9rem;margin-bottom:0}
+.green-box{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:14px 18px;margin:12px 0;max-width:680px}
+.green-box p{color:rgba(255,255,255,.75);font-size:.9rem;margin-bottom:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:700px;margin:12px auto}
+.col-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px}
+.col-box h4{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:6px}
+.col-box p{font-size:.85rem;margin-bottom:0}
+</style>
+</head>
+<body>
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div id="slides-container"></div>
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<script>
+var SLIDES=[
+{bg:"https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1920&q=80",cat:"Research Brief",catB:"rgba(34,211,238,.12);color:#22d3ee;border-color:rgba(34,211,238,.25)",isTitle:true,title:"Anandamide & Diabetes",subtitle:"The Endocannabinoid Deficiency Connection — What the Research Shows",text:"A comprehensive look at how anandamide (AEA) deficiency drives insulin resistance, metabolic dysfunction, and diabetic complications — and what we can do about it."},
+
+{bg:"https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1920&q=80",cat:"The Molecule",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",title:"What is Anandamide?",subtitle:"N-arachidonoylethanolamine (AEA) — the body's own cannabinoid",text:"Anandamide is an endocannabinoid: a naturally produced signaling molecule that binds to CB1 and CB2 receptors throughout the body. It is part of the endocannabinoid system (ECS), which regulates appetite, metabolism, insulin sensitivity, pain, mood, and immune function.",keyBox:true,keyTitle:"Key Fact",keyText:"The name 'anandamide' comes from the Sanskrit word 'ananda' meaning 'bliss.' It was the first endocannabinoid ever discovered, by Raphael Mechoulam's team in 1992."},
+
+{bg:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80",cat:"Mechanism 1",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",title:"Insulin Resistance",subtitle:"How AEA deficiency disrupts glucose regulation",text:"Anandamide modulates insulin signaling in pancreatic beta cells, liver, adipose tissue, and muscle. Low AEA levels are directly associated with increased insulin resistance. CB1 receptor activation in the liver can either promote or inhibit gluconeogenesis depending on context — acute vs chronic exposure produces opposite effects.",ref:"Di Marzo et al., 2008, Diabetologia; Gruden et al., 2016, Nutrition & Diabetes"},
+
+{bg:"https://images.unsplash.com/photo-1505576399279-0d754c0d8df8?w=1920&q=80",cat:"Mechanism 2",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",title:"Beta Cell Dysfunction",subtitle:"The pancreas under endocannabinoid stress",text:"AEA influences insulin secretion from beta cells. Deficiency disrupts the fine-tuning of glucose-stimulated insulin secretion. Chronic high-fat diets — a primary driver of type 2 diabetes — deplete anandamide in pancreatic tissue, creating a vicious cycle of worsening glucose control.",ref:"Malenczyk et al., 2015, Journal of Biological Chemistry; Jourdan et al., 2017, Molecular Metabolism"},
+
+{bg:"https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1920&q=80",cat:"Mechanism 3",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"Chronic Inflammation",subtitle:"The silent driver of diabetic complications",text:"Diabetes is a chronic low-grade inflammatory state. Anandamide has potent anti-inflammatory properties via CB2 receptor activation on immune cells. AEA deficiency means reduced anti-inflammatory signaling, which worsens diabetic complications: neuropathy, nephropathy, and retinopathy.",ref:"Vinod & Hungund, 2005, Journal of Neuroimmunology; Rajesh et al., 2010, American Journal of Pathology"},
+
+{bg:"https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1920&q=80",cat:"Mechanism 4",catB:"rgba(34,211,238,.12);color:#22d3ee;border-color:rgba(34,211,238,.25)",title:"The Obesity Paradox",subtitle:"Elevated AEA but functional deficiency",text:"Obese individuals often have elevated circulating endocannabinoids (2-AG and AEA) but the receptors are downregulated — creating a functional deficiency. This is called 'endocannabinoid resistance.' The elevated levels are a compensatory response to receptor desensitization, not a sign of health.",ref:"Engeli et al., 2005, Diabetes; Blüher et al., 2006, Journal of Clinical Endocrinology & Metabolism"},
+
+{bg:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1920&q=80",cat:"Mechanism 5",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",title:"Gut Microbiome Disruption",subtitle:"Where digestion meets endocannabinoid production",text:"The gut microbiome produces endocannabinoids and regulates AEA levels. Diabetic patients have altered gut flora, which disrupts endocannabinoid production. AEA deficiency in the gut increases intestinal permeability ('leaky gut'), driving systemic inflammation that worsens insulin resistance.",ref:"Cani et al., 2012, Gut; Muccioli et al., 2010, FASEB Journal"},
+
+{bg:"https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=1920&q=80",cat:"Mechanism 6",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",title:"Lipid Metabolism & FAAH",subtitle:"The enzyme that breaks down your anandamide",text:"AEA is synthesized from arachidonic acid. Diabetic dyslipidemia alters membrane phospholipid composition, reducing substrate availability. The degradation enzyme FAAH (fatty acid amide hydrolase) is overactive in diabetes — breaking down AEA faster than it can be produced.",ref:"Matias et al., 2008, International Journal of Obesity; Touriño et al., 2010, British Journal of Pharmacology"},
+
+{bg:"https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1920&q=80",cat:"The Pesticide Connection",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",title:"Pesticides & Gut Destruction",subtitle:"How modern agriculture disrupts your endocannabinoid system",text:"Glyphosate and other pesticides are antimicrobial by design. They kill soil bacteria — and the same bacteria in your gut. The gut microbes that regulate AEA production are particularly vulnerable. Organophosphates directly inhibit FAAH, paradoxically raising AEA acutely but damaging the ECS long-term.",warningBox:true,warningTitle:"The Hidden Cost of 'Clean' Food",warningText:"Conventionally grown produce carries pesticide residues that selectively destroy endocannabinoid-regulating gut bacteria. This is not about dirt — it's about chemical warfare on your microbiome."},
+
+{bg:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1920&q=80",cat:"The Pesticide Connection",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",title:"The Gut-Pesticide-Diabetes Axis",subtitle:"A pathway your doctor never mentions",text:"Pesticide exposure → gut microbiome disruption → reduced AEA production → increased intestinal permeability → systemic inflammation → insulin resistance → diabetes. This chain is supported by epidemiological data showing higher diabetes rates in agricultural communities with heavy pesticide use.",ref:"Samsel & Seneff, 2013, Entropy; Velmurugan et al., 2017, Environmental Health Perspectives"},
+
+{bg:"https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=1920&q=80",cat:"Why GPs Stay Silent",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",title:"Why Your GP Doesn't Warn You",subtitle:"The institutional blind spot",text:"Medical education spends <2% of curriculum on nutrition. Endocannabinoid science is barely taught. GPs are trained to prescribe metformin, not to discuss pesticide residues on food. The pharmaceutical model profits from managing diabetes, not preventing it through dietary awareness.",warningBox:true,warningTitle:"Follow the Money",warningText:"Diabetes management is a $760 billion global industry. There is no financial incentive for a doctor to tell you to buy organic, avoid processed food, or question pesticide exposure. The system is designed to manage disease, not prevent it."},
+
+{bg:"https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1920&q=80",cat:"Why GPs Stay Silent",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",title:"The 'Dirty Food' Problem",subtitle:"Why doctors don't talk about food quality",text:"When GPs say 'eat healthy,' they mean 'reduce sugar and fat.' They don't mention that the lettuce in your salad may carry glyphosate residues, that your wheat may be sprayed with Roundup before harvest, or that your chicken was fed antibiotics that destroy gut flora. The food system is the elephant in the examination room.",keyBox:true,keyTitle:"What They Could Say But Don't",keyText:"'Choose organic when possible, especially for thin-skinned fruits and vegetables. Wash produce thoroughly. Prioritize fiber-rich whole foods that feed beneficial gut bacteria. Your endocannabinoid system depends on it.'"},
+
+{bg:"https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1920&q=80",cat:"Clinical Evidence",catB:"rgba(34,211,238,.12);color:#22d3ee;border-color:rgba(34,211,238,.25)",title:"What the Trials Show",subtitle:"FAAH inhibitors, CB1 antagonists, and metabolic outcomes",text:"Type 2 diabetic patients show altered plasma anandamide levels. FAAH inhibitors (which raise AEA) improve insulin sensitivity in animal models. CB1 receptor antagonists like rimonabant improved metabolic markers in humans — but were withdrawn due to psychiatric side effects, not metabolic ones.",ref:"Côté et al., 2007, International Journal of Obesity; Nogueiras et al., 2009, Journal of Clinical Investigation"},
+
+{bg:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1920&q=80",cat:"Treatment Adaptation",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"Adapting Treatment",subtitle:"What the evidence suggests we should do differently",text:"Current diabetes treatment ignores the endocannabinoid system entirely. The evidence supports a different approach:",listTitle:"Evidence-Based Adaptations",listItems:["Reduce pesticide exposure — choose organic for the 'Dirty Dozen' (strawberries, spinach, kale, apples, grapes)","Support gut microbiome — prebiotic fiber, fermented foods, avoid unnecessary antibiotics","Optimize omega-3 intake — substrate for AEA synthesis (fatty fish, flaxseed, walnuts)","Exercise regularly — proven to increase anandamide levels (the 'runner's high' is real AEA)","Consider probiotic strains that support endocannabinoid-producing bacteria","Reduce ultra-processed food — these deplete ECS function and promote inflammation"]},
+
+{bg:"https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1920&q=80",cat:"Treatment Adaptation",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"The Russo Hypothesis",subtitle:"Clinical Endocannabinoid Deficiency (CECD)",text:"Dr. Ethan Russo proposed that certain conditions — migraine, fibromyalgia, IBS — may be caused by endocannabinoid deficiency. Researchers now extend this to metabolic syndrome and diabetes. The ECS becomes dysregulated: either producing insufficient anandamide or having desensitized receptors despite normal/high circulating levels.",ref:"Russo, 2004, Neuroendocrinology Letters; Russo, 2016, Cannabis and Cannabinoid Research"},
+
+{bg:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80",cat:"Conclusions",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",title:"Key Takeaways",subtitle:"What to remember from this research",text:"",listTitle:"The Bottom Line",listItems:["Diabetes both causes AND results from anandamide deficiency — it's a bidirectional vicious cycle","Pesticides destroy the gut microbes that regulate your endocannabinoid system","Your GP likely won't warn you about food quality — the system isn't designed for prevention","Treatment should include ECS support: diet, exercise, microbiome care, reduced toxin exposure","The endocannabinoid system is a legitimate therapeutic target — not alternative medicine","Organic food isn't a luxury — it's endocannabinoid protection"]},
+
+{bg:"https://images.unsplash.com/photo-1505576399279-0d754c0d8df8?w=1920&q=80",cat:"References",catB:"rgba(255,255,255,.08);color:#94a3b8;border-color:rgba(255,255,255,.15)",title:"Selected References",subtitle:"White papers and peer-reviewed sources",text:"",listTitle:"Key Papers",listItems:["Di Marzo et al. (2008) 'The endocannabinoid system in obesity and type 2 diabetes' — Diabetologia 51(8):1356-67","Russo EB (2004) 'Clinical endocannabinoid deficiency' — Neuroendocrinology Letters 25(1-2):31-39","Cani PD et al. (2012) 'Changes in gut microbiota control inflammation in obese mice' — Gut 61(7):1059-68","Samsel A & Seneff S (2013) 'Glyphosate's suppression of cytochrome P450 enzymes' — Entropy 15(4):1416-1463","Engeli S et al. (2005) 'Activation of the peripheral endocannabinoid system in human obesity' — Diabetes 54(10):2838-43","Gruden G et al. (2016) 'Role of the endocannabinoid system in diabetes' — Nutrition & Diabetes 6:e232","Matias I et al. (2008) 'Regulation of dietary fat consumption by the endocannabinoid system' — International Journal of Obesity 32(S1):S10-12"]},
+
+{bg:"https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1920&q=80",cat:"End",catB:"rgba(34,211,238,.12);color:#22d3ee;border-color:rgba(34,211,238,.25)",title:"Well Done!",subtitle:"You now understand the anandamide-diabetes connection",text:"The endocannabinoid system is not fringe science — it is fundamental metabolic regulation. Protecting it through diet, exercise, and reduced toxin exposure is one of the most evidence-supported things you can do for metabolic health.",keyBox:true,keyTitle:"Next Steps",keyText:"Share this with someone managing diabetes. The conversation about endocannabinoid health is long overdue in mainstream medicine."}
+];
+
+var current=0;
+function renderSlides(){
+  var c=document.getElementById('slides-container');
+  var d=document.getElementById('navDots');
+  var h='',dh='';
+  SLIDES.forEach(function(s,i){
+    h+='<div class="slide'+(i===0?' active':'')+'" id="slide-'+i+'">';
+    h+='<div class="slide-bg" style="background-image:url('+s.bg+')"></div>';
+    h+='<span class="slide-number">'+(i+1)+' / '+SLIDES.length+'</span>';
+    h+='<div class="slide-content">';
+    if(s.isTitle){
+      h+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+      h+='<h1>'+s.title+'</h1>';
+      h+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) h+='<p>'+s.text+'</p>';
+    } else {
+      h+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+      h+='<h1>'+s.title+'</h1>';
+      h+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) h+='<p>'+s.text+'</p>';
+      if(s.keyBox) h+='<div class="key-box"><p><strong style="color:var(--cyan)">'+s.keyTitle+':</strong> '+s.keyText+'</p></div>';
+      if(s.warningBox) h+='<div class="warning-box"><p><strong style="color:var(--rose)">'+s.warningTitle+':</strong> '+s.warningText+'</p></div>';
+      if(s.listTitle){
+        h+='<h3>'+s.listTitle+'</h3>';
+        h+='<ul>';
+        s.listItems.forEach(function(item){ h+='<li>'+item+'</li>'; });
+        h+='</ul>';
+      }
+      if(s.ref) h+='<div class="ref">'+s.ref+'</div>';
+    }
+    h+='</div></div>';
+    dh+='<div class="nav-dot'+(i===0?' active':'')+'" onclick="goTo('+i+')"></div>';
+  });
+  c.innerHTML=h;
+  d.innerHTML=dh;
+}
+
+function showSlide(n){
+  if(n<0||n>=SLIDES.length)return;
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-dot').forEach(function(d){d.classList.remove('active')});
+  document.getElementById('slide-'+n).classList.add('active');
+  document.querySelectorAll('.nav-dot')[n].classList.add('active');
+  current=n;
+  document.getElementById('progressBar').style.width=(((current+1)/SLIDES.length)*100)+'%';
+}
+
+function nextSlide(){showSlide(current+1)}
+function prevSlide(){showSlide(current-1)}
+function goTo(n){showSlide(n)}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}
+  if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}
+});
+
+// Shift+wheel for horizontal scroll
+document.addEventListener('wheel',function(e){
+  if(e.shiftKey){e.preventDefault();window.scrollBy(e.deltaY,0);}
+},{passive:false});
+
+// Touch swipe
+var tx=0;
+document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;});
+document.addEventListener('touchend',function(e){
+  var d=tx-e.changedTouches[0].clientX;
+  if(Math.abs(d)>50){d>0?nextSlide():prevSlide()}
+});
+
+renderSlides();
+</script>
+</body>
+</html>

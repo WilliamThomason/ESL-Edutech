@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Alien Metronome">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e1a">
+<meta name="application-name" content="Alien Metronome">
+<meta name="description" content="A beautiful metronome with delay, reverb, ring modulation and saturation effects. Perfect for practice and performance.">
+<meta name="keywords" content="metronome, music, musician, practice, tempo, bpm, delay, reverb, effects, drum, rhythm">
+<meta name="author" content="Eloquenta">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Social -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Alien Metronome">
+<meta property="og:description" content="A beautiful metronome with delay, reverb, ring modulation and saturation effects.">
+<meta property="og:site_name" content="Alien Metronome">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Alien Metronome">
+<meta name="twitter:description" content="A beautiful metronome with delay, reverb, ring modulation and saturation effects.">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS Icons -->
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-startup-image" href="splash-1125x2436.png">
+
+<title>Alien Metronome — Tempo Control Unit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<!-- Prevent phone number detection on iOS -->
+<meta name="format-detection" content="telephone=no">
+
+<style>
+:root{--bg:#0a0e1a;--bg-card:#111827;--border:#1e3a5f;--text:#e0f2fe;--text-muted:#94a3b8;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;overflow-y:auto;position:relative}
+
+/* STARS */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite;opacity:var(--op)}
+@keyframes twinkle{0%,100%{opacity:var(--op)}50%{opacity:.1}}
+
+/* RING */
+.ring{position:fixed;border:1px solid rgba(34,211,238,.08);border-radius:50%;pointer-events:none;z-index:0}
+.ring-1{width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.ring-2{width:500px;height:500px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.ring-3{width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+.app{position:relative;z-index:1;width:100%;max-width:420px;padding:20px;padding-bottom:60px;display:flex;flex-direction:column;align-items:center;gap:20px;min-height:100vh}
+@supports not (backdrop-filter: blur(8px)) {
+  .text-box{background:rgba(30,40,60,.92)!important}
+  .donate-modal{background:rgba(10,14,26,.95)!important}
+}
+/* Touch action for better mobile experience */
+.bpm-slider,.effect-slider,.sound-btn,.donate-btn,.play-btn,.timing-btn,.ts-btn,.delay-btn,.preset-btn,.btn{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+/* Prevent text selection on buttons */
+button{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+/* Firefox specific */
+@-moz-document url-prefix(){
+  .bpm-slider::-moz-range-thumb{width:18px;height:18px}
+  .effect-slider::-moz-range-thumb{width:12px;height:12px}
+}
+/* Safari specific */
+@supports (-webkit-touch-callout:none){
+  .app{padding-bottom:max(60px,env(safe-area-inset-bottom))}
+  .controls{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+}
+@media(min-width:700px){
+  .app{min-height:auto;padding-bottom:40px}
+}
+
+/* HEADER */
+.header{text-align:center}
+.header h1{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:900;color:var(--cyan);text-shadow:0 0 15px var(--cyan),0 0 30px var(--cyan),0 0 45px rgba(34,211,238,.3);letter-spacing:2px}
+.header .subtitle{font-size:.75rem;color:var(--text-muted);margin-top:4px;letter-spacing:1px}
+
+/* BPM DISPLAY */
+.bpm-display{text-align:center;position:relative;display:flex;flex-direction:column;align-items:center}
+.bpm-ring{width:260px;height:260px;border-radius:50%;border:3px solid var(--violet);display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(circle,rgba(167,139,250,.06) 0%,transparent 70%);transition:border-color .1s,box-shadow .1s;cursor:pointer;box-shadow:0 0 20px rgba(167,139,250,.15),inset 0 0 12px rgba(167,139,250,.08)}
+.bpm-ring.beat{border-color:var(--cyan);box-shadow:0 0 50px rgba(34,211,238,.5),inset 0 0 25px rgba(34,211,238,.2);animation:bpmPulse .25s ease-out}
+.bpm-ring.beat-green{border-color:var(--green);box-shadow:0 0 60px rgba(52,211,153,.6),inset 0 0 30px rgba(52,211,153,.25);animation:bpmPulse .25s ease-out}
+.bpm-num{font-family:'Orbitron',sans-serif;font-size:5rem;font-weight:900;color:var(--violet);text-shadow:0 0 15px var(--violet),0 0 30px var(--violet),0 0 45px rgba(167,139,250,.3);transition:color .1s}
+.bpm-num.beat{color:var(--cyan);text-shadow:0 0 15px var(--cyan),0 0 30px var(--cyan),0 0 45px rgba(34,211,238,.4)}
+.bpm-label{font-size:.8rem;color:var(--violet);margin-top:6px;letter-spacing:2px;text-shadow:0 0 8px rgba(167,139,250,.3)}
+@keyframes bpmPulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+/* TAP CALLOUT */
+.tap-callout{font-size:.75rem;color:var(--cyan);margin-top:8px;display:flex;align-items:center;gap:4px;cursor:pointer;text-shadow:0 0 8px rgba(34,211,238,.3);transition:color .15s}
+.tap-callout:hover{color:var(--text)}
+
+/* BPM CONTROLS */
+.bpm-controls{display:flex;align-items:center;gap:10px;flex:1}
+.bpm-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--bg-card);color:var(--text);font-size:1.2rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-weight:700}
+.bpm-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.2)}
+.bpm-btn:active{transform:scale(.95)}
+.bpm-slider-wrap{flex:1}
+.bpm-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;background:var(--bg-card);border-radius:3px;outline:none;border:1px solid var(--border)}
+.bpm-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 10px var(--cyan),0 0 20px rgba(34,211,238,.4)}
+.bpm-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--cyan);cursor:pointer;border:none;box-shadow:0 0 10px var(--cyan),0 0 20px rgba(34,211,238,.4)}
+
+/* TIME SIGNATURE */
+.time-sig{display:flex;gap:8px}
+.ts-title{font-size:.75rem;font-weight:700;color:var(--amber);font-family:'Orbitron',sans-serif;text-align:center;letter-spacing:2px;margin-bottom:4px;text-shadow:0 0 8px rgba(251,191,36,.3),0 0 16px rgba(251,191,36,.15)}
+.ts-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s}
+.ts-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.ts-btn.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 8px rgba(34,211,238,.2)}
+
+/* SOUND SELECT */
+.sound-select{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.sound-btn{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.75rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.sound-btn:hover{border-color:var(--green);color:var(--green)}
+.sound-btn.active{background:rgba(52,211,153,.12);border-color:var(--green);color:var(--green);text-shadow:0 0 6px rgba(52,211,153,.3)}
+
+/* PLAY BUTTON — single toggles between play and stop */
+.play-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+.play-btn{background:transparent;border:none;cursor:pointer;transition:all .15s;line-height:1;padding:8px 16px;font-family:'Share Tech Mono',monospace}
+.play-btn .icon{display:block;transition:all .2s}
+.play-btn .label{display:block;font-size:.65rem;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.play-btn:active{transform:scale(.9)}
+.btn-play .icon{font-size:3.5rem;color:var(--green);text-shadow:0 0 15px var(--green),0 0 30px var(--green),0 0 45px rgba(52,211,153,.3);transition:transform .15s ease-out,text-shadow .15s ease-out}
+.btn-play .label{color:var(--green);text-shadow:0 0 8px rgba(52,211,153,.4)}
+.btn-play:hover .icon{text-shadow:0 0 25px var(--green),0 0 50px var(--green),0 0 75px rgba(52,211,153,.4)}
+.btn-play.playing .icon{font-size:3.5rem;color:var(--rose);text-shadow:0 0 15px var(--rose),0 0 30px var(--rose),0 0 45px rgba(251,113,133,.3);animation:btnPulse 1s ease-in-out infinite}
+.btn-play.playing .label{color:var(--rose);text-shadow:0 0 8px rgba(251,113,133,.4)}
+.btn-play.playing .icon.beat{transform:scale(1.15);text-shadow:0 0 25px var(--rose),0 0 50px var(--rose),0 0 80px rgba(251,113,133,.5)}
+@keyframes btnPulse{0%,100%{opacity:1}50%{opacity:.6}}
+.sparkle-container{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:visible}
+.sparkle{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.8),0 0 12px 4px rgba(52,211,153,.4);animation:sparkle-fly 0.6s ease-out forwards;pointer-events:none}
+@keyframes sparkle-fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+
+/* BEAT INDICATORS */
+.beat-indicators{display:flex;gap:8px;justify-content:center;align-items:center;margin-bottom:6px}
+.beat-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:var(--bg-card);transition:all .1s}
+.beat-dot.active{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 10px var(--cyan),0 0 20px rgba(34,211,238,.3)}
+.beat-dot.accent{background:var(--green);border-color:var(--green);box-shadow:0 0 10px var(--green),0 0 20px rgba(52,211,153,.3)}
+
+/* VOLUME */
+.volume-control{display:flex;align-items:center;gap:8px}
+.volume-control input{width:80px;-webkit-appearance:none;appearance:none;height:4px;background:var(--bg-card);border-radius:2px;outline:none;border:1px solid var(--border)}
+.volume-control input::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--amber);cursor:pointer;box-shadow:0 0 8px var(--amber),0 0 16px rgba(251,191,36,.3)}
+.volume-control input::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--amber);cursor:pointer;border:none;box-shadow:0 0 8px var(--amber),0 0 16px rgba(251,191,36,.3)}
+.volume-label{font-size:.7rem;color:var(--text-muted)}
+
+/* PRESETS */
+.presets{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.preset-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:600;cursor:pointer;transition:all .15s}
+.preset-btn:hover{border-color:var(--amber);color:var(--amber);text-shadow:0 0 6px rgba(251,191,36,.3)}
+
+/* TOP ALIEN */
+.top-alien{text-align:center;font-size:8rem;margin-bottom:4px}
+.top-alien .emoji{display:inline-block;animation:alienBob 3s ease-in-out infinite,alienFloat 2.5s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(34,211,238,.5))}
+
+/* ═══ EFFECTS ═══ */
+.effects-section{display:flex;flex-direction:column;gap:10px;margin:8px 0;padding:12px;border-radius:12px;background:rgba(0,0,0,.15);border:1px solid rgba(30,58,95,.3)}
+.effect-row{display:flex;align-items:center;gap:10px}
+.effect-label{font-size:.75rem;color:var(--text-muted);min-width:60px}
+.effect-slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:linear-gradient(90deg,rgba(30,58,95,.4),rgba(167,139,250,.15));border-radius:3px;outline:none;border:1px solid rgba(30,58,95,.3)}
+.effect-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 0 10px var(--green),0 0 20px rgba(52,211,153,.4)}
+.effect-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;border:none;box-shadow:0 0 10px var(--green),0 0 20px rgba(52,211,153,.4)}
+.effect-val{font-size:.7rem;color:var(--green);min-width:35px;text-align:right;font-family:'Orbitron',sans-serif;text-shadow:0 0 6px rgba(52,211,153,.3)}
+.effect-section-label{font-size:.8rem;font-weight:700;font-family:'Orbitron',sans-serif;text-align:center;letter-spacing:3px;margin-bottom:6px}
+.section-delay{color:var(--cyan);font-size:.9rem;text-shadow:0 0 8px rgba(34,211,238,.3),0 0 16px rgba(34,211,238,.1)}
+.section-ring{color:var(--violet);text-shadow:0 0 10px rgba(167,139,250,.4),0 0 20px rgba(167,139,250,.15)}
+.section-reverb{color:var(--green);text-shadow:0 0 10px rgba(52,211,153,.4),0 0 20px rgba(52,211,153,.15)}
+
+/* DELAY MODE BUTTONS */
+.delay-modes{display:flex;gap:4px;justify-content:center;margin-bottom:6px}
+.delay-btn{flex:1;padding:12px 0;border-radius:8px;border:1px solid rgba(30,58,95,.4);background:rgba(0,0,0,.2);color:var(--text-muted);font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .15s;text-align:center}
+.delay-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.08)}
+.delay-btn.active{background:rgba(34,211,238,.15);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(34,211,238,.25)}
+
+/* ═══ DONATE BUTTON ═══ */
+.donate-section{text-align:center;margin-top:8px}
+.donate-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 32px;border-radius:50px;
+  background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(251,113,133,.2));
+  border:2px solid var(--violet);
+  color:var(--violet);font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 0 20px rgba(167,139,250,.15),0 0 40px rgba(167,139,250,.05);
+  animation:glow 2s ease-in-out infinite alternate;
+}
+.donate-btn:hover{
+  background:linear-gradient(135deg,rgba(167,139,250,.35),rgba(251,113,133,.35));
+  box-shadow:0 0 30px rgba(167,139,250,.3),0 0 60px rgba(167,139,250,.1);
+  transform:scale(1.05);
+}
+.donate-btn:active{transform:scale(.98)}
+.donate-icon{font-size:2rem;display:inline-block;animation:alienBob 2.5s ease-in-out infinite,alienFloat 2s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(167,139,250,.4))}
+.donate-sub{font-size:.7rem;color:var(--text-muted);margin-top:6px}
+@keyframes glow{
+  0%{box-shadow:0 0 20px rgba(167,139,250,.15),0 0 40px rgba(167,139,250,.05)}
+  100%{box-shadow:0 0 30px rgba(167,139,250,.3),0 0 60px rgba(167,139,250,.15)}
+}
+
+/* ═══ DONATE MODAL ═══ */
+.donate-modal{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(10,14,26,.85);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.donate-modal.show{display:flex}
+.donate-box{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:20px;
+  padding:32px;max-width:380px;width:100%;position:relative;
+  box-shadow:0 0 40px rgba(167,139,250,.1),0 20px 60px rgba(0,0,0,.3);
+  animation:modalIn .3s ease-out;
+}
+@keyframes modalIn{0%{opacity:0;transform:scale(.9) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.donate-close{
+  position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--border);background:var(--bg);color:var(--text-muted);
+  cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.donate-close:hover{border-color:var(--rose);color:var(--rose)}
+.donate-alien{font-size:2.5rem;text-align:center;margin-bottom:8px;animation:float 3s ease-in-out infinite}
+.donate-box h3{text-align:center;font-size:1.2rem;color:var(--violet);margin-bottom:8px}
+.donate-desc{text-align:center;font-size:.85rem;color:var(--text-muted);margin-bottom:20px;line-height:1.6}
+.donate-amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.amount-btn{
+  padding:10px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bg);color:var(--text);font-family:'Orbitron',sans-serif;
+  font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;
+}
+.amount-btn:hover{border-color:var(--violet);color:var(--violet)}
+.amount-btn.selected{background:rgba(167,139,250,.15);border-color:var(--violet);color:var(--violet)}
+.amount-btn.popular{border-color:var(--amber);color:var(--amber)}
+.amount-btn.popular.selected{background:rgba(251,191,36,.15)}
+.donate-custom{margin-bottom:16px}
+.donate-custom label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px}
+.donate-custom input{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.9rem;font-family:inherit}
+.donate-custom input:focus{outline:none;border-color:var(--violet)}
+.donate-methods{display:flex;gap:6px;margin-bottom:16px}
+.method-btn{
+  flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg);color:var(--text-muted);font-size:.75rem;font-weight:600;
+  cursor:pointer;transition:all .15s;
+}
+.method-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.method-btn.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+.donate-submit{
+  width:100%;padding:14px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--violet),var(--rose));
+  color:#fff;font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:all .2s;letter-spacing:1px;
+  box-shadow:0 0 20px rgba(167,139,250,.2);
+}
+.donate-submit:hover{box-shadow:0 0 30px rgba(167,139,250,.4);transform:translateY(-1px)}
+.donate-submit:active{transform:scale(.98)}
+.donate-secure{text-align:center;font-size:.7rem;color:var(--text-dim);margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- STARS -->
+<div class="stars" id="stars"></div>
+
+<!-- RINGS -->
+<div class="ring ring-1"></div>
+<div class="ring ring-2"></div>
+<div class="ring ring-3"></div>
+
+<!-- APP -->
+<div class="app">
+  <!-- TOP ALIEN -->
+  <div class="top-alien" onclick="document.getElementById('soundsSection').scrollIntoView({behavior:'smooth'})" style="cursor:pointer"><span class="emoji">👽</span></div>
+
+  <div class="header">
+    <h1>ALIEN METRONOME</h1>
+    <div class="subtitle">/// TEMPO CONTROL UNIT ///</div>
+  </div>
+
+  <!-- PLAY / STOP TOGGLE -->
+  <div class="play-wrap">
+    <button class="play-btn btn-play" id="playBtn" onclick="togglePlay()" title="Play / Stop">
+      <span class="icon">▶</span>
+      <span class="label">PLAY</span>
+    </button>
+    <div class="sparkle-container" id="sparkleContainer"></div>
+  </div>
+
+  <!-- VOLUME -->
+  <div class="volume-control">
+    <span class="volume-label">🔊</span>
+    <input type="range" id="volume" min="0" max="100" value="70" oninput="setVolume(this.value)" ondblclick="resetToDefault('volume',70,'setVolume')">
+    <span class="volume-label" id="volDisplay">70%</span>
+  </div>
+
+  <!-- BPM DISPLAY + CONTROLS (tap tempo on ring) -->
+  <div class="bpm-display">
+    <div class="bpm-ring" id="bpmRing" onclick="tapTempo()" title="Tap tempo here!">
+      <div>
+        <div class="bpm-num" id="bpmNum">72</div>
+        <div class="bpm-label">BPM</div>
+      </div>
+    </div>
+    <div class="tap-callout" onclick="tapTempo()">👆 TAP</div>
+    <div class="bpm-controls">
+      <button class="bpm-btn" onclick="changeBPM(-10)">-10</button>
+      <button class="bpm-btn" onclick="changeBPM(-1)">-1</button>
+      <div class="bpm-slider-wrap">
+        <input type="range" class="bpm-slider" id="bpmSlider" min="20" max="240" value="72" oninput="setBPM(this.value)" ondblclick="resetToDefault('bpmSlider',72,'setBPM')">
+      </div>
+      <button class="bpm-btn" onclick="changeBPM(1)">+1</button>
+      <button class="bpm-btn" onclick="changeBPM(10)">+10</button>
+    </div>
+  </div>
+
+  <!-- BEAT INDICATORS -->
+  <div class="beat-indicators" id="beatIndicators"></div>
+
+  <!-- PRESETS -->
+  <div class="presets">
+    <button class="preset-btn" onclick="loadPreset(40,'Largo')">Largo 40</button>
+    <button class="preset-btn" onclick="loadPreset(52,'Adagio')">Adagio 52</button>
+    <button class="preset-btn" onclick="loadPreset(66,'Andante')">Andante 66</button>
+    <button class="preset-btn" onclick="loadPreset(72,'Moderato')">Moderato 72</button>
+    <button class="preset-btn" onclick="loadPreset(96,'Allegretto')">Allegretto 96</button>
+    <button class="preset-btn" onclick="loadPreset(120,'Allegro')">Allegro 120</button>
+    <button class="preset-btn" onclick="loadPreset(168,'Presto')">Presto 168</button>
+    <button class="preset-btn" onclick="loadPreset(200,'Prestissimo')">Prestissimo 200</button>
+  </div>
+
+
+  <!-- TIME SIGNATURE -->
+  <div class="ts-title">&#9835; TIME SIG</div>
+  <div class="time-sig">
+    <button class="ts-btn" onclick="setTimeSig(1,this)">1/4</button>
+    <button class="ts-btn" onclick="setTimeSig(2,this)">2/4</button>
+    <button class="ts-btn" onclick="setTimeSig(3,this)">3/4</button>
+    <button class="ts-btn active" onclick="setTimeSig(4,this)">4/4</button>
+    <button class="ts-btn" onclick="setTimeSig(6,this)">6/8</button>
+    <button class="ts-btn" onclick="setTimeSig(7,this)">7/8</button>
+    <button class="ts-btn" onclick="setTimeSig(15,this)">15/8</button>
+  </div>
+  <div class="time-sig" style="margin-top:4px">
+    <button class="ts-btn" onclick="setTimeSig(14,this)">14/4</button>
+    <button class="ts-btn" onclick="setTimeSig(20,this)">20/4</button>
+    <button class="ts-btn" onclick="setTimeSig(23,this)">23/8</button>
+    <button class="ts-btn" onclick="setTimeSig(30,this)">15/16</button>
+  </div>
+  <div class="time-sig" style="margin-top:4px">
+    <input type="number" id="customSigNum" min="1" max="99" value="5" style="width:42px;height:34px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Orbitron',sans-serif;font-size:.75rem;text-align:center;outline:none" onfocus="this.select()">
+    <span style="color:var(--text-muted);font-size:.8rem">/</span>
+    <select id="customSigDen" style="width:42px;height:34px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Orbitron',sans-serif;font-size:.75rem;text-align:center;outline:none">
+      <option value="4">4</option>
+      <option value="8" selected>8</option>
+      <option value="16">16</option>
+      <option value="7">&#8725;7</option>
+    </select>
+    <button class="ts-btn" onclick="applyCustomSig()">SET</button>
+  </div>
+
+  <!-- SOUND -->
+  <div class="ts-title" id="soundsSection">&#9835; SOUNDS</div>
+  <div class="sound-select">
+    <button class="sound-btn" onclick="setSound('alien1',this)">🛸 Alien Ping</button>
+    <button class="sound-btn" onclick="setSound('alien2',this)">👾 Retro Blip</button>
+    <button class="sound-btn" onclick="setSound('alien3',this)">🌀 Warp Drive</button>
+    <button class="sound-btn" onclick="setSound('alien4',this)">⚡ Laser Zap</button>
+    <button class="sound-btn" onclick="setSound('alien5',this)">🔮 Crystal Hum</button>
+    <button class="sound-btn" onclick="setSound('dnb',this)">💥 DNB Kick</button>
+    <button class="sound-btn" onclick="setSound('moan',this)">🪲 Space Flea</button>
+    <button class="sound-btn" onclick="setSound('water',this)">💧 Water Drop</button>
+    <button class="sound-btn active" onclick="setSound('vanilla',this)">🔔 Vanilla</button>
+  </div>
+
+  <!-- EFFECTS -->
+  <div class="effects-section" id="fxSection">
+    <div class="effect-section-label section-reverb">🌊 REVERB</div>
+    <div class="effect-row">
+      <span class="effect-label">🌀 Send It!</span>
+      <input type="range" class="effect-slider" id="reverbSlider" min="0" max="100" value="0" oninput="setReverb(this.value)" ondblclick="resetToDefault('reverbSlider',0,'setReverb')">
+      <span class="effect-val" id="reverbVal">Send It! 0%</span>
+    </div>
+    <div class="effect-section-label section-delay">⏱ DELAY TIME</div>
+    <div class="delay-modes">
+      <button class="delay-btn" onclick="setDelayMode('dot1',this)">♩</button>
+      <button class="delay-btn" onclick="setDelayMode('dot2',this)">♩.</button>
+      <button class="delay-btn" onclick="setDelayMode('dot4',this)">♪</button>
+      <button class="delay-btn active" onclick="setDelayMode('dot8',this)">♪.</button>
+      <button class="delay-btn" onclick="setDelayMode('dot16',this)">♬</button>
+      <button class="delay-btn" onclick="setDelayMode('tri1',this)">♩3</button>
+      <button class="delay-btn" onclick="setDelayMode('tri2',this)">♪3</button>
+      <button class="delay-btn" onclick="setDelayMode('tri4',this)">♫3</button>
+      <button class="delay-btn" onclick="setDelayMode('tri8',this)">♬3</button>
+      <button class="delay-btn" onclick="setDelayMode('tri16',this)">𝅘𝅥𝅯</button>
+    </div>
+    <div class="effect-row">
+      <span class="effect-label">&#128257; Send It!</span>
+      <input type="range" class="effect-slider" id="delaySlider" min="0" max="100" value="0" oninput="setDelay(this.value)" ondblclick="resetToDefault('delaySlider',0,'setDelay')">
+      <span class="effect-val" id="delayVal">Send It! 0%</span>
+    </div>
+    <div class="effect-row">
+      <span class="effect-label">&#128259; Feedback</span>
+      <input type="range" class="effect-slider" id="feedbackSlider" min="0" max="100" value="40" oninput="setDelayFeedback(this.value)" ondblclick="resetToDefault('feedbackSlider',40,'setDelayFeedback')">
+      <span class="effect-val" id="feedbackVal">40%</span>
+    </div>
+    <div class="effect-row">
+      <span class="effect-label">&#127744; Warp</span>
+      <input type="range" class="effect-slider" id="warpSlider" min="0" max="9" step="0.01" value="3" oninput="setDelayWarp(this.value)" ondblclick="resetToDefault('warpSlider',3,'setDelayWarp')">
+      <span class="effect-val" id="warpVal" style="min-width:70px">dot8</span>
+    </div>
+    <div class="effect-section-label section-ring">💍 RING MOD</div>
+    <div class="effect-row">
+      <span class="effect-label">&#127925; Freq</span>
+      <input type="range" class="effect-slider" id="ringFreqSlider" min="1" max="16420" value="120" oninput="setRingFreq(this.value)" ondblclick="resetToDefault('ringFreqSlider',120,'setRingFreq')">
+      <span class="effect-val" id="ringFreqVal">120Hz</span>
+    </div>
+    <div class="effect-row">
+      <span class="effect-label">&#128167; Send It!</span>
+      <input type="range" class="effect-slider" id="ringMixSlider" min="0" max="100" value="0" oninput="setRingMix(this.value)" ondblclick="resetToDefault('ringMixSlider',0,'setRingMix')">
+      <span class="effect-val" id="ringMixVal">Send It! 0%</span>
+    </div>
+  </div>
+
+  <!-- DONATE -->
+  <div class="donate-section">
+    <button class="donate-btn" onclick="openDonate()">
+      <span class="donate-icon">👽</span>
+      <span class="donate-text">Donate</span>
+    </button>
+    <p class="donate-sub">Support the alien metronome 🛸</p>
+  </div>
+</div>
+
+<!-- DONATE MODAL -->
+<div class="donate-modal" id="donateModal" onclick="closeDonate(event)">
+  <div class="donate-box" onclick="event.stopPropagation()">
+    <button class="donate-close" onclick="closeDonate()">✕</button>
+    <div class="donate-alien">👽</div>
+    <h3>Support Alien Metronome</h3>
+    <p class="donate-desc">Help us keep the beats going across the galaxy. Your donation funds new sounds, features, and intergalactic tempo research.</p>
+    <div class="donate-amounts">
+      <button class="amount-btn" onclick="selectAmount(this,3)">$3 🛸</button>
+      <button class="amount-btn" onclick="selectAmount(this,5)">$5 👾</button>
+      <button class="amount-btn popular" onclick="selectAmount(this,10)">$10 ⭐</button>
+      <button class="amount-btn" onclick="selectAmount(this,25)">$25 🌟</button>
+    </div>
+    <div class="donate-custom">
+      <label>Custom amount ($)</label>
+      <input type="number" id="customAmount" min="1" placeholder="Enter amount" oninput="clearAmountBtns()">
+    </div>
+    <div class="donate-methods">
+      <button class="method-btn active" onclick="selectMethod(this,'paypal')">💳 PayPal</button>
+      <button class="method-btn" onclick="selectMethod(this,'stripe')">💎 Stripe</button>
+      <button class="method-btn" onclick="selectMethod(this,'crypto')">₿ Crypto</button>
+    </div>
+    <button class="donate-submit" onclick="processDonate()">🚀 Send Donation</button>
+    <p class="donate-secure">🔒 Secure payment · No spam · Cancel anytime</p>
+  </div>
+</div>
+
+<script>
+// ═══ AUDIO ENGINE ═══
+var audioCtx = null;
+var isPlaying = false;
+var bpm = 72;
+var beatCount = 0;
+var timeSig = 4;
+var timeSigUnit = 1; // 1=quarter note beat, 2=eighth note beat
+var currentSound = 'vanilla';
+var volume = 0.7;
+var timerID = null;
+var nextNoteTime = 0;
+var scheduleAheadTime = 0.1;
+var lookahead = 25;
+
+// ═══ EARLY AUDIO CONTEXT ═══
+// Create and eagerly resume AudioContext so there's no delay on first play
+function createAudioContext() {
+  if (audioCtx) return;
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) audioCtx = new AC();
+  } catch(e) {}
+}
+// Create immediately on load
+createAudioContext();
+// Resume on ANY user interaction (browser policy requires gesture)
+function resumeAudioContext() {
+  if (!audioCtx) createAudioContext();
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+document.addEventListener('click', resumeAudioContext, {once:false});
+document.addEventListener('touchstart', resumeAudioContext, {once:false});
+document.addEventListener('keydown', resumeAudioContext, {once:false});
+
+// ═══ EFFECTS STATE ═══
+var reverbMix = 0;
+var delayMix = 0;
+var delayTime = 0.25;
+var delayMode = 'dot8';
+var delayWarp = 0;      // -0.5 to +0.5, shifts delay time ±50% for warp/warble
+var delayWarpMult = null; // set by warp slider: interpolated multiplier between notches
+var reverbConvolver = null;
+var delayFeedbackAmt = 0.4;
+var ringFreq = 120;
+var ringMix = 0;
+
+// Parallel chain nodes: masterGain → dryGain → dest + effect sends
+var masterGain = null;   // main output gain, always exists
+var dryGain = null;      // dry signal path
+
+// Ring mod stage
+var ringOsc = null;      // oscillator for ring modulation
+var ringGain = null;     // ring mod gain (wet path)
+var ringWetGain = null;  // ring mod wet output gain
+var ringDryGain = null;  // ring mod dry pass-through gain
+var postRingGain = null; // ring mod stage output
+
+// Delay stage
+var delayNode = null;     // delay line
+var delayFeedback = null; // delay feedback gain
+var delayWetGain = null;  // delay wet output gain
+var delayOutGain = null;  // delay stage output
+
+// Reverb stage
+var reverbWetGain = null; // reverb wet output gain
+
+// ═══ DD-3 STYLE SATURATION ═══
+var _saturationCurve = null;
+function getSaturationCurve() {
+  if (!_saturationCurve) {
+    var samples = 44100;
+    _saturationCurve = new Float32Array(samples);
+    for (var i = 0; i < samples; i++) {
+      var x = (i * 2) / samples - 1;
+      _saturationCurve[i] = Math.tanh(x * 2.2); // gentle analog warmth
+    }
+  }
+  return _saturationCurve;
+}
+
+function syncDelayToBPM() {
+  var beatDuration = 60.0 / bpm;
+  var multiplier = getDelayMultiplier();
+  switch(delayMode) {
+    case 'dot2':  delayTime = beatDuration * 3.0 * multiplier; break;
+    case 'dot4':  delayTime = beatDuration * 1.5 * multiplier; break;
+    case 'dot8':  delayTime = beatDuration * 0.75 * multiplier; break;
+    case 'dot16': delayTime = beatDuration * 0.375 * multiplier; break;
+    case 'dot1':   delayTime = beatDuration * 4.0 * multiplier; break;
+    case 'tri4':  delayTime = beatDuration * (2/3) * multiplier; break;
+    case 'tri8':  delayTime = beatDuration * (1/3) * multiplier; break;
+    case 'tri16': delayTime = beatDuration * (1/6) * multiplier; break;
+    case 'tri2':  delayTime = beatDuration * (4/3) * multiplier; break;
+    case 'tri1':   delayTime = beatDuration * (8/3) * multiplier; break;
+    default:       delayTime = beatDuration * 0.75 * multiplier;
+  }
+}
+
+
+function getReverb() {
+  if (!reverbConvolver) {
+    reverbConvolver = audioCtx.createConvolver();
+    var rate = audioCtx.sampleRate;
+    var length = rate * 2.0;
+    var impulse = audioCtx.createBuffer(2, length, rate);
+    for (var ch = 0; ch < 2; ch++) {
+      var data = impulse.getChannelData(ch);
+      for (var i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+      }
+    }
+    reverbConvolver.buffer = impulse;
+  }
+  return reverbConvolver;
+}
+
+function ensureEffectChain() {
+  // Guard: don't build if audioCtx isn't ready
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') { audioCtx.resume(); return; }
+  if (audioCtx.state !== 'running') return;
+
+  // Disconnect effect nodes only — keep masterGain alive so sound sources still feed it
+  try { if (delayNode) delayNode.disconnect(); } catch(e) {}
+  try { if (delayFeedback) delayFeedback.disconnect(); } catch(e) {}
+  try { if (delayWetGain) delayWetGain.disconnect(); } catch(e) {}
+  try { if (delayOutGain) delayOutGain.disconnect(); } catch(e) {}
+  try { if (reverbWetGain) reverbWetGain.disconnect(); } catch(e) {}
+  try { if (dryGain) { dryGain.disconnect(); dryGain = null; } } catch(e) {}
+  try { if (ringOsc) { ringOsc.stop(); ringOsc.disconnect(); ringOsc = null; } } catch(e) {}
+  try { if (ringGain) { ringGain.disconnect(); ringGain = null; } } catch(e) {}
+  try { if (ringWetGain) { ringWetGain.disconnect(); ringWetGain = null; } } catch(e) {}
+  try { if (ringDryGain) { ringDryGain.disconnect(); ringDryGain = null; } } catch(e) {}
+  try { if (postRingGain) { postRingGain.disconnect(); postRingGain = null; } } catch(e) {}
+
+  // Create masterGain only on first call; reconnect outputs on rebuilds
+  if (!masterGain) {
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = volume;
+  } else {
+    try { masterGain.disconnect(); } catch(e) {}
+  }
+
+  var hasDelay = delayMix > 0;
+  var hasReverb = reverbMix > 0;
+  var hasRing = ringMix > 0;
+  var activeCount = (hasRing ? 1 : 0) + (hasDelay ? 1 : 0) + (hasReverb ? 1 : 0);
+
+  // ═══ NO EFFECTS ═══
+  if (activeCount === 0) {
+    masterGain.connect(audioCtx.destination);
+    return;
+  }
+
+  // ═══ SOLO MODE (1 effect): parallel dry + effect with its own crossfade ═══
+  if (activeCount === 1) {
+    var soloMix = Math.max(delayMix, reverbMix, ringMix);
+    dryGain = audioCtx.createGain();
+    dryGain.gain.value = 1 - soloMix;
+    masterGain.connect(dryGain);
+    dryGain.connect(audioCtx.destination);
+
+    if (hasRing) {
+      // Ring mod solo: dry || (master → ring mod wet/dry)
+      ringOsc = audioCtx.createOscillator();
+      ringOsc.type = 'sine';
+      ringOsc.frequency.setValueAtTime(ringFreq, audioCtx.currentTime);
+      ringGain = audioCtx.createGain();
+      ringGain.gain.value = ringMix;
+      ringDryGain = audioCtx.createGain();
+      ringDryGain.gain.value = 1 - ringMix;
+      ringWetGain = audioCtx.createGain();
+      ringWetGain.gain.value = ringMix;
+      postRingGain = audioCtx.createGain();
+      postRingGain.gain.value = 1;
+      ringOsc.connect(ringGain.gain);
+      masterGain.connect(ringGain);
+      ringGain.connect(ringWetGain);
+      ringWetGain.connect(postRingGain);
+      masterGain.connect(ringDryGain);
+      ringDryGain.connect(postRingGain);
+      postRingGain.connect(audioCtx.destination);
+      ringOsc.start();
+    }
+
+    if (hasDelay) {
+      // Delay solo: dry || (master → delay with feedback)
+      syncDelayToBPM();
+      delayNode = audioCtx.createDelay(5.0);
+      delayNode.delayTime.value = delayTime;
+      delayFeedback = audioCtx.createGain();
+      delayFeedback.gain.value = delayFeedbackAmt;
+      delayWetGain = audioCtx.createGain();
+      delayWetGain.gain.value = delayMix;
+      // Wet path: delay → destination
+      masterGain.connect(delayNode);
+      delayNode.connect(delayFeedback);
+      delayFeedback.connect(delayNode);
+      delayNode.connect(delayWetGain);
+      delayWetGain.connect(audioCtx.destination);
+      // Dry path handled by global dryGain above
+    }
+
+    if (hasReverb) {
+      // Reverb solo: dry || (master → reverb)
+      var rev = getReverb();
+      reverbWetGain = audioCtx.createGain();
+      reverbWetGain.gain.value = reverbMix;
+      masterGain.connect(rev);
+      rev.connect(reverbWetGain);
+      reverbWetGain.connect(audioCtx.destination);
+    }
+    return;
+  }
+
+  // ═══ SERIES MODE (2+ effects): pedalboard order Ring Mod → Delay → Reverb ═══
+  // Dry path: masterGain → dryGain → destination (clean, no effects)
+  // Wet path: masterGain → [ring mod] → delay → [reverb] → destination
+  var maxMix = Math.max(ringMix, delayMix, reverbMix);
+
+  dryGain = audioCtx.createGain();
+  dryGain.gain.value = 1 - maxMix;
+  masterGain.connect(dryGain);
+  dryGain.connect(audioCtx.destination);
+
+  // ── STAGE 1: RING MOD (on dry signal, its own wet/dry inside the chain) ──
+  var chainOut = masterGain;
+  if (hasRing) {
+    ringOsc = audioCtx.createOscillator();
+    ringOsc.type = 'sine';
+    ringOsc.frequency.setValueAtTime(ringFreq, audioCtx.currentTime);
+    ringGain = audioCtx.createGain();
+    ringGain.gain.value = 1; // full wet in series
+    ringDryGain = audioCtx.createGain();
+    ringDryGain.gain.value = 0;
+    ringWetGain = audioCtx.createGain();
+    ringWetGain.gain.value = 1;
+    postRingGain = audioCtx.createGain();
+    postRingGain.gain.value = 1;
+    ringOsc.connect(ringGain.gain);
+    chainOut.connect(ringGain);
+    ringGain.connect(ringWetGain);
+    ringWetGain.connect(postRingGain);
+    chainOut.connect(ringDryGain);
+    ringDryGain.connect(postRingGain);
+    chainOut = postRingGain;
+    ringOsc.start();
+  }
+
+  // ── STAGE 2: DELAY (taps from chain, feeds reverb) ──
+  if (hasDelay) {
+    syncDelayToBPM();
+    delayNode = audioCtx.createDelay(5.0);
+    delayNode.delayTime.value = delayTime;
+    delayFeedback = audioCtx.createGain();
+    delayFeedback.gain.value = delayFeedbackAmt;
+    delayWetGain = audioCtx.createGain();
+    delayWetGain.gain.value = 1; // full wet in series
+    chainOut.connect(delayNode);
+    delayNode.connect(delayFeedback);
+    delayFeedback.connect(delayNode);
+    delayNode.connect(delayWetGain);
+    chainOut = delayWetGain;
+  }
+
+  // ── STAGE 3: REVERB (send from delay output, parallel to dry delay) ──
+  if (hasReverb) {
+    var rev2 = getReverb();
+    reverbWetGain = audioCtx.createGain();
+    reverbWetGain.gain.value = 1; // full wet in series
+    var reverbTap = hasDelay ? delayWetGain : chainOut;
+    reverbTap.connect(rev2);
+    rev2.connect(reverbWetGain);
+    reverbWetGain.connect(audioCtx.destination);
+  }
+
+  // Delay wet output → destination (parallel with reverb wet)
+  if (hasDelay) {
+    chainOut.connect(audioCtx.destination);
+  }
+  // If ring only with no delay/reverb in series, connect chainOut
+  if (!hasDelay && !hasReverb && hasRing) {
+    chainOut.connect(audioCtx.destination);
+  }
+}
+
+
+function initAudio() {
+  try {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx.state === 'running';
+  } catch(e) { return false; }
+}
+
+function ensureAudioReady(cb) {
+  if (!initAudio()) return;
+  if (audioCtx.state === 'running') { cb && cb(); }
+  else { audioCtx.resume().then(function(){ cb && cb(); }).catch(function(){}); }
+}
+
+// ═══ SOUND SYNTHESIS ═══
+// All sounds output to masterGain (effect chain handles routing)
+
+function playVanillaClick(time, accent) {
+  // Pro Tools style click: tight, bright, sinusoidal tick
+  var v = accent ? volume * 0.75 : volume * 0.45;
+  var f = accent ? 1000 : 800;
+  var dur = 0.05;
+
+  // Main tick — clean sine, very short, snappy
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(masterGain);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(f, time);
+  osc.frequency.exponentialRampToValueAtTime(f * 0.5, time + dur);
+  gain.gain.setValueAtTime(0, time);
+  gain.gain.linearRampToValueAtTime(v, time + 0.001);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.start(time); osc.stop(time + dur + 0.01);
+
+  // High overtone for that PT "snap"
+  var o2 = audioCtx.createOscillator();
+  var g2 = audioCtx.createGain();
+  o2.connect(g2); g2.connect(masterGain);
+  o2.type = 'sine';
+  o2.frequency.setValueAtTime(f * 2, time);
+  g2.gain.setValueAtTime(0, time);
+  g2.gain.linearRampToValueAtTime(v * 0.15, time + 0.001);
+  g2.gain.exponentialRampToValueAtTime(0.001, time + 0.015);
+  o2.start(time); o2.stop(time + 0.02);
+}
+
+function playDnbKick(time, accent) {
+  var v = accent ? volume * 1.0 : volume * 0.7;
+  var dur = 0.15;
+  // Sub boom
+  var o1 = audioCtx.createOscillator(); var g1 = audioCtx.createGain();
+  o1.connect(g1); g1.connect(masterGain);
+  o1.type = 'sine';
+  o1.frequency.setValueAtTime(150, time);
+  o1.frequency.exponentialRampToValueAtTime(35, time + dur);
+  // Snappy attack on sub
+  g1.gain.setValueAtTime(0, time);
+  g1.gain.linearRampToValueAtTime(v, time + 0.002);
+  g1.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  o1.start(time); o1.stop(time + dur + 0.01);
+  // Click
+  var o2 = audioCtx.createOscillator(); var g2 = audioCtx.createGain();
+  o2.connect(g2); g2.connect(masterGain);
+  o2.type = 'triangle';
+  o2.frequency.setValueAtTime(600, time);
+  o2.frequency.exponentialRampToValueAtTime(80, time + 0.03);
+  // Snappy attack on click
+  g2.gain.setValueAtTime(0, time);
+  g2.gain.linearRampToValueAtTime(v * 0.5, time + 0.001);
+  g2.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+  o2.start(time); o2.stop(time + 0.05);
+  // Noise snap
+  var bufLen = Math.floor(audioCtx.sampleRate * 0.04);
+  var buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+  var d = buf.getChannelData(0);
+  for (var i = 0; i < bufLen; i++) d[i] = (Math.random()*2-1)*Math.pow(1-i/bufLen,6);
+  var ns = audioCtx.createBufferSource(); ns.buffer = buf;
+  var ng = audioCtx.createGain(); var nf = audioCtx.createBiquadFilter();
+  nf.type = 'bandpass'; nf.frequency.value = 2500; nf.Q.value = 2;
+  ns.connect(nf); nf.connect(ng); ng.connect(masterGain);
+  // Snappy attack on noise
+  ng.gain.setValueAtTime(0, time);
+  ng.gain.linearRampToValueAtTime(v * 0.3, time + 0.001);
+  ng.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+  ns.start(time);
+}
+
+function playAlienPing(time, accent) {
+  var f = accent ? 880 : 660;
+  var v = accent ? volume * 0.6 : volume * 0.4;
+  var dur = 0.18;
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(masterGain);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(f, time);
+  osc.frequency.exponentialRampToValueAtTime(f * 1.3, time + 0.04);
+  osc.frequency.exponentialRampToValueAtTime(f * 0.6, time + dur);
+  gain.gain.setValueAtTime(v, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.start(time); osc.stop(time + dur + 0.01);
+}
+
+function playRetroBlip(time, accent) {
+  var f = accent ? 800 : 600;
+  var v = accent ? volume * 0.4 : volume * 0.3;
+  var dur = 0.05;
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(masterGain);
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(f, time);
+  gain.gain.setValueAtTime(v, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.start(time); osc.stop(time + dur + 0.01);
+}
+
+function playWarpDrive(time, accent) {
+  var f = accent ? 400 : 300;
+  var v = accent ? volume * 0.35 : volume * 0.25;
+  var dur = 0.25;
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  var filter = audioCtx.createBiquadFilter();
+  osc.connect(filter); filter.connect(gain); gain.connect(masterGain);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(f * 0.5, time);
+  osc.frequency.linearRampToValueAtTime(f * (accent ? 1.8 : 1.4), time + dur * 0.6);
+  osc.frequency.linearRampToValueAtTime(f * 0.2, time + dur);
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(2000, time);
+  filter.frequency.exponentialRampToValueAtTime(150, time + dur);
+  gain.gain.setValueAtTime(v, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.start(time); osc.stop(time + dur + 0.01);
+}
+
+function playLaserZap(time, accent) {
+  var f = accent ? 1200 : 900;
+  var v = accent ? volume * 0.5 : volume * 0.35;
+  var dur = 0.1;
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(masterGain);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(f * 2.5, time);
+  osc.frequency.exponentialRampToValueAtTime(f * 0.2, time + dur);
+  gain.gain.setValueAtTime(v, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.start(time); osc.stop(time + dur + 0.01);
+}
+
+function playCrystalHum(time, accent) {
+  var f = accent ? 600 : 450;
+  var v = accent ? volume * 0.35 : volume * 0.25;
+  var dur = 0.35;
+  [1, 1.005, 0.995, 2, 3].forEach(function(mult) {
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(masterGain);
+    osc.type = mult < 2 ? 'sine' : 'triangle';
+    osc.frequency.setValueAtTime(f * mult * (accent ? 1.15 : 1), time);
+    gain.gain.setValueAtTime(v * (mult < 2 ? 0.25 : 0.08), time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+    osc.start(time); osc.stop(time + dur + 0.01);
+  });
+}
+
+// ═══ SPACE FLEA ═══
+function playSpaceFlea(time, accent) {
+  var v = accent ? volume * 0.5 : volume * 0.3;
+  var f = accent ? 420 : 340;   // base pitch
+  var dur = 0.18;
+
+  // Main vocal tone — sawtooth for richness, filtered
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  var filter = audioCtx.createBiquadFilter();
+  osc.connect(filter); filter.connect(gain); gain.connect(masterGain);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(f, time);
+  osc.frequency.linearRampToValueAtTime(f * 1.15, time + 0.04);
+  osc.frequency.exponentialRampToValueAtTime(f * 0.85, time + dur);
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(1200, time);
+  filter.frequency.exponentialRampToValueAtTime(600, time + dur);
+  filter.Q.value = 2;
+  gain.gain.setValueAtTime(0, time);
+  gain.gain.linearRampToValueAtTime(v, time + 0.005);
+  gain.gain.setValueAtTime(v, time + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.start(time); osc.stop(time + dur + 0.01);
+
+  // Breath layer — soft noise
+  var noiseLen = Math.floor(audioCtx.sampleRate * 0.12);
+  var noiseBuf = audioCtx.createBuffer(1, noiseLen, audioCtx.sampleRate);
+  var nd = noiseBuf.getChannelData(0);
+  for (var i = 0; i < noiseLen; i++) nd[i] = (Math.random()*2-1)*Math.pow(1-i/noiseLen,3)*0.3;
+  var ns = audioCtx.createBufferSource(); ns.buffer = noiseBuf;
+  var ng = audioCtx.createGain();
+  var nf = audioCtx.createBiquadFilter();
+  nf.type = 'bandpass'; nf.frequency.value = 800; nf.Q.value = 0.8;
+  ns.connect(nf); nf.connect(ng); ng.connect(masterGain);
+  ng.gain.setValueAtTime(0, time + 0.01);
+  ng.gain.linearRampToValueAtTime(v * 0.25, time + 0.015);
+  ng.gain.exponentialRampToValueAtTime(0.001, time + 0.14);
+  ns.start(time + 0.01);
+}
+
+// ═══ WATER DROP ═══
+// Synthesized water drop: noise burst + resonant ping + sub plop
+function playWaterDrop(time, accent) {
+  var v = accent ? volume * 0.85 : volume * 0.55;
+  var f1 = accent ? 3200 : 2400;  // main resonant freq
+  var f2 = accent ? 1800 : 1200;  // body resonance
+  var dur = 0.08;
+
+  // Layer 1: High ping — resonant sine with fast decay
+  var osc1 = audioCtx.createOscillator();
+  var g1 = audioCtx.createGain();
+  osc1.connect(g1); g1.connect(masterGain);
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(f1, time);
+  osc1.frequency.exponentialRampToValueAtTime(f1 * 0.5, time + dur);
+  g1.gain.setValueAtTime(0, time);
+  g1.gain.linearRampToValueAtTime(v * 0.6, time + 0.001);
+  g1.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc1.start(time); osc1.stop(time + dur + 0.01);
+
+  // Layer 2: Body — lower sine, slightly detuned for richness
+  var osc2 = audioCtx.createOscillator();
+  var g2 = audioCtx.createGain();
+  osc2.connect(g2); g2.connect(masterGain);
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(f2 * 1.01, time);
+  osc2.frequency.exponentialRampToValueAtTime(f2 * 0.7, time + dur * 0.8);
+  g2.gain.setValueAtTime(0, time);
+  g2.gain.linearRampToValueAtTime(v * 0.4, time + 0.001);
+  g2.gain.exponentialRampToValueAtTime(0.001, time + dur * 0.7);
+  osc2.start(time); osc2.stop(time + dur + 0.01);
+
+  // Layer 3: Noise splash — short burst, bandpassed
+  var noiseDur = 0.025;
+  var bufLen = Math.floor(audioCtx.sampleRate * noiseDur);
+  var buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+  var d = buf.getChannelData(0);
+  for (var i = 0; i < bufLen; i++) {
+    d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufLen, 8);
+  }
+  var ns = audioCtx.createBufferSource();
+  ns.buffer = buf;
+  var ng = audioCtx.createGain();
+  var nf = audioCtx.createBiquadFilter();
+  nf.type = 'bandpass';
+  nf.frequency.value = accent ? 4000 : 3000;
+  nf.Q.value = 2;
+  ns.connect(nf); nf.connect(ng); ng.connect(masterGain);
+  ng.gain.setValueAtTime(0, time);
+  ng.gain.linearRampToValueAtTime(v * 0.5, time + 0.001);
+  ng.gain.exponentialRampToValueAtTime(0.001, time + noiseDur);
+  ns.start(time);
+
+  // Layer 4: Sub plop — very low sine, super short
+  var osc3 = audioCtx.createOscillator();
+  var g3 = audioCtx.createGain();
+  osc3.connect(g3); g3.connect(masterGain);
+  osc3.type = 'sine';
+  osc3.frequency.setValueAtTime(150, time);
+  osc3.frequency.exponentialRampToValueAtTime(60, time + 0.03);
+  g3.gain.setValueAtTime(0, time);
+  g3.gain.linearRampToValueAtTime(v * 0.35, time + 0.001);
+  g3.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+  osc3.start(time); osc3.stop(time + 0.04);
+}
+
+// ═══ MAIN PLAY FUNCTION ═══
+function playBeat(time, isAccent) {
+  switch(currentSound) {
+    case 'vanilla': playVanillaClick(time, isAccent); break;
+    case 'moan': playSpaceFlea(time, isAccent); break;
+    case 'dnb': playDnbKick(time, isAccent); break;
+    case 'alien1': playAlienPing(time, isAccent); break;
+    case 'alien2': playRetroBlip(time, isAccent); break;
+    case 'alien3': playWarpDrive(time, isAccent); break;
+    case 'alien4': playLaserZap(time, isAccent); break;
+    case 'alien5': playCrystalHum(time, isAccent); break;
+    case 'water': playWaterDrop(time, isAccent); break;
+    default: playVanillaClick(time, isAccent); break;
+  }
+}
+
+function scheduleNote(time) {
+  var isAccent = beatCount % timeSig === 0;
+  playBeat(time, isAccent);
+  var delay = (time - audioCtx.currentTime) * 1000;
+  var capturedBeat = beatCount;
+  setTimeout(function() { flashBeat(isAccent, capturedBeat); }, Math.max(0, delay));
+}
+
+function scheduler() {
+  while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+    scheduleNote(nextNoteTime);
+    var secPerBeat = 60.0 / bpm;
+    if (timeSigUnit === 2) secPerBeat /= 2;
+    else if (timeSigUnit === 4) secPerBeat /= 4;
+    else if (timeSigUnit === 7) secPerBeat /= 7;
+    nextNoteTime += secPerBeat;
+    beatCount++;
+  }
+  if (isPlaying) timerID = setTimeout(scheduler, lookahead);
+}
+
+function resetToDefault(sliderId, defaultVal, updateFn) {
+  var el = document.getElementById(sliderId);
+  if (el) { el.value = defaultVal; updateFn(defaultVal); }
+}
+
+function sparkleBurst() {
+  var container = document.getElementById('sparkleContainer');
+  if (!container) return;
+  for (var i = 0; i < 12; i++) {
+    var el = document.createElement('div');
+    el.className = 'sparkle';
+    var angle = (i / 12) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    var dist = 55 + Math.random() * 45;
+    var tx = Math.cos(angle) * dist;
+    var ty = Math.sin(angle) * dist;
+    el.style.left = '50%';
+    el.style.top = '50%';
+    el.style.setProperty('--tx', tx + 'px');
+    el.style.setProperty('--ty', ty + 'px');
+    container.appendChild(el);
+    setTimeout(function(e){ e && e.parentNode && e.parentNode.removeChild(e); }, 700, el);
+  }
+}
+
+var _stopFadeTimer = null;
+
+function togglePlay() {
+  var btn = document.getElementById('playBtn');
+  var icon = btn.querySelector('.icon');
+  var label = btn.querySelector('.label');
+  sparkleBurst();
+  if (isPlaying) {
+    // STOP
+    isPlaying = false;
+    clearTimeout(timerID);
+    clearBeatIndicators();
+    beatCount = 0;
+
+    // Cancel any previous fade timer (edge case: rapid play/stop/play)
+    if (_stopFadeTimer) { clearTimeout(_stopFadeTimer); _stopFadeTimer = null; }
+
+    // Fade out delay feedback over 3s so repeats decay naturally
+    if (audioCtx && delayFeedback) {
+      try {
+        var now = audioCtx.currentTime;
+        delayFeedback.gain.cancelScheduledValues(now);
+        delayFeedback.gain.setValueAtTime(delayFeedback.gain.value, now);
+        delayFeedback.gain.linearRampToValueAtTime(0, now + 3.0);
+      } catch(e) {}
+    }
+
+    // After fade completes, tear down the effect chain
+    _stopFadeTimer = setTimeout(function() {
+      _stopFadeTimer = null;
+      // Only tear down if we're still stopped (user may have hit play again)
+      if (!isPlaying) {
+        try { if (ringOsc) { ringOsc.stop(); ringOsc.disconnect(); } } catch(e) {}
+        ringOsc = null; ringGain = null; ringWetGain = null; ringDryGain = null; postRingGain = null;
+        delayNode = null; delayFeedback = null; delayWetGain = null; delayOutGain = null;
+        reverbWetGain = null;
+        dryGain = null;
+        try { if (masterGain) { masterGain.disconnect(); } } catch(e) {}
+        masterGain = null;
+      }
+    }, 3100);
+
+    // Update UI immediately (don't wait for fade)
+    icon.textContent = '▶';
+    label.textContent = 'PLAY';
+    btn.classList.remove('playing');
+  } else {
+    // PLAY — ensure audio context is actually running before starting
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'running') {
+      startPlayback();
+    } else {
+      audioCtx.resume().then(function(){ startPlayback(); }).catch(function(){});
+    }
+  }
+}
+
+function startPlayback() {
+  isPlaying = true;
+  var btn = document.getElementById('playBtn');
+  var icon = btn.querySelector('.icon');
+  var label = btn.querySelector('.label');
+  icon.textContent = '⏹';
+  label.textContent = 'STOP';
+  btn.classList.add('playing');
+  if (!initAudio()) { isPlaying = false; return; }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume().then(function(){ startPlayback(); }).catch(function(){});
+    return;
+  }
+  ensureEffectChain();
+  beatCount = 0; heartPhase = 0; nextNoteTime = audioCtx.currentTime + 0.05;
+  scheduler();
+}
+
+// ═══ VISUAL ═══
+function flashBeat(isAccent, capturedBeat) {
+  var ring = document.getElementById('bpmRing');
+  var num = document.getElementById('bpmNum');
+  var playIcon = document.getElementById('playBtn').querySelector('.icon');
+  ring.classList.remove('beat','beat-green');
+  num.classList.remove('beat');
+  if (playIcon) playIcon.classList.remove('beat');
+  void ring.offsetWidth;
+  ring.classList.add(isAccent ? 'beat-green' : 'beat');
+  num.classList.add('beat');
+  if (playIcon) {
+    playIcon.classList.add('beat');
+    setTimeout(function(){ playIcon.classList.remove('beat'); }, 200);
+  }
+  var dots = document.querySelectorAll('.beat-dot');
+  dots.forEach(function(d,i){ d.classList.remove('active','accent'); });
+  var idx = capturedBeat % timeSig;
+  if (dots[idx]) {
+    dots[idx].classList.add('active');
+    if (isAccent) dots[idx].classList.add('accent');
+  }
+}
+function clearBeatIndicators() { document.querySelectorAll('.beat-dot').forEach(function(d){ d.classList.remove('active','accent'); }); }
+function updateBeatIndicators() {
+  var c = document.getElementById('beatIndicators');
+  if (!c) return;
+  c.innerHTML = '';
+  var count = timeSig;
+  for (var i = 0; i < count; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'beat-dot' + (i === 0 ? ' accent' : '');
+    c.appendChild(dot);
+  }
+}
+
+// ═══ CONTROLS ═══
+function changeBPM(d) { setBPM(bpm + d); }
+function setBPM(v) {
+  bpm = Math.max(20, Math.min(240, parseInt(v)));
+  document.getElementById('bpmNum').textContent = bpm;
+  document.getElementById('bpmSlider').value = bpm;
+  if (isPlaying && delayNode && audioCtx) {
+    syncDelayToBPM();
+    var now = audioCtx.currentTime;
+    delayNode.delayTime.cancelScheduledValues(now);
+    delayNode.delayTime.linearRampToValueAtTime(delayTime, now + 0.050);
+  }
+}
+function setTimeSig(sig, btn) {
+  timeSig = sig;
+  // Eighth-note-beat signatures: 6/8, 7/8, 15/8, 23/8 use unit=2
+  // Sixteenth-note-beat signatures: 15/16 uses unit=4
+  // Quarter-note-beat signatures: everything else uses unit=1
+  if (sig === 6 || sig === 7 || sig === 15 || sig === 23) {
+    timeSigUnit = 2;
+  } else if (sig === 30) {
+    // 15/16 — sixteenth-note beat
+    timeSigUnit = 4;
+  } else {
+    timeSigUnit = 1;
+  }
+  document.querySelectorAll('.ts-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  updateBeatIndicators();
+}
+function applyCustomSig(){
+  var num=Math.max(1,Math.min(99,parseInt(document.getElementById('customSigNum').value)||1));
+  var den=parseInt(document.getElementById('customSigDen').value);
+  var unit=1;
+  if(den===8) unit=2;
+  else if(den===16) unit=4;
+  else if(den===7) unit=7;
+  timeSig=num;
+  timeSigUnit=unit;
+  document.querySelectorAll('.ts-btn').forEach(function(b){ b.classList.remove('active'); });
+  updateBeatIndicators();
+}
+function setSound(s, btn) {
+  currentSound = s;
+  document.querySelectorAll('.sound-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+function setDelay(v) {
+  var wasOff = delayMix === 0;
+  var prevActive = (ringMix > 0 ? 1 : 0) + (delayMix > 0 ? 1 : 0) + (reverbMix > 0 ? 1 : 0);
+  delayMix = v/100;
+  document.getElementById('delayVal').textContent = 'Send It! ' + v + '%';
+  var maxMix = Math.max(delayMix, reverbMix, ringMix);
+  var nowActive = (ringMix > 0 ? 1 : 0) + (delayMix > 0 ? 1 : 0) + (reverbMix > 0 ? 1 : 0);
+  if (isPlaying) {
+    if (dryGain) dryGain.gain.setValueAtTime(1 - maxMix, audioCtx.currentTime);
+    if (wasOff !== (delayMix > 0) || prevActive !== nowActive) {
+      ensureEffectChain();
+    }
+    // Solo mode live mix update
+    if (delayMix > 0 && nowActive === 1 && delayWetGain) {
+      delayWetGain.gain.setValueAtTime(delayMix, audioCtx.currentTime);
+    }
+  }
+}
+function setReverb(v) {
+  var wasOff = reverbMix === 0;
+  var prevActive = (ringMix > 0 ? 1 : 0) + (delayMix > 0 ? 1 : 0) + (reverbMix > 0 ? 1 : 0);
+  reverbMix = v/100;
+  document.getElementById('reverbVal').textContent = 'Send It! ' + v + '%';
+  var maxMix = Math.max(delayMix, reverbMix, ringMix);
+  var nowActive = (ringMix > 0 ? 1 : 0) + (delayMix > 0 ? 1 : 0) + (reverbMix > 0 ? 1 : 0);
+  if (isPlaying) {
+    if (dryGain) dryGain.gain.setValueAtTime(1 - maxMix, audioCtx.currentTime);
+    if (wasOff !== (reverbMix > 0) || prevActive !== nowActive) {
+      ensureEffectChain();
+    }
+    // Solo mode live mix update
+    if (reverbMix > 0 && nowActive === 1 && reverbWetGain) {
+      reverbWetGain.gain.setValueAtTime(reverbMix, audioCtx.currentTime);
+    }
+  }
+}
+// ═══ DELAY MODE TABLE (ordered left-to-right, longest to shortest) ═══
+var DELAY_MODES = [
+  { id: 'dot1',  label: 'dot1',  mult: 4.0   },
+  { id: 'dot2',  label: 'dot2',  mult: 3.0   },
+  { id: 'dot4',  label: 'dot4',  mult: 1.5   },
+  { id: 'dot8',  label: 'dot8',  mult: 0.75  },
+  { id: 'dot16', label: 'dot16', mult: 0.375 },
+  { id: 'tri1',  label: 'tri1',  mult: 8/3   },
+  { id: 'tri2',  label: 'tri2',  mult: 4/3   },
+  { id: 'tri4',  label: 'tri4',  mult: 2/3   },
+  { id: 'tri8',  label: 'tri8',  mult: 1/3   },
+  { id: 'tri16', label: 'tri16', mult: 1/6   }
+];
+
+function modeIndex(id) {
+  for (var i = 0; i < DELAY_MODES.length; i++) {
+    if (DELAY_MODES[i].id === id) return i;
+  }
+  return 3; // default dot8
+}
+
+function setDelayMode(m, btn) {
+  delayMode = m;
+  delayWarp = 0;
+  delayWarpMult = null;
+  var idx = modeIndex(m);
+  document.getElementById('warpSlider').value = idx;
+  document.getElementById('warpVal').textContent = DELAY_MODES[idx].label;
+  document.querySelectorAll('.delay-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  if (isPlaying && delayNode && audioCtx) {
+    syncDelayToBPM();
+    var now = audioCtx.currentTime;
+    delayNode.delayTime.cancelScheduledValues(now);
+    delayNode.delayTime.linearRampToValueAtTime(delayTime, now + 0.050);
+  }
+}
+
+// Warp slider: audio throttle + visual debounce
+var _warpUpdateTimer = null;
+var _warpPendingValue = null;
+var _warpVisualTimer = null;
+var WARP_UPDATE_INTERVAL = 20;   // ms between audio updates
+var WARP_VISUAL_INTERVAL = 150;  // ms before visual label settles
+var WARP_RAMP_TIME = 0.050;     // 50ms linear ramp
+
+function setDelayWarp(v) {
+  var floatIdx = Math.max(0, Math.min(9, parseFloat(v)));
+  var idx = Math.floor(floatIdx);
+  var frac = floatIdx - idx;
+  var nextIdx = Math.min(9, idx + 1);
+  var baseMult = DELAY_MODES[idx].mult;
+  var nextMult = DELAY_MODES[nextIdx].mult;
+  var smoothMult = baseMult + (nextMult - baseMult) * frac;
+  delayWarpMult = smoothMult;
+  delayWarp = 0;
+  delayMode = DELAY_MODES[idx].id;
+
+  // Immediate audio throttle
+  _warpPendingValue = floatIdx;
+  if (!_warpUpdateTimer) {
+    _warpUpdateTimer = setTimeout(function() {
+      _warpUpdateTimer = null;
+      if (_warpPendingValue === null) return;
+      syncDelayToBPM();
+      if (isPlaying && delayNode && audioCtx) {
+        var now = audioCtx.currentTime;
+        delayNode.delayTime.cancelScheduledValues(now);
+        delayNode.delayTime.linearRampToValueAtTime(delayTime, now + WARP_RAMP_TIME);
+      }
+      _warpPendingValue = null;
+    }, WARP_UPDATE_INTERVAL);
+  }
+
+  // Debounced visual update — only update label/buttons after settling
+  if (_warpVisualTimer) clearTimeout(_warpVisualTimer);
+  _warpVisualTimer = setTimeout(function() {
+    _warpVisualTimer = null;
+    var v2 = parseFloat(document.getElementById('warpSlider').value);
+    var fidx = Math.max(0, Math.min(9, v2));
+    var i = Math.floor(fidx);
+    var f = fidx - i;
+    var ni = Math.min(9, i + 1);
+    var lbl = DELAY_MODES[i].label;
+    if (f > 0.05 && f < 0.95) lbl += ' +' + Math.round(f * 100) + '%';
+    else if (f >= 0.95) lbl = DELAY_MODES[ni].label;
+    document.getElementById('warpVal').textContent = lbl;
+    document.querySelectorAll('.delay-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'" + DELAY_MODES[i].id + "'") !== -1);
+    });
+  }, WARP_VISUAL_INTERVAL);
+}
+
+// Called by syncDelayToBPM to compute delayTime from BPM + current warp mult
+function getDelayMultiplier() {
+  if (delayWarpMult !== null) return delayWarpMult;
+  // fallback: compute from delayWarp legacy
+  return 1.0 + delayWarp;
+}
+
+function syncDelayHighlight() {
+  // Warp slider is now the primary selector — just sync buttons to current mode
+  delayWarpMult = null;
+  var idx = modeIndex(delayMode);
+  document.getElementById('warpSlider').value = idx;
+  document.getElementById('warpVal').textContent = DELAY_MODES[idx].label;
+  document.querySelectorAll('.delay-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute("onclick") && b.getAttribute("onclick").indexOf("'" + delayMode + "'") !== -1);
+  });
+}
+
+function setVolume(v) {
+  volume = v/100;
+  document.getElementById('volDisplay').textContent = v + '%';
+  if (masterGain) masterGain.gain.setValueAtTime(volume, audioCtx.currentTime);
+}
+function setDelayFeedback(v) {
+  delayFeedbackAmt = v / 100;
+  document.getElementById('feedbackVal').textContent = v + '%';
+  if (delayFeedback) delayFeedback.gain.setValueAtTime(delayFeedbackAmt, audioCtx.currentTime);
+}
+function setRingFreq(v) {
+  ringFreq = parseFloat(v);
+  document.getElementById('ringFreqVal').textContent = ringFreq + 'Hz';
+  if (ringOsc) ringOsc.frequency.setValueAtTime(ringFreq, audioCtx.currentTime);
+}
+function setRingMix(v) {
+  var wasOff = ringMix <= 0;
+  var prevActive = (ringMix > 0 ? 1 : 0) + (delayMix > 0 ? 1 : 0) + (reverbMix > 0 ? 1 : 0);
+  ringMix = v / 100;
+  document.getElementById('ringMixVal').textContent = 'Send It! ' + v + '%';
+  var nowActive = (ringMix > 0 ? 1 : 0) + (delayMix > 0 ? 1 : 0) + (reverbMix > 0 ? 1 : 0);
+  var maxMix = Math.max(ringMix, delayMix, reverbMix);
+  if (dryGain) dryGain.gain.setValueAtTime(1 - maxMix, audioCtx.currentTime);
+  if (ringGain && !wasOff && ringMix > 0 && nowActive === 1) {
+    ringGain.gain.setValueAtTime(ringMix, audioCtx.currentTime);
+  }
+  if (ringDryGain && !wasOff && ringMix > 0 && nowActive === 1) {
+    ringDryGain.gain.setValueAtTime(1 - ringMix, audioCtx.currentTime);
+  }
+  if (isPlaying && (wasOff !== (ringMix > 0) || prevActive !== nowActive)) {
+    ensureEffectChain();
+  }
+}
+function loadPreset(bpmVal, name) { setBPM(bpmVal); }
+
+// ═══ TAP TEMPO ═══
+var tapTimes = [];
+function tapTempo() {
+  var now = Date.now();
+  tapTimes.push(now);
+  if (tapTimes.length > 8) tapTimes.shift();
+  if (tapTimes.length >= 2) {
+    var intervals = [];
+    for (var i = 1; i < tapTimes.length; i++) intervals.push(tapTimes[i] - tapTimes[i-1]);
+    var avg = intervals.reduce(function(a,b){return a+b;}) / intervals.length;
+    var calcBPM = Math.round(60000 / avg);
+    if (calcBPM >= 20 && calcBPM <= 240) setBPM(calcBPM);
+  }
+  clearTimeout(tapTimes._timeout);
+  tapTimes._timeout = setTimeout(function(){ tapTimes = []; }, 2000);
+}
+
+// ═══ KEYBOARD SHORTCUTS ═══
+document.addEventListener('keydown', function(e) {
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowUp') changeBPM(1);
+  if (e.code === 'ArrowDown') changeBPM(-1);
+  if (e.code === 'ArrowRight') changeBPM(10);
+  if (e.code === 'ArrowLeft') changeBPM(-10);
+  if (e.code === 'KeyT') tapTempo();
+});
+
+// ═══ LIFECYCLE ═══
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden && isPlaying) togglePlay();
+});
+// Touch double-fire fix: removed touchstart->click delegation.
+// CSS touch-action: manipulation already handles tap response.
+// The delegation caused play/stop and buttons to fire twice.
+
+// Also ensure audio context is activated on first touch
+document.body.addEventListener('touchstart', function activation(){
+  initAudio();
+  document.body.removeEventListener('touchstart', activation);
+}, {once:true, passive:true});
+
+// ═══ DONATE ═══
+var selectedAmount = 10;
+var selectedMethod = 'paypal';
+function openDonate() { document.getElementById('donateModal').classList.add('show'); }
+function closeDonate(e) {
+  if (!e || e.target === document.getElementById('donateModal') || e.target.classList.contains('donate-close'))
+    document.getElementById('donateModal').classList.remove('show');
+}
+function selectAmount(btn, amt) {
+  selectedAmount = amt;
+  document.querySelectorAll('.amount-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  document.getElementById('customAmount').value = '';
+}
+function clearAmountBtns() {
+  document.querySelectorAll('.amount-btn').forEach(function(b){ b.classList.remove('selected'); });
+}
+function selectMethod(btn, method) {
+  selectedMethod = method;
+  document.querySelectorAll('.method-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+function processDonate() {
+  var custom = document.getElementById('customAmount').value;
+  var amount = custom ? parseFloat(custom) : selectedAmount;
+  if (!amount || amount < 1) { alert('Please select or enter an amount'); return; }
+  window.open('https://www.paypal.com/paypalme/Didjiwalla/' + amount, '_blank');
+  var box = document.querySelector('.donate-box');
+  box.innerHTML = '<div class="donate-alien" style="font-size:3rem">🎉</div><h3>Thank You!</h3><p class="donate-desc">Your $' + amount + ' donation helps keep the alien metronome flying across the galaxy!</p><p style="text-align:center;color:var(--text-muted);font-size:.85rem;margin-top:16px">PayPal should have opened in a new tab 🚀</p><button class="donate-submit" onclick="closeDonate()" style="margin-top:16px">Close</button>';
+  if (initAudio() && audioCtx) {
+    var now = audioCtx.currentTime;
+    [523,659,784,1047,1319,1568].forEach(function(freq,i) {
+      var osc = audioCtx.createOscillator(); var gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, now + i*0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i*0.06 + 0.2);
+      osc.start(now + i*0.06); osc.stop(now + i*0.06 + 0.2);
+    });
+  }
+}
+
+// ═══ STARS ═══
+function createStars() {
+  var c = document.getElementById('stars');
+  for (var i = 0; i < 80; i++) {
+    var star = document.createElement('div'); star.className = 'star';
+    star.style.left = Math.random()*100+'%';
+    star.style.top = Math.random()*100+'%';
+    star.style.setProperty('--dur',(2+Math.random()*3)+'s');
+    star.style.setProperty('--op',(0.3+Math.random()*0.7));
+    star.style.animationDelay = Math.random()*2+'s';
+    var sz = Math.random()*2+1;
+    star.style.width = sz+'px'; star.style.height = sz+'px';
+    c.appendChild(star);
+  }
+}
+
+// ═══ PWA INSTALL ═══
+var _deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  _deferredPrompt = e;
+  // Show install button
+  var btn = document.getElementById('installBtn');
+  if (btn) { btn.style.display = 'inline-flex'; }
+});
+function installPWA() {
+  if (!_deferredPrompt) return;
+  _deferredPrompt.prompt();
+  _deferredPrompt.userChoice.then(function(result) {
+    if (result.outcome === 'accepted') {
+      var btn = document.getElementById('installBtn');
+      if (btn) { btn.style.display = 'none'; }
+    }
+    _deferredPrompt = null;
+  });
+}
+// Detect if running as PWA
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+  document.body.classList.add('pwa-mode');
+}
+
+// ═══ SERVICE WORKER ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+
+// ═══ INIT ═══
+createStars();
+updateBeatIndicators();
+</script>
+
+<!-- Install Banner (shown on mobile when PWA can be installed) -->
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:12px 16px;z-index:999;align-items:center;gap:12px;font-size:13px">
+  <span style="flex:1">Install Alien Metronome for offline use</span>
+  <button onclick="installPWA()" style="padding:8px 16px;border-radius:8px;border:none;background:var(--cyan);color:#000;font-weight:700;cursor:pointer;font-size:12px">Install</button>
+  <button onclick="document.getElementById('installBanner').style.display='none'" style="padding:8px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:16px">✕</button>
+</div>
+<script>
+// Show install banner on mobile after 3 seconds if not installed
+setTimeout(function(){
+  if (!_deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+    // Check if on mobile
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      document.getElementById('installBanner').style.display = 'flex';
+    }
+  }
+}, 3000);
+</script>
+</body>
+</html>

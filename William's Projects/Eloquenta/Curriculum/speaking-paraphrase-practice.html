@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Speaking Practice — Paraphrased Questions | Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../Curriculum/eloquent-branding.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow-x:hidden;min-height:100vh;height:auto;padding-top:48px}
+.slide{display:none;width:100vw;min-height:100vh;height:auto;position:relative;flex-direction:column;justify-content:center;align-items:center;padding-top:48px}
+.slide.active{display:flex}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.25) saturate(1.2)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.5) 100%)}
+.slide-content{position:relative;z-index:2;max-width:900px;padding:32px;text-align:center;max-height:calc(100vh - 120px);overflow-y:auto}
+.slide-number{position:absolute;top:64px;right:28px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase}
+.slide-category{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;border:1px solid}
+.slide h1{font-size:2.6rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:6px}
+.slide h2{font-size:1.2rem;font-weight:600;line-height:1.4;margin-bottom:14px;color:rgba(255,255,255,.85)}
+.slide h3{font-size:.95rem;font-weight:700;color:#fbbf24;margin:14px 0 8px;text-transform:uppercase;letter-spacing:1px}
+.slide p{font-size:1rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:640px;margin:0 auto}
+.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:8px;align-items:center}
+.nav-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{background:rgba(255,255,255,.25)}
+.nav-dots{display:flex;gap:5px;align-items:center;padding:0 8px;max-width:300px;flex-wrap:wrap;justify-content:center}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.4)}
+.progress{position:fixed;top:48px;left:0;right:0;z-index:60;background:rgba(255,255,255,.06);height:8px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa);transition:width .4s ease-out;border-radius:0 4px 4px 0}
+
+/* Level badges */
+.level-row{display:flex;gap:8px;max-width:860px;margin:10px auto 0;flex-wrap:wrap;justify-content:center}
+.level-col{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 14px;min-width:160px;max-width:200px;flex:1;text-align:left}
+.level-col .l-score{font-size:18px;font-weight:900;margin-bottom:3px}
+.level-col .l-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:5px}
+.level-col .l-q{font-size:11px;color:rgba(255,255,255,.7);line-height:1.5;font-style:italic}
+.level-col .l-a{font-size:10px;color:#22d3ee;margin-top:5px;line-height:1.4}
+.level-col.highlight{background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
+.level-col.highlight .l-score{color:#22d3ee}
+
+/* Dialogue box */
+.dialogue-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 20px;max-width:700px;margin:12px auto 0;text-align:left;font-size:13px;line-height:1.8}
+.dialogue-box .speaker{font-weight:700;margin-right:6px}
+.dialogue-box .examiner{color:#22d3ee}
+.dialogue-box .candidate{color:#34d399}
+.dialogue-box .note{color:rgba(255,255,255,.35);font-size:10px;margin-top:8px;font-style:italic;border-top:1px solid rgba(255,255,255,.06);padding-top:6px}
+
+/* Tips */
+.tips-box{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:14px 18px;max-width:640px;margin:12px auto 0;text-align:left}
+.tips-box h4{font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.tips-box ul{list-style:none;padding:0}
+.tips-box li{font-size:12px;color:rgba(255,255,255,.65);padding:3px 0;line-height:1.5}
+.tips-box li::before{content:"→ ";color:#a78bfa;font-weight:700}
+
+/* Quick nav */
+.quick-nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:4px}
+.qn-btn{padding:4px 10px;border-radius:6px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.5);color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;text-align:center}
+.qn-btn:hover{color:#22d3ee;border-color:rgba(34,211,230,.3)}
+.qn-btn.active{background:rgba(34,211,238,.1);color:#22d3ee;border-color:rgba(34,211,238,.3)}
+
+/* Vocab */
+.vocab-word{border-bottom:2px dotted rgba(34,211,238,.5);cursor:help;color:#22d3ee;font-weight:600;position:relative}
+.vocab-word:hover{border-bottom-color:#22d3ee}
+.vocab-word .tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 14px;min-width:200px;max-width:300px;font-size:13px;font-weight:400;color:#e2e8f0;line-height:1.5;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;transition:opacity .3s;pointer-events:none}
+.vocab-word .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#334155}
+.vocab-word:hover .tooltip{visibility:visible;opacity:1}
+
+.slide-footer{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.2);letter-spacing:1px}
+.logo{color:#fff;font-weight:700;letter-spacing:.5px}.logo .o{color:#22d3ee}
+
+@media(max-width:640px){
+  .slide h1{font-size:1.8rem}
+  .slide h2{font-size:1rem}
+  .slide-content{padding:16px}
+  .level-row{flex-direction:column;align-items:center}
+  .quick-nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="elo-bar">
+  <a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
+  <span class="elo-tagline">Speaking Practice</span>
+  <div class="elo-menu">
+    <a href="../Extras/landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 Lessons</a>
+  </div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div id="slides-container"></div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<div class="quick-nav" id="quickNav"></div>
+
+<script>
+var SLIDES=[
+
+/* ═══════════════════════════════════════════
+   INTRODUCTION
+   ═══════════════════════════════════════════ */
+
+// SLIDE 0: Title
+{
+  bg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80",
+  cat:"Speaking Practice",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Paraphrased Questions",subtitle:"Learn to answer the same question at every level — from simple to sophisticated",
+  text:"Each topic shows the original question paraphrased at 4 levels, with model answers showing how vocabulary, grammar, and fluency change.",
+  isTitle:true
+},
+
+// SLIDE 1: How this works
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80",
+  cat:"Method",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"How This Works",subtitle:"",
+  text:"",
+  isAim:true,
+  goals:[
+    {icon:"📖",label:"Original Question",desc:"From topicalconversations.com — real ESL questions used in classrooms worldwide"},
+    {icon:"🔄",label:"4 Paraphrases",desc:"Same question rewritten at A2, B1, B2, and C1 level. See how complexity changes."},
+    {icon:"💬",label:"Model Answers",desc:"Dialogue examples showing how a strong candidate answers at each level"},
+    {icon:"📝",label:"Key Vocabulary",desc:"Highlighted words show the upgrade from simple to advanced expression"}
+  ]
+},
+
+/* ═══════════════════════════════════════════
+   TOPIC 1: TRAVEL
+   ═══════════════════════════════════════════ */
+
+// SLIDE 2: Travel title
+{
+  bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",
+  cat:"Topic 1: Travel",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Travel & Tourism",subtitle:"",
+  text:"One of the most common IELTS and ESL speaking topics. The same question can be answered simply or with sophistication.",
+  isTitle:true
+},
+
+// SLIDE 3: Travel Q1 - Do you like to travel?
+{
+  bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",
+  cat:"Travel",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"\"Do you like to travel?\"",subtitle:"Paraphrased at 4 levels",
+  text:"",
+  custom:function(){
+    return '<div class="level-row">'+
+      '<div class="level-col"><div class="b-score" style="color:#fb7185">A2</div><div class="l-label">Basic</div><div class="l-q">"Do you like going to new places?"</div><div class="l-a">"Yes, I like it very much. I go to the beach every summer."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#fbbf24">B1</div><div class="l-label">Intermediate</div><div class="l-q">"Do you enjoy travelling to different destinations?"</div><div class="l-a">"Yes, I really enjoy it. I try to visit at least one new place every year because I find it refreshing."</div></div>'+
+      '<div class="level-col highlight"><div class="b-score">B2</div><div class="l-label">Upper-Intermediate</div><div class="l-q">"Are you someone who relishes exploring unfamiliar destinations?"</div><div class="l-a">"Absolutely. I would say I am an avid traveller. There is something deeply fulfilling about immersing yourself in a completely different culture and stepping outside your comfort zone."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#22d3ee">C1</div><class="l-label">Advanced</div><div class="l-q">"Would you characterise yourself as someone who is inherently drawn to the prospect of discovering uncharted territories?"</div><div class="l-a">"Without a doubt. I firmly believe that travel is one of the most enriching experiences available to us. It broadens our horizons, challenges our preconceptions, and ultimately makes us more empathetic and well-rounded individuals."</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 4: Travel Q2 - Describe the best trip
+{
+  bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",
+  cat:"Travel",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"\"Describe the best trip you've ever taken\"",subtitle:"Notice how detail and vocabulary increase at each level",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Examiner (B1):</span> "Can you describe a really good trip you have been on?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B1):</span> "Yes, I went to Thailand two years ago. The beaches were beautiful and the food was delicious. I stayed for two weeks and I really enjoyed it."</p>'+
+      '<p class="note">Problems: Simple past only. No descriptive language. Short answer. No personal reflection.</p>'+
+      '<p style="margin-top:12px"><span class="speaker examiner">Examiner (B2):</span> "Could you recount what you consider to be the most memorable journey you have undertaken?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B2):</span> "Certainly. About two years ago, I had the opportunity to visit Thailand, and it was truly unforgettable. What struck me most was the sheer beauty of the coastline — crystal-clear waters stretching as far as the eye could see. The culinary experience was equally remarkable; I sampled everything from street food to fine dining. What made it particularly special was the warmth of the local people, who went out of their way to make me feel welcome. It was the kind of trip that stays with you long after you return home."</p>'+
+      '<p class="note">Strengths: Varied tenses (had the opportunity, was, struck, stretched). Descriptive phrases (crystal-clear, as far as the eye could see). Personal reflection. Natural flow.</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 5: Travel Q3 - Prefer short or long trips
+{
+  bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",
+  cat:"Travel",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"\"Do you prefer short trips or longer ones?\"",subtitle:"The key skill: expressing preferences with nuance",
+  text:"",
+  custom:function(){
+    return '<div class="level-row">'+
+      '<div class="level-col"><div class="b-score" style="color:#fb7185">A2</div><div class="l-label">Basic</div><div class="l-q">"Do you like short trips or long trips more?"</div><div class="l-a">"I like long trips. Short trips are boring."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#fbbf24">B1</div><div class="l-label">Intermediate</div><div class="l-q">"Do you prefer taking brief getaways or extended holidays?"</div><div class="l-a">"I prefer longer holidays because I have more time to relax and really get to know a place. Short trips can feel a bit rushed."</div></div>'+
+      '<div class="level-col highlight"><div class="b-score">B2</div><div class="l-label">Upper-Intermediate</div><div class="l-q">"Are you more inclined towards fleeting weekend escapes or prolonged sojourns abroad?"</div><div class="l-a">"On balance, I would say I gravitate towards longer trips. While weekend getaways have their charm, I find that extended travel allows you to truly disconnect from your daily routine and gain a deeper appreciation for the destination. That said, I appreciate that not everyone has the luxury of time, so short trips certainly serve their purpose."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#22d3ee">C1</div><div class="l-label">Advanced</div><div class="l-q">"When it comes to travel, do you find yourself drawn to the brevity of a short escape or the immersive potential of a more protracted journey?"</div><div class="l-a">"That is a thought-provoking question. I would argue that the ideal approach is a combination of both, depending on one's circumstances at the time. When time is constrained, a brief respite can be remarkably rejuvenating. However, for genuine cultural immersion and personal growth, there is no substitute for an extended sojourn. The depth of understanding you gain from spending weeks rather than days in a place is, I believe, incomparable."</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   TOPIC 2: FOOD & DIET
+   ═══════════════════════════════════════════ */
+
+// SLIDE 6: Food title
+{
+  bg:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80",
+  cat:"Topic 2: Food & Diet",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Food & Diet",subtitle:"",
+  text:"Another universal speaking topic. Food questions appear in IELTS Part 1, Part 2, and Part 3.",
+  isTitle:true
+},
+
+// SLIDE 7: Food Q1 - What do you usually eat for breakfast?
+{
+  bg:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80",
+  cat:"Food & Diet",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"\"What do you usually eat for breakfast?\"",subtitle:"A simple question — but your answer can be simple or sophisticated",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Examiner (A2):</span> "What do you eat in the morning?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (A2):</span> "I eat bread and eggs. And coffee. Every day the same."</p>'+
+      '<p class="note">Understandable but very basic. No variety in vocabulary or grammar.</p>'+
+      '<p style="margin-top:12px"><span class="speaker examiner">Examiner (B1):</span> "Could you describe what you typically have for breakfast?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B1):</span> "Well, on weekdays I usually keep it quite simple — perhaps some toast with jam and a cup of coffee. But at weekends, I tend to be more adventurous. I might make a full breakfast with eggs, bacon, and freshly squeezed orange juice. It really depends on how much time I have."</p>'+
+      '<p class="note">Good: "typically," "keep it quite simple," "tend to be more adventurous." Shows range.</p>'+
+      '<p style="margin-top:12px"><span class="speaker examiner">Examiner (B2):</span> "How would you characterise your morning eating habits?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B2):</span> "My breakfast habits are largely dictated by my schedule. During the work week, I gravitate towards quick, nutritious options — overnight oats or a smoothie, for instance. However, I am a firm believer in the importance of a proper weekend breakfast. There is something deeply satisfying about taking the time to prepare a leisurely meal. I find it sets a positive tone for the rest of the day."</p>'+
+      '<p class="note">Excellent: "dictated by," "gravitate towards," "firm believer," "leisurely," "sets a positive tone." Natural, fluent, opinionated.</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 8: Food Q2 - Have you ever been on a diet?
+{
+  bg:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80",
+  cat:"Food & Diet",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"\"Have you ever been on a diet?\"",subtitle:"Past experience questions — perfect for showing tense range",
+  text:"",
+  custom:function(){
+    return '<div class="level-row">'+
+      '<div class="level-col"><div class="b-score" style="color:#fb7185">A2</div><div class="l-label">Basic</div><div class="l-q">"Have you ever tried to eat less to lose weight?"</div><div class="l-a">"Yes, I tried. I ate only salad. It was very hard and I stopped."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#fbbf24">B1</div><div class="l-label">Intermediate</div><div class="l-q">"Have you ever followed a specific diet plan?"</div><div class="l-a">"Yes, I tried a low-carb diet about a year ago. I cut out bread and pasta and focused on eating more protein and vegetables. I did lose a few kilos, but I found it quite difficult to maintain long-term."</div></div>'+
+      '<div class="level-col highlight"><div class="b-score">B2</div><div class="l-label">Upper-Intermediate</div><div class="l-q">"Have you ever embarked on a structured dietary regimen?"</div><div class="l-a">"Indeed I have. Approximately a year ago, I decided to adopt a Mediterranean-style diet after reading about its long-term health benefits. I significantly reduced my intake of processed foods and increased my consumption of olive oil, fish, and fresh produce. While the initial adjustment was challenging, I found that the benefits — increased energy, better sleep, and gradual weight loss — made it well worth the effort. That said, I have since moved away from strict dieting towards a more balanced, intuitive approach to eating."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#22d3ee">C1</div><div class="l-label">Advanced</div><div class="l-q">"Have you ever undertaken a deliberate restructuring of your nutritional intake, and if so, what were the outcomes?"</div><div class="l-a">"I have, on more than one occasion. My most successful endeavour was transitioning to a predominantly plant-based diet, motivated by both health and environmental concerns. The process required considerable research and discipline, particularly in ensuring I was meeting all my nutritional requirements. The results, however, were remarkable — not only did I experience significant improvements in my energy levels and digestion, but I also developed a far more mindful relationship with food. I would say it fundamentally changed the way I think about nutrition."</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   TOPIC 3: EDUCATION
+   ═══════════════════════════════════════════ */
+
+// SLIDE 9: Education title
+{
+  bg:"https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80",
+  cat:"Topic 3: Education",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Education & Learning",subtitle:"",
+  text:"Education questions test your ability to discuss abstract ideas, compare past and present, and express opinions about systems.",
+  isTitle:true
+},
+
+// SLIDE 10: Education Q1 - Did you enjoy your school years?
+{
+  bg:"https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80",
+  cat:"Education",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"\"Did you enjoy your school years?\"",subtitle:"Past reflection — a chance to show narrative skills",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Examiner (B1):</span> "Did you enjoy your time at school?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B1):</span> "Yes, I enjoyed it quite a lot. I had good friends and some of my teachers were really inspiring. I particularly enjoyed history and literature classes because they allowed me to explore different perspectives. That said, I did find the exam periods quite stressful, and I sometimes felt that the curriculum was too rigid and did not leave enough room for creativity."</p>'+
+      '<p class="note">Good structure: positive → specific examples → balanced criticism. Natural connectors ("That said").</p>'+
+      '<p style="margin-top:12px"><span class="speaker examiner">Examiner (C1):</span> "Looking back, how would you evaluate the formative impact of your educational experiences?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (C1):</span> "That is a fascinating question. I would say my educational journey has been something of a double-edged sword. On the one hand, the discipline and critical thinking skills I acquired during my school years have been invaluable. My history teacher, in particular, instilled in me a passion for questioning assumptions and examining issues from multiple angles. On the other hand, I feel that the system placed excessive emphasis on rote memorisation and standardised testing, which arguably stifled creativity and independent thought. If I were to redesign the system, I would place far greater emphasis on project-based learning and the development of practical life skills."</p>'+
+      '<p class="note">Sophisticated: "double-edged sword," "instilled," "rote memorisation," "stifled," "project-based learning." Hypothetical ("If I were to").</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 11: Education Q2 - Is education important for success?
+{
+  bg:"https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80",
+  cat:"Education",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"\"How important is education to success in life?\"",subtitle:"Opinion questions — show you can argue a position",
+  text:"",
+  custom:function(){
+    return '<div class="level-row">'+
+      '<div class="level-col"><div class="b-score" style="color:#fb7185">A2</div><div class="l-label">Basic</div><div class="l-q">"Is school important for getting a good job?"</div><div class="l-a">"Yes, very important. If you study hard, you get a good job."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#fbbf24">B1</div><div class="l-label">Intermediate</div><div class="l-q">"How crucial is formal education in determining one's career prospects?"</div><div class="l-a">"I think it is quite important, especially for certain professions like medicine or engineering. However, I also believe that practical experience and soft skills play a significant role. Some of the most successful people I know are self-taught."</div></div>'+
+      '<div class="level-col highlight"><div class="b-score">B2</div><div class="l-label">Upper-Intermediate</div><div class="l-q">"To what extent does one's educational background dictate their trajectory in the professional world?"</div><div class="l-a">"That is a nuanced question. While I would acknowledge that formal education provides a solid foundation and opens certain doors, I do not believe it is the sole determinant of success. In today's rapidly evolving job market, qualities such as adaptability, emotional intelligence, and the capacity for continuous learning are arguably more valuable than a degree alone. Furthermore, the rise of entrepreneurship and the gig economy has created alternative pathways to success that simply did not exist a generation ago."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#22d3ee">C1</div><div class="l-label">Advanced</div><div class="l-q">"In an era of increasing automation and the democratisation of knowledge through technology, how relevant do you believe traditional educational credentials remain as predictors of professional achievement?"</div><div class="l-a">"This is a profoundly important question that society is still grappling with. While traditional credentials undoubtedly retain value in certain regulated professions, I would argue that their monopoly on signalling competence is eroding rapidly. The ability to demonstrate practical skills, think critically, and adapt to novel challenges is increasingly valued over formal qualifications alone. That said, I would caution against dismissing education entirely — rather, I believe we need to reconceptualise what constitutes valuable learning in the 21st century, placing greater emphasis on interdisciplinary thinking, digital literacy, and the cultivation of uniquely human capabilities that machines cannot easily replicate."</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   TOPIC 4: WORK & JOBS
+   ═══════════════════════════════════════════ */
+
+// SLIDE 12: Work title
+{
+  bg:"https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1920&q=80",
+  cat:"Topic 4: Work & Jobs",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Work & Careers",subtitle:"",
+  text:"Work questions appear in every IELTS speaking test. You need to discuss your current job, future plans, and broader questions about work culture.",
+  isTitle:true
+},
+
+// SLIDE 13: Work Q1 - What do you do for a living?
+{
+  bg:"https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1920&q=80",
+  cat:"Work & Jobs",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"\"What do you do for a living?\"",subtitle:"The most common IELTS Part 1 question — make it memorable",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Examiner:</span> "So, do you work or are you a student?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B1):</span> "I work. I am a software developer. I have been working at a tech company for about three years now. My role involves designing and maintaining web applications, which I find quite challenging but also very rewarding. What I particularly enjoy about my job is the problem-solving aspect — every day brings a new puzzle to solve."</p>'+
+      '<p class="note">Strong B1: Present simple + present perfect continuous. Specific details. Personal opinion. Natural enthusiasm.</p>'+
+      '<p style="margin-top:12px"><span class="speaker candidate">Candidate (B2):</span> "I work as a software developer for a mid-sized tech firm. I have been in this role for approximately three years, and during that time, I have had the opportunity to work on a diverse range of projects — from e-commerce platforms to mobile applications. What I find particularly stimulating is the constant need to stay abreast of emerging technologies. The industry evolves at such a rapid pace that complacency is simply not an option. I would say that the intellectual challenge is what keeps me motivated, even during the more demanding periods."</p>'+
+      '<p class="note">B2 upgrade: "approximately," "diverse range," "stay abreast of," "complacency," "intellectual challenge." More sophisticated vocabulary and complex sentence structures.</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 14: Work Q2 - Would you like to change your job?
+{
+  bg:"https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1920&q=80",
+  cat:"Work & Jobs",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"\"Would you like to change your job?\"",subtitle:"Hypothetical questions — show conditional grammar",
+  text:"",
+  custom:function(){
+    return '<div class="level-row">'+
+      '<div class="level-col"><div class="b-score" style="color:#fb7185">A2</div><div class="l-label">Basic</div><div class="l-q">"Do you want a different job?"</div><div class="l-a">"Yes, I want more money. My job is boring."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#fbbf24">B1</div><div class="l-label">Intermediate</div><div class="l-q">"Are you considering a career change at any point?"</div><div class="l-a">"Not immediately, but I have thought about it. If I had the chance, I would probably move into project management because I enjoy leading teams. But for now, I am happy to gain more experience in my current role."</div></div>'+
+      '<div class="level-col highlight"><div class="b-score">B2</div><div class="l-label">Upper-Intermediate</div><div class="l-q">"Do you envisage yourself remaining in your current profession long-term, or do you harbour aspirations of transitioning into a different field?"</div><div class="l-a">"That is something I ponder quite frequently, actually. While I derive considerable satisfaction from my current role, I would be lying if I said I had never contemplated a transition. If circumstances were different — if I had fewer financial obligations, for instance — I would seriously consider retraining in the field of data science. The intersection of technology and analytics fascinates me, and I believe my existing skill set would transfer quite naturally. However, I am also a pragmatist, and I recognise that such a move would require careful planning and considerable sacrifice in the short term."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#22d3ee">C1</div><div class="l-label">Advanced</div><div class="l-q">"Given the rapidly shifting landscape of the modern workforce, how do you envisage your professional identity evolving over the coming decade?"</div><div class="l-a">"That is a profoundly relevant question in today's climate of constant disruption. I believe the notion of a single, linear career path is becoming increasingly obsolete. Personally, I anticipate that my professional identity will become more fluid and multidisciplinary. I am already investing in developing complementary skills — particularly in the realms of artificial intelligence and strategic leadership — that I believe will allow me to pivot as opportunities arise. The key, I think, is to cultivate a mindset of perpetual adaptability rather than anchoring oneself to a specific job title or industry."</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   TOPIC 5: TECHNOLOGY
+   ═══════════════════════════════════════════ */
+
+// SLIDE 15: Technology title
+{
+  bg:"https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80",
+  cat:"Topic 5: Technology",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"Technology & Modern Life",subtitle:"",
+  text:"Technology questions test your ability to discuss change, compare past and future, and express balanced opinions about progress.",
+  isTitle:true
+},
+
+// SLIDE 16: Technology Q1 - How has technology changed your life?
+{
+  bg:"https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80",
+  cat:"Technology",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"\"How has technology changed your life?\"",subtitle:"Present perfect + comparison — a grammar showcase",
+  text:"",
+  custom:function(){
+    return '<div class="dialogue-box">'+
+      '<p><span class="speaker examiner">Examiner (B1):</span> "Has technology changed the way you live?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B1):</span> "Oh, absolutely. I use my smartphone for everything now — banking, shopping, communicating with friends. I cannot really imagine life without it. A few years ago, I used to go to the bank and the supermarket in person, but now I can do almost everything from my phone. It has made life much more convenient, although I do sometimes worry about spending too much time staring at a screen."</p>'+
+      '<p class="note">Good: Present perfect ("has changed," "used to"). Balanced opinion. Personal examples.</p>'+
+      '<p style="margin-top:12px"><span class="speaker examiner">Examiner (B2):</span> "In what ways has the proliferation of digital technology fundamentally altered your daily existence?"</p>'+
+      '<p style="margin-top:6px"><span class="speaker candidate">Candidate (B2):</span> "That is a thought-provoking question. I would say technology has fundamentally transformed virtually every aspect of my daily routine. The most profound shift has been in how I access information and communicate. Where once I would have consulted encyclopaedias or sought expert opinions, I now have the entirety of human knowledge at my fingertips. Similarly, the nature of my social interactions has evolved dramatically — I maintain relationships with people across multiple continents through video calls and messaging platforms, something that would have been inconceivable a generation ago. However, I am also acutely aware of the trade-offs. The constant connectivity can be overwhelming, and I have noticed a decline in the quality of my face-to-face interactions. There is a paradox at play: we are more connected than ever, yet many people report feeling increasingly isolated."</p>'+
+      '<p class="note">Excellent: "proliferation," "fundamentally altered," "virtually every aspect," "inconceivable," "acutely aware," "trade-offs," "paradox." Complex sentences with subordinate clauses.</p>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   TOPIC 6: ENVIRONMENT
+   ═══════════════════════════════════════════ */
+
+// SLIDE 17: Environment title
+{
+  bg:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80",
+  cat:"Topic 6: Environment",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"The Environment",subtitle:"",
+  text:"Environmental topics require you to discuss causes, effects, and solutions — perfect for showing complex grammar.",
+  isTitle:true
+},
+
+// SLIDE 18: Environment Q1 - What can individuals do to help the environment?
+{
+  bg:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80",
+  cat:"Environment",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"\"What can individuals do to help the environment?\"",subtitle:"Solution questions — show you can propose and evaluate ideas",
+  text:"",
+  custom:function(){
+    return '<div class="level-row">'+
+      '<div class="level-col"><div class="b-score" style="color:#fb7185">A2</div><div class="l-label">Basic</div><div class="l-q">"What can people do to help nature?"</div><div class="l-a">"We should not throw rubbish on the ground. We should recycle. We should use less plastic."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#fbbf24">B1</div><div class="l-label">Intermediate</div><div class="l-q">"What steps can ordinary citizens take to reduce their environmental impact?"</div><div class="l-a">"There are several things we can do. On a personal level, we can reduce our consumption of single-use plastics, use public transport more often, and be more mindful of our energy usage at home. I also think supporting businesses that prioritise sustainability sends an important market signal. However, I recognise that individual action alone is not sufficient — systemic change is also needed."</div></div>'+
+      '<div class="level-col highlight"><div class="b-score">B2</div><div class="l-label">Upper-Intermediate</div><div class="l-q">"To what extent can individual behavioural change mitigate the environmental crisis, as opposed to requiring systemic and governmental intervention?"</div><div class="l-a">"This is a question I feel quite strongly about. While I firmly believe that individual actions matter — and that we all have a moral obligation to minimise our ecological footprint — I am somewhat sceptical about the narrative that places the burden of responsibility primarily on individuals. The reality is that a significant proportion of global emissions can be attributed to a relatively small number of corporations. Therefore, while I personally strive to live sustainably — reducing meat consumption, choosing renewable energy providers, and minimising air travel — I believe that meaningful progress requires robust government regulation, investment in green technology, and a fundamental rethinking of our economic models. Individual action is necessary, but it is far from sufficient."</div></div>'+
+      '<div class="level-col"><div class="b-score" style="color:#22d3ee">C1</div><div class="l-label">Advanced</div><div class="l-q">"Given the scale and urgency of the environmental challenges we face, do you believe the discourse around individual responsibility serves to distract from the more pressing need for structural and institutional reform?"</div><div class="l-a">"That is a remarkably astute observation, and I believe there is considerable truth in that assertion. The emphasis on individual carbon footprints — while not without merit — was, in many ways, popularised by fossil fuel companies seeking to deflect accountability. That said, I would not go so far as to say individual action is meaningless. There is a powerful symbolic dimension to personal choices: when individuals adopt sustainable practices, they normalise those behaviours, influence their social circles, and create demand for greener products and services. The key is to avoid false dichotomy. We need both individual consciousness and systemic transformation operating in tandem. The most effective approach, in my view, is for citizens to engage in personal sustainability while simultaneously advocating for and demanding institutional change through civic participation, voting, and holding corporations and governments to account."</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   PRACTICE TIPS
+   ═══════════════════════════════════════════ */
+
+// SLIDE 19: Tips for paraphrasing
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4270?w=1920&q=80",
+  cat:"Key Strategies",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"How to Paraphrase Questions",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="tips-box"><h4>Paraphrasing Techniques</h4><ul>'+
+      '<li><strong>Change the verb:</strong> "Do you like...?" → "Are you fond of...?" → "Would you say you have an affinity for...?"</li>'+
+      '<li><strong>Change the noun:</strong> "a trip" → "a journey" → "an excursion" → "a sojourn"</li>'+
+      '<li><strong>Add qualifiers:</strong> "important" → "crucial" → "of paramount importance" → "indispensable"</li>'+
+      '<li><strong>Use passive voice:</strong> "People should recycle" → "Greater emphasis ought to be placed on recycling"</li>'+
+      '<li><strong>Use conditionals:</strong> "I want to travel" → "If I had the opportunity, I would travel more extensively"</li>'+
+      '<li><strong>Add hedging:</strong> "It is important" → "I would argue that it is fairly important" → "Its significance should not be underestimated"</li>'+
+    '</ul></div>'+
+    '<div style="margin-top:16px"><p style="color:rgba(255,255,255,.5);font-size:13px">Remember: In the IELTS speaking test, the examiner asks the question once. You do NOT need to paraphrase the question — just answer it well. These paraphrases are for <strong style="color:#fff">vocabulary building</strong> and <strong style="color:#fff">understanding how the same idea can be expressed at different levels</strong>.</p></div>';
+  }
+},
+
+// SLIDE 20: Practice exercise
+{
+  bg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80",
+  cat:"Practice",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Your Turn",subtitle:"Take a simple question and rewrite it at 4 levels",
+  text:"",
+  custom:function(){
+    return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 24px;max-width:680px;margin:12px auto 0;text-align:left">'+
+      '<p style="font-size:14px;color:#fff;margin-bottom:12px"><strong>Starting question:</strong> "Do you like cooking?"</p>'+
+      '<p style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px">Now write your own paraphrases at each level:</p>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+      '<div style="background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2);border-radius:8px;padding:10px"><div style="font-size:9px;color:#fb7185;font-weight:700;margin-bottom:4px">A2 — Basic</div><textarea style="width:100%;height:50px;background:transparent;border:none;color:#fff;font-size:11px;resize:none;outline:none" placeholder="Your A2 version here..."></textarea></div>'+
+      '<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:10px"><div style="font-size:9px;color:#fbbf24;font-weight:700;margin-bottom:4px">B1 — Intermediate</div><textarea style="width:100%;height:50px;background:transparent;border:none;color:#fff;font-size:11px;resize:none;outline:none" placeholder="Your B1 version here..."></textarea></div>'+
+      '<div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:10px"><div style="font-size:9px;color:#34d399;font-weight:700;margin-bottom:4px">B2 — Upper-Intermediate</div><textarea style="width:100%;height:50px;background:transparent;border:none;color:#fff;font-size:11px;resize:none;outline:none" placeholder="Your B2 version here..."></textarea></div>'+
+      '<div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:8px;padding:10px"><div style="font-size:9px;color:#22d3ee;font-weight:700;margin-bottom:4px">C1 — Advanced</div><textarea style="width:100%;height:50px;background:transparent;border:none;color:#fff;font-size:11px;resize:none;outline:none" placeholder="Your C1 version here..."></textarea></div>'+
+      '</div>'+
+      '<p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:8px">Tip: Try to use different grammar structures at each level. A2 = simple present. B1 = comparatives, "would like." B2 = conditionals, passive. C1 = inversion, cleft sentences, subjunctive.</p>'+
+    '</div>';
+  }
+},
+
+// SLIDE 21: More topics to practice
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4270?w=1920&q=80",
+  cat:"More Topics",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Practice With These Topics",subtitle:"All from topicalconversations.com — paraphrase them yourself",
+  text:"",
+  custom:function(){
+    return '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;max-width:700px;margin:12px auto 0">'+
+      '<div class="tips-box" style="margin:0"><h4 style="color:#22d3ee">People & Relationships</h4><ul style="font-size:11px"><li>Family & Friends</li><li>Dating & Marriage</li><li>Personality</li><li>Happiness</li></ul></div>'+
+      '<div class="tips-box" style="margin:0"><h4 style="color:#fbbf24">Lifestyle</h4><ul style="font-size:11px"><li>Health & Fitness</li><li>Food & Cooking</li><li>Shopping</li><li>Fashion</li></ul></div>'+
+      '<div class="tips-box" style="margin:0"><h4 style="color:#a78bfa">Society & World</h4><ul style="font-size:11px"><li>Politics & Law</li><li>Environment</li><li>Technology</li><li>Education</li></ul></div>'+
+    '</div>'+
+    '<div style="margin-top:16px"><p style="font-size:18px;color:#fff;font-weight:700">Well done! 🎯</p><p style="color:rgba(255,255,255,.5);font-size:13px;margin-top:4px">Practice one topic per day. Write your own paraphrases, then speak your answers aloud.</p></div>';
+  }
+}
+
+];
+
+/* ═══════════════════════════════════════════
+   RENDER ENGINE
+   ═══════════════════════════════════════════ */
+
+function renderSlides(){
+  var container=document.getElementById('slides-container');
+  var dots=document.getElementById('navDots');
+  var qnav=document.getElementById('quickNav');
+  var html='',dotsHtml='',qnavHtml='';
+  var currentSection='';
+  SLIDES.forEach(function(s,i){
+    if(s.cat&&s.cat!==currentSection&&!s.isTitle){
+      currentSection=s.cat;
+      qnavHtml+='<div class="qn-btn" onclick="goToSlide('+i+')">'+s.cat.substring(0,12)+'</div>';
+    }
+    html+='<div class="slide'+(i===0?' active':'')+'" id="slide'+i+'">';
+    html+='<div class="slide-bg" style="background-image:url(\'+'s.bg+\')"></div>';
+    html+='<div class="slide-content">';
+    html+='<div class="slide-number">'+(i+1)+' / '+SLIDES.length+'</div>';
+    html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+    if(s.isTitle){html+='<h1>'+s.title+'</h1>';if(s.subtitle)html+='<h2>'+s.subtitle+'</h2>';if(s.text)html+='<p>'+s.text+'</p>';}
+    else if(s.isAim){
+      html+='<h1>'+s.title+'</h1>';if(s.subtitle)html+='<h2>'+s.subtitle+'</h2>';if(s.text)html+='<p>'+s.text+'</p>';
+      if(s.goals){html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;max-width:750px;margin:16px auto 0;text-align:left">';s.goals.forEach(function(g){html+='<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">'+g.icon+' '+g.label+'</div><div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">'+g.desc+'</div></div>';});html+='</div>';}
+    }else if(s.custom){html+='<h1>'+s.title+'</h1>';if(s.subtitle)html+='<h2>'+s.subtitle+'</h2>';if(s.text)html+='<p>'+s.text+'</p>';html+=s.custom();}
+    else{html+='<h1>'+s.title+'</h1>';if(s.subtitle)html+='<h2>'+s.subtitle+'</h2>';if(s.text)html+='<p>'+s.text+'</p>';}
+    html+='<div class="slide-footer"><span class="logo">El<span class="o">o</span>quenta</span> — Speaking Practice</div>';
+    html+='</div></div>';
+    dotsHtml+='<div class="nav-dot'+(i===0?' active':'')+'" onclick="goToSlide('+i+')"></div>';
+  });
+  container.innerHTML=html;dots.innerHTML=dotsHtml;qnav.innerHTML=qnavHtml;
+}
+
+var currentSlide=0;
+function goToSlide(n){
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-dot').forEach(function(d){d.classList.remove('active');});
+  document.getElementById('slide'+n).classList.add('active');
+  document.querySelectorAll('.nav-dot')[n].classList.add('active');
+  currentSlide=n;
+  document.getElementById('progressBar').style.width=((n+1)/SLIDES.length*100)+'%';
+}
+function nextSlide(){if(currentSlide<SLIDES.length-1)goToSlide(currentSlide+1);}
+function prevSlide(){if(currentSlide>0)goToSlide(currentSlide-1);}
+document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key===' ')nextSlide();
+  if(e.key==='ArrowLeft')prevSlide();
+});
+renderSlides();
+
+// Shift+wheel for horizontal scroll (side scrolling)
+document.addEventListener('wheel',function(e){
+  if(e.shiftKey){
+    e.preventDefault();
+    window.scrollBy(e.deltaY, 0);
+  }
+},{passive:false});
+</script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulary Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;
+    --text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;
+    --accent:#22d3ee;--green:#34d399;--amber:#fbbf24;--violet:#a78bfa;--rose:#fb7185;
+  }
+  html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+  .container{width:100%;max-width:720px;margin:0 auto;padding:24px 16px}
+
+  /* Header */
+  .header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:20px}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text-dim);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
+  .back-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(34,211,238,.06)}
+  .header h1{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:-.3px}
+
+  /* Category Select */
+  .category-select{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+  .cat-btn{padding:18px 16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .cat-btn span.cat-label{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);font-weight:500}
+  .cat-btn:hover{border-color:var(--text-dim);color:var(--text)}
+  .cat-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(34,211,238,.06)}
+  .cat-btn.active span.cat-label{color:var(--accent);opacity:.7}
+
+  /* Quiz Card */
+  .quiz-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;display:none}
+  .quiz-card.visible{display:block}
+
+  /* Progress */
+  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;color:var(--text-muted)}
+  .progress-bar-track{height:6px;background:var(--bg3);border-radius:99px;margin-bottom:20px;overflow:hidden}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--violet));border-radius:99px;transition:width .4s ease;width:0%}
+
+  /* Timer */
+  .timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .timer-label{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);font-weight:500}
+  .timer-bar-track{height:4px;background:var(--bg3);border-radius:99px;margin-bottom:24px;overflow:hidden}
+  .timer-bar-fill{height:100%;background:var(--amber);border-radius:99px;transition:width .1s linear;width:100%}
+  .timer-bar-fill.warning{background:var(--rose)}
+  .timer-bar-fill.danger{background:var(--rose);animation:pulse .6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  /* Score */
+  .score-badge{font-size:13px;font-weight:600;color:var(--green);background:rgba(52,211,153,.1);padding:4px 12px;border-radius:99px}
+
+  /* Word */
+  .word-area{text-align:center;margin-bottom:24px}
+  .word-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;font-weight:500}
+  .word{font-size:36px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+
+  /* Options */
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt-btn{padding:16px 20px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;font-weight:500;text-align:left;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+  .opt-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(34,211,238,.06)}
+  .opt-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .opt-btn.correct{border-color:var(--green);background:rgba(52,211,153,.12);color:var(--green)}
+  .opt-btn.incorrect{border-color:var(--rose);background:rgba(251,113,133,.12);color:var(--rose)}
+  .opt-btn.disabled{opacity:.5;cursor:default}
+  .opt-letter{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--bg2);border-radius:6px;font-size:12px;font-weight:700;color:var(--text-muted);margin-right:10px;flex-shrink:0;vertical-align:middle}
+  .opt-btn.correct .opt-letter{background:var(--green);color:var(--bg)}
+  .opt-btn.incorrect .opt-letter{background:var(--rose);color:var(--bg)}
+
+  /* Feedback */
+  .feedback{margin-top:16px;padding:16px;background:var(--bg3);border-radius:12px;border-left:4px solid var(--border);display:none}
+  .feedback.visible{display:flex;gap:10px;align-items:flex-start;animation:slideUp .25s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .feedback.correct{border-left-color:var(--green)}
+  .feedback.incorrect{border-left-color:var(--rose)}
+  .feedback-icon{font-size:18px;font-weight:700;flex-shrink:0;width:24px;text-align:center}
+  .feedback-text{font-size:14px;color:var(--text-dim)}
+  .feedback-text strong{color:var(--text);display:block;margin-bottom:3px;font-size:15px}
+  .next-btn{margin-top:14px;padding:10px 24px;background:var(--accent);border:none;border-radius:10px;color:var(--bg);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .next-btn:hover{opacity:.85}
+  .next-btn:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
+  /* Results */
+  .results-screen{text-align:center;padding:20px 0;display:none}
+  .results-screen.visible{display:block;animation:slideUp .3s ease}
+  .results-title{font-size:28px;font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+  .results-subtitle{font-size:15px;color:var(--text-muted);margin-bottom:24px}
+  .results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+  .stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 10px}
+  .stat-value{font-size:28px;font-weight:800;letter-spacing:-.5px}
+  .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-top:4px;font-weight:500}
+  .stat-accuracy{color:var(--green)}
+  .stat-time{color:var(--amber)}
+  .stat-score{color:var(--accent)}
+
+  .missed-section{text-align:left;margin-bottom:24px}
+  .missed-title{font-size:14px;font-weight:700;color:var(--rose);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+  .missed-list{display:flex;flex-direction:column;gap:8px}
+  .missed-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+  .missed-word{font-size:15px;font-weight:700;color:var(--text)}
+  .missed-def{font-size:13px;color:var(--text-muted);margin-top:2px}
+  .missed-none{font-size:14px;color:var(--green);text-align:center;padding:20px;background:rgba(52,211,153,.06);border-radius:10px;border:1px dashed rgba(52,211,153,.2)}
+
+  .results-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  /* Buttons */
+  .btn-primary{padding:12px 28px;background:var(--accent);border:none;border-radius:12px;color:var(--bg);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .btn-primary:hover{opacity:.85}
+  .btn-secondary{padding:12px 28px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-secondary:hover{border-color:var(--text-dim)}
+  .btn-primary:focus-visible,.btn-secondary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .start-label{text-align:center;font-size:14px;color:var(--text-muted);margin-top:16px;display:none}
+  .start-label.visible{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <a href="index.html" class="back-btn">&larr; Back</a>
+    <h1>Vocabulary Quiz</h1>
+  </div>
+
+  <!-- Category Selection -->
+  <div id="categoryScreen">
+    <div class="category-select">
+      <button class="cat-btn active" onclick="startQuiz('general')" data-cat="general">
+        <span class="cat-label">01</span>
+        General
+      </button>
+      <button class="cat-btn" onclick="startQuiz('business')" data-cat="business">
+        <span class="cat-label">02</span>
+        Business
+      </button>
+      <button class="cat-btn" onclick="startQuiz('academic')" data-cat="academic">
+        <span class="cat-label">03</span>
+        Academic
+      </button>
+      <button class="cat-btn" onclick="startQuiz('travel')" data-cat="travel">
+        <span class="cat-label">04</span>
+        Travel
+      </button>
+    </div>
+    <p class="start-label" id="startLabel">Select a category to begin</p>
+  </div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card" id="quizCard">
+    <div class="progress-row">
+      <span id="progressText">Question 1 of 20</span>
+      <span class="score-badge" id="scoreBadge">Score: 0</span>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+    <div class="timer-row">
+      <span class="timer-label">Time Remaining</span>
+      <span id="timerText" style="font-size:13px;font-weight:600;color:var(--amber)">15s</span>
+    </div>
+    <div class="timer-bar-track"><div class="timer-bar-fill" id="timerFill"></div></div>
+
+    <div class="word-area">
+      <div class="word-label">Define this word</div>
+      <div class="word" id="wordDisplay">Word</div>
+    </div>
+
+    <div class="options" id="optionsArea"></div>
+
+    <div class="feedback" id="feedback">
+      <div class="feedback-icon" id="feedbackIcon"></div>
+      <div>
+        <div class="feedback-text" id="feedbackText"></div>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="quiz-card" id="resultsCard">
+    <div class="results-screen">
+      <div class="results-title" id="resultsTitle">Quiz Complete</div>
+      <div class="results-subtitle" id="resultsSubtitle">Category: General</div>
+
+      <div class="results-stats">
+        <div class="stat-box">
+          <div class="stat-value stat-accuracy" id="statAccuracy">0%</div>
+          <div class="stat-label">Accuracy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value stat-score" id="statScore">0/20</div>
+          <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value stat-time" id="statTime">0s</div>
+          <div class="stat-label">Avg Time</div>
+        </div>
+      </div>
+
+      <div class="missed-section" id="missedSection">
+        <div class="missed-title">Review Missed Words</div>
+        <div class="missed-list" id="missedList"></div>
+      </div>
+
+      <div class="results-actions">
+        <button class="btn-primary" onclick="restartQuiz()">Play Again</button>
+        <button class="btn-secondary" onclick="changeCategory()">Change Category</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const VOCAB = {
+  general: [
+    {word:"Ubiquitous",def:"Present, appearing, or found everywhere",wrong:["Rare or uncommon","Confined to one area","Hidden from view"]},
+    {word:"Pragmatic",def:"Dealing with things sensibly and realistically",wrong:["Impractical and idealistic","Emotionally driven","Wildly unpredictable"]},
+    {word:"Eloquent",def:"Fluent or persuasive in speaking or writing",wrong:["Silent and reserved","Confusing and unclear","Rudely blunt"]},
+    {word:"Resilient",def:"Able to recover quickly from difficulties",wrong:["Fragile and brittle","Completely unchanged","Extremely fragile"]},
+    {word:"Meticulous",def:"Showing great attention to detail",wrong:["Careless and sloppy","Hasty and rushed","Indifferent to quality"]},
+    {word:"Candid",def:"Truthful and straightforward",wrong:["Deceptive","Secretive","Evasive"]},
+    {word:"Profound",def:"Very great or intense; having deep insight",wrong:["Superficial","Minor","Trivial"]},
+    {word:"Astute",def:"Having shrewdness and discernment",wrong:["Naive","Ignorant","Foolish"]},
+    {word:"Tenacious",def:"Holding firmly to something; persistent",wrong:["Easily giving up","Passive","Unmotivated"]},
+    {word:"Innovative",def:"Introducing new ideas or methods",wrong:["Traditional","Outdated","Conventional"]},
+    {word:"Versatile",def:"Able to adapt to many different functions",wrong:["Specialized only","Inflexible","Limited"]},
+    {word:"Diligent",def:"Hardworking and careful in one's work",wrong:["Lazy","Negligent","Idle"]},
+    {word:"Empathy",def:"The ability to understand another's feelings",wrong:["Indifference","Hostility","Apathy"]},
+    {word:"Integrity",def:"The quality of being honest and having strong morals",wrong:["Deceitfulness","Dishonesty","Corruption"]},
+    {word:"Ambiguous",def:"Open to more than one interpretation",wrong:["Perfectly clear","Obvious","Unmistakable"]},
+    {word:"Comprehensive",def:"Complete; including all or nearly all elements",wrong:["Partial","Incomplete","Limited"]},
+    {word:"Elaborate",def:"Involving many carefully arranged parts or details",wrong:["Simple","Plain","Basic"]},
+    {word:"Preliminary",def:"Done in preparation for something more important",wrong:["Final","Concluding","Ultimate"]},
+    {word:"Substantial",def:"Of considerable importance, size, or worth",wrong:["Insignificant","Trivial","Negligible"]},
+    {word:"Contemporary",def:"Living or occurring at the same time; modern",wrong:["Ancient","Outdated","Historical"]}
+  ],
+  business: [
+    {word:"Revenue",def:"Income, especially of a company or organization",wrong:["Expenses","Losses","Debts"]},
+    {word:"Liquidation",def:"The process of winding up a company by selling assets",wrong:["Expansion","Mergers","Acquisitions"]},
+    {word:"Equity",def:"The value of shares issued by a company; ownership stake",wrong:["Debt","Expenses","Liabilities"]},
+    {word:"Dividend",def:"A sum of money paid regularly by a company to shareholders",wrong:["A tax penalty","An employee salary","A loan repayment"]},
+    {word:"Amortization",def:"The gradual repayment of debt over time",wrong:["Instant payment","Doubling of debt","Cancellation of assets"]},
+    {word:"Leverage",def:"The use of debt to finance the purchase of assets",wrong:["Saving accounts","Cash reserves","Retained earnings"]},
+    {word:"Acquisition",def:"The process of one company buying another",wrong:["Merging equally","Selling off","Going public"]},
+    {word:"ROI",def:"Return on Investment; a measure of profitability",wrong:["Rate of inflation","Risk of insolvency","Ratio of indebtedness"]},
+    {word:"Fiscal",def:"Relating to government revenue, spending, or financial matters",wrong:["Cultural","Military","Religious"]},
+    {word:"Commodity",def:"A raw material or product that can be bought and sold",wrong:["A service agreement","A legal contract","A trademark"]},
+    {word:"Depreciation",def:"Reduction in the value of an asset over time",wrong:["Increase in value","Market growth","Asset appreciation"]},
+    {word:"Entrepreneur",def:"A person who starts and runs a business",wrong:["A government official","A bank employee","A financial auditor"]},
+    {word:"Monopoly",def:"Exclusive control of a market by a single supplier",wrong:["A competitive market","A government agency","A partnership"]},
+    {word:"Tariff",def:"A tax on imports or exports",wrong:["A subsidy","A grant","A rebate"]},
+    {word:"Inflation",def:"A general increase in prices and fall in the value of money",wrong:["A decrease in prices","Economic stability","Currency strengthening"]},
+    {word:"Collateral",def:"Property pledged as security for repayment of a loan",wrong:["A dividend","A salary","A bonus"]},
+    {word:"Bankruptcy",def:"A legal state of being unable to repay debts",wrong:["Expansion","High profitability","Market dominance"]},
+    {word:"Outsourcing",def:"Obtaining goods or services from an external supplier",wrong:["In-house production","Vertical integration","Domestic hiring"]},
+    {word:"Venture Capital",def:"Capital invested in a startup with high growth potential",wrong:["Government bonds","Personal savings","Bank deposits"]},
+    {word:"Market Share",def:"The portion of a market controlled by a company",wrong:["Total revenue","Net profit","Operating cost"]}
+  ],
+  academic: [
+    {word:"Hypothesis",def:"A proposed explanation made as a starting point for investigation",wrong:["A proven fact","A final conclusion","A random guess"]},
+    {word:"Methodology",def:"A system of methods used in a field of study",wrong:["A bibliography","A conclusion","An appendix"]},
+    {word:"Empirical",def:"Based on observation or experience rather than theory alone",wrong:["Theoretical","Speculative","Abstract"]},
+    {word:"Paradigm",def:"A typical example or pattern of something",wrong:["An error","A variable","A footnote"]},
+    {word:"Annotated",def:"Provided with explanatory notes or comments",wrong:["Simplified","Translated","Condensed"]},
+    {word:"Corroborate",def:"To confirm or give support to a statement or theory",wrong:["To contradict","To question","To ignore"]},
+    {word:"Synthesis",def:"The combination of ideas to form a theory or system",wrong:["The separation of elements","The removal of data","The critique of sources"]},
+    {word:"Cognitive",def:"Relating to mental processes of perception and reasoning",wrong:["Physical","Emotional","Mechanical"]},
+    {word:"Discourse",def:"Written or spoken communication or debate",wrong:["Silence","Isolation","Inaction"]},
+    {word:"Quantitative",def:"Measured by quantity rather than quality",wrong:["Descriptive","Narrative","Subjective"]},
+    {word:"Qualitative",def:"Relating to the quality or character of something",wrong:["Mathematical","Statistical","Numerical"]},
+    {word:"Peer Review",def:"Evaluation of scientific work by experts in the same field",wrong:["Self-assessment","Public voting","Editorial censorship"]},
+    {word:"Abstract",def:"A summary of a research paper or article",wrong:["A bibliography","A glossary","An index"]},
+    {word:"Citation",def:"A reference to a source of information",wrong:["A footnote number","A document title","A page header"]},
+    {word:"Variable",def:"A factor that can change in an experiment",wrong:["A constant","A conclusion","A theory"]},
+    {word:"Longitudinal",def:"Studying a group of people over a long period of time",wrong:["Short-term","Cross-sectional","Random"]},
+    {word:"Axiom",def:"A statement regarded as self-evidently true",wrong:["A fallacy","A conjecture","A contradiction"]},
+    {word:"Dichotomy",def:"A division into two contrasting parts or categories",wrong:["A merger","A synthesis","A continuum"]},
+    {word:"Iteration",def:"The repetition of a process or procedure",wrong:["A deletion","An omission","A conclusion"]},
+    {word:"Verisimilitude",def:"The appearance of being true or real",wrong:["Confusion","Deception","Ambiguity"]}
+  ],
+  travel: [
+    {word:"Itinerary",def:"A planned route or schedule of a journey",wrong:["A passport","A souvenir","A visa"]},
+    {word:"Transit",def:"The act of passing through or across a place",wrong:["Permanent relocation","Immigration control","Customs inspection"]},
+    {word:"Excursion",def:"A short journey or trip, especially for pleasure",wrong:["A business meeting","A medical procedure","A court hearing"]},
+    {word:"Accommodation",def:"A place where travelers can stay and sleep",wrong:["Transportation","Entertainment","Souvenirs"]},
+    {word:"Visa",def:"An official document permitting entry to a country",wrong:["A boarding pass","A luggage tag","A currency note"]},
+    {word:"Embarkation",def:"The act of boarding a ship, aircraft, or vehicle",wrong:["Disembarkation","Immigration","Customs"]},
+    {word:"Jet Lag",def:"Fatigue caused by traveling across time zones",wrong:["Air sickness","Altitude sickness","Motion sickness"]},
+    {word:"Hostel",def:"A budget-friendly lodging for travelers",wrong:["A luxury hotel","A private villa","A cruise ship"]},
+    {word:"Consulate",def:"The offices of a consul in a foreign country",wrong:["An airport","A train station","A museum"]},
+    {word:"Carry-On",def:"A small bag taken onto an aircraft by a passenger",wrong:["Checked luggage","Cargo","Freight"]},
+    {word:"Layover",def:"A stop or wait in the middle of a journey",wrong:["A direct flight","An arrival","A departure"]},
+    {word:"Departure",def:"The act of leaving a place to begin a journey",wrong:["An arrival","A return","A delay"]},
+    {word:"Duty-Free",def:"Goods bought without payment of local taxes",wrong:["Taxed items","Prohibited goods","Restricted luggage"]},
+    {word:"Passport",def:"An official document verifying identity for international travel",wrong:["A hotel key","A boarding pass","A travel guide"]},
+    {word:"Backpacker",def:"A person who travels on a low budget with a backpack",wrong:["A cruise passenger","A business traveler","A first-class tourist"]},
+    {word:"Landmark",def:"A recognizable feature used for navigation",wrong:["A road sign","A restaurant","A parking lot"]},
+    {word:"Roam",def:"To move or travel without a fixed purpose or destination",wrong:["To settle permanently","To schedule precisely","To commute daily"]},
+    {word:"Glimpse",def:"A brief, incomplete view of something",wrong:["A thorough examination","A complete tour","A long observation"]},
+    {word:"Perishable",def:"Likely to decay or go bad quickly during travel",wrong:["Durable","Fragile","Rigid"]},
+    {word:"Customs",def:"The government agency that inspects goods entering a country",wrong:["The airline","The hotel reception","The tourism board"]}
+  ]
+};
+
+let currentCategory = "general";
+let questions = [];
+let qIndex = 0;
+let score = 0;
+let missed = [];
+let timerInterval = null;
+let timeLeft = 15;
+let totalTime = 0;
+let answered = false;
+
+function shuffle(arr) {
+  let a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(category) {
+  currentCategory = category;
+  questions = shuffle(VOCAB[category]);
+  qIndex = 0;
+  score = 0;
+  missed = [];
+  totalTime = 0;
+
+  document.querySelectorAll(".cat-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.cat === category);
+  });
+
+  document.getElementById("categoryScreen").style.display = "none";
+  document.getElementById("quizCard").classList.add("visible");
+  document.getElementById("resultsCard").classList.remove("visible");
+  document.getElementById("startLabel").classList.remove("visible");
+
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[qIndex];
+  const total = questions.length;
+
+  document.getElementById("progressText").textContent = `Question ${qIndex + 1} of ${total}`;
+  document.getElementById("progressFill").style.width = `${((qIndex) / total) * 100}%`;
+  document.getElementById("scoreBadge").textContent = `Score: ${score}`;
+  document.getElementById("wordDisplay").textContent = q.word;
+  document.getElementById("feedback").classList = "feedback";
+  document.getElementById("nextBtn").style.display = "none";
+
+  const opts = shuffle([q.def, ...q.wrong]);
+  const letters = ["A","B","C","D"];
+  const area = document.getElementById("optionsArea");
+  area.innerHTML = "";
+
+  opts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.setAttribute("tabindex", "0");
+    btn.addEventListener("click", () => selectAnswer(btn, opt, q));
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); btn.click(); }
+    });
+    area.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 15;
+  updateTimerDisplay();
+
+  timerInterval = setInterval(() => {
+    timeLeft -= 0.1;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      clearInterval(timerInterval);
+      if (!answered) {
+        answered = true;
+        timeUp();
+      }
+    }
+    updateTimerDisplay();
+  }, 100);
+}
+
+function updateTimerDisplay() {
+  const pct = (timeLeft / 15) * 100;
+  const fill = document.getElementById("timerFill");
+  fill.style.width = `${pct}%`;
+  document.getElementById("timerText").textContent = `${Math.ceil(timeLeft)}s`;
+
+  fill.className = "timer-bar-fill";
+  if (timeLeft <= 3) fill.classList.add("danger");
+  else if (timeLeft <= 7) fill.classList.add("warning");
+}
+
+function selectAnswer(btn, selected, question) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const elapsed = (15 - timeLeft);
+  totalTime += elapsed;
+
+  const allBtns = document.querySelectorAll(".opt-btn");
+  allBtns.forEach(b => {
+    b.disabled = true;
+    b.classList.add("disabled");
+    const text = b.textContent.replace(/^[A-Z]\s*/, "");
+    if (text === question.def) b.classList.add("correct");
+  });
+
+  const feedback = document.getElementById("feedback");
+  const fbText = document.getElementById("feedbackText");
+  const fbIcon = document.getElementById("feedbackIcon");
+
+  if (selected === question.def) {
+    score++;
+    document.getElementById("scoreBadge").textContent = `Score: ${score}`;
+    btn.classList.remove("disabled");
+    btn.classList.add("correct");
+    feedback.classList = "feedback correct visible";
+    fbIcon.textContent = "[OK]";
+    fbText.innerHTML = `<strong>Correct!</strong>${question.word}: ${question.def}`;
+  } else {
+    btn.classList.remove("disabled");
+    btn.classList.add("incorrect");
+    missed.push({ word: question.word, def: question.def });
+    feedback.classList = "feedback incorrect visible";
+    fbIcon.textContent = "[X]";
+    fbText.innerHTML = `<strong>Incorrect.</strong>The correct definition of "${question.word}" is: ${question.def}`;
+  }
+
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+function timeUp() {
+  const question = questions[qIndex];
+  totalTime += 15;
+
+  const allBtns = document.querySelectorAll(".opt-btn");
+  allBtns.forEach(b => {
+    b.disabled = true;
+    b.classList.add("disabled");
+    const text = b.textContent.replace(/^[A-Z]\s*/, "");
+    if (text === question.def) b.classList.add("correct");
+  });
+
+  missed.push({ word: question.word, def: question.def });
+
+  const feedback = document.getElementById("feedback");
+  feedback.classList = "feedback incorrect visible";
+  document.getElementById("feedbackIcon").textContent = "[--]";
+  document.getElementById("feedbackText").innerHTML = `<strong>Time's up!</strong>The definition of "${question.word}" is: ${question.def}`;
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+function nextQuestion() {
+  clearInterval(timerInterval);
+  qIndex++;
+
+  if (qIndex >= questions.length) {
+    showResults();
+    return;
+  }
+  showQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById("quizCard").classList.remove("visible");
+  document.getElementById("resultsCard").classList.add("visible");
+
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+  const avgTime = totalTime > 0 ? (totalTime / total).toFixed(1) : "0";
+
+  const catNames = { general:"General", business:"Business", academic:"Academic", travel:"Travel" };
+  document.getElementById("resultsSubtitle").textContent = `Category: ${catNames[currentCategory]}`;
+  document.getElementById("statAccuracy").textContent = `${pct}%`;
+  document.getElementById("statScore").textContent = `${score}/${total}`;
+  document.getElementById("statTime").textContent = `${avgTime}s`;
+
+  const missedList = document.getElementById("missedList");
+  const missedSection = document.getElementById("missedSection");
+
+  if (missed.length === 0) {
+    missedList.innerHTML = `<div class="missed-none">Perfect score! No words missed.</div>`;
+  } else {
+    missedList.innerHTML = missed.map(m =>
+      `<div class="missed-item"><div class="missed-word">${m.word}</div><div class="missed-def">${m.def}</div></div>`
+    ).join("");
+  }
+}
+
+function restartQuiz() {
+  startQuiz(currentCategory);
+}
+
+function changeCategory() {
+  clearInterval(timerInterval);
+  document.getElementById("resultsCard").classList.remove("visible");
+  document.getElementById("quizCard").classList.remove("visible");
+  document.getElementById("categoryScreen").style.display = "block";
+  document.getElementById("startLabel").classList.add("visible");
+}
+</script>
+</body>
+</html>

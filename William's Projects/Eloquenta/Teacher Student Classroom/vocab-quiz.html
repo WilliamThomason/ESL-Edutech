@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulary Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;
+    --text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;
+    --accent:#22d3ee;--green:#34d399;--amber:#fbbf24;--violet:#a78bfa;--rose:#fb7185;
+  }
+  html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+  .container{width:100%;max-width:720px;margin:0 auto;padding:24px 16px}
+
+  /* Header */
+  .header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:20px}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text-dim);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
+  .back-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(34,211,238,.06)}
+  .header h1{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:-.3px}
+
+  /* Category Select */
+  .category-select{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+  .cat-btn{padding:18px 16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .cat-btn span.cat-label{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);font-weight:500}
+  .cat-btn:hover{border-color:var(--text-dim);color:var(--text)}
+  .cat-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(34,211,238,.06)}
+  .cat-btn.active span.cat-label{color:var(--accent);opacity:.7}
+
+  /* Quiz Card */
+  .quiz-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;display:none}
+  .quiz-card.visible{display:block}
+
+  /* Progress */
+  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;color:var(--text-muted)}
+  .progress-bar-track{height:6px;background:var(--bg3);border-radius:99px;margin-bottom:20px;overflow:hidden}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--violet));border-radius:99px;transition:width .4s ease;width:0%}
+
+  /* Timer */
+  .timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .timer-label{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);font-weight:500}
+  .timer-bar-track{height:4px;background:var(--bg3);border-radius:99px;margin-bottom:24px;overflow:hidden}
+  .timer-bar-fill{height:100%;background:var(--amber);border-radius:99px;transition:width .1s linear;width:100%}
+  .timer-bar-fill.warning{background:var(--rose)}
+  .timer-bar-fill.danger{background:var(--rose);animation:pulse .6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  /* Score */
+  .score-badge{font-size:13px;font-weight:600;color:var(--green);background:rgba(52,211,153,.1);padding:4px 12px;border-radius:99px}
+
+  /* Word */
+  .word-area{text-align:center;margin-bottom:24px}
+  .word-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;font-weight:500}
+  .word{font-size:36px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+
+  /* Options */
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt-btn{padding:16px 20px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;font-weight:500;text-align:left;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+  .opt-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(34,211,238,.06)}
+  .opt-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .opt-btn.correct{border-color:var(--green);background:rgba(52,211,153,.12);color:var(--green)}
+  .opt-btn.incorrect{border-color:var(--rose);background:rgba(251,113,133,.12);color:var(--rose)}
+  .opt-btn.disabled{opacity:.5;cursor:default}
+  .opt-letter{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--bg2);border-radius:6px;font-size:12px;font-weight:700;color:var(--text-muted);margin-right:10px;flex-shrink:0;vertical-align:middle}
+  .opt-btn.correct .opt-letter{background:var(--green);color:var(--bg)}
+  .opt-btn.incorrect .opt-letter{background:var(--rose);color:var(--bg)}
+
+  /* Feedback */
+  .feedback{margin-top:16px;padding:16px;background:var(--bg3);border-radius:12px;border-left:4px solid var(--border);display:none}
+  .feedback.visible{display:flex;gap:10px;align-items:flex-start;animation:slideUp .25s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .feedback.correct{border-left-color:var(--green)}
+  .feedback.incorrect{border-left-color:var(--rose)}
+  .feedback-icon{font-size:18px;font-weight:700;flex-shrink:0;width:24px;text-align:center}
+  .feedback-text{font-size:14px;color:var(--text-dim)}
+  .feedback-text strong{color:var(--text);display:block;margin-bottom:3px;font-size:15px}
+  .next-btn{margin-top:14px;padding:10px 24px;background:var(--accent);border:none;border-radius:10px;color:var(--bg);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .next-btn:hover{opacity:.85}
+  .next-btn:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
+  /* Results */
+  .results-screen{text-align:center;padding:20px 0;display:none}
+  .results-screen.visible{display:block;animation:slideUp .3s ease}
+  .results-title{font-size:28px;font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+  .results-subtitle{font-size:15px;color:var(--text-muted);margin-bottom:24px}
+  .results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+  .stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 10px}
+  .stat-value{font-size:28px;font-weight:800;letter-spacing:-.5px}
+  .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-top:4px;font-weight:500}
+  .stat-accuracy{color:var(--green)}
+  .stat-time{color:var(--amber)}
+  .stat-score{color:var(--accent)}
+
+  .missed-section{text-align:left;margin-bottom:24px}
+  .missed-title{font-size:14px;font-weight:700;color:var(--rose);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+  .missed-list{display:flex;flex-direction:column;gap:8px}
+  .missed-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+  .missed-word{font-size:15px;font-weight:700;color:var(--text)}
+  .missed-def{font-size:13px;color:var(--text-muted);margin-top:2px}
+  .missed-none{font-size:14px;color:var(--green);text-align:center;padding:20px;background:rgba(52,211,153,.06);border-radius:10px;border:1px dashed rgba(52,211,153,.2)}
+
+  .results-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  /* Buttons */
+  .btn-primary{padding:12px 28px;background:var(--accent);border:none;border-radius:12px;color:var(--bg);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .btn-primary:hover{opacity:.85}
+  .btn-secondary{padding:12px 28px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-secondary:hover{border-color:var(--text-dim)}
+  .btn-primary:focus-visible,.btn-secondary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .start-label{text-align:center;font-size:14px;color:var(--text-muted);margin-top:16px;display:none}
+  .start-label.visible{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <a href="index.html" class="back-btn">&larr; Back</a>
+    <h1>Vocabulary Quiz</h1>
+  </div>
+
+  <!-- Category Selection -->
+  <div id="categoryScreen">
+    <div class="category-select">
+      <button class="cat-btn active" onclick="startQuiz('general')" data-cat="general">
+        <span class="cat-label">01</span>
+        General
+      </button>
+      <button class="cat-btn" onclick="startQuiz('business')" data-cat="business">
+        <span class="cat-label">02</span>
+        Business
+      </button>
+      <button class="cat-btn" onclick="startQuiz('academic')" data-cat="academic">
+        <span class="cat-label">03</span>
+        Academic
+      </button>
+      <button class="cat-btn" onclick="startQuiz('travel')" data-cat="travel">
+        <span class="cat-label">04</span>
+        Travel
+      </button>
+    </div>
+    <p class="start-label" id="startLabel">Select a category to begin</p>
+  </div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card" id="quizCard">
+    <div class="progress-row">
+      <span id="progressText">Question 1 of 20</span>
+      <span class="score-badge" id="scoreBadge">Score: 0</span>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+    <div class="timer-row">
+      <span class="timer-label">Time Remaining</span>
+      <span id="timerText" style="font-size:13px;font-weight:600;color:var(--amber)">15s</span>
+    </div>
+    <div class="timer-bar-track"><div class="timer-bar-fill" id="timerFill"></div></div>
+
+    <div class="word-area">
+      <div class="word-label">Define this word</div>
+      <div class="word" id="wordDisplay">Word</div>
+    </div>
+
+    <div class="options" id="optionsArea"></div>
+
+    <div class="feedback" id="feedback">
+      <div class="feedback-icon" id="feedbackIcon"></div>
+      <div>
+        <div class="feedback-text" id="feedbackText"></div>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="quiz-card" id="resultsCard">
+    <div class="results-screen">
+      <div class="results-title" id="resultsTitle">Quiz Complete</div>
+      <div class="results-subtitle" id="resultsSubtitle">Category: General</div>
+
+      <div class="results-stats">
+        <div class="stat-box">
+          <div class="stat-value stat-accuracy" id="statAccuracy">0%</div>
+          <div class="stat-label">Accuracy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value stat-score" id="statScore">0/20</div>
+          <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value stat-time" id="statTime">0s</div>
+          <div class="stat-label">Avg Time</div>
+        </div>
+      </div>
+
+      <div class="missed-section" id="missedSection">
+        <div class="missed-title">Review Missed Words</div>
+        <div class="missed-list" id="missedList"></div>
+      </div>
+
+      <div class="results-actions">
+        <button class="btn-primary" onclick="restartQuiz()">Play Again</button>
+        <button class="btn-secondary" onclick="changeCategory()">Change Category</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const VOCAB = {
+  general: [
+    {word:"Ubiquitous",def:"Present, appearing, or found everywhere",wrong:["Something that is extremely rare and difficult to locate in any setting","An object that stays hidden and never reveals itself to anyone","A phenomenon that occurs only once in a very long period of time"]},
+    {word:"Pragmatic",def:"Dealing with things sensibly and realistically in a practical way",wrong:["Approaching every situation with idealistic and unrealistic expectations","Making decisions based purely on emotions rather than logic","Avoiding any form of planning or preparation for the future"]},
+    {word:"Eloquent",def:"Fluent, persuasive, and expressive in speaking or writing",wrong:["Unable to express thoughts clearly when communicating with others","Speaking in a confused manner that is difficult for listeners to follow","Remaining silent and refusing to share opinions in any discussion"]},
+    {word:"Resilient",def:"Able to recover quickly from difficulties and adapt to challenges",wrong:["Easily breaking down when faced with even minor problems or setbacks","Being completely unable to function after experiencing any hardship","Avoiding all situations that might involve risk or uncertainty"]},
+    {word:"Meticulous",def:"Showing great attention to detail and being very careful and precise",wrong:["Paying little attention to details and making frequent careless errors","Completing work as quickly as possible without checking for mistakes","Being indifferent to the quality of the final result of any task"]},
+    {word:"Candid",def:"Truthful, straightforward, and honest in what one says and does",wrong:["Telling lies and deceiving others to protect oneself from criticism","Hiding one true feelings and being secretive about every matter","Avoiding direct answers and being evasive when questioned by others"]},
+    {word:"Profound",def:"Very great or intense, showing deep insight and understanding",wrong:["Lacking any depth of meaning or significance in what is communicated","Being concerned only with surface level and trivial matters","Having no real impact or lasting effect on those who encounter it"]},
+    {word:"Astute",def:"Having shrewdness, discernment, and the ability to accurately assess situations",wrong:["Lacking awareness and failing to notice important details around them","Being easily deceived and making poor judgments about people and events","Relying on guesswork rather than careful observation and analysis"]},
+    {word:"Tenacious",def:"Holding firmly to something and being persistent and determined",wrong:["Giving up easily when faced with the slightest obstacle or challenge","Lacking motivation and avoiding any effort that requires commitment","Quickly abandoning goals when the first signs of difficulty appear"]},
+    {word:"Innovative",def:"Introducing new ideas, methods, or creative approaches to solving problems",wrong:["Strictly following traditional methods and resisting any kind of change"," Rejecting new ideas and insisting that old ways are always the best","Refusing to consider any approach that has not been used before"]},
+    {word:"Versatile",def:"Able to adapt to many different functions, tasks, or situations",wrong:["Being limited to performing only one specific task and nothing else","Requiring extensive training before being able to do anything new","Refusing to try activities outside a very narrow area of expertise"]},
+    {word:"Diligent",def:"Working hard and being careful and persistent in one duties",wrong:["Avoiding work and exerting minimal effort whenever possible","Being negligent and careless about the responsibilities assigned to one","Procrastinating and delaying tasks until the very last moment"]},
+    {word:"Empathy",def:"The ability to understand and share the feelings of another person",wrong:["Being completely indifferent to the emotions and struggles of others","Feeling hostile and antagonistic toward anyone who is suffering","Dismissing other people feelings as unimportant and irrelevant"]},
+    {word:"Integrity",def:"The quality of being honest and having strong moral principles",wrong:["Being willing to lie and deceive others for personal advantage","Acting dishonestly whenever there is a chance of not being caught","Having no consistent moral standards and changing principles situationally"]},
+    {word:"Ambiguous",def:"Open to more than one interpretation and not having a clear meaning",wrong:["Being perfectly clear and leaving no room for any misunderstanding","Having a single obvious meaning that everyone interprets the same way","Being so straightforward that no explanation whatsoever is needed"]},
+    {word:"Comprehensive",def:"Complete and including all or nearly all elements of something",wrong:["Covering only a small part and missing many important aspects","Being partial and focusing on just one detail while ignoring everything else","Leaving out key information and providing an incomplete picture"]},
+    {word:"Elaborate",def:"Involving many carefully arranged parts or details that are complex",wrong:["Being extremely simple with very few parts or details to consider","Having a basic structure that requires little planning or effort","Presenting something in the most straightforward and minimal way possible"]},
+    {word:"Preliminary",def:"Done in preparation for something more important that comes later",wrong:["Being the final and conclusive step that finishes a process completely","Concluding a project after all the main work has already been done","Serving as the ultimate outcome rather than an initial preparation"]},
+    {word:"Substantial",def:"Of considerable importance, size, or real worth and significance",wrong:["Being trivial and having very little importance or real value","Amounting to almost nothing in terms of size, impact, or worth","Having no meaningful significance and being easily disregarded"]},
+    {word:"Contemporary",def:"Living or occurring at the same time as something else, or modern",wrong:["Belonging to a distant time long ago that no longer relates to today","Being outdated and having no relevance to the present moment","Referring exclusively to something that will only exist in the future"]}
+  ],
+  business: [
+    {word:"Revenue",def:"The total income generated by a company from its business activities",wrong:["The total expenses a company incurs during its financial operations","The debts and financial obligations that a company owes to others","The losses recorded when a company spends more than it earns"]},
+    {word:"Liquidation",def:"The process of winding up a company by selling off all its assets",wrong:["The expansion of business operations into new and emerging markets","The merging of two companies to form a single larger organization","The acquisition of smaller brands to grow a business portfolio"]},
+    {word:"Equity",def:"The value of shares issued by a company, representing ownership stake",wrong:["The total debt a company owes to its creditors and lenders","The operating expenses a company must pay to keep running","The liabilities that appear on a company balance sheet"]},
+    {word:"Dividend",def:"A regular sum of money paid by a company to its shareholders from profits",wrong:["A financial penalty imposed by regulators for violating rules","A salary payment made to company employees for their regular work","A repayment of loan principal made to banks and other creditors"]},
+    {word:"Amortization",def:"The gradual process of paying off a debt through scheduled payments over time",wrong:["The immediate and full repayment of all outstanding debt in one go","The rapid accumulation of new debt through increased borrowing","The complete cancellation of all assets without any repayment"]},
+    {word:"Leverage",def:"The strategic use of borrowed money to finance the purchase of assets and increase returns",wrong:["The practice of keeping all savings in low risk deposit accounts","The maintenance of large cash reserves that are not being used","The retention of all earnings within the business without borrowing"]},
+    {word:"Acquisition",def:"The process where one company purchases and takes ownership of another company",wrong:["The merging of two equal companies to form a completely new entity","The selling off of business units to raise quick cash","The process of listing company shares on a public stock exchange"]},
+    {word:"ROI",def:"Return on Investment, a measure of the profitability of an investment",wrong:["The rate of inflation affecting the general economy over time","The risk assessment of a company becoming insolvent and failing","The ratio comparing total debt to total assets of a business"]},
+    {word:"Fiscal",def:"Relating to government revenue, spending, taxation, and financial matters",wrong:["Relating to cultural affairs and the promotion of arts in society","Relating to military operations and national defense strategies","Religious activities and the management of faith based organizations"]},
+    {word:"Commodity",def:"A raw material or agricultural product that can be bought and sold on markets",wrong:["A service agreement between two parties for ongoing professional work","A legal contract that binds parties to specific obligations","A trademark protecting a brand name from being used by competitors"]},
+    {word:"Depreciation",def:"The gradual reduction in the recorded value of an asset over its useful lifetime",wrong:["The increase in market value of an asset as demand grows","The growth of a business market share through competitive success","The appreciation of property values in a booming real estate market"]},
+    {word:"Entrepreneur",def:"A person who starts, organizes, and operates a new business venture",wrong:["A government official who regulates business activities in a sector","A bank employee responsible for managing customer accounts","A financial auditor who examines company books for accuracy"]},
+    {word:"Monopoly",def:"The exclusive control of an entire market by a single supplier with no competition",wrong:["A highly competitive market with many providers fighting for customers","A government agency that oversees and regulates commercial activity","A partnership where two firms collaborate on a joint project"]},
+    {word:"Tariff",def:"A tax imposed by a government on goods that are imported or exported",wrong:["A financial subsidy given to domestic producers to lower their costs","A grant provided to support new business development initiatives","A rebate returned to customers after they make a large purchase"]},
+    {word:"Inflation",def:"A general increase in prices across the economy and corresponding fall in money purchasing power",wrong:["A sustained decrease in the general price level of goods and services","A period of economic stability where prices remain relatively constant","A strengthening of the currency making imports cheaper for consumers"]},
+    {word:"Collateral",def:"An asset or property pledged by a borrower as security for the repayment of a loan",wrong:["A regular dividend payment distributed to company shareholders","A salary paid to employees for performing their regular duties","A bonus given to managers for meeting performance targets"]},
+    {word:"Bankruptcy",def:"A legal state in which a person or business is unable to repay outstanding debts",wrong:["A period of rapid business expansion and market growth","A state of high profitability with record breaking annual revenue","A situation where a company dominates its market completely"]},
+    {word:"Outsourcing",def:"The practice of obtaining goods or services from an outside supplier rather than doing them internally",wrong:["The production of all goods and services within the company itself","The integration of suppliers into the company through vertical ownership","The exclusive hiring of local workers for all business operations"]},
+    {word:"Venture Capital",def:"Capital invested in a new startup business that has high potential for growth",wrong:["Government bonds that provide a guaranteed return with very low risk","Personal savings kept in a bank account earning standard interest","Standard deposits held at commercial banking institutions"]},
+    {word:"Market Share",def:"The total portion of sales in a market that is controlled by a particular company",wrong:["The total amount of revenue generated across an entire industry","The net profit earned by all companies operating in a sector","The operating costs required to run business activities efficiently"]}
+  ],
+  academic: [
+    {word:"Hypothesis",def:"A proposed explanation for a phenomenon, serving as a starting point for further investigation",wrong:["A proven fact that has already been confirmed through extensive testing","A final conclusion drawn after all data has been thoroughly analyzed","A random guess made without any observational basis or reasoning"]},
+    {word:"Methodology",def:"A systematic set of methods and procedures used in a particular field of study",wrong:["A list of references cited at the end of a research paper","The final conclusions and findings of a completed study","An appendix containing supplementary data and charts"]},
+    {word:"Empirical",def:"Based on observation, experience, or experiment rather than on theory alone",wrong:["Based purely on abstract reasoning without any experimental evidence","Speculative thinking that has not been tested in any way","Concerned only with philosophical concepts and abstract ideas"]},
+    {word:"Paradigm",def:"A typical example, pattern, or model of something that serves as a standard",wrong:["An error or mistake made during the course of an investigation","A quantity that can vary and change during an experiment","A minor note added at the bottom of a page in a document"]},
+    {word:"Annotated",def:"Provided with explanatory notes, comments, or additional information added to the text",wrong:["Simplified and made easier to understand by removing complex parts","Translated from one language into another for wider readability","Shortened and condensed by cutting out less important sections"]},
+    {word:"Corroborate",def:"To confirm or give support to a statement, theory, or finding with additional evidence",wrong:["To contradict and argue against a claim made by a researcher","To question the motives behind without examining any evidence","To deliberately ignore findings that do not support a preferred conclusion"]},
+    {word:"Synthesis",def:"The process of combining different ideas or elements to form a connected whole or new theory",wrong:["The separation and isolation of individual elements for individual study","The removal of data points that do not fit an expected pattern","The process of criticizing and tearing apart arguments made by others"]},
+    {word:"Cognitive",def:"Relating to mental processes such as perception, memory, thinking, and reasoning",wrong:["Relating to physical movement and coordination of the body","Connected to emotional responses rather than logical thinking","Pertaining to mechanical operations that require no conscious thought"]},
+    {word:"Discourse",def:"Written or spoken communication, discussion, or debate on a particular subject",wrong:["The complete absence of any communication between parties","A state of isolation where no interaction takes place","A deliberate refusal to engage in any form of discussion"]},
+    {word:"Quantitative",def:"Measured and expressed in terms of quantity, numbers, and statistical data",wrong:["Describing experiences through detailed narrative and storytelling","Based on personal opinion rather than on measurable data","Focused on the subjective qualities that cannot be counted or measured"]},
+    {word:"Qualitative",def:"Relating to the quality, nature, or character of something rather than its quantity",wrong:["Based strictly on mathematical calculations and numerical analysis","Expressed primarily in statistical terms and measured quantities","Concerned only with objective numbers without any descriptive assessment"]},
+    {word:"Peer Review",def:"The evaluation of scientific or academic work by qualified experts in the same field",wrong:["Assessment conducted by oneself without any external input","A public vote open to anyone regardless of their qualifications","A screening process conducted solely by journal editors without outside experts"]},
+    {word:"Abstract",def:"A brief summary that provides an overview of a research paper or academic article",wrong:["A complete bibliography listing all sources referenced in the work","A glossary defining technical terms used throughout the text","An index listing every topic and where it appears in the document"]},
+    {word:"Citation",def:"A formal reference to a specific source of information used in academic work",wrong:["A number placed at the bottom of a page as a footnote marker","The title of a document appearing at the first page","A heading that appears at the top of every other page"]},
+    {word:"Variable",def:"A factor or element that can change and be measured in an experiment or study",wrong:["A fixed constant that remains unchanged throughout the research","The final conclusion drawn after completing all data analysis","The main theory that a researcher is attempting to prove"]},
+    {word:"Longitudinal",def:"Studying and tracking the same group of people over an extended period of time",wrong:["Conducting a brief study that lasts only a short period of time","Taking a single snapshot of different groups at one point in time","Selecting random participants for a one time data collection session"]},
+    {word:"Axiom",def:"A statement that is regarded as self-evidently true and accepted as a starting point",wrong:["A logical fallacy where the reasoning contains an internal error","A speculative guess that has not yet been supported by any evidence","A direct contradiction where two statements cannot both be true"]},
+    {word:"Dichotomy",def:"A division or contrast between two things that are represented as being entirely different or opposed",wrong:["A coming together and merging of separate elements into one","A gradual blending where differences become less and less distinguishable","A continuous spectrum with no clear boundaries between categories"]},
+    {word:"Iteration",def:"The repetition of a process or sequence, typically to improve the result each time",wrong:["The complete removal or deletion of material from a document","The intentional omission of sections that are no longer needed","The final conclusion that ends a process after the first attempt"]},
+    {word:"Verisimilitude",def:"The appearance or semblance of being true, real, or believable",wrong:["A state of complete confusion that makes understanding impossible","The deliberate act of deceiving others through calculated lies","A sense of ambiguity where nothing can be clearly understood"]}
+  ],
+  travel: [
+    {word:"Itinerary",def:"A detailed plan or schedule of a journey listing destinations and times",wrong:["An official passport document required for crossing international borders","A small souvenir purchased to remember a place that was visited","An entry visa granted by a foreign government for temporary visits"]},
+    {word:"Transit",def:"The act of passing through or traveling across a place on the way to somewhere else",wrong:["A permanent relocation where one moves to live somewhere new","The process of entering a country and passing through immigration control","A formal inspection of luggage carried out by customs officials at borders"]},
+    {word:"Excursion",def:"A short journey or trip taken for pleasure, often as part of a larger trip",wrong:["A business meeting conducted away from the usual office location","A medical procedure that requires traveling to a specialist facility","A court hearing that requires appearing before a judge in another city"]},
+    {word:"Accommodation",def:"A place where travelers can stay, sleep, and rest during their trip",wrong:["The transportation used to travel between different destinations","The entertainment and activities available at a holiday destination","The souvenirs and gifts purchased while visiting new places"]},
+    {word:"Visa",def:"An official document or stamp in a passport that permits entry to a foreign country",wrong:["A boarding pass needed to get onto an airplane for a flight","A luggage tag attached to suitcases for identification purposes","A paper note of the local currency used in a foreign country"]},
+    {word:"Embarkation",def:"The act of boarding a ship, aircraft, or other vehicle to begin a journey",wrong:["The process of leaving a vehicle after reaching the final destination","The procedure of entering a country through immigration checkpoints","The security screening that passengers must pass through at airports"]},
+    {word:"Jet Lag",def:"The tiredness and disorientation felt after a long flight across different time zones",wrong:["A feeling of nausea experienced during turbulent flights at high altitude","A condition caused by insufficient oxygen when climbing to high elevations","A general sense of motion sickness from traveling in any vehicle"]},
+    {word:"Hostel",def:"A budget friendly form of accommodation where travelers share dormitory style rooms",wrong:["A high end luxury hotel offering premium concierge services to guests","A private villa rented exclusively for a single family vacation","A large cruise ship that transports passengers across oceans in comfort"]},
+    {word:"Consulate",def:"The official offices of a consul that provide assistance to citizens traveling abroad",wrong:["An international airport terminal used by passengers for departing flights","A train station hub where multiple rail lines intersect and connect","A museum dedicated to preserving historical artifacts and artwork"]},
+    {word:"Carry-On",def:"A small bag or suitcase that a passenger is allowed to bring onto the aircraft cabin",wrong:["Luggage that is checked in and stored in the aircraft cargo hold","Heavy freight and commercial goods transported by cargo ships","Postal packages sent through international mail delivery services"]},
+    {word:"Layover",def:"A stop or period of waiting at an intermediate point during a longer journey",wrong:["A direct flight that goes straight to the final destination without stopping","The final arrival at the end of a long journey to the planned destination","The departure from home at the very beginning of any trip"]},
+    {word:"Departure",def:"The act of leaving a place to begin traveling to another destination",wrong:["The act of arriving at the final destination after completing a journey","The return trip back home after finishing a vacation abroad","An unexpected delay that prevents travelers from leaving on time"]},
+    {word:"Duty-Free",def:"Goods that can be purchased without paying the usual local import taxes or customs duties",wrong:["Items that are taxed at the highest rate when brought into a country","Goods that are strictly prohibited from entering a foreign nation","Luggage that exceeds the weight limit set by the airline for flights"]},
+    {word:"Passport",def:"An official government document that verifies identity for international travel",wrong:["A key card used to unlock the door of a hotel room","A boarding pass issued by the airline before a flight departs","A guidebook containing information about attractions at a destination"]},
+    {word:"Backpacker",def:"A person who travels on a low budget, typically carrying belongings in a backpack",wrong:["A passenger who travels in premium first class cabin accommodations","A traveler who works in an office environment while stationed abroad","A tourist who books exclusive and expensive luxury resort vacations"]},
+    {word:"Landmark",def:"A prominent and recognizable feature of a landscape used for navigation or identification",wrong:["A signpost on a road giving directions to nearby towns and cities","A restaurant that serves local cuisine to visitors in an area","A parking lot where travelers leave their vehicles during a trip"]},
+    {word:"Roam",def:"To move about or travel freely without a fixed purpose or specific destination",wrong:["To settle permanently and establish long term residence in one location","To plan every detail of a journey with strict schedules and timetables","To commute daily between home and a fixed place of employment"]},
+    {word:"Glimpse",def:"A brief, partial, or momentary view of something seen only for a short time",wrong:["A thorough and detailed examination of something studied carefully","A complete tour visiting every part of a place in exhaustive detail","A long and uninterrupted period of observation lasting several hours"]},
+    {word:"Perishable",def:"Items that are likely to decay or spoil quickly if not properly stored or transported",wrong:["Goods that are extremely durable and last for a very long time","Objects that are fragile and easily broken when handled improperly","Materials that are rigid and cannot be bent or shaped in any way"]},
+    {word:"Customs",def:"The government authority that inspects goods and luggage entering or leaving a country",wrong:["The airline company responsible for operating international flights","The hotel reception desk where guests check in and collect keys","The tourism board that promotes a destination to potential visitors"]}
+  ]
+};
+
+let currentCategory = "general";
+let questions = [];
+let qIndex = 0;
+let score = 0;
+let missed = [];
+let timerInterval = null;
+let timeLeft = 15;
+let totalTime = 0;
+let answered = false;
+
+function shuffle(arr) {
+  let a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(category) {
+  currentCategory = category;
+  questions = shuffle(VOCAB[category]);
+  qIndex = 0;
+  score = 0;
+  missed = [];
+  totalTime = 0;
+
+  document.querySelectorAll(".cat-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.cat === category);
+  });
+
+  document.getElementById("categoryScreen").style.display = "none";
+  document.getElementById("quizCard").classList.add("visible");
+  document.getElementById("resultsCard").classList.remove("visible");
+  document.getElementById("startLabel").classList.remove("visible");
+
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[qIndex];
+  const total = questions.length;
+
+  document.getElementById("progressText").textContent = `Question ${qIndex + 1} of ${total}`;
+  document.getElementById("progressFill").style.width = `${((qIndex) / total) * 100}%`;
+  document.getElementById("scoreBadge").textContent = `Score: ${score}`;
+  document.getElementById("wordDisplay").textContent = q.word;
+  document.getElementById("feedback").classList = "feedback";
+  document.getElementById("nextBtn").style.display = "none";
+
+  const opts = shuffle([q.def, ...q.wrong]);
+  const letters = ["A","B","C","D"];
+  const area = document.getElementById("optionsArea");
+  area.innerHTML = "";
+
+  opts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.setAttribute("tabindex", "0");
+    btn.addEventListener("click", () => selectAnswer(btn, opt, q));
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); btn.click(); }
+    });
+    area.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 15;
+  updateTimerDisplay();
+
+  timerInterval = setInterval(() => {
+    timeLeft -= 0.1;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      clearInterval(timerInterval);
+      if (!answered) {
+        answered = true;
+        timeUp();
+      }
+    }
+    updateTimerDisplay();
+  }, 100);
+}
+
+function updateTimerDisplay() {
+  const pct = (timeLeft / 15) * 100;
+  const fill = document.getElementById("timerFill");
+  fill.style.width = `${pct}%`;
+  document.getElementById("timerText").textContent = `${Math.ceil(timeLeft)}s`;
+
+  fill.className = "timer-bar-fill";
+  if (timeLeft <= 3) fill.classList.add("danger");
+  else if (timeLeft <= 7) fill.classList.add("warning");
+}
+
+function selectAnswer(btn, selected, question) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const elapsed = (15 - timeLeft);
+  totalTime += elapsed;
+
+  const allBtns = document.querySelectorAll(".opt-btn");
+  allBtns.forEach(b => {
+    b.disabled = true;
+    b.classList.add("disabled");
+    const text = b.textContent.replace(/^[A-Z]\s*/, "");
+    if (text === question.def) b.classList.add("correct");
+  });
+
+  const feedback = document.getElementById("feedback");
+  const fbText = document.getElementById("feedbackText");
+  const fbIcon = document.getElementById("feedbackIcon");
+
+  if (selected === question.def) {
+    score++;
+    document.getElementById("scoreBadge").textContent = `Score: ${score}`;
+    btn.classList.remove("disabled");
+    btn.classList.add("correct");
+    feedback.classList = "feedback correct visible";
+    fbIcon.textContent = "[OK]";
+    fbText.innerHTML = `<strong>Correct!</strong>${question.word}: ${question.def}`;
+  } else {
+    btn.classList.remove("disabled");
+    btn.classList.add("incorrect");
+    missed.push({ word: question.word, def: question.def });
+    feedback.classList = "feedback incorrect visible";
+    fbIcon.textContent = "[X]";
+    fbText.innerHTML = `<strong>Incorrect.</strong>The correct definition of "${question.word}" is: ${question.def}`;
+  }
+
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+function timeUp() {
+  const question = questions[qIndex];
+  totalTime += 15;
+
+  const allBtns = document.querySelectorAll(".opt-btn");
+  allBtns.forEach(b => {
+    b.disabled = true;
+    b.classList.add("disabled");
+    const text = b.textContent.replace(/^[A-Z]\s*/, "");
+    if (text === question.def) b.classList.add("correct");
+  });
+
+  missed.push({ word: question.word, def: question.def });
+
+  const feedback = document.getElementById("feedback");
+  feedback.classList = "feedback incorrect visible";
+  document.getElementById("feedbackIcon").textContent = "[--]";
+  document.getElementById("feedbackText").innerHTML = `<strong>Time's up!</strong>The definition of "${question.word}" is: ${question.def}`;
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+function nextQuestion() {
+  clearInterval(timerInterval);
+  qIndex++;
+
+  if (qIndex >= questions.length) {
+    showResults();
+    return;
+  }
+  showQuestion();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById("quizCard").classList.remove("visible");
+  document.getElementById("resultsCard").classList.add("visible");
+
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+  const avgTime = totalTime > 0 ? (totalTime / total).toFixed(1) : "0";
+
+  const catNames = { general:"General", business:"Business", academic:"Academic", travel:"Travel" };
+  document.getElementById("resultsSubtitle").textContent = `Category: ${catNames[currentCategory]}`;
+  document.getElementById("statAccuracy").textContent = `${pct}%`;
+  document.getElementById("statScore").textContent = `${score}/${total}`;
+  document.getElementById("statTime").textContent = `${avgTime}s`;
+
+  const missedList = document.getElementById("missedList");
+  const missedSection = document.getElementById("missedSection");
+
+  if (missed.length === 0) {
+    missedList.innerHTML = `<div class="missed-none">Perfect score! No words missed.</div>`;
+  } else {
+    missedList.innerHTML = missed.map(m =>
+      `<div class="missed-item"><div class="missed-word">${m.word}</div><div class="missed-def">${m.def}</div></div>`
+    ).join("");
+  }
+}
+
+function restartQuiz() {
+  startQuiz(currentCategory);
+}
+
+function changeCategory() {
+  clearInterval(timerInterval);
+  document.getElementById("resultsCard").classList.remove("visible");
+  document.getElementById("quizCard").classList.remove("visible");
+  document.getElementById("categoryScreen").style.display = "block";
+  document.getElementById("startLabel").classList.add("visible");
+}
+</script>
+</body>
+</html>

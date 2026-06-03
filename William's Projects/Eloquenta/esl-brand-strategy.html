@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESL Business — Brand Strategy &amp; Business Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: #020617;
+    color: #e2e8f0;
+    padding: 24px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  h1 { font-size: 22px; font-weight: 700; color: #22d3ee; margin-bottom: 4px; }
+  h2 {
+    font-size: 16px; font-weight: 700; color: #fbbf24;
+    margin: 28px 0 12px 0; padding-bottom: 6px;
+    border-bottom: 2px solid #fbbf24;
+  }
+  h3 { font-size: 13px; font-weight: 700; color: #a78bfa; margin: 20px 0 8px 0; }
+  h4 { font-size: 11px; font-weight: 700; color: #34d399; margin: 14px 0 6px 0; }
+  .subtitle { font-size: 11px; color: #64748b; margin-bottom: 6px; }
+  .tagline { font-size: 11px; color: #34d399; margin-bottom: 24px; font-style: italic; }
+
+  .box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+  .box.highlight { border-color: #22d3ee; }
+  .box.warning { border-color: #f59e0b; }
+  .box.usp { border-color: #34d399; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10px; }
+  th { background: #1e293b; color: #94a3b8; padding: 8px 6px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 6px; border-bottom: 1px solid #1e293b; vertical-align: top; }
+  tr:hover { background: #1e293b44; }
+
+  .name-option {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 14px;
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .name-option .rank { font-size: 20px; font-weight: 700; color: #22d3ee; margin-right: 12px; min-width: 30px; }
+  .name-option .name { font-size: 14px; font-weight: 700; }
+  .name-option .meaning { font-size: 9px; color: #64748b; }
+  .name-option .verdict { font-size: 9px; padding: 3px 8px; border-radius: 3px; }
+  .verdict-yes { background: rgba(52,211,153,0.15); color: #34d399; }
+  .verdict-maybe { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .verdict-no { background: rgba(251,113,133,0.15); color: #fb7185; }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .flow-node {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 10px;
+    text-align: center;
+    min-width: 90px;
+  }
+  .flow-arrow { color: #475569; font-size: 14px; }
+
+  .big-number { font-size: 28px; font-weight: 700; color: #22d3ee; }
+  .big-label { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  .stat-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; text-align: center; }
+
+  .region-badge {
+    display: inline-block; font-size: 8px; padding: 2px 6px; border-radius: 3px; margin: 2px; font-weight: 600;
+  }
+  .eu { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .as { background: rgba(251,146,60,0.2); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+  .sa { background: rgba(52,211,153,0.2); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+  .all-reg { background: rgba(167,139,250,0.2); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+
+  ul { padding-left: 0; list-style: none; font-size: 10px; color: #94a3b8; }
+  ul li { padding: 3px 0; }
+  ul li::before { content: "▸ "; color: #475569; }
+  ul.check li::before { content: "✓ "; color: #34d399; }
+  ul.cross li::before { content: "✗ "; color: #fb7185; }
+  ul.star li::before { content: "★ "; color: #fbbf24; }
+</style>
+</head>
+<body>
+
+<h1>ESL Business — Brand Strategy &amp; Business Plan</h1>
+<p class="subtitle">Based on: Voxy + Fluentify + English Score | Premium Multilingual VoIP ESL</p>
+<p class="tagline">"English Score's structure + Fluentify's premium tutoring + live translations nobody else offers"</p>
+
+
+<!-- ============================== -->
+<!-- THE THREE MODELS               -->
+<!-- ============================== -->
+<h2>The Three Companies We're Learning From</h2>
+
+<div class="grid-3">
+  <div class="box">
+    <h4 style="color:#3b82f6">VOXY</h4>
+    <p style="font-size:10px; color:#94a3b8; margin-bottom:8px;">Corporate/individual English training. AI-powered adaptive learning. Mobile-first.</p>
+    <ul class="check">
+      <li>Structured level system</li>
+      <li>Real-world content (news, business)</li>
+      <li>B2B corporate packages</li>
+      <li>Subscription model</li>
+      <li>Mobile-first = always accessible</li>
+    </ul>
+    <ul class="cross">
+      <li>No live 1-on-1 tutoring</li>
+      <li>No translation support</li>
+      <li>Impersonal / AI-heavy</li>
+    </ul>
+    <p style="font-size:9px; color:#fbbf24; margin-top:8px;">SUBSCRIPTION: $39-69/mo individual | Custom B2B</p>
+  </div>
+
+  <div class="box">
+    <h4 style="color:#f59e0b">FLUENTIFY</h4>
+    <p style="font-size:10px; color:#94a3b8; margin-bottom:8px;">Premium 1-on-1 online English tutoring marketplace. Hand-picked native teachers.</p>
+    <ul class="check">
+      <li>Premium 1-on-1 tutoring</li>
+      <li>Native teachers, quality-controlled</li>
+      <li>Placement test + structured levels</li>
+      <li>Business professional focus</li>
+      <li>Marketplace = scalable model</li>
+    </ul>
+    <ul class="cross">
+      <li>No translation support</li>
+      <li>Less structured curriculum</li>
+      <li>No corporate packages</li>
+    </ul>
+    <p style="font-size:9px; color:#fbbf24; margin-top:8px;">PRICING: $40-80/hr | Teacher is contractor</p>
+  </div>
+
+  <div class="box">
+    <h4 style="color:#8b5cf6">ENGLISH SCORE</h4>
+    <p style="font-size:10px; color:#94a3b8; margin-bottom:8px;">Your syllabus. 14-level system (FL0-FL13), CEFR-aligned. Placement + assessments.</p>
+    <ul class="check">
+      <li>Highly structured 14-level system</li>
+      <li>CEFR-aligned (globally recognized)</li>
+      <li>Placement test at entry</li>
+      <li>Assessment at end of each block</li>
+      <li>Language points + dialogues + vocab per level</li>
+    </ul>
+    <ul class="cross">
+      <li>No live translation</li>
+      <li>No corporate offering</li>
+      <li>189 language points to create materials for</li>
+    </ul>
+    <p style="font-size:9px; color:#fbbf24; margin-top:8px;">MODEL: 1-on-1 + structured curriculum</p>
+  </div>
+</div>
+
+
+<!-- ============================== -->
+<!-- YOUR HYBRID MODEL               -->
+<!-- ============================== -->
+<h2>Your Hybrid Model — The Best of All Three</h2>
+
+<div class="box usp">
+  <h4>YOUR POSITIONING</h4>
+  <p style="font-size:13px; color:#e2e8f0; font-weight:600;">
+    "Structured English Score curriculum + Fluentify's premium 1-on-1 tutoring + live translations nobody else offers"
+  </p>
+</div>
+
+<div class="grid-2">
+  <div class="box">
+    <h4>FROM VOXY — What You Adopt</h4>
+    <ul class="star">
+      <li>B2B corporate packages (sell to companies, immigration consultants)</li>
+      <li>Exam-focused adaptive content (TOEFL, IELTS, OET, IGCSE)</li>
+      <li>Mobile-first student dashboard</li>
+      <li>Free content marketing (YouTube lessons, lead magnets)</li>
+      <li>Progress tracking and reporting</li>
+      <li>Multi-brand localization under one umbrella</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>FROM FLUENTIFY — What You Adopt</h4>
+    <ul class="star">
+      <li>Premium 1-on-1 lesson format</li>
+      <li>Hand-picked teacher marketplace (you first, then hire)</li>
+      <li>Placement test → learning path</li>
+      <li>Business professional target market</li>
+      <li>Teacher contractor model (commission-based)</li>
+      <li>Premium pricing ($40-90/hr)</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>FROM ENGLISH SCORE — Your Foundation</h4>
+    <ul class="star">
+      <li>14-level system (FL0-FL13, Pre-A1 to C2+)</li>
+      <li>CEFR-aligned progression</li>
+      <li>Placement test at entry</li>
+      <li>Assessment at end of each block</li>
+      <li>Language points + dialogues + vocabulary per level</li>
+      <li>189 language points, 92 topics, ~182 sessions to create</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>YOUR USP — What Nobody Else Has</h4>
+    <ul class="star">
+      <li><b>Live translations during lessons</b> — you teach in EN, translate in DE/ES in real-time</li>
+      <li>AI-assisted translations for 6+ other languages (DeepL + human review)</li>
+      <li>Bilingual lesson materials (EN + target language)</li>
+      <li>Cultural bridging — you understand the learner's language and culture</li>
+      <li>Multi-currency, multi-language, multi-region from day one</li>
+      <li>Dual-VoIP reliability (Google Meet + Talky.io failover)</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ============================== -->
+<!-- NAME IDEAS                     -->
+<!-- ============================== -->
+<h2>Brand Name Ideas</h2>
+<p class="subtitle">You mentioned Voxy as inspiration. Here are names that fit the premium multilingual ESL space.</p>
+
+<h3>Top Tier — Strongest Options</h3>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">1</div>
+    <div>
+      <div class="name">VerbalEdge</div>
+      <div class="meaning">"Verbal" = spoken language. "Edge" = your competitive advantage (live translations).<br>
+      Works globally, premium feel, easy to spell in any language.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-yes">BEST FIT</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">2</div>
+    <div>
+      <div class="name">TwoTongue</div>
+      <div class="meaning">Clever play on "tongue" = language. Speaks directly to bilingual learning.<br>
+      Memorable, sticky, slightly playful. Think: "Speaking two tongues."</div>
+    </div>
+  </div>
+  <div class="verdict verdict-yes">STRONG</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">3</div>
+    <div>
+      <div class="name">BridgeLang</div>
+      <div class="meaning">"Bridge" = connecting languages. Clear value proposition.<br>
+      Professional, works across all markets, easy to localize.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-yes">STRONG</div>
+</div>
+
+<h3>Second Tier — Good Options</h3>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">4</div>
+    <div>
+      <div class="name">Parola</div>
+      <div class="meaning">"Word" or "speech" in Italian, similar in Spanish/Portuguese/French.<br>
+      European premium feel. Short, elegant, brandable.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">5</div>
+    <div>
+      <div class="name">FluentFirst</div>
+      <div class="meaning">"Fluent" = goal. "First" = your first language advantage.<br>
+      Premium positioning, clear meaning, good for SEO.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">6</div>
+    <div>
+      <div class="name">LangBridge</div>
+      <div class="meaning">Shorter version of BridgeLang. Clean, modern, tech-feel.<br>
+      Works well as app name too.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">7</div>
+    <div>
+      <div class="name">SayLingua</div>
+      <div class="meaning">"Say" = speaking. "Lingua" = language (Latin, recognized across EU).<br>
+      Action-oriented, fresh, works in Romance languages.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<h3>Voxy-Style Names (Short, Punchy)</h3>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">8</div>
+    <div>
+      <div class="name">LinguaCore</div>
+      <div class="meaning">"Core" = foundation. Serious, structured, implies depth.<br>
+      Fits the English Score structured approach well.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">9</div>
+    <div>
+      <div class="name">ProLingo</div>
+      <div class="meaning">"Pro" = premium/professional. "Lingo" = language (approachable).<br>
+      Premium but not stuffy.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<div class="name-option">
+  <div style="display:flex; align-items:center;">
+    <div class="rank">10</div>
+    <div>
+      <div class="name">FluencyDock</div>
+      <div class="meaning">"Dock" = where you arrive. Learning destination metaphor.<br>
+      Unique, memorable, good for app dashboard metaphor.</div>
+    </div>
+  </div>
+  <div class="verdict verdict-maybe">NICE</div>
+</div>
+
+<h3>Names to Avoid (too generic or problematic)</h3>
+<div class="box warning">
+  <ul class="cross">
+    <li><b>Englishea/Englisify/Englishify</b> — too generic, SEO competition is brutal</li>
+    <li><b>Sprech</b> — great in German, but "Sprech" sounds like "scratch" in English</li>
+    <li><b>HablaNow</b> — too Spanish-specific, excludes EU/Asia</li>
+    <li><b>Toungue</b> — misspelling of "tongue" reads as error, not clever</li>
+    <li><b>ELSA</b> — already taken (Elsa Speak is a well-funded competitor)</li>
+  </ul>
+</div>
+
+
+<!-- ============================== -->
+<!-- LOCALIZATION STRATEGY         -->
+<!-- ============================== -->
+<h2>Localization Strategy — One Brand, Many Doors</h2>
+<p class="subtitle">Voxy's model: one umbrella brand, localized storefronts. NOT separate brands per country.</p>
+
+<div class="flow">
+  <div class="flow-node" style="border-color:#22d3ee; color:#22d3ee;"><b>UMBRELLA BRAND</b><br>VerbalEdge.com</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">.de (German)<br>.fr (French)<br>.es (Spanish)<br>.it (Italian)<br>.pt (Portuguese)<br>.jp (Japanese)<br>.kr (Korean)<br>.cn (Mandarin)</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><b>ONE PLATFORM</b><br>Same LMS, same curriculum, same teacher marketplace</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><b>LOCAL FEEL</b><br>Language, currency, ads, support</div>
+</div>
+
+<div class="grid-3">
+  <div class="box">
+    <h4><span class="region-badge eu">EU</span> European Markets</h4>
+    <table>
+      <tr><td><b>Primary</b></td><td>Germany, France, Italy, Spain</td></tr>
+      <tr><td><b>Languages</b></td><td>DE, FR, ES, IT</td></tr>
+      <tr><td><b>Domain</b></td><td>brand.de, .fr, .es, .it</td></tr>
+      <tr><td><b>Pricing</b></td><td>€50-90/hr (premium)</td></tr>
+      <tr><td><b>Payment</b></td><td>SEPA, credit card</td></tr>
+      <tr><td><b>Compliance</b></td><td>GDPR required</td></tr>
+      <tr><td><b>Your edge</b></td><td>DE + ES direct translation</td></tr>
+    </table>
+  </div>
+  <div class="box">
+    <h4><span class="region-badge as">AS</span> Asian Markets</h4>
+    <table>
+      <tr><td><b>Primary</b></td><td>Japan, Korea, China, Vietnam</td></tr>
+      <tr><td><b>Languages</b></td><td>JA, KO, ZH, VI</td></tr>
+      <tr><td><b>Domain</b></td><td>brand.jp, .kr, .cn</td></tr>
+      <tr><td><b>Pricing</b></td><td>¥4,000-8,000/hr (PPP adjusted)</td></tr>
+      <tr><td><b>Payment</b></td><td>Credit card, Alipay, LINE Pay</td></tr>
+      <tr><td><b>Hot exam</b></td><td>TOEFL + IELTS (massive demand)</td></tr>
+      <tr><td><b>Translation</b></td><td>AI draft + native review</td></tr>
+    </table>
+  </div>
+  <div class="box">
+    <h4><span class="region-badge sa">SA</span> South American Markets</h4>
+    <table>
+      <tr><td><b>Primary</b></td><td>Brazil, Colombia, Argentina</td></tr>
+      <tr><td><b>Languages</b></td><td>PT, ES</td></tr>
+      <tr><td><b>Domain</b></td><td>brand.com.br, .com</td></tr>
+      <tr><td><b>Pricing</b></td><td>R$100-200/hr (accessible)</td></tr>
+      <tr><td><b>Payment</b></td><td>Pix, boleto, credit card</td></tr>
+      <tr><td><b>Hot market</b></td><td>Business English (corporate)</td></tr>
+      <tr><td><b>Your edge</b></td><td>PT via ES similarity + AI</td></tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============================== -->
+<!-- REVENUE MODEL                  -->
+<!-- ============================== -->
+<h2>Revenue Model — How You Make Money</h2>
+
+<div class="grid-2">
+  <div class="box">
+    <h4>B2C — Individual Students (70% of revenue target)</h4>
+    <table>
+      <tr><th>Package</th><th>Price</th><th>Frequency</th></tr>
+      <tr><td>Free Trial (30 min)</td><td>FREE</td><td>One-time</td></tr>
+      <tr><td>Single Lesson</td><td>$50-90</td><td>Per lesson</td></tr>
+      <tr><td>5-Lesson Pack</td><td>$225-405</td><td>Save 10%</td></tr>
+      <tr><td>10-Lesson Pack</td><td>$400-720</td><td>Save 20%</td></tr>
+      <tr><td>Exam Intensive (10 sessions)</td><td>$500-800</td><td>Per exam</td></tr>
+      <tr><td>Monthly Unlimited</td><td>$600-1000</td><td>Per month</td></tr>
+      <tr><td>Young Learners (30 min)</td><td>$30-50</td><td>Per lesson</td></tr>
+      <tr><td>Group Class (3-5 students)</td><td>$25-40/student</td><td>Per lesson</td></tr>
+    </table>
+  </div>
+  <div class="box">
+    <h4>B2B — Corporate / Institutional (30% of revenue target)</h4>
+    <table>
+      <tr><th>Package</th><th>Price</th><th>Notes</th></tr>
+      <tr><td>Corporate 10-pack</td><td>$4,000-7,000</td><td>For teams</td></tr>
+      <tr><td>Corporate Monthly</td><td>$2,000-5,000/mo</td><td>Per company</td></tr>
+      <tr><td>Immigration Consultant Deal</td><td>$300/student</td><td>Referral commission</td></tr>
+      <tr><td>University Partnership</td><td>Custom</td><td>Bulk pricing</td></tr>
+      <tr><td>OET Healthcare Package</td><td>$600-900</td><td>Per student</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-box">
+    <div class="big-number">10</div>
+    <div class="big-label">Students @ 4hrs/wk = Break even</div>
+  </div>
+  <div class="stat-box">
+    <div class="big-number">25</div>
+    <div class="big-label">Hrs/wk = Hire first teacher</div>
+  </div>
+  <div class="stat-box">
+    <div class="big-number">$4k</div>
+    <div class="big-label">Mo revenue @ 20 students</div>
+  </div>
+  <div class="stat-box">
+    <div class="big-number">6</div>
+    <div class="big-label">Teachers by month 12 target</div>
+  </div>
+</div>
+
+
+<!-- ============================== -->
+<!-- HQ & LEGAL                     -->
+<!-- ============================== -->
+<h2>HQ Registration — Low/No Tax, No Residency Required</h2>
+
+<div class="box warning">
+  <p style="font-size:10px; color:#fbbf24;">
+    <b>IMPORTANT:</b> This is research, not legal/tax advice. Talk to a cross-border tax accountant before deciding. The best structure depends on where YOU are tax resident, not just where the company is registered.
+  </p>
+</div>
+
+<table>
+  <tr><th>Jurisdiction</th><th>Corp. Tax</th><th>Residency Needed?</th><th>Setup Cost</th><th>Best For</th><th>Verdict</th></tr>
+  <tr>
+    <td><b>Estonia (e-Residency)</b></td>
+    <td>0% on retained profits (20% on dividends)</td>
+    <td>No</td>
+    <td>~€300</td>
+    <td>EU market access, digital setup, credibility</td>
+    <td><span style="color:#34d399">BEST FOR EU</span></td>
+  </tr>
+  <tr>
+    <td><b>UAE (Dubai Free Zone)</b></td>
+    <td>0%</td>
+    <td>No</td>
+    <td>$3-5k/yr</td>
+    <td>International, premium image, no tax</td>
+    <td><span style="color:#34d399">BEST OVERALL</span></td>
+  </tr>
+  <tr>
+    <td><b>Wyoming LLC (USA)</b></td>
+    <td>0% state tax (federal still applies)</td>
+    <td>No</td>
+    <td>~$300</td>
+    <td>Cheapest, simplest, Stripe/PayPal easy</td>
+    <td><span style="color:#fbbf24">BUDGET OPTION</span></td>
+  </tr>
+  <tr>
+    <td><b>Hong Kong</b></td>
+    <td>8.25% first HK$2M</td>
+    <td>No</td>
+    <td>~$2k</td>
+    <td>Asia-facing business</td>
+    <td><span style="color:#fbbf24">GOOD FOR ASIA</span></td>
+  </tr>
+  <tr>
+    <td><b>Singapore</b></td>
+    <td>17% (effective often lower)</td>
+    <td>No</td>
+    <td>~$3k</td>
+    <td>Asia hub, great banking</td>
+    <td><span style="color:#fbbf24">GOOD FOR ASIA</span></td>
+  </tr>
+  <tr>
+    <td><b>Panama</b></td>
+    <td>0% on foreign income</td>
+    <td>No</td>
+    <td>~$2k</td>
+    <td>SA-facing, territorial tax</td>
+    <td><span style="color:#fbbf24">GOOD FOR SA</span></td>
+  </tr>
+</table>
+
+<h3>My Recommendation: Two Options</h3>
+
+<div class="grid-2">
+  <div class="box">
+    <h4>Option A: UAE Free Zone (DMCC/JAFZA)</h4>
+    <ul class="check">
+      <li>0% corporate and personal tax</li>
+      <li>No requirement to live there</li>
+      <li>Can get UAE business bank account</li>
+      <li>Premium international image</li>
+      <li>Easy to add teachers as contractors globally</li>
+    </ul>
+    <ul class="cross">
+      <li>Costs $3-5k/year (license + virtual office)</li>
+      <li>More paperwork than Estonia</li>
+    </ul>
+    <p style="font-size:9px; color:#34d399; margin-top:8px;">BEST IF: You want 0% tax and premium positioning</p>
+  </div>
+  <div class="box">
+    <h4>Option B: Estonia e-Residency</h4>
+    <ul class="check">
+      <li>0% tax on retained/reinvested profits</li>
+      <li>Fully digital setup (do it from SA)</li>
+      <li>EU VAT number (credibility for EU students)</li>
+      <li>Only €300 to register</li>
+      <li>Easy EU bank account (Wise, Payoneer)</li>
+    </ul>
+    <ul class="cross">
+      <li>20% tax when you distribute dividends to yourself</li>
+      <li>Less known than UAE/USA</li>
+    </ul>
+    <p style="font-size:9px; color:#34d399; margin-top:8px;">BEST IF: EU is your main market and you want low cost</p>
+  </div>
+</div>
+
+<div class="box highlight">
+  <h4>THE TAX RESIDENCE QUESTION (Most Important)</h4>
+  <p style="font-size:10px; color:#94a3b8;">
+    If you're a <b>South African tax resident</b>, SA taxes your <b>worldwide income</b> regardless of where your company is registered.
+    Registering in UAE or Estonia doesn't automatically reduce your SA tax bill.
+    <br><br>
+    To truly benefit from a low-tax jurisdiction, you'd need to either:
+  </p>
+  <ul>
+    <li>Become <b>non-resident</b> for SA tax purposes (emigrate formally — "financial emigration")</li>
+    <li>Or use the foreign employment income exemption (if you're physically outside SA for 183+ days/year)</li>
+  </ul>
+  <p style="font-size:10px; color:#fbbf24; margin-top:8px;">
+    → Talk to a SA cross-border tax accountant. This single decision affects everything.
+  </p>
+</div>
+
+
+<!-- ============================== -->
+<!-- TEACHER MARKETPLACE MODEL      -->
+<!-- ============================== -->
+<h2>Teacher Marketplace — Fluentify Model</h2>
+
+<div class="grid-2">
+  <div class="box">
+    <h4>Phase 1: Solo (Month 1-6)</h4>
+    <ul>
+      <li>You are the only teacher</li>
+      <li>Max capacity: ~30 hrs/week teaching</li>
+      <li>All revenue is yours (minus payment processing)</li>
+      <li>Build curriculum, refine workflow, get testimonials</li>
+      <li>Target: 15-20 active students</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>Phase 2: First Hire (Month 6-9)</h4>
+    <ul>
+      <li>Hire when: 25+ hrs/week consistently booked</li>
+      <li>First teacher: part-time contractor</li>
+      <li>Commission: 70% teacher / 30% platform</li>
+      <li>Focus on language you can't cover (JA, KO, ZH)</li>
+      <li>You focus on DE + ES + EN (your languages)</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>Phase 3: Team (Month 9-18)</h4>
+    <ul>
+      <li>3-6 teachers, each covering specific languages</li>
+      <li>You: quality control, marketing, premium students</li>
+      <li>Onboarding: trial lesson script, curriculum training</li>
+      <li>Quality: student ratings, regular reviews</li>
+      <li>Target: 50+ active students</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>Phase 4: Scale (Month 18+)</h4>
+    <ul>
+      <li>6-10 teachers</li>
+      <li>B2B corporate packages (Voxy model)</li>
+      <li>White-label for companies</li>
+      <li>Automated placement + progress tracking</li>
+      <li>Target: $20k+/mo revenue</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ============================== -->
+<!-- STUDENT JOURNEY                -->
+<!-- ============================== -->
+<h2>Student Journey — End to End</h2>
+
+<div class="flow" style="flex-wrap:wrap;">
+  <div class="flow-node">Google Ad / YouTube / Referral</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Landing Page<br><span style="font-size:8px; color:#64748b">Localized</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Free Trial Booking<br><span style="font-size:8px; color:#64748b">Cal.com</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Placement Test<br><span style="font-size:8px; color:#64748b">FL0-FL13</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Level Assigned<br><span style="font-size:8px; color:#64748b">Learning Path</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Package Purchase<br><span style="font-size:8px; color:#64748b">Stripe</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Dashboard Access<br><span style="font-size:8px; color:#64748b">Lessons + Recordings</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Join Lesson<br><span style="font-size:8px; color:#64748b">Meet + Talky</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Assessment<br><span style="font-size:8px; color:#64748b">End of Block</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node">Level Up!<br><span style="font-size:8px; color:#64748b">Next Block</span></div>
+</div>
+
+
+<!-- ============================== -->
+<!-- ACTION PLAN                    -->
+<!-- ============================== -->
+<h2>Immediate Action Plan — First 2 Weeks</h2>
+
+<table>
+  <tr><th>#</th><th>Action</th><th>Why</th><th>Time</th></tr>
+  <tr><td>1</td><td>Pick a brand name (top 3: VerbalEdge, TwoTongue, BridgeLang)</td><td>Everything flows from this</td><td>1 day</td></tr>
+  <tr><td>2</td><td>Check domain availability (.com + country TLDs)</td><td>Secure before someone else</td><td>1 hour</td></tr>
+  <tr><td>3</td><td>Register domain + social handles</td><td>Lock in your name</td><td>2 hours</td></tr>
+  <tr><td>4</td><td>Talk to a cross-border tax accountant</td><td>HQ structure depends on your SA tax status</td><td>1-2 days</td></tr>
+  <tr><td>5</td><td>Register company (Estonia or UAE)</td><td>Legal entity for Stripe, credibility</td><td>1-2 weeks</td></tr>
+  <tr><td>6</td><td>Set up Stripe account (multi-currency)</td><td>Start taking payments</td><td>1 day</td></tr>
+  <tr><td>7</td><td>Set up Cal.com + Google Calendar</td><td>Booking + Meet links</td><td>1 day</td></tr>
+  <tr><td>8</td><td>Build landing page (simple, one-page)</td><td>Start collecting leads</td><td>2-3 days</td></tr>
+  <tr><td>9</td><td>Create placement test (FL0-FL13)</td><td>Core of your system</td><td>2-3 days</td></tr>
+  <tr><td>10</td><td>Start creating FL0-FL2 materials</td><td>First curriculum to teach</td><td>Ongoing</td></tr>
+</table>
+
+<div class="box usp" style="margin-top:20px;">
+  <h4>YOUR UNFAIR ADVANTAGE</h4>
+  <p style="font-size:12px; color:#e2e8f0;">
+    You are a native English speaker who <b>also speaks German and Spanish fluently</b>.
+    You can teach English AND translate in real-time for 2 of your 3 target regions.
+    No one on iTalki, Preply, Fluentify, or Voxy can do this.
+    <br><br>
+    This is not a small feature. This is your entire brand.
+    <b>"English taught in your language."</b>
+  </p>
+</div>
+
+<div style="margin-top:20px; color:#475569; font-size:9px;">
+  Generated by OWL | May 21, 2026 | Based on Voxy + Fluentify + English Score | Premium Multilingual VoIP ESL
+</div>
+
+</body>
+</html>

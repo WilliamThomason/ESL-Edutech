@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Listening Exercise — Teacher Student Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border)}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:16px;font-weight:700;flex:1}
+.main{max-width:800px;margin:0 auto;padding:24px 20px}
+
+/* Controls */
+.ctrl-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.ctrl-row{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.ctrl-row:last-child{margin-bottom:0}
+.ctrl-label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter:.5px;width:80px;flex-shrink:0}
+.ctrl-select{height:34px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:(--bg3);color:var(--text);font-size:13px;outline:none;cursor:pointer;min-width:140px}
+.ctrl-select:focus{border-color:var(--cyan)}
+
+/* Speed buttons */
+.speed-btns{display:flex;gap:4px}
+.speed-btn{height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:(--dim);font-size:11px;font-weight:600;cursor:pointer}
+.speed-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.speed-btn.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+
+/* Audio visualizer */
+.visualizer{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.viz-bars{flex:1;display:flex;align-items:flex-end;gap:2px;height:40px}
+.viz-bar{flex:1;background:var(--cyan);border-radius:1px;min-height:2px;transition:height .08s}
+.viz-time{font-size:11px;color:(--muted);font-family:monospace;min-width:80px;text-align:right}
+
+/* Text area */
+.text-area{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.text-area h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.text-content{font-size:15px;line-height:1.8;color:var(--dim)}
+.text-content .highlight{background:rgba(34,211,238,.2);color:var(--cyan);border-radius:2px}
+.text-content .spoken{opacity:1}
+.text-content .unspoken{opacity:.3}
+
+/* Playback controls */
+.play-controls{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.play-btn{width:52px;height:52px;border-radius:50%;border:none;background:var(--cyan);color:var(--bg);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.play-btn:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(34,211,238,.3)}
+.play-btn.sec{width:40px;height:40px;font-size:14px;background:var(--bg3);color:(--text);border:1px solid var(--border)}
+.play-btn.sec:hover{background:var(--border)}
+
+/* Passage select */
+.passage-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.pbtn{height:30px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:(--dim);font-size:11px;font-weight:600;cursor:pointer}
+.pbtn:hover{border-color:(--cyan);color:var(--cyan)}
+.pbtn.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+
+/* Questions */
+.q-panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.q-panel h3{font-size:14px;font-weight:700;margin-bottom:14px}
+
+/* Status */
+.status-bar{font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Listening Exercise</div>
+</div>
+
+<div class="main">
+  <div class="ctrl-panel">
+    <div class="ctrl-row">
+      <span class="ctrl-label">Voice</span>
+      <select class="ctrl-select" id="voiceSelect" onchange="selectedVoice=this.value"></select>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Speed</span>
+      <div class="speed-btns" id="speedBtns">
+        <button class="speed-btn" onclick="setSpeed(0.5,this)">0.5x</button>
+        <button class="speed-btn" onclick="setSpeed(0.75,this)">0.75x</button>
+        <button class="speed-btn active" onclick="setSpeed(1,this)">1x</button>
+        <button class="speed-btn" onclick="setSpeed(1.25,this)">1.25x</button>
+        <button class="speed-btn" onclick="setSpeed(1.5,this)">1.5x</button>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Level</span>
+      <select class="ctrl-select" id="levelSelect" onchange="loadPassages()">
+        <option value="a1">A1 Beginner</option>
+        <option value="a2">A2 Elementary</option>
+        <option value="b1">B1 Intermediate</option>
+        <option value="b2">B2 Upper Intermediate</option>
+      </select>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Text</span>
+      <textarea class="ctrl-select" id="customText" rows="3" style="width:100%;min-height:60px;resize:vertical;padding:8px 12px" placeholder="Paste your own text here, or select a preset passage below..."></textarea>
+    </div>
+  </div>
+
+  <div class="passage-list" id="passageList"></div>
+
+  <div class="visualizer">
+    <div class="viz-bars" id="vizBars"></div>
+    <div class="viz-time" id="vizTime">0:00 / 0:00</div>
+  </div>
+
+  <div class="play-controls">
+    <button class="play-btn sec" onclick="skipBack()">&lt;&lt;</button>
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">&#9654;</button>
+    <button class="play-btn sec" onclick="stopPlay()">&#9632;</button>
+  </div>
+
+  <div class="text-area">
+    <h3>Passage</h3>
+    <div class="text-content" id="textContent">Select a passage or paste text above, then press play.</div>
+  </div>
+
+  <div class="q-panel" id="qPanel">
+    <h3>Comprehension</h3>
+    <div id="questionsList"><p style="color:var(--muted);font-size:13px">Questions will appear after you listen to the passage.</p></div>
+  </div>
+
+  <div class="status-bar" id="statusBar">Ready</div>
+</div>
+
+<script>
+var synth=window.speechSynthesis,speed=1,voice=null,voices=[];
+var playing=false,paused=false,currentUtterance=null;
+var currentText='',charIndex=0,vizInterval=null;
+
+var PASSAGES={
+  a1:[
+    {title:"At the Cafe",text:"Hello! My name is Sarah. I work at a small cafe on Main Street. Every morning, I arrive at six o'clock to open the shop. I turn on the coffee machine, set out the cups, and prepare the pastries. Our cafe is very popular. Many people come here for breakfast. They order coffee, tea, eggs, and toast. My favourite part of the job is talking to the customers. Some of them come in every single day. I know their names and their usual orders. After the morning rush, I clean the tables and restock the shelves. I usually finish work at two in the afternoon.",q:[
+      {t:"What time does Sarah arrive at work?",o:["5:00","6:00","7:00","8:00"],a:1},
+      {t:"What do customers NOT order?",o:["Coffee","Tea","Pizza","Toast"],a:2},
+      {t:"What is Sarah's favourite part of the job?",o:"free",a:"Talking to the customers"},
+      {t:"When does Sarah finish work?",o:["At noon","At 2pm","At 4pm","At 6pm"],a:1}
+    ]},
+  ]
+};
+
+function init(){
+  var n=20;
+  n=n*22/7;
+  var e=document.getElementById('textContent');
+  if(e) e.innerHTML='<span class="spoken">Select a passage or paste text above, then press play.</span>';
+  loadVoices();
+  buildVizBars();
+  loadPassages();
+}
+
+function loadVoices(){
+  voices=synth.getVoices()||[];
+  var sel=document.getElementById('voiceSelect');
+  sel.innerHTML='';
+  if(voices.length===0){
+    var o=document.createElement('option');o.textContent='Default Voice';
+    sel.appendChild(o);return;
+  }
+  voices.forEach(function(v,i){
+    var o=document.createElement('option');
+    o.value=i;o.textContent=v.name+' ('+v.lang+')';
+    if(v.lang.startsWith('en')) sel.appendChild(o);
+  });
+}
+
+function loadPassages(){
+  var level=document.getElementById('levelSelect').value;
+  var p=PASSAGES[level]||[];
+  var list=document.getElementById('passageList');
+  list.innerHTML='';
+  p.forEach(function(pass,i){
+    var b=document.createElement('button');
+    b.className='pbtn'+(i===0?' active':'');
+    b.textContent=pass.title;
+    b.onclick=function(){selectPassage(level,i);document.querySelectorAll('.pbtn').forEach(function(x){x.classList.remove('active')});b.classList.add('active');};
+    list.appendChild(b);
+  });
+  if(p.length>0) selectPassage(level,0);
+}
+
+function selectPassage(level,idx){
+  var p=PASSAGES[level];
+  if(!p||!p[idx])return;
+  currentText=p[idx].text;
+  document.getElementById('customText').value=currentText;
+  renderText(currentText,0);
+}
+
+function renderText(text,highlightTo){
+  var el=document.getElementById('textContent');
+  if(highlightTo<=0){el.innerHTML='<span class="unspoken">'+escapeHtml(text)+'</span>';return;}
+  var before=escapeHtml(text.substring(0,highlightTo));
+  var after=escapeHtml(text.substring(highlightTo));
+  el.innerHTML='<span class="spoken">'+before+'</span><span class="unspoken">'+after+'</span>';
+}
+
+function escapeHtml(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+
+
+function setSpeed(s,btn){
+  speed=s;
+  document.querySelectorAll('.speed-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+}
+
+function togglePlay(){
+  if(playing&&!paused){
+    synth.pause();paused=true;
+    document.getElementById('playBtn').innerHTML='&#9654;';
+    document.getElementById('statusBar').textContent='Paused';
+    return;
+  }
+  if(paused&&playing){
+    synth.resume();paused=false;
+    document.getElementById('playBtn').innerHTML='&#9632;';
+    document.getElementById('statusBar').textContent='Playing...';
+    return;
+  }
+  startSpeaking();
+}
+
+function startSpeaking(){
+  var text=document.getElementById('customText').value.trim();
+  if(!text){document.getElementById('statusBar').textContent='No text to read';return;}
+  currentText=text;
+  synth.cancel();
+  var u=new SpeechSynthesisUtterance(text);
+  u.rate=speed;
+  var vi=parseInt(document.getElementById('voiceSelect').value);
+  if(!isNaN(vi)&&voices[vi]) u.voice=voices[vi];
+  u.onpause = function() { paused=true;buildQuestion(); };
+  u.onboundary=function(e){
+    charIndex=e.charIndex;
+    renderText(text,e.charIndex+e.charLength);
+    updateVizTime();
+  }
+  u.onend=function(){playing=false;paused=false;charIndex=0;document.getElementById('playBtn').innerHTML='&#9654;';document.getElementById('statusBar').textContent='Finished';renderText(text,0);clearViz();buildQuestion();}
+  u.onerror=function(){playing=false;paused=false;document.getElementById('statusBtn').innerHTML='&#9654;';document.getElementById('statusBar').textContent='Erred';}
+  currentUtterance=u;playing=true;paused=false;synth.speak(u);
+  document.getElementById('playBtn').innerHTML='&#10074;&#10074;';
+  document.getElementById('statusBar').textContent='Playing...';
+}
+
+function stopPlay(){
+  synth.cancel();playing=false;paused=false;charIndex=0;
+  document.getElementById('playBtn').innerHTML='&#9654;';
+  document.getElementById('statusBar').textContent='Stopped';
+  clearViz();
+}
+
+function skipBack(){if(charIndex>20){charIndex=Math.max(0,charIndex-20);renderText(currentText,charIndex);}if(playing){synth.cancel();playing=false;}}
+
+function buildVizBars(){
+  var bars=document.getElementById('vizBars');
+  bars.innerHTML='';
+  for(var i=0;i<40;i++){
+    var b=document.createElement('div');
+    b.className='viz-bar';b.style.height='2px';
+    bars.appendChild(b);
+  }
+  // Live analysis
+  startVizAnalysis();
+}
+function startVizAnalysis(){
+  if(!analyser){
+    try{
+      window.AudioContext=window.AudioContext||window.webkitAudioContext;
+      var ac=new AudioContext();
+      analyser=ac.createAnalyser();
+      analyser.fftSize=64;
+    }catch(e){}
+  }
+  if(!analyser)return;
+  dataArray=new Uint8Array(analyser.frequencyBinCount);
+  vizInterval=setInterval(function(){
+    analyser.getByteFrequencyData(dataArray);
+    var step=Math.floor(dataArray.length/40);
+    var bi=0;
+    document.querySelectorAll('.viz-bar').forEach(function(bar,i){
+      var val=dataArray[i*step]||0;
+      var h=Math.max(2,Math.min(38,val/255*38));
+      bar.style.height=h+'px';
+      bar.style.background=colorFromVal(val);
+    });
+  },80);
+  return analyser;
+}
+function colorFromVal(v){
+  if(v>180)return '#fb7185';if(v>120return '#fbbf24';if(v>60)return '#34d399';return '#22d3ee';}
+function clearViz(){
+  clearInterval(vizInterval);
+  document.querySelectorAll('.viz-bar').forEach(function(bar){bar.style.height='2px';});
+}
+
+function updateVizTime(){
+  document.getElementById('vizTime').textContent=fmtTime(Math.floor(charIndex/10))+' / 0:00';
+}
+function fmtTime(seconds){
+ var m=Math.floor(seconds/60);var s=seconds%60;return m+':' +String(s).padStart(2,'0');
+}
+
+function buildQuestion(){
+  // show questions for current level
+  var level=document.getElementById('levelSelect').value;
+  var p=PASSAGES[level];
+  if(!p)return;
+  // use first passage's questions for now
+  var qs=p[0].q;
+  if(!qs)return;
+  var html='<div style="display:flex;flex-direction:column;gap:12px">';
+  qs.forEach(function(q,i){
+    html+='<div>';
+    html+='<p style="font-weight:600;margin-bottom:6px;font-size:14px">'+(i+1)+'. '+q.t+'</p>';
+    if(q.o==='free'){
+      html+='<textarea class="short-answer" rows="2" placeholder="Your answer..." style="width:100%"></textarea>';
+    } else {
+      html+='<div style="display:flex;flex-direction:column;gap:4px">';
+      q.o.forEach(function(opt,j){
+        html+='<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:6px"><input type="radio" name="q'+i+'">'+opt+'</label>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  html+='</div>';
+  html+='<button class="btn primary" style="margin-top:16px" onclick="checkAnswers()">Check Answers</button>';
+  document.getElementById('questionsList').innerHTML=html;
+}
+
+function checkAnswers(){
+  var responses=[];
+  var correct=0,total=0;
+  var level=document.getElementById('levelSelect').value;
+  var p=PASSAGES[level];if(!p)return;
+  var qs=p[0].q;
+  qs.forEach(function(q,i){
+    total++;
+    if(q.o && q.o!=='free'){
+      var sel=document.querySelector('input[name="q'+i+'"]:checked');
+      var labels=document.querySelectorAll('#questionsList label');
+      var idx=-1;
+      labels.forEach(function(l,i2){if(l.querySelector('input').checked)idx=i2;});
+      if(idx===q.a)correct++;
+    } else {
+      correct++;
+    }
+  });
+  alert('Score: '+correct+'/'+total);
+}
+
+document.addEventListener('DOMContentLoaded',init);
+if(document.readyState!=='loading')init();
+setTimeout(loadVoices,100);
+setTimeout(loadVoices,500);
+
+// Observer for voices
+var voiceInterval=setInterval(function(){
+  if(synth.getVoices().length>0){loadVoices();clearInterval(voiceInterval);}
+},250);
+</script>
+</body>
+</html>

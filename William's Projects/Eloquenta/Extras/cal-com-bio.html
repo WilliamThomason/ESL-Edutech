@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Bio para Cal.com</title>
+<style>
+:root {
+  --bg: #020617;
+  --bg-card: #0f172a;
+  --border: #1e293b;
+  --border-light: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --cyan: #22d3ee;
+  --amber: #fbbf24;
+  --emerald: #34d399;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 40px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+h1 { font-size: 22px; font-weight: 800; color: var(--cyan); margin-bottom: 8px; }
+h2 { font-size: 16px; font-weight: 700; color: var(--amber); margin: 28px 0 10px 0; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 13px; font-weight: 700; color: var(--emerald); margin: 18px 0 8px 0; }
+p, li { font-size: 14px; color: var(--text-muted); }
+ul { padding-left: 0; list-style: none; }
+ul li { padding: 4px 0; }
+ul li::before { content: "▸ "; color: var(--text-dim); }
+.box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 16px 0;
+}
+.bio-box {
+  background: var(--bg-card);
+  border: 1px solid var(--cyan);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 16px 0;
+}
+.bio-box p { font-size: 15px; color: var(--text); line-height: 1.8; }
+.copy-btn {
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+}
+.copy-btn:hover { background: #67e8f9; }
+.copied { background: var(--emerald); }
+.note {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+.lang-tabs {
+  display: flex; gap: 8px; margin-bottom: 20px;
+}
+.lang-tab {
+  padding: 8px 16px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text-muted);
+}
+.lang-tab.active {
+  background: var(--cyan); color: var(--bg); border-color: var(--cyan);
+}
+.section { display: none; }
+.section.active { display: block; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+th { background: var(--border); color: var(--text-muted); padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body><!-- Eloquenta Brand Bar --><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+
+<h1>Eloquenta — Cal.com Bio &amp; Profile</h1>
+<p class="subtitle" style="font-size:13px; color:var(--text-dim);">Copy-paste ready bios in Spanish (B1 course), German, and English for your Cal.com profile and booking page.</p>
+
+<div class="lang-tabs">
+  <button class="lang-tab active" onclick="showLang('es')">🇪🇸 Español (B1)</button>
+  <button class="lang-tab" onclick="showLang('de')">🇩🇪 Deutsch</button>
+  <button class="lang-tab" onclick="showLang('en')">🇬🇧 English</button>
+  <button class="lang-tab" onclick="showLang('fr')">🇫🇷 Français</button>
+  <button class="lang-tab" onclick="showLang('pt')">🇧🇷 Português</button>
+  <button class="lang-tab" onclick="showLang('all')">📋 All Translations</button>
+</div>
+
+
+<!-- ======== SPANISH (B1) ======== -->
+<div id="lang-es" class="section active">
+<h2>🇪🇸 Bio en Español (Nivel B1 — Curso de Negocios)</h2>
+<p class="note">Escrito en español de nivel B1. Claro, profesional, realista para un estudiante de B1.</p>
+
+<div class="bio-box">
+  <p>
+    ¡Hola! Soy William, tu profesor de inglés en Eloquenta.<br><br>
+    Llevo ocho años enseñando inglés como segundo idioma. Soy nativo en inglés y hablo español y alemán con fluencia.<br><br>
+    En mis clases, enseño inglés pero también traduzco los conceptos importantes en español o alemán en tiempo real. Esto ayuda a que entiendas mejor la gramática y el vocabulario.<br><br>
+    Preparo estudiantes para exámenes como TOEFL, IELTS, OET e IGCSE. También enseño inglés para profesionales y niños.<br><br>
+    Mi método usa un sistema de 14 niveles (desde principiante hasta avanzado) y cada estudiante empieza con una prueba de nivel.<br><br>
+    ¡Reserva tu clase de prueba gratuita y empezamos!
+  </p>
+</div>
+<button class="copy-btn" onclick="copyText('es')">📋 Copiar Bio en Español</button>
+
+<h3>Notas sobre el nivel B1 usado:</h3>
+<div class="box">
+  <table>
+    <tr><th>Característica</th><th>Ejemplo en la bio</th><th>Por qué</th></tr>
+    <tr><td>Oraciones simples y claras</td><td>"llevo ocho años enseñando"</td><td>B1 usa presente perfecto simple</td></tr>
+    <tr><td>Vocabulario de negocios</td><td>"conceptos", "gramática", "vocabulario", "prueba de nivel"</td><td>Tema: curso de negocios</td></tr>
+    <tr><td>Conectores básicos</td><td>"pero también", "esto ayuda a que", "y", "también</td><td>Conectores de nivel B1</td></tr>
+    <tr><td>Subjuntivo básico</td><td>"ayuda a que entiendas"</td><td>Subjuntivo presente, nivel B1+</td></tr>
+    <tr><td>Sin estructuras complejas</td><td>No hay condicionales, ni estilo indirecto, ni pasivas complejas</td><td>Esto es B2/C1 — no lo incluimos</td></tr>
+  </table>
+</div>
+</div>
+
+
+<!-- ======== GERMAN ======== -->
+<div id="lang-de" class="section">
+<h2>🇩🇪 Bio auf Deutsch</h2>
+<p class="note">Professionelles Deutsch — direkt und klar.</p>
+
+<div class="bio-box">
+  <p>
+    Hallo! Ich bin William, Ihr Englischlehrer bei Eloquenta.<br><br>
+    Ich unterrichte seit acht Jahren Englisch als Fremdsprache. Ich bin englischer Muttersprachler und spreche fließend Deutsch und Spanisch.<br><br>
+    In meinem Unterricht erkläre ich wichtige Konzepte auf Englisch — und übersetze sie gleichzeitig auf Deutsch oder Spanisch. So verstehen Sie Grammatik und Vokabular viel schneller.<br><br>
+    Ich bereite Prüfungskandidaten auf TOEFL, IELTS, OET und IGCSE vor. Außerdem unterrichte ich Business-Englisch und Englisch für Kinder.<br><br>
+    Mein Methode basiert auf einem 14-Stufen-System (Anfänger bis Fortgeschrittener). Jeder Schüler beginnt mit einem Einstufungstest.<br><br>
+    Buchen Sie Ihren kostenlosen Probelosung — fangen wir an!
+  </p>
+</div>
+<button class="copy-btn" onclick="copyText('de')">📋 Copy German Bio</button>
+</div>
+
+
+<!-- ======== ENGLISH ======== -->
+<div id="lang-en" class="section">
+<h2>🇬🇧 Bio in English</h2>
+
+<div class="bio-box">
+  <p>
+    Hi! I'm William, your English teacher at Eloquenta.<br><br>
+    I've been teaching ESL for eight years. I'm a native English speaker and I'm fluent in both German and Spanish.<br><br>
+    During my lessons, I teach concepts in English — and translate key points into German or Spanish in real-time. This helps you understand grammar and vocabulary faster.<br><br>
+    I prepare students for TOEFL, IELTS, OET, and IGCSE. I also teach Business English and English for young learners.<br><br>
+    My method uses a 14-level system (beginner to proficient). Every student starts with a placement test.<br><br>
+    Book your free trial lesson and let's get started!
+  </p>
+</div>
+<button class="copy-btn" onclick="copyText('en')">📋 Copy English Bio</button>
+</div>
+
+
+<!-- ======== FRENCH ======== -->
+<div id="lang-fr" class="section">
+<h2>🇫🇷 Bio en Français</h2>
+
+<div class="bio-box">
+  <p>
+    Bonjour ! Je suis William, votre professeur d'anglais chez Eloquenta.<br><br>
+    J'enseigne l'anglais langue étrangère depuis huit ans. Je suis de langue maternelle anglaise et je parle couramment l'allemand et l'espagnol.<br><br>
+    Pendant mes cours, j'enseigne en anglais — et je traduis les concepts clés en allemand ou en espagnol en temps réel. Cela vous aide à mieux comprendre la grammaire et le vocabulaire.<br><br>
+    Je prépare les étudiants aux examens TOEFL, IELTS, OET et IGCSE. J'enseigne aussi l'anglais professionnel et l'anglais pour les enfants.<br><br>
+    Ma méthode utilise un système de 14 niveaux (débutant à avancé). Chaque étudiant commence par un test de niveau.<br><br>
+    Réservez votre leçon d'essai gratuite et commençons !
+  </p>
+</div>
+<button class="copy-btn" onclick="copyText('fr')">📋 Copier Bio Française</button>
+</div>
+
+
+<!-- ======== PORTUGUESE ======== -->
+<div id="lang-pt" class="section">
+<h2>🇧🇷 Bio em Português</h2>
+
+<div class="bio-box">
+  <p>
+    Olá! Sou William, seu professor de inglês na Eloquenta.<br><br>
+    Dou aulas de inglês como língua estrangeira há oito anos. Sou nativo em inglês e falo alemão e espanhol fluentemente.<br><br>
+    Nas minhas aulas, ensino em inglês — e traduzo os conceitos importantes para alemão ou espanhol em tempo real. Isso ajuda você a entender a gramática e o vocabulário mais rápido.<br><br>
+    Preparo alunos para os exames TOEFL, IELTS, OET e IGCSE. Também ensino inglês para profissionais e crianças.<br><br>
+    Meu método usa um sistema de 14 níveis (iniciante a avançado). Cada aluno começa com um teste de nivelamento.<br><br>
+    Agende sua aula experimental gratuita e vamos começar!
+  </p>
+</div>
+<button class="copy-btn" onclick="copyText('pt')">📋 Copiar Bio em Português</button>
+</div>
+
+
+<!-- ======== ALL SIDE BY SIDE ======== -->
+<div id="lang-all" class="section">
+<h2>📋 All Bios — Side by Side Comparison</h2>
+
+<table>
+  <tr>
+    <th>Language</th>
+    <th>Bio Text</th>
+    <th>Copy</th>
+  </tr>
+  <tr>
+    <td>🇪🇸 ES (B1)</td>
+    <td>Hola! Soy William, tu profesor de inglés en Eloquenta. Llevo ocho años enseñando inglés como segundo idioma...</td>
+    <td><button class="copy-btn" onclick="copyText('es')" style="padding:6px 12px; font-size:12px;">Copy</button></td>
+  </tr>
+  <tr>
+    <td>🇩🇪 DE</td>
+    <td>Hallo! Ich bin William, Ihr Englischlehrer bei Eloquenta. Ich unterrichte seit acht Jahren...</td>
+    <td><button class="copy-btn" onclick="copyText('de')" style="padding:6px 12px; font-size:12px;">Copy</button></td>
+  </tr>
+  <tr>
+    <td>🇬🇧 EN</td>
+    <td>Hi! I'm William, your English teacher at Eloquenta. I've been teaching ESL for eight years...</td>
+    <td><button class="copy-btn" onclick="copyText('en')" style="padding:6px 12px; font-size:12px;">Copy</button></td>
+  </tr>
+  <tr>
+    <td>🇫🇷 FR</td>
+    <td>Bonjour ! Je suis William, votre professeur d'anglais chez Eloquenta. J'enseigne l'anglais...</td>
+    <td><button class="copy-btn" onclick="copyText('fr')" style="padding:6px 12px; font-size:12px;">Copy</button></td>
+  </tr>
+  <tr>
+    <td>🇧🇷 PT</td>
+    <td>Olá! Sou William, seu professor de inglês na Eloquenta. Dou aulas de inglês...</td>
+    <td><button class="copy-btn" onclick="copyText('pt')" style="padding:6px 12px; font-size:12px;">Copy</button></td>
+  </tr>
+</table>
+
+<h2>Lesson Descriptions for Cal.com</h2>
+
+<table>
+  <tr><th>Language</th><th>Free Trial Description</th><th>Lesson Description</th></tr>
+  <tr>
+    <td>🇪🇸 ES</td>
+    <td>Clase de prueba gratuita de 30 minutos. Vamos a conocer tu nivel y tus objetivos. Sin compromiso.</td>
+    <td>Clase individual de 60 minutos. Incluye traducción en español o alemán, materiales de práctica y grabación de la clase.</td>
+  </tr>
+  <tr>
+    <td>🇩🇪 DE</td>
+    <td>Kostenlose 30-minütige Probestunde. Wir ermitteln Ihr Niveau und Ihre Ziele. Unverbindlich.</td>
+    <td>Individueller 60-minütiger Unterricht. Inklusive Übersetzung auf Deutsch oder Spanisch, Übungsmaterials und Aufnahme.</td>
+  </tr>
+  <tr>
+    <td>🇬🇧 EN</td>
+    <td>Free 30-minute trial lesson. We'll assess your level and goals. No commitment.</td>
+    <td>60-minute 1-on-1 lesson. Includes live translations (DE/ES), practice materials, and lesson recording.</td>
+  </tr>
+</table>
+
+<h2>Booking Page Headlines</h2>
+
+<table>
+  <tr><th>Language</th><th>Headline</th><th>Subheadline</th></tr>
+  <tr>
+    <td>🇪🇸 ES</td>
+    <td>Reserva tu clase gratuita</td>
+    <td>Inglés con traducción en directo. Tu profesor habla tu idioma.</td>
+  </tr>
+  <tr>
+    <td>🇩🇪 DE</td>
+    <td>Kostenlose Probestunde buchen</td>
+    <td>Englisch mit Echtzeit-Übersetzung. Ihr Lehrer spricht Ihre Sprache.</td>
+  </tr>
+  <tr>
+    <td>🇬🇧 EN</td>
+    <td>Book Your Free Trial</td>
+    <td>English with live translations. Your teacher speaks your language.</td>
+  </tr>
+  <tr>
+    <td>🇫🇷 FR</td>
+    <td>Réservez votre essai gratuit</td>
+    <td>Anglais avec traduction en direct. Votre professeur parle votre langue.</td>
+  </tr>
+  <tr>
+    <td>🇧🇷 PT</td>
+    <td>Agende sua aula grátis</td>
+    <td>Inglês com tradução ao vivo. Seu professor fala seu idioma.</td>
+  </tr>
+</table>
+</div>
+
+<script>
+function showLang(lang) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyText(lang) {
+  const bios = {
+    es: "¡Hola! Soy William, tu profesor de inglés en Eloquenta.\n\nLlevo ocho años enseñando inglés como segundo idioma. Soy nativo en inglés y hablo español y alemán con fluencia.\n\nEn mis clases, enseño inglés pero también traduzco los conceptos importantes en español o alemán en tiempo real. Esto ayuda a que entiendas mejor la gramática y el vocabulario.\n\nPreparo estudiantes para exámenes como TOEFL, IELTS, OET e IGCSE. También enseño inglés para profesionales y niños.\n\nMi método usa un sistema de 14 niveles (desde principiante hasta avanzado) y cada estudiante empieza con una prueba de nivel.\n\n¡Reserva tu clase de prueba gratuita y empezamos!",
+    de: "Hallo! Ich bin William, Ihr Englischlehrer bei Eloquenta.\n\nIch unterrichte seit acht Jahren Englisch als Fremdsprache. Ich bin englischer Muttersprachler und spreche fließend Deutsch und Spanisch.\n\nIn meinem Unterricht erkläre ich wichtige Konzepte auf Englisch — und übersetze sie gleichzeitig auf Deutsch oder Spanisch. So verstehen Sie Grammatik und Vokabular viel schneller.\n\nIch bereite Prüfungskandidaten auf TOEFL, IELTS, OET und IGCSE vor. Außerdem unterrichte ich Business-Englisch und Englisch für Kinder.\n\nMein Methode basiert auf einem 14-Stufen-System (Anfänger bis Fortgeschrittener). Jeder Schüler beginnt mit einem Einstufungstest.\n\nBuchen Sie Ihren kostenlosen Probelosung — fangen wir an!",
+    en: "Hi! I'm William, your English teacher at Eloquenta.\n\nI've been teaching ESL for eight years. I'm a native English speaker and I'm fluent in both German and Spanish.\n\nDuring my lessons, I teach concepts in English — and translate key points into German or Spanish in real-time. This helps you understand grammar and vocabulary faster.\n\nI prepare students for TOEFL, IELTS, OET, and IGCSE. I also teach Business English and English for young learners.\n\nMy method uses a 14-level system (beginner to proficient). Every student starts with a placement test.\n\nBook your free trial lesson and let's get started!",
+    fr: "Bonjour ! Je suis William, votre professeur d'anglais chez Eloquenta.\n\nJ'enseigne l'anglais langue étrangère depuis huit ans. Je suis de langue maternelle anglaise et je parle couramment l'allemand et l'espagnol.\n\nPendant mes cours, j'enseigne en anglais — et je traduis les concepts clés en allemand ou en espagnol en temps réel. Cela vous aide à mieux comprendre la grammaire et le vocabulaire.\n\nJe prépare les étudiants aux examens TOEFL, IELTS, OET et IGCSE. J'enseigne aussi l'anglais professionnel et l'anglais pour les enfants.\n\nMa méthode utilise un système de 14 niveaux (débutant à avancé). Chaque étudiant commence par un test de niveau.\n\nRéservez votre leçon d'essai gratuite et commençons !",
+    pt: "Olá! Sou William, seu professor de inglês na Eloquenta.\n\nDou aulas de inglês como língua estrangeira há oito anos. Sou nativo em inglês e falo alemão e espanhol fluentemente.\n\nNas minhas aulas, ensino em inglês — e traduzo os conceitos importantes para alemão ou espanhol em tempo real. Isso ajuda você a entender a gramática e o vocabulário mais rápido.\n\nPreparo alunos para os exames TOEFL, IELTS, OET e IGCSE. Também ensino inglês para profissionais e crianças.\n\nMeu método usa um sistema de 14 níveis (iniciante a avançado). Cada aluno começa com um teste de nivelamento.\n\nAgende sua aula experimental gratuita e vamos começar!"
+  };
+
+  navigator.clipboard.writeText(bios[bios]).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    // Fallback for non-HTTPS
+    const textarea = document.createElement('textarea');
+    textarea.value = bios[lang];
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    const btn = event.target;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>

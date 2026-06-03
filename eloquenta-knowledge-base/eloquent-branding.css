@@ -1,0 +1,75 @@
+/* ═══ ELOQUENTA SHARED BRANDING ═══ */
+/* Include this in every lesson page <head> via <link rel="stylesheet" href="eloquent-branding.css"> */
+
+/* Fixed top header bar */
+.elo-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: 48px; background: rgba(2,6,23,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1e293b;
+  display: flex; align-items: center; padding: 0 20px; gap: 12px;
+  box-shadow: 0 2px 20px rgba(0,0,0,.4);
+}
+.elo-bar a { text-decoration: none; }
+
+.elo-logo {
+  font-size: 18px; font-weight: 900; letter-spacing: -.5px;
+  color: #fff; text-decoration: none; display: flex; align-items: center; gap: 6px;
+  transition: opacity .15s;
+}
+.elo-logo:hover { opacity: .85; }
+.elo-logo .o { color: #22d3ee; }
+
+.elo-tagline {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+  color: #64748b; padding-left: 10px; border-left: 1px solid #1e293b;
+}
+
+.elo-menu {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+}
+.elo-menu-link {
+  height: 30px; padding: 0 14px; border-radius: 6px;
+  border: 1px solid #1e293b; background: transparent;
+  color: #94a3b8; font-size: 11px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  text-decoration: none; transition: all .15s;
+}
+.elo-menu-link:hover {
+  border-color: #334155; color: #e2e8f0; background: rgba(255,255,255,.03);
+}
+.elo-menu-link.active {
+  border-color: #22d3ee; color: #22d3ee; background: rgba(34,211,238,.08);
+}
+
+/* Spacer to prevent content from hiding behind fixed bar */
+.elo-spacer { height: 48px; }
+
+/* Logo wrap (for curriculum and other pages) */
+.elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+.elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+.elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+.elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+
+/* Z-index utility for lesson content that might conflict */
+.elo-bar * { z-index: 10000; }
+
+/* ═══ WELL DONE / END SLIDE PATTERN ═══ */
+.well-done{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:1px solid #1e293b;border-radius:20px;padding:48px 32px;text-align:center;margin:40px 0}
+.well-done h2{font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;margin-bottom:8px}
+.well-done h2 .o{color:#22d3ee}
+.well-done p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto 24px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s}
+.cta-btn:hover{text-decoration:none;transform:translateY(-2px)}
+.cta-btn.primary{background:#fbbf24;color:#000}
+.cta-btn.primary:hover{background:#fcd34d;box-shadow:0 4px 20px rgba(251,191,36,.3)}
+.cta-btn.secondary{border:1px solid #334155;color:#e2e8f0}
+.cta-btn.secondary:hover{border-color:#22d3ee;color:#22d3ee}
+.cta-btn.outline{border:1px solid #22d3ee;color:#22d3ee}
+.cta-btn.outline:hover{background:rgba(34,211,238,.1)}
+
+/* ═══ FIDGET (subtle attention animation) ═══ */
+.fidget{position:relative;overflow:hidden}
+.fidget::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.03) 50%,transparent 60%);animation:fidgetShimmer 3s ease-in-out infinite;pointer-events:none}
+@keyframes fidgetShimmer{0%,100%{transform:translateX(-30%) translateY(-30%)}50%{transform:translateX(30%) translateY(30%)}}

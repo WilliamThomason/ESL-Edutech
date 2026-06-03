@@ -1,0 +1,47 @@
+{
+  "app_store": {
+    "name": "Alien Metronome",
+    "subtitle": "Pro metronome with effects",
+    "description": "A beautifully designed metronome app built for serious musicians. Features delay, reverb, ring modulation, and saturation effects — all routed through a professional-grade audio engine.\n\nKEY FEATURES:\n• Precise tempo control (20-240 BPM) with tap tempo\n• Multiple time signatures (1/4 through 20/4, 6/8, 7/8, 15/8, 23/8, 15/16)\n• 9 unique sound options including alien-themed sounds\n• Studio-quality effects: Delay, Reverb, Ring Modulation, Saturation\n• Feedback control with automatic 3-second fade on stop\n• Beat indicators for visual timekeeping\n• Preset tempos (Largo to Prestissimo)\n• Clean, distraction-free dark interface\n• Works offline — no internet required\n• No ads, no subscriptions, no tracking\n\nPERFECT FOR:\n• Music practice and lessons\n• Live performance preparation\n• Recording studio reference\n• Music education\n• Drummers, guitarists, pianists, and all instrumentalists\n\nBuilt with Web Audio API for sample-accurate timing and professional sound quality.",
+    "keywords": "metronome,music,practice,tempo,bpm,delay,reverb,effects,drum,rhythm,musician,guitar,piano,drums",
+    "category": "Music",
+    "secondary_category": "Utilities",
+    "content_rating": "4+",
+    "price": "Free",
+    "in_app_purchases": false,
+    "privacy_policy_url": "https://eloquent.ee/privacy",
+    "support_url": "https://eloquent.ee/support",
+    "marketing_url": "https://eloquent.ee/alien-metronome",
+    "screenshots_required": {
+      "iphone_6.7": 3,
+      "iphone_6.5": 3,
+      "iphone_5.5": 3,
+      "ipad_12.9": 3
+    },
+    "app_review_notes": "No account required. No data collected. All audio processing happens locally on device. The app uses Web Audio API for professional-grade timing accuracy.",
+    "export_compliance": "No encryption — does not require documentation"
+  },
+  "play_store": {
+    "title": "Alien Metronome",
+    "short_description": "Pro metronome with delay, reverb & effects. Precise timing for musicians.",
+    "full_description": "A beautifully designed metronome app built for serious musicians. Features delay, reverb, ring modulation, and saturation effects — all routed through a professional-grade audio engine.\n\nKEY FEATURES:\n• Precise tempo control (20-240 BPM) with tap tempo\n• Multiple time signatures (1/4 through 20/4, 6/8, 7/8, 15/8, 23/8, 15/16)\n• 9 unique sound options including alien-themed sounds\n• Studio-quality effects: Delay, Reverb, Ring Modulation, Saturation\n• Feedback control with automatic 3-second fade on stop\n• Beat indicators for visual timekeeping\n• Preset tempos (Largo to Prestissimo)\n• Clean, distraction-free dark interface\n• Works offline — no internet required\n• No ads, no subscriptions, no tracking\n\nPERFECT FOR:\n• Music practice and lessons\n• Live performance preparation\n• Recording studio reference\n• Music education\n• Drummers, guitarists, pianists, and all instrumentalists\n\nBuilt with Web Audio API for sample-accurate timing and professional sound quality. All processing happens locally on your device — no data is collected or transmitted.",
+    "category": "Music & Audio",
+    "tags": ["metronome", "music", "practice", "tempo", "bpm", "delay", "reverb", "effects", "drum", "rhythm"],
+    "content_rating": "Everyone",
+    "price": "Free",
+    "in_app_purchases": false,
+    "privacy_policy": "https://eloquent.ee/privacy",
+    "data_safety": "No data collected. No data shared. No data processed externally.",
+    "feature_graphic_required": true,
+    "screenshots_required": {
+      "phone": 4,
+      "tablet_7": 2,
+      "tablet_10": 2
+    }
+  },
+  "desktop": {
+    "platforms": ["macOS", "Windows", "Linux"],
+    "distribution": ["direct_download", "snap_store", "homebrew"],
+    "file_formats": ["dmg", "exe", "appimage", "snap"]
+  }
+}

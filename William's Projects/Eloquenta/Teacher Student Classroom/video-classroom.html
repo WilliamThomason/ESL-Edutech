@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Classroom — Teacher Student Hub</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0f1a;color:#f1f5f9;overflow:hidden;height:100vh}
+
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:260px;min-width:260px;background:#111827;border-right:1px solid #374151;display:flex;flex-direction:column;z-index:10}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid #374151;display:flex;align-items:center;gap:10px}
+.sidebar-header .logo{font-size:18px;font-weight:700;letter-spacing:-.5px;color:#f1f5f9}
+.sidebar-header .logo em{color:#22d3ee;font-style:normal}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px}
+.sidebar-nav .nav-section{margin-bottom:16px}
+.sidebar-nav .nav-label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;padding:8px 12px}
+.sidebar-nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#94a3b8;font-size:13px;font-weight:500;text-decoration:none;transition:all .2s}
+.sidebar-nav a:hover{background:#1f2937;color:#f1f5f9}
+.sidebar-nav a.active{background:rgba(34,211,238,.15);color:#22d3ee}
+.sidebar-nav a .icon{font-size:16px;width:20px;text-align:center}
+.sidebar-footer{padding:12px;border-top:1px solid #374151}
+.user-chip{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#1f2937}
+.user-chip .avatar{width:32px;height:32px;border-radius:50%;background:rgba(34,211,238,.15);color:#22d3ee;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.user-chip .info{font-size:12px}
+.user-chip .name{font-weight:600;color:#f1f5f9}
+.user-chip .role{font-size:10px;color:#64748b}
+
+/* MAIN AREA */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:24px 20px;background:#111827;border-bottom:1px solid #374151;flex-shrink:0;z-index:10}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left h1{font-size:16px;font-weight:700}
+.live-badge{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.live-badge.live{background:rgba(52,211,153,.15);color:#34d399}
+.live-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #374151;color:#94a3b8;background:transparent;cursor:pointer;transition:all .2s}
+.topbar-btn:hover{background:#1f2937;color:#f1f5f9;border-color:#4b5563}
+
+/* ═══ VIDEO STAGE ═══ */
+.video-stage{flex:1;position:relative;background:#0a0f1a;overflow:hidden}
+
+/* Draggable video window */
+.video-window{position:absolute;border-radius:12px;overflow:hidden;background:#111827;z-index:5;box-shadow:0 4px 24px rgba(0,0,0,.5);transition:box-shadow .2s}
+.video-window:hover{box-shadow:0 6px 32px rgba(0,0,0,.6)}
+.video-window video{width:100%;height:100%;object-fit:cover}
+.video-window .video-label{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.65);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;color:#f1f5f9;pointer-events:none}
+.video-window .speaking-ring{position:absolute;inset:0;border:3px solid #34d399;border-radius:12px;pointer-events:none;opacity:0;transition:opacity .2s}
+.video-window.speaking .speaking-ring{opacity:1}
+
+/* Main video — large, centered */
+.main-video{top:50%;left:50%;transform:translate(-50%,-50%);width:70%;height:70%;min-width:300px;min-height:200px;max-width:90%;max-height:80%}
+.main-video video{transform:scaleX(-1)}
+
+/* PIP — small, bottom-right by default */
+.pip-video{bottom:16px;right:16px;width:200px;height:120px;min-width:100px;min-height:70px;max-width:40%;max-height:35%}
+.pip-video video{transform:scaleX(-1)}
+
+/* Drag handle */
+.drag-handle{position:absolute;top:0;left:0;right:0;height:32px;z-index:2;cursor:grab;background:linear-gradient(180deg,rgba(0,0,0,.4) 0%,transparent 100%);opacity:0;transition:opacity .2s;border-radius:12px 12px 0 0}
+.video-window:hover .drag-handle{opacity:1}
+.drag-handle:active{cursor:grabbing}
+
+/* Resize handles */
+.resize-handle{position:absolute;z-index:3;background:transparent}
+.resize-handle.nw{top:0;left:0;width:12px;height:12px;cursor:nw-resize}
+.resize-handle.ne{top:0;right:0;width:12px;height:12px;cursor:ne-resize}
+.resize-handle.sw{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize}
+.resize-handle.se{bottom:0;right:0;width:12px;height:12px;cursor:se-resize}
+.resize-handle.n{top:0;left:12px;right:12px;height:6px;cursor:n-resize}
+.resize-handle.s{bottom:0;left:12px;right:12px;height:6px;cursor:s-resize}
+.resize-handle.w{top:12px;bottom:12px;left:0;width:6px;cursor:w-resize}
+.resize-handle.e{top:12px;bottom:12px;right:0;width:6px;cursor:e-resize}
+
+/* Corner resize indicator */
+.resize-handle.se::after{content:'';position:absolute;bottom:2px;right:2px;width:8px;height:8px;border-right:2px solid rgba(255,255,255,.4);border-bottom:2px solid rgba(255,255,255,.4);border-radius:0 0 4px 0}
+.video-window:hover .resize-handle.se::after{border-color:rgba(34,211,238,.8)}
+
+/* Placeholder when no remote video */
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827,#1f2937);color:#64748b}
+.video-placeholder .avatar-big{width:80px;height:80px;border-radius:50%;background:rgba(34,211,238,.15);color:#22d3ee;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;margin-bottom:12px}
+.video-placeholder .name{font-size:18px;font-weight:700;color:#f1f5f9;margin-bottom:4px}
+.video-placeholder .status{font-size:13px;color:#64748b}
+
+/* ═══ REVERSO LANGUAGE WIDGET ═══ */
+.lang-widget-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:15;background:linear-gradient(135deg,#1e3a5f,#166534);color:#86efac;border:none;padding:10px 6px;border-radius:8px 0 0 8px;cursor:pointer;font-size:16px;box-shadow:-2px 0 12px rgba(0,0,0,.3);transition:all .3s;writing-mode:vertical-rl;text-orientation:mixed}
+.lang-widget-toggle:hover{padding:10px 10px;background:linear-gradient(135deg,#2a4f7a,#1a4a32)}
+.lang-widget-toggle.active{right:340px;background:linear-gradient(135deg,#22d3ee,#0891b2);color:#0a0f1a}
+
+.lang-panel{position:fixed;right:0;top:72px;bottom:0;width:340px;background:#0f172a;border-left:1px solid #1e293b;z-index:14;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.4)}
+.lang-panel.open{transform:translateX(0)}
+
+/* Panel header */
+.lang-panel-header{padding:14px 16px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.lang-panel-header h3{font-size:14px;font-weight:700;color:#e2e8f0;display:flex;align-items:center;gap:8px}
+.lang-panel-close{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:16px;cursor:pointer;border:none;background:transparent}
+.lang-panel-close:hover{background:#1e293b;color:#f1f5f9}
+
+/* Tabs */
+.lang-tabs{display:flex;border-bottom:1px solid #1e293b;flex-shrink:0}
+.lang-tab{flex:1;padding:10px 6px;font-size:11px;font-weight:600;color:#64748b;text-align:center;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s}
+.lang-tab:hover{color:#94a3b8;background:#1e293b}
+.lang-tab.active{color:#22d3ee;border-bottom-color:#22d3ee}
+.lang-tab .tab-icon{font-size:16px;display:block;margin-bottom:2px}
+
+/* Panel content */
+.lang-panel-content{flex:1;overflow-y:auto;padding:16px}
+
+/* Translate tab */
+.translate-input-wrap{margin-bottom:12px}
+.lang-select-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lang-select-row select{flex:1;background:#0a0f1a;border:1px solid #1e293b;border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:13px;cursor:pointer}
+.lang-select-row select:focus{outline:none;border-color:#22d3ee}
+.lang-swap-btn{width:32px;height:32px;border-radius:6px;border:1px solid #1e293b;background:#0a0f1a;color:#22d3ee;font-size:14px;cursor:pointer;flex-shrink:0}
+.lang-swap-btn:hover{background:#1e293b}
+.lang-textarea{width:100%;min-height:80px;background:#0a0f1a;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:14px;font-family:inherit;resize:vertical;line-height:1.5}
+.lang-textarea:focus{outline:none;border-color:#22d3ee}
+.lang-textarea::placeholder{color:#475569}
+
+.translate-btn{width:100%;padding:10px;background:linear-gradient(135deg,#22d3ee,#0891b2);color:#0a0f1a;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:all .2s}
+.translate-btn:hover{filter:brightness(1.1)}
+.translate-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.translate-result{background:#0a0f1a;border:1px solid #1e293b;border-radius:8px;padding:12px;margin-bottom:10px}
+.translate-result-label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.translate-result-text{font-size:14px;color:#e2e8f0;line-height:1.5}
+.translate-result-actions{display:flex;gap:6px;margin-top:8px}
+.lang-action-btn{padding:4px 10px;border-radius:6px;border:1px solid #1e293b;background:transparent;color:#94a3b8;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px}
+.lang-action-btn:hover{border-color:#22d3ee;color:#22d3ee}
+.lang-action-btn.saved{background:rgba(34,211,238,.1);border-color:#22d3ee;color:#22d3ee}
+
+/* Context examples */
+.context-section{margin-top:12px}
+.context-title{font-size:12px;font-weight:700;color:#94a3b8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.context-example{background:#0a0f1a;border:1px solid #1e293b;border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;line-height:1.5}
+.context-example .source{color:#e2e8f0}
+.context-example .target{color:#4ade80;margin-top:4px;font-size:12px}
+.context-example .source-lang{font-size:10px;color:#64748b;margin-top:4px}
+
+/* Synonyms */
+.synonym-group{margin-bottom:12px}
+.synonym-group-title{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #1e293b}
+.synonym-chips{display:flex;flex-wrap:wrap;gap:6px}
+.synonym-chip{padding:4px 10px;border-radius:6px;border:1px solid #1e293b;background:#0a0f1a;color:#94a3b8;font-size:12px;cursor:pointer;transition:all .15s}
+.synonym-chip:hover{border-color:#22d3ee;color:#22d3ee;background:rgba(34,211,238,.05)}
+.synonym-chip.near-exact{border-color:#34d399;color:#34d399;background:rgba(52,211,153,.05)}
+.synonym-chip.common{border-color:#fbbf24;color:#fbbf24;background:rgba(251,191,36,.05)}
+
+/* Conjugation */
+.conj-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.conj-table th{text-align:left;padding:6px 8px;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1e293b}
+.conj-table td{padding:6px 8px;font-size:13px;color:#e2e8f0;border-bottom:1px solid #0a0f1a}
+.conj-table tr:hover td{background:rgba(34,211,238,.03)}
+.conj-tense{font-weight:600;color:#22d3ee;font-size:11px}
+
+/* Grammar check */
+.grammar-input-wrap{margin-bottom:12px}
+.grammar-result{margin-top:12px}
+.grammar-error{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.2);border-radius:8px;padding:10px;margin-bottom:8px}
+.grammar-error .error-text{color:#fca5a5;font-size:13px;text-decoration:line-through}
+.grammar-error .correction-text{color:#4ade80;font-size:13px;margin-top:4px}
+.grammar-error .error-type{font-size:10px;color:#f87171;margin-top:4px;font-weight:600}
+.grammar-clean{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:10px;color:#4ade80;font-size:13px}
+
+/* Vocabulary list */
+.vocab-search{width:100%;background:#0a0f1a;border:1px solid #1e293b;border-radius:6px;padding:8px 12px;color:#e2e8f0;font-size:13px;margin-bottom:10px}
+.vocab-search:focus{outline:none;border-color:#22d3ee}
+.vocab-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:6px;border:1px solid transparent;margin-bottom:4px;cursor:pointer;transition:all .15s}
+.vocab-item:hover{background:#0a0f1a;border-color:#1e293b}
+.vocab-word{font-size:13px;font-weight:600;color:#e2e8f0}
+.vocab-translation{font-size:12px;color:#4ade80}
+.vocab-lang{font-size:10px;color:#64748b;margin-left:6px}
+.vocab-delete{width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:#475569;cursor:pointer;font-size:12px;opacity:0;transition:all .15s}
+.vocab-item:hover .vocab-delete{opacity:1}
+.vocab-delete:hover{background:rgba(251,113,133,.15);color:#fb7185}
+.vocab-empty{text-align:center;padding:32px 16px;color:#475569;font-size:13px}
+.vocab-empty .empty-icon{font-size:32px;margin-bottom:8px}
+
+/* Pronounce button */
+.pronounce-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:4px;border:1px solid #1e293b;background:transparent;color:#22d3ee;font-size:11px;cursor:pointer;margin-left:8px}
+.pronounce-btn:hover{background:rgba(34,211,238,.1)}
+
+/* Loading state */
+.lang-loading{display:flex;align-items:center;justify-content:center;padding:32px;color:#475569;font-size:13px}
+.lang-loading .spinner{width:20px;height:20px;border:2px solid #1e293b;border-top-color:#22d3ee;border-radius:50%;animation:spin .6s linear infinite;margin-right:8px}
+
+/* Responsive */
+@media(max-width:900px){
+  .lang-panel{width:100%;top:auto;bottom:0;height:50vh;border-left:none;border-top:1px solid #1e293b}
+  .lang-widget-toggle{right:50%;top:auto;bottom:50vh;transform:translate(50%,50%);border-radius:8px 8px 0 0;padding:6px 12px;writing-mode:horizontal-tb}
+  .lang-widget-toggle.active{right:50%;bottom:calc(50vh + 40px)}
+}
+.layout-reset{position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#f1f5f9;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;opacity:0;transition:opacity .2s;display:flex;align-items:center;gap:4px}
+.video-stage:hover .layout-reset{opacity:1}
+.layout-reset:hover{background:rgba(0,0,0,.7);border-color:#22d3ee;color:#22d3ee}
+
+/* BOTTOM CONTROLS */
+.bottom-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px;background:#111827;border-top:1px solid #374151;flex-shrink:0;z-index:10}
+.ctrl-btn{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s;position:relative;border:none;cursor:pointer}
+.ctrl-btn{background:#1f2937;color:#f1f5f9}
+.ctrl-btn:hover{background:#374151;transform:scale(1.08)}
+.ctrl-btn.active{background:rgba(34,211,238,.15);color:#22d3ee}
+.ctrl-btn.muted{background:rgba(251,113,133,.15);color:#fb7185}
+.ctrl-btn.danger{background:#fb7185;color:#fff}
+.ctrl-btn.danger:hover{background:#f43f5e}
+.ctrl-btn .tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1f2937;border:1px solid #374151;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.ctrl-btn:hover .tooltip{opacity:1}
+
+/* PANELS */
+.side-panel{width:320px;min-width:320px;background:#111827;border-left:1px solid #374151;display:none;flex-direction:column;z-index:10}
+.side-panel.open{display:flex}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #374151}
+.panel-header h3{font-size:14px;font-weight:700}
+.panel-close{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:16px;cursor:pointer;border:none;background:transparent}
+.panel-close:hover{background:#1f2937;color:#f1f5f9}
+.panel-content{flex:1;overflow-y:auto;padding:16px}
+
+/* CHAT */
+.chat-msg{margin-bottom:12px}
+.chat-msg .sender{font-size:11px;font-weight:700;margin-bottom:2px}
+.chat-msg .sender.teacher{color:#34d399}
+.chat-msg .sender.student{color:#22d3ee}
+.chat-msg .text{font-size:13px;color:#94a3b8;line-height:1.5}
+.chat-msg .time{font-size:10px;color:#64748b;margin-top:2px}
+.chat-input-area{padding:12px;border-top:1px solid #374151;display:flex;gap:8px}
+.chat-input-area input{flex:1;background:#0a0f1a;border:1px solid #374151;border-radius:8px;padding:8px 12px;color:#f1f5f9;font-size:13px}
+.chat-input-area input:focus{outline:none;border-color:#22d3ee}
+.chat-input-area button{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;background:#22d3ee;color:#0a0f1a;border:none;cursor:pointer}
+.chat-input-area button:hover{background:#67e8f9}
+
+/* PARTICIPANTS */
+.participant-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:4px;transition:background .2s}
+.participant-item:hover{background:#1f2937}
+.participant-item .p-avatar{width:32px;height:32px;border-radius:50%;background:rgba(34,211,238,.15);color:#22d3ee;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.participant-item .p-name{font-size:13px;font-weight:600;flex:1}
+.participant-item .p-badges{display:flex;gap:4px}
+.participant-item .p-badge{width:20px;height:20px;border-radius:4px;background:#0a0f1a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#94a3b8}
+
+/* SETTINGS PANEL */
+.settings-section{margin-bottom:20px}
+.settings-section-title{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1f2937}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1f2937}
+.setting-row:last-child{border-bottom:none}
+.setting-left{display:flex;flex-direction:column;gap:2px}
+.setting-label{font-size:13px;color:#e2e8f0;font-weight:500}
+.setting-desc{font-size:11px;color:#64748b}
+.toggle{width:40px;height:22px;border-radius:11px;background:#374151;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:#34d399}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle.on::after{left:20px}
+.setting-select{background:#0a0f1a;border:1px solid #374151;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:12px;cursor:pointer;min-width:140px}
+.setting-select:focus{outline:none;border-color:#22d3ee}
+.setting-value{font-size:12px;color:#22d3ee;font-weight:600;min-width:40px;text-align:right}
+.slider-wrap{display:flex;align-items:center;gap:10px;flex:1;margin-left:16px}
+.slider-track{flex:1;height:4px;border-radius:2px;background:#374151;position:relative;cursor:pointer}
+.slider-fill{height:100%;border-radius:2px;background:#22d3ee;width:50%}
+.slider-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #22d3ee;cursor:grab}
+.device-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.device-badge.active{background:rgba(52,211,153,.15);color:#34d399}
+.device-badge.inactive{background:#1f2937;color:#64748b}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#111827;border:1px solid #374151;border-radius:16px;padding:28px;max-width:400px;width:90%}
+.modal h2{font-size:20px;font-weight:800;margin-bottom:8px}
+.modal p{font-size:14px;color:#94a3b8;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* LOADING */
+.loading-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0f1a;z-index:20;transition:opacity .5s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loading-spinner{width:40px;height:40px;border:3px solid #374151;border-top-color:#22d3ee;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:#94a3b8;font-size:14px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{position:absolute;left:-260px;height:100%;transition:left .3s;z-index:20}
+  .sidebar.open{left:0}
+  .side-panel{position:absolute;right:0;height:100%;box-shadow:-4px 0 20px rgba(0,0,0,.3);z-index:20}
+  .pip-video{width:140px;height:90px}
+}
+@media(max-width:600px){
+  .bottom-controls{gap:8px;padding:12px}
+  .ctrl-btn{width:42px;height:42px;font-size:18px}
+  .pip-video{width:120px;height:75px;bottom:8px;right:8px}
+}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+       <span class="elo-wordmark">Eloqu<span class="o">e</span>nta</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-label">Classroom</div>
+        <a href="#" class="active" onclick="showPanel('none');return false;"><span class="icon">🎥</span> Video Room</a>
+        <a href="#" onclick="togglePanel('chat');return false;"><span class="icon">💬</span> Chat</a>
+        <a href="#" onclick="togglePanel('participants');return false;"><span class="icon">👥</span> Participants <span id="participant-count" style="margin-left:auto;font-size:11px;color:#64748b">2</span></a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Session</div>
+        <a href="#" onclick="togglePanel('settings');return false;"><span class="icon">⚙️</span> Settings</a>
+        <a href="dashboard.html"><span class="icon">📊</span> Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar" id="my-avatar">M</div>
+        <div class="info"><div class="name" id="my-name">Maria Schmidt</div><div class="role" id="my-role">FL4 — Student</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="room-title">FL4 Session 3 — Present Perfect</h1>
+        <div class="live-badge live" id="live-badge" style="display:none">
+          <div class="dot"></div> LIVE
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" onclick="copyInvite()">🔗 Copy Link</button>
+        <button class="topbar-btn" onclick="toggleSidebar()">☰</button>
+      </div>
+    </div>
+
+    <!-- VIDEO STAGE -->
+    <div class="video-stage" id="video-stage">
+      
+      <!-- MEET-STYLE CONTROL BAR OVERLAY -->
+      <div class="meet-controls">
+        <div class="meet-status">
+            <span class="status-indicator">●</span> <span id="conn-quality">Stable</span>
+        </div>
+        <div class="meet-participants">👥 2</div>
+        <div class="meet-time" id="meet-timer">00:00</div>
+      </div>
+      <style>
+        .meet-controls {
+            position:absolute; top:20px; left:50%; transform:translateX(-50%);
+            display:flex; align-items:center; gap:20px; background:rgba(0,0,0,0.6);
+            padding:10px 20px; border-radius:30px; z-index:20; backdrop-filter:blur(8px);
+            font-size:13px; font-weight:600; border:1px solid rgba(255,255,255,0.1);
+        }
+        .status-indicator { color:#34d399; margin-right:4px; }
+      </style>
+
+      <!-- Loading overlay -->
+      <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">Connecting to classroom...</div>
+      </div>
+
+      <!-- Device Check Overlay -->
+      <div class="device-check-overlay" id="device-check" style="display:none;position:absolute;inset:0;z-index:25;background:#0a0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px">
+        <div style="max-width:480px;width:100%;text-align:center">
+          <div style="font-size:3rem;margin-bottom:16px">📹🎤🔊</div>
+          <h2 style="font-size:1.4rem;font-weight:700;color:#f1f5f9;margin-bottom:8px">Check Your Devices</h2>
+          <p style="color:#94a3b8;font-size:14px;margin-bottom:24px">Allow access to your camera, microphone and speakers before joining the classroom.</p>
+          
+          <div style="background:#111827;border:1px solid #374151;border-radius:12px;padding:16px;margin-bottom:16px;text-align:left">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0" id="dev-cam">
+              <span style="font-size:20px">📷</span>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:#f1f5f9">Camera</div>
+                <div style="font-size:11px;color:#64748b" id="dev-cam-status">Checking...</div>
+              </div>
+              <span class="dev-badge" id="dev-cam-badge" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;background:#374151;color:#94a3b8">—</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #1f2937" id="dev-mic">
+              <span style="font-size:20px">🎤</span>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:#f1f5f9">Microphone</div>
+                <div style="font-size:11px;color:#64748b" id="dev-mic-status">Checking...</div>
+              </div>
+              <span class="dev-badge" id="dev-mic-badge" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;background:#374151;color:#94a3b8">—</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #1f2937" id="dev-spk">
+              <span style="font-size:20px">🔊</span>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:#f1f5f9">Speakers</div>
+                <div style="font-size:11px;color:#64748b" id="dev-spk-status">Checking...</div>
+              </div>
+              <span class="dev-badge" id="dev-spk-badge" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;background:#374151;color:#94a3b8">—</span>
+            </div>
+          </div>
+
+          <div id="dev-error" style="display:none;background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);border-radius:8px;padding:10px;margin-bottom:16px;text-align:left;font-size:12px;color:#fb7185"></div>
+
+          <button id="dev-test-btn" onclick="runDeviceCheck()" style="width:100%;padding:12px;border-radius:8px;border:none;background:linear-gradient(135deg,#22d3ee,#0891b2);color:#0a0f1a;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
+            🔍 Test Camera & Microphone
+          </button>
+          <button id="dev-join-btn" onclick="proceedToJoin()" style="width:100%;padding:12px;border-radius:8px;border:1px solid #374151;background:transparent;color:#94a3b8;font-size:14px;font-weight:700;cursor:not-allowed;opacity:.5" disabled>
+            Join Classroom →
+          </button>
+          <button onclick="skipDeviceCheck()" style="margin-top:8px;padding:8px;border:none;background:transparent;color:#64748b;font-size:12px;cursor:pointer">
+            Skip and join anyway
+          </button>
+        </div>
+      </div>
+
+      <!-- Main video (remote — fullscreen for student, small for teacher) -->
+      <div class="video-window main-video" id="main-video-wrap">
+        <div class="drag-handle" id="main-drag"></div>
+        <div class="resize-handle nw"></div>
+        <div class="resize-handle ne"></div>
+        <div class="resize-handle sw"></div>
+        <div class="resize-handle se"></div>
+        <div class="resize-handle n"></div>
+        <div class="resize-handle s"></div>
+        <div class="resize-handle w"></div>
+        <div class="resize-handle e"></div>
+        <div class="video-placeholder" id="remote-placeholder">
+          <div class="avatar-big" id="remote-avatar">W</div>
+          <div class="name" id="remote-name">William</div>
+          <div class="status" id="remote-status">Waiting to connect...</div>
+        </div>
+        <video id="remote-video" autoplay playsinline style="display:none"></video>
+        <div class="speaking-ring"></div>
+        <div class="video-label" id="remote-label">William — Teacher</div>
+      </div>
+
+      <!-- PIP video (self — small for student, fullscreen for teacher) -->
+      <div class="video-window pip-video" id="pip-video-wrap">
+        <div class="drag-handle" id="pip-drag"></div>
+        <div class="resize-handle nw"></div>
+        <div class="resize-handle ne"></div>
+        <div class="resize-handle sw"></div>
+        <div class="resize-handle se"></div>
+        <div class="resize-handle n"></div>
+        <div class="resize-handle s"></div>
+        <div class="resize-handle w"></div>
+        <div class="resize-handle e"></div>
+        <video id="local-video" autoplay playsinline muted></video>
+        <div class="speaking-ring"></div>
+        <div class="video-label" id="pip-label">You</div>
+      </div>
+
+      <!-- Layout reset button -->
+      <button class="layout-reset" id="layout-reset" onclick="resetLayout()">🔄 Reset Layout</button>
+    </div>
+
+    <!-- BOTTOM CONTROLS -->
+    <div class="bottom-controls">
+      <button class="ctrl-btn" id="ctrl-mic" onclick="toggleMic()" title="Microphone">
+        🎤<span class="tooltip">Mic</span>
+      </button>
+      <button class="ctrl-btn" id="ctrl-cam" onclick="toggleCam()" title="Camera">
+        📷<span class="tooltip">Camera</span>
+      </button>
+      <button class="ctrl-btn" id="ctrl-screen" onclick="shareScreen()" title="Share Screen">
+        🖥️<span class="tooltip">Share</span>
+      </button>
+      <button class="ctrl-btn" id="ctrl-swap" onclick="swapVideos()" title="Swap Videos">
+        🔄<span class="tooltip">Swap</span>
+      </button>
+      <button class="ctrl-btn" id="ctrl-chat" onclick="togglePanel('chat')" title="Chat">
+        💬<span class="tooltip">Chat</span>
+      </button>
+      <button class="ctrl-btn danger" onclick="confirmLeave()" title="Leave">
+        📴<span class="tooltip">Leave</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- SIDE PANEL -->
+  <aside class="side-panel" id="side-panel">
+    <div class="panel-header">
+      <h3 id="panel-title">Chat</h3>
+      <button class="panel-close" onclick="togglePanel('none')">✕</button>
+    </div>
+    <div class="panel-content" id="panel-content"></div>
+    <div class="chat-input-area" id="chat-input-area" style="display:none">
+      <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()">Send</button>
+    </div>
+  </aside>
+</div><!-- end app -->
+
+<!-- ═══ LANGUAGE WIDGET TOGGLE ═══ -->
+<button class="lang-widget-toggle" id="lang-widget-toggle" onclick="toggleLangWidget()" title="Language Tools">🌐 Tools</button>
+
+<!-- ═══ LANGUAGE WIDGET PANEL ═══ -->
+<div class="lang-panel" id="lang-panel">
+  <div class="lang-panel-header">
+    <h3>🌐 Language Tools</h3>
+    <button class="lang-panel-close" onclick="toggleLangWidget()">✕</button>
+  </div>
+  <div class="lang-tabs">
+    <button class="lang-tab active" data-tab="translate" onclick="switchLangTab('translate')"><span class="tab-icon">🔄</span>Translate</button>
+    <button class="lang-tab" data-tab="synonyms" onclick="switchLangTab('synonyms')"><span class="tab-icon">💡</span>Synonyms</button>
+    <button class="lang-tab" data-tab="conjugate" onclick="switchLangTab('conjugate')"><span class="tab-icon">📝</span>Conjugate</button>
+    <button class="lang-tab" data-tab="grammar" onclick="switchLangTab('grammar')"><span class="tab-icon">✓</span>Grammar</button>
+    <button class="lang-tab" data-tab="vocab" onclick="switchLangTab('vocab')"><span class="tab-icon">📚</span>My Words</button>
+  </div>
+  <div class="lang-panel-content" id="lang-panel-content">
+    <!-- Translate tab (default) -->
+    <div class="lang-tab-content" id="tab-translate">
+      <div class="lang-select-row">
+        <select id="lang-from">
+          <option value="en">English</option>
+          <option value="de">German</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="zh">Chinese</option>
+        </select>
+        <button class="lang-swap-btn" onclick="swapLangs()" title="Swap languages">⇄</button>
+        <select id="lang-to">
+          <option value="de">German</option>
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="zh">Chinese</option>
+        </select>
+      </div>
+      <textarea class="lang-textarea" id="lang-input" placeholder="Type or paste text to translate..."></textarea>
+      <button class="translate-btn" onclick="doTranslate()">🔄 Translate</button>
+      <div id="translate-results"></div>
+    </div>
+    <!-- Synonyms tab -->
+    <div class="lang-tab-content" id="tab-synonyms" style="display:none">
+      <div class="translate-input-wrap">
+        <input type="text" class="lang-textarea" id="synonym-input" placeholder="Enter a word to find synonyms..." style="min-height:48px" onkeydown="if(event.key==='Enter')doSynonyms()">
+      </div>
+      <button class="translate-btn" onclick="doSynonyms()">💡 Find Synonyms</button>
+      <div id="synonym-results"></div>
+    </div>
+    <!-- Conjugate tab -->
+    <div class="lang-tab-content" id="tab-conjugate" style="display:none">
+      <div class="translate-input-wrap">
+        <input type="text" class="lang-textarea" id="conjugate-input" placeholder="Enter a verb to conjugate..." style="min-height:48px" onkeydown="if(event.key==='Enter')doConjugate()">
+      </div>
+      <div class="lang-select-row" style="margin-bottom:10px">
+        <select id="conjugate-lang" style="flex:1;background:#0a0f1a;border:1px solid #1e293b;border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:13px">
+          <option value="en">English</option>
+          <option value="de">German</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="it">Italian</option>
+        </select>
+      </div>
+      <button class="translate-btn" onclick="doConjugate()">📝 Conjugate</button>
+      <div id="conjugate-results"></div>
+    </div>
+    <!-- Grammar tab -->
+    <div class="lang-tab-content" id="tab-grammar" style="display:none">
+      <textarea class="lang-textarea" id="grammar-input" placeholder="Write a sentence to check grammar..." style="min-height:100px"></textarea>
+      <button class="translate-btn" onclick="doGrammarCheck()">✓ Check Grammar</button>
+      <div id="grammar-results"></div>
+    </div>
+    <!-- Vocab tab -->
+    <div class="lang-tab-content" id="tab-vocab" style="display:none">
+      <input type="text" class="vocab-search" id="vocab-search" placeholder="🔍 Search saved words..." oninput="filterVocab()">
+      <div id="vocab-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM LEAVE MODAL -->
+<div class="modal-overlay" id="leave-modal">
+  <div class="modal">
+    <h2>Leave Classroom?</h2>
+    <p>This will end the video session. You can rejoin anytime from your dashboard.</p>
+    <div class="modal-actions">
+      <button class="topbar-btn" onclick="document.getElementById('leave-modal').classList.remove('active')">Cancel</button>
+      <button class="ctrl-btn danger" style="border-radius:8px;width:auto;padding:8px 20px" onclick="leaveRoom()">Leave</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ── ROLE DETECTION ──
+  // URL param: ?role=teacher or ?role=student (default: student)
+  var params = new URLSearchParams(window.location.search);
+  var myRole = params.get('role') || 'student';
+  var roomId = params.get('room') || 'esl-maria-fl4-20260523';
+
+  // Update UI based on role
+  if(myRole === 'teacher'){
+    document.getElementById('my-name').textContent = 'William';
+    document.getElementById('my-role').textContent = 'Teacher';
+    document.getElementById('my-avatar').textContent = 'W';
+    document.getElementById('remote-name').textContent = 'Maria';
+    document.getElementById('remote-avatar').textContent = 'M';
+    document.getElementById('pip-label').textContent = 'You (Teacher)';
+  }
+
+  // ── WEBRTC SETUP ──
+  var localStream = null;
+  var remoteStream = null;
+  var pc = null; // RTCPeerConnection
+  var ws = null; // WebSocket signaling
+  var micOn = true;
+  var camOn = true;
+  var videosSwapped = false;
+  var isInitiator = false;
+
+  var localVideo = document.getElementById('local-video');
+  var remoteVideo = document.getElementById('remote-video');
+  var remotePlaceholder = document.getElementById('remote-placeholder');
+  var mainVideoWrap = document.getElementById('main-video-wrap');
+  var pipVideoWrap = document.getElementById('pip-video-wrap');
+  var loadingOverlay = document.getElementById('loading-overlay');
+  var loadingText = document.getElementById('loading-text');
+
+  // ── SIGNALING ──
+  function connectSignaling(){
+    var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var port = location.port || (location.protocol === 'https:' ? '443' : '80');
+    var wsUrl = proto + '//' + location.hostname + ':' + port + '/signal';
+    loadingText.textContent = 'Connecting to signaling server...';
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = function(){
+      console.log('Signaling connected');
+      ws.send(JSON.stringify({ type: 'join', room: roomId, role: myRole }));
+    };
+
+    ws.onmessage = function(evt){
+      var msg = JSON.parse(evt.data);
+      console.log('Signal:', msg.type);
+      switch(msg.type){
+        case 'joined':
+          loadingText.textContent = 'In room: ' + roomId + ' (' + (msg.peers || 0) + ' other' + (msg.peers === 1 ? '' : 's') + ')';
+          // If we're the second peer, we initiate the call
+          if(msg.peers > 0 && myRole === 'teacher'){
+            isInitiator = true;
+            startCall();
+          } else if(msg.peers > 0){
+            // Student waits for offer
+            isInitiator = false;
+          }
+          break;
+        case 'offer':
+          handleOffer(msg.sdp);
+          break;
+        case 'answer':
+          handleAnswer(msg.sdp);
+          break;
+        case 'ice-candidate':
+          if(msg.candidate && pc){
+            pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(function(e){ console.warn('ICE add error:', e); });
+          }
+          break;
+        case 'peer-left':
+          console.log('Peer left');
+          remotePlaceholder.querySelector('.status').textContent = 'Peer disconnected';
+          remotePlaceholder.style.display = 'flex';
+          remoteVideo.style.display = 'none';
+          document.getElementById('live-badge').style.display = 'none';
+          if(pc){ pc.close(); pc = null; }
+          break;
+      }
+    };
+
+    ws.onerror = function(e){
+      console.error('WS error', e);
+      loadingText.textContent = 'Signaling server error. Make sure the server is running.';
+    };
+
+    ws.onclose = function(){
+      console.log('WS closed');
+      loadingText.textContent = 'Disconnected from signaling server.';
+    };
+  }
+
+  // ── PEER CONNECTION ──
+  function createPeerConnection(){
+    var config = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' },
+        { urls: 'stun:global.stun.twilio.com:3478' }
+      ]
+    };
+    pc = new RTCPeerConnection(config);
+
+    pc.onicecandidate = function(evt){
+      if(evt.candidate && ws && ws.readyState === WebSocket.OPEN){
+        ws.send(JSON.stringify({ type: 'ice-candidate', candidate: evt.candidate }));
+      }
+    };
+
+    pc.ontrack = function(evt){
+      console.log('Remote track received:', evt.track.kind);
+      remoteStream = evt.streams[0];
+      remoteVideo.srcObject = remoteStream;
+      remotePlaceholder.style.display = 'none';
+      remoteVideo.style.display = 'block';
+      loadingOverlay.classList.add('hidden');
+      document.getElementById('live-badge').style.display = 'flex';
+      remotePlaceholder.querySelector('.status').textContent = 'Connected';
+    };
+
+    pc.onconnectionstatechange = function(){
+      console.log('Connection state:', pc.connectionState);
+      if(pc.connectionState === 'disconnected' || pc.connectionState === 'failed'){
+        remotePlaceholder.querySelector('.status').textContent = 'Connection lost';
+        remotePlaceholder.style.display = 'flex';
+        remoteVideo.style.display = 'none';
+        document.getElementById('live-badge').style.display = 'none';
+      }
+    };
+
+    // Add local tracks
+    if(localStream){
+      localStream.getTracks().forEach(function(track){
+        pc.addTrack(track, localStream);
+      });
+    }
+  }
+
+  function startCall(){
+    if(!pc) createPeerConnection();
+    pc.createOffer().then(function(offer){
+      return pc.setLocalDescription(offer);
+    }).then(function(){
+      if(ws && ws.readyState === WebSocket.OPEN){
+        ws.send(JSON.stringify({ type: 'offer', sdp: pc.localDescription }));
+      }
+    }).catch(function(e){ console.error('Offer error:', e); });
+  }
+
+  function handleOffer(sdp){
+    if(!pc) createPeerConnection();
+    pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(function(){
+      return pc.createAnswer();
+    }).then(function(answer){
+      return pc.setLocalDescription(answer);
+    }).then(function(){
+      if(ws && ws.readyState === WebSocket.OPEN){
+        ws.send(JSON.stringify({ type: 'answer', sdp: pc.localDescription }));
+      }
+      loadingOverlay.classList.add('hidden');
+      document.getElementById('live-badge').style.display = 'flex';
+      remotePlaceholder.querySelector('.status').textContent = 'Connected';
+    }).catch(function(e){ console.error('Answer error:', e); });
+  }
+
+  function handleAnswer(sdp){
+    pc.setRemoteDescription(new RTCSessionDescription(sdp)).catch(function(e){ console.error('Remote desc error:', e); });
+  }
+
+  // ═══ DEVICE CHECK ON LOAD ═══
+  var deviceCheckPassed = false;
+  var deviceCheckStream = null;
+
+  function showDeviceCheck() {
+    document.getElementById('device-check').style.display = 'flex';
+    document.getElementById('loading-overlay').style.display = 'none';
+    // Auto-detect devices
+    detectDevices();
+  }
+
+  async function detectDevices() {
+    var camStatus = document.getElementById('dev-cam-status');
+    var micStatus = document.getElementById('dev-mic-status');
+    var spkStatus = document.getElementById('dev-spk-status');
+    var camBadge = document.getElementById('dev-cam-badge');
+    var micBadge = document.getElementById('dev-mic-badge');
+    var spkBadge = document.getElementById('dev-spk-badge');
+    
+    // Check if mediaDevices API exists
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+      camStatus.textContent = 'API not available';
+      micStatus.textContent = 'API not available';
+      spkStatus.textContent = 'API not available';
+      camBadge.textContent = 'N/A'; camBadge.style.background = '#374151';
+      micBadge.textContent = 'N/A'; micBadge.style.background = '#374151';
+      spkBadge.textContent = 'N/A'; spkBadge.style.background = '#374151';
+      showDeviceError('Your browser does not support media device detection. Try clicking "Test Camera & Microphone" or use a modern browser (Chrome, Firefox, Edge).');
+      // Enable join anyway — let the browser handle permissions on the next step
+      document.getElementById('dev-join-btn').disabled = false;
+      document.getElementById('dev-join-btn').style.opacity = '1';
+      document.getElementById('dev-join-btn').style.cursor = 'pointer';
+      document.getElementById('dev-join-btn').style.color = '#f1f5f9';
+      document.getElementById('dev-join-btn').style.borderColor = '#22d3ee';
+      return;
+    }
+
+    // First enumerate devices without permission (fast, no prompt)
+    try {
+      var devices = await navigator.mediaDevices.enumerateDevices();
+      var videoInputs = devices.filter(function(d) { return d.kind === 'videoinput'; }).length;
+      var audioInputs = devices.filter(function(d) { return d.kind === 'audioinput'; }).length;
+      var audioOutputs = devices.filter(function(d) { return d.kind === 'audiooutput'; }).length;
+
+      camStatus.textContent = videoInputs > 0 ? videoInputs + ' camera(s) found' : 'No camera detected';
+      micStatus.textContent = audioInputs > 0 ? audioInputs + ' microphone(s) found' : 'No microphone detected';
+
+      // Check speaker support
+      var speakerOK = false;
+      try {
+        var testCtx = new (window.AudioContext || window.webkitAudioContext)();
+        speakerOK = testCtx.state !== 'closed';
+        testCtx.close();
+      } catch(e) {}
+      spkStatus.textContent = (audioOutputs > 0 || speakerOK) ? 'Audio output available' : 'Cannot verify speakers';
+
+      if (videoInputs > 0) { camBadge.textContent = '✓ Found'; camBadge.style.background = 'rgba(52,211,153,.2)'; camBadge.style.color = '#34d399'; }
+      else { camBadge.textContent = '✗ None'; camBadge.style.background = 'rgba(251,113,133,.2)'; camBadge.style.color = '#fb7185'; }
+
+      if (audioInputs > 0) { micBadge.textContent = '✓ Found'; micBadge.style.background = 'rgba(52,211,153,.2)'; micBadge.style.color = '#34d399'; }
+      else { micBadge.textContent = '✗ None'; micBadge.style.background = 'rgba(251,113,133,.2)'; micBadge.style.color = '#fb7185'; }
+
+      if (audioOutputs > 0 || speakerOK) { spkBadge.textContent = '✓ Ready'; spkBadge.style.background = 'rgba(52,211,153,.2)'; spkBadge.style.color = '#34d399'; }
+      else { spkBadge.textContent = '? Unknown'; spkBadge.style.background = '#374151'; spkBadge.style.color = '#94a3b8'; }
+
+      // Enable join if we found at least audio
+      if (audioInputs > 0 || videoInputs > 0) {
+        document.getElementById('dev-join-btn').disabled = false;
+        document.getElementById('dev-join-btn').style.opacity = '1';
+        document.getElementById('dev-join-btn').style.cursor = 'pointer';
+        document.getElementById('dev-join-btn').style.color = '#f1f5f9';
+        document.getElementById('dev-join-btn').style.borderColor = '#22d3ee';
+      }
+
+    } catch(e) {
+      camStatus.textContent = 'Error: ' + e.message;
+      micStatus.textContent = 'Error: ' + e.message;
+      spkStatus.textContent = 'Unknown';
+      showDeviceError('Device detection failed: ' + e.message + '. Try clicking "Test Camera & Microphone" to grant permissions manually.');
+      // Enable join anyway
+      document.getElementById('dev-join-btn').disabled = false;
+      document.getElementById('dev-join-btn').style.opacity = '1';
+      document.getElementById('dev-join-btn').style.cursor = 'pointer';
+      document.getElementById('dev-join-btn').style.color = '#f1f5f9';
+      document.getElementById('dev-join-btn').style.borderColor = '#22d3ee';
+    }
+  }
+
+  async function runDeviceCheck() {
+    var btn = document.getElementById('dev-test-btn');
+    btn.textContent = '⏳ Testing...';
+    btn.disabled = true;
+    
+    try {
+      // Request full permissions
+      deviceCheckStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      
+      // Show local video preview
+      var localVideo = document.getElementById('local-video');
+      if (localVideo) {
+        localVideo.srcObject = deviceCheckStream;
+        localVideo.style.display = 'block';
+      }
+      
+      // Update UI
+      var camBadge = document.getElementById('dev-cam-badge');
+      var micBadge = document.getElementById('dev-mic-badge');
+      camBadge.textContent = '✓ Working'; camBadge.style.background = 'rgba(52,211,153,.2)'; camBadge.style.color = '#34d399';
+      micBadge.textContent = '✓ Working'; micBadge.style.background = 'rgba(52,211,153,.2)'; micBadge.style.color = '#34d399';
+      document.getElementById('dev-cam-status').textContent = 'Camera active — you should see yourself below';
+      document.getElementById('dev-mic-status').textContent = 'Microphone active';
+      
+      // Enable join
+      document.getElementById('dev-join-btn').disabled = false;
+      document.getElementById('dev-join-btn').style.opacity = '1';
+      document.getElementById('dev-join-btn').style.cursor = 'pointer';
+      document.getElementById('dev-join-btn').style.color = '#f1f5f9';
+      document.getElementById('dev-join-btn').style.borderColor = '#22d3ee';
+      
+      deviceCheckPassed = true;
+      document.getElementById('dev-error').style.display = 'none';
+      
+    } catch(e) {
+      showDeviceError('Could not access camera/microphone: ' + e.name + ' — ' + e.message);
+      var camBadge = document.getElementById('dev-cam-badge');
+      var micBadge = document.getElementById('dev-mic-badge');
+      camBadge.textContent = '✗ Denied'; camBadge.style.background = 'rgba(251,113,133,.2)'; camBadge.style.color = '#fb7185';
+      micBadge.textContent = '✗ Denied'; micBadge.style.background = 'rgba(251,113,133,.2)'; micBadge.style.color = '#fb7185';
+    }
+    
+    btn.textContent = '🔍 Test Again';
+    btn.disabled = false;
+  }
+
+  function showDeviceError(msg) {
+    var el = document.getElementById('dev-error');
+    el.textContent = '⚠ ' + msg;
+    el.style.display = 'block';
+  }
+
+  function proceedToJoin() {
+    // Clean up test stream
+    if (deviceCheckStream) {
+      deviceCheckStream.getTracks().forEach(function(t) { t.stop(); });
+      deviceCheckStream = null;
+    }
+    document.getElementById('device-check').style.display = 'none';
+    document.getElementById('loading-overlay').style.display = '';
+    initMedia();
+  }
+
+  function skipDeviceCheck() {
+    if (deviceCheckStream) {
+      deviceCheckStream.getTracks().forEach(function(t) { t.stop(); });
+      deviceCheckStream = null;
+    }
+    document.getElementById('device-check').style.display = 'none';
+    document.getElementById('loading-overlay').style.display = '';
+    initMedia();
+  }
+
+  // Get user media then connect signaling
+  async function initMedia(){
+    try{
+      loadingText.textContent = 'Requesting camera and microphone access...';
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: true
+      });
+      localVideo.srcObject = localStream;
+      loadingText.textContent = 'Camera ready. Connecting to server...';
+      connectSignaling();
+    }catch(e){
+      console.warn('Camera/mic not available:', e);
+      loadingText.textContent = 'Camera not available. Trying audio only...';
+      try{
+        localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+        localVideo.srcObject = localStream;
+        connectSignaling();
+      }catch(e2){
+        loadingText.textContent = 'Could not access microphone. Please check permissions and reload.';
+      }
+    }
+  }
+
+  // Initialize drag & resize
+  initDragAndResize();
+
+  // ── DRAG & RESIZE SYSTEM ──
+  var dragState = null; // { element, startX, startY, startLeft, startTop }
+  var resizeState = null; // { element, handle, startX, startY, startW, startH, startL, startT }
+
+  function initDragAndResize(){
+    var stage = document.getElementById('video-stage');
+    var windows = stage.querySelectorAll('.video-window');
+
+    windows.forEach(function(win){
+      // Drag via handle
+      var handle = win.querySelector('.drag-handle');
+      if(handle){
+        handle.addEventListener('mousedown', function(e){ startDrag(e, win); });
+        handle.addEventListener('touchstart', function(e){ startDrag(e, win); }, {passive:false});
+      }
+
+      // Resize via handles
+      var handles = win.querySelectorAll('.resize-handle');
+      handles.forEach(function(h){
+        h.addEventListener('mousedown', function(e){ startResize(e, win, h); });
+        h.addEventListener('touchstart', function(e){ startResize(e, win, h); }, {passive:false});
+      });
+
+      // Double-click to swap
+      win.addEventListener('dblclick', function(){ swapVideos(); });
+    });
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+  }
+
+  function startDrag(e, win){
+    e.preventDefault();
+    e.stopPropagation();
+    var rect = win.getBoundingClientRect();
+    var stage = document.getElementById('video-stage');
+    var stageRect = stage.getBoundingClientRect();
+    dragState = {
+      element: win,
+      startX: e.touches ? e.touches[0].clientX : e.clientX,
+      startY: e.touches ? e.touches[0].clientY : e.clientY,
+      startLeft: rect.left - stageRect.left,
+      startTop: rect.top - stageRect.top,
+      stageRect: stageRect
+    };
+    win.style.transition = 'none';
+  }
+
+  function startResize(e, win, handle){
+    e.preventDefault();
+    e.stopPropagation();
+    var rect = win.getBoundingClientRect();
+    var stage = document.getElementById('video-stage');
+    var stageRect = stage.getBoundingClientRect();
+    var handleClass = '';
+    handle.classList.forEach(function(c){ if(c !== 'resize-handle') handleClass = c; });
+    resizeState = {
+      element: win,
+      handle: handleClass,
+      startX: e.touches ? e.touches[0].clientX : e.clientX,
+      startY: e.touches ? e.touches[0].clientY : e.clientY,
+      startW: rect.width,
+      startH: rect.height,
+      startL: rect.left - stageRect.left,
+      startT: rect.top - stageRect.top,
+      stageRect: stageRect
+    };
+    win.style.transition = 'none';
+  }
+
+  function onMove(e){
+    if(dragState){
+      e.preventDefault();
+      var dx = (e.touches ? e.touches[0].clientX : e.clientX) - dragState.startX;
+      var dy = (e.touches ? e.touches[0].clientY : e.clientY) - dragState.startY;
+      var newLeft = dragState.startLeft + dx;
+      var newTop = dragState.startTop + dy;
+      // Constrain to stage
+      var el = dragState.element;
+      var maxLeft = dragState.stageRect.width - el.offsetWidth;
+      var maxTop = dragState.stageRect.height - el.offsetHeight;
+      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+      newTop = Math.max(0, Math.min(newTop, maxTop));
+      el.style.left = newLeft + 'px';
+      el.style.top = newTop + 'px';
+      el.style.right = 'auto';
+      el.style.bottom = 'auto';
+      el.style.transform = 'none';
+    }
+    if(resizeState){
+      e.preventDefault();
+      var dx = (e.touches ? e.touches[0].clientX : e.clientX) - resizeState.startX;
+      var dy = (e.touches ? e.touches[0].clientY : e.clientY) - resizeState.startY;
+      var el = resizeState.element;
+      var h = resizeState.handle;
+      var newW = resizeState.startW;
+      var newH = resizeState.startH;
+      var newL = resizeState.startL;
+      var newT = resizeState.startT;
+      var minW = 100, minH = 70;
+
+      if(h.includes('e')){ newW = Math.max(minW, resizeState.startW + dx); }
+      if(h.includes('w')){ newW = Math.max(minW, resizeState.startW - dx); newL = resizeState.startL + dx; }
+      if(h.includes('s')){ newH = Math.max(minH, resizeState.startH + dy); }
+      if(h.includes('n')){ newH = Math.max(minH, resizeState.startH - dy); newT = resizeState.startT + dy; }
+
+      // Constrain to stage
+      newL = Math.max(0, newL);
+      newT = Math.max(0, newT);
+      newW = Math.min(newW, resizeState.stageRect.width - newL);
+      newH = Math.min(newH, resizeState.stageRect.height - newT);
+
+      el.style.width = newW + 'px';
+      el.style.height = newH + 'px';
+      el.style.left = newL + 'px';
+      el.style.top = newT + 'px';
+      el.style.right = 'auto';
+      el.style.bottom = 'auto';
+      el.style.transform = 'none';
+    }
+  }
+
+  function endDrag(){
+    if(dragState){
+      dragState.element.style.transition = '';
+      dragState = null;
+    }
+    if(resizeState){
+      resizeState.element.style.transition = '';
+      resizeState = null;
+    }
+  }
+
+  // ── SWAP VIDEOS ──
+  function swapVideos(){
+    var mainWrap = document.getElementById('main-video-wrap');
+    var pipWrap = document.getElementById('pip-video-wrap');
+    var mainRect = mainWrap.getBoundingClientRect();
+    var pipRect = pipWrap.getBoundingClientRect();
+    var stage = document.getElementById('video-stage');
+    var stageRect = stage.getBoundingClientRect();
+
+    // Store content
+    var mainContent = mainWrap.innerHTML;
+    var pipContent = pipWrap.innerHTML;
+
+    // Swap positions and sizes
+    var mainLeft = mainRect.left - stageRect.left;
+    var mainTop = mainRect.top - stageRect.top;
+    var mainW = mainRect.width;
+    var mainH = mainRect.height;
+    var pipLeft = pipRect.left - stageRect.left;
+    var pipTop = pipRect.top - stageRect.top;
+    var pipW = pipRect.width;
+    var pipH = pipRect.height;
+
+    // Apply swapped
+    mainWrap.style.transition = 'all .3s ease';
+    pipWrap.style.transition = 'all .3s ease';
+
+    mainWrap.style.left = pipLeft + 'px';
+    mainWrap.style.top = pipTop + 'px';
+    mainWrap.style.width = pipW + 'px';
+    mainWrap.style.height = pipH + 'px';
+    mainWrap.style.right = 'auto';
+    mainWrap.style.bottom = 'auto';
+    mainWrap.style.transform = 'none';
+    mainWrap.innerHTML = pipContent;
+
+    pipWrap.style.left = mainLeft + 'px';
+    pipWrap.style.top = mainTop + 'px';
+    pipWrap.style.width = mainW + 'px';
+    pipWrap.style.height = mainH + 'px';
+    pipWrap.style.right = 'auto';
+    pipWrap.style.bottom = 'auto';
+    pipWrap.style.transform = 'none';
+    pipWrap.innerHTML = mainContent;
+
+    // Re-init drag/resize on new elements
+    setTimeout(function(){
+      mainWrap.style.transition = '';
+      pipWrap.style.transition = '';
+      initDragAndResize();
+    }, 300);
+  }
+
+  // ── RESET LAYOUT ──
+  function resetLayout(){
+    var mainWrap = document.getElementById('main-video-wrap');
+    var pipWrap = document.getElementById('pip-video-wrap');
+
+    mainWrap.style.transition = 'all .3s ease';
+    pipWrap.style.transition = 'all .3s ease';
+
+    // Reset main to center, 70% size
+    mainWrap.style.left = '50%';
+    mainWrap.style.top = '50%';
+    mainWrap.style.width = '70%';
+    mainWrap.style.height = '70%';
+    mainWrap.style.right = 'auto';
+    mainWrap.style.bottom = 'auto';
+    mainWrap.style.transform = 'translate(-50%,-50%)';
+
+    // Reset PIP to bottom-right
+    pipWrap.style.left = 'auto';
+    pipWrap.style.top = 'auto';
+    pipWrap.style.right = '16px';
+    pipWrap.style.bottom = '16px';
+    pipWrap.style.width = '200px';
+    pipWrap.style.height = '120px';
+    pipWrap.style.transform = 'none';
+
+    setTimeout(function(){
+      mainWrap.style.transition = '';
+      pipWrap.style.transition = '';
+    }, 300);
+  }
+
+  // ── CONTROLS ──
+  function toggleMic(){
+    micOn = !micOn;
+    if(localStream){
+      localStream.getAudioTracks().forEach(function(t){ t.enabled = micOn; });
+    }
+    document.getElementById('ctrl-mic').classList.toggle('muted', !micOn);
+  }
+
+  function toggleCam(){
+    camOn = !camOn;
+    if(localStream){
+      localStream.getVideoTracks().forEach(function(t){ t.enabled = camOn; });
+    }
+    document.getElementById('ctrl-cam').classList.toggle('muted', !camOn);
+    localVideo.style.display = camOn ? 'block' : 'none';
+  }
+
+  // ── SCREEN SHARING ──
+  var screenStream = null;
+  var isSharing = false;
+  var preShareLayout = null;
+
+  function shareScreen(){
+    if(isSharing){
+      stopScreenShare();
+      return;
+    }
+    if(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia){
+      navigator.mediaDevices.getDisplayMedia({ video: true }).then(function(stream){
+        screenStream = stream;
+        isSharing = true;
+
+        // Save current layout
+        var mainWrap = document.getElementById('main-video-wrap');
+        var pipWrap = document.getElementById('pip-video-wrap');
+        preShareLayout = {
+          main: { left: mainWrap.style.left, top: mainWrap.style.top, width: mainWrap.style.width, height: mainWrap.style.height, right: mainWrap.style.right, bottom: mainWrap.style.bottom, transform: mainWrap.style.transform, html: mainWrap.innerHTML },
+          pip: { left: pipWrap.style.left, top: pipWrap.style.top, width: pipWrap.style.width, height: pipWrap.style.height, right: pipWrap.style.right, bottom: pipWrap.style.bottom, transform: pipWrap.style.transform, html: pipWrap.innerHTML }
+        };
+
+        // Get the video stage dimensions (excluding side panel)
+        var stage = document.getElementById('video-stage');
+        var stageRect = stage.getBoundingClientRect();
+
+        // Make main video fill the entire stage
+        mainWrap.style.transition = 'all .3s ease';
+        mainWrap.style.left = '0px';
+        mainWrap.style.top = '0px';
+        mainWrap.style.width = '100%';
+        mainWrap.style.height = '100%';
+        mainWrap.style.right = 'auto';
+        mainWrap.style.bottom = 'auto';
+        mainWrap.style.transform = 'none';
+        mainWrap.style.borderRadius = '0px';
+        mainWrap.style.zIndex = '4';
+
+        // Show screen share in main video area
+        mainWrap.innerHTML = '';
+        var screenVideo = document.createElement('video');
+        screenVideo.id = 'screen-share-video';
+        screenVideo.autoplay = true;
+        screenVideo.playsinline = true;
+        screenVideo.style.cssText = 'width:100%;height:100%;object-fit:contain;background:#0a0f1a';
+        screenVideo.srcObject = stream;
+        mainWrap.appendChild(screenVideo);
+
+        // Add "Stop Sharing" overlay button
+        var stopBtn = document.createElement('button');
+        stopBtn.id = 'stop-share-btn';
+        stopBtn.style.cssText = 'position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(239,68,68,.9);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.4)';
+        stopBtn.innerHTML = '⏹️ Stop Sharing';
+        stopBtn.onclick = function(){ stopScreenShare(); };
+        mainWrap.appendChild(stopBtn);
+
+        // Add "You're sharing" indicator
+        var shareLabel = document.createElement('div');
+        shareLabel.id = 'share-indicator';
+        shareLabel.style.cssText = 'position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(0,0,0,.7);color:#4ade80;padding:6px 16px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px';
+        shareLabel.innerHTML = '🖥️ You are sharing your screen';
+        mainWrap.appendChild(shareLabel);
+
+        // Make PIP small in bottom-right with teacher's camera
+        pipWrap.style.transition = 'all .3s ease';
+        pipWrap.style.left = 'auto';
+        pipWrap.style.top = 'auto';
+        pipWrap.style.right = '16px';
+        pipWrap.style.bottom = '16px';
+        pipWrap.style.width = '180px';
+        pipWrap.style.height = '100px';
+        pipWrap.style.transform = 'none';
+        pipWrap.style.zIndex = '6';
+
+        // Show teacher camera in PIP
+        pipWrap.innerHTML = '';
+        var pipVideo = document.createElement('video');
+        pipVideo.id = 'pip-camera-video';
+        pipVideo.autoplay = true;
+        pipVideo.playsinline = true;
+        pipVideo.muted = true;
+        pipVideo.style.cssText = 'width:100%;height:100%;object-fit:cover;transform:scaleX(-1)';
+        pipVideo.srcObject = localStream;
+        pipWrap.appendChild(pipVideo);
+        var pipLabel = document.createElement('div');
+        pipLabel.className = 'video-label';
+        pipLabel.textContent = myRole === 'teacher' ? 'You (Teacher)' : 'You';
+        pipWrap.appendChild(pipLabel);
+        var pipRing = document.createElement('div');
+        pipRing.className = 'speaking-ring';
+        pipWrap.appendChild(pipRing);
+
+        // Update button state
+        document.getElementById('ctrl-screen').classList.add('active');
+
+        // Handle stream end (user clicks "Stop sharing" in browser UI)
+        stream.getVideoTracks()[0].onended = function(){
+          stopScreenShare();
+        };
+
+      }).catch(function(){
+        // User cancelled or error
+      });
+    }
+  }
+
+  function stopScreenShare(){
+    if(!isSharing) return;
+    isSharing = false;
+
+    // Stop screen stream tracks
+    if(screenStream){
+      screenStream.getTracks().forEach(function(t){ t.stop(); });
+      screenStream = null;
+    }
+
+    var mainWrap = document.getElementById('main-video-wrap');
+    var pipWrap = document.getElementById('pip-video-wrap');
+
+    mainWrap.style.transition = 'all .3s ease';
+    pipWrap.style.transition = 'all .3s ease';
+
+    // Restore pre-share layout
+    if(preShareLayout){
+      var m = preShareLayout.main;
+      mainWrap.style.left = m.left; mainWrap.style.top = m.top;
+      mainWrap.style.width = m.width; mainWrap.style.height = m.height;
+      mainWrap.style.right = m.right; mainWrap.style.bottom = m.bottom;
+      mainWrap.style.transform = m.transform;
+      mainWrap.innerHTML = m.html;
+
+      var p = preShareLayout.pip;
+      pipWrap.style.left = p.left; pipWrap.style.top = p.top;
+      pipWrap.style.width = p.width; pipWrap.style.height = p.height;
+      pipWrap.style.right = p.right; pipWrap.style.bottom = p.bottom;
+      pipWrap.style.transform = p.transform;
+      pipWrap.innerHTML = p.html;
+    } else {
+      // Fallback to default layout
+      mainWrap.style.left = '50%'; mainWrap.style.top = '50%';
+      mainWrap.style.width = '70%'; mainWrap.style.height = '70%';
+      mainWrap.style.right = 'auto'; mainWrap.style.bottom = 'auto';
+      mainWrap.style.transform = 'translate(-50%,-50%)';
+
+      pipWrap.style.left = 'auto'; pipWrap.style.top = 'auto';
+      pipWrap.style.right = '16px'; pipWrap.style.bottom = '16px';
+      pipWrap.style.width = '200px'; pipWrap.style.height = '120px';
+      pipWrap.style.transform = 'none';
+    }
+
+    mainWrap.style.borderRadius = '';
+    mainWrap.style.zIndex = '';
+
+    // Re-init drag/resize
+    setTimeout(function(){
+      mainWrap.style.transition = '';
+      pipWrap.style.transition = '';
+      initDragAndResize();
+    }, 300);
+
+    // Update button state
+    document.getElementById('ctrl-screen').classList.remove('active');
+  }
+
+  function copyInvite(){
+    var url = window.location.href.split('?')[0] + '?room=' + roomId + '&role=' + (myRole === 'teacher' ? 'student' : 'teacher');
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(url).then(function(){ alert('Invite link copied!'); });
+    } else {
+      prompt('Copy this link for the other person:', url);
+    }
+  }
+
+  function confirmLeave(){
+    document.getElementById('leave-modal').classList.add('active');
+  }
+
+  function leaveRoom(){
+    if(pc){ pc.close(); pc = null; }
+    if(ws){ ws.close(); ws = null; }
+    if(localStream) localStream.getTracks().forEach(function(t){ t.stop(); });
+    window.location.href = 'dashboard.html';
+  }
+
+  // ── SIDEBAR ──
+  function toggleSidebar(){
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  // ── SIDE PANEL ──
+  var currentPanel = 'none';
+  function togglePanel(name){
+    if(currentPanel === name) name = 'none';
+    currentPanel = name;
+    var panel = document.getElementById('side-panel');
+    var chatInput = document.getElementById('chat-input-area');
+    if(name === 'none'){ panel.classList.remove('open'); return; }
+    panel.classList.add('open');
+    chatInput.style.display = (name === 'chat') ? 'flex' : 'none';
+    var titles = {chat:'💬 Chat', participants:'👥 Participants', settings:'⚙️ Settings'};
+    document.getElementById('panel-title').textContent = titles[name] || 'Panel';
+    var content = document.getElementById('panel-content');
+    if(name === 'chat') renderChat(content);
+    if(name === 'participants') renderParticipants(content);
+    if(name === 'settings') renderSettings(content);
+  }
+
+  // ── CHAT ──
+  var chatMessages = [];
+  function renderChat(container){
+    if(chatMessages.length === 0){
+      chatMessages = [{
+        sender: myRole === 'teacher' ? 'You (Teacher)' : 'William (Teacher)',
+        text: 'Welcome to the lesson! Let me know when you are ready to start. 🎯',
+        time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+        isTeacher: true
+      }];
+    }
+    var html = '';
+    for(var i = 0; i < chatMessages.length; i++){
+      var m = chatMessages[i];
+      html += '<div class="chat-msg"><div class="sender' + (m.isTeacher ? ' teacher' : '') + '">' + m.sender + '</div><div class="text">' + m.text + '</div><div class="time">' + m.time + '</div></div>';
+    }
+    container.innerHTML = html;
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function sendChat(){
+    var input = document.getElementById('chat-input');
+    var text = input.value.trim();
+    if(!text) return;
+    chatMessages.push({
+      sender: myRole === 'teacher' ? 'You (Teacher)' : 'You (Student)',
+      text: text,
+      time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+      isTeacher: myRole === 'teacher'
+    });
+    input.value = '';
+    renderChat(document.getElementById('panel-content'));
+    // Simulate reply
+    if(myRole === 'student'){
+      setTimeout(function(){
+        var replies = ['Great question! Let me explain...','Exactly right! 👍','Good point.','Can you try using that in a sentence?'];
+        chatMessages.push({sender:'William (Teacher)',text:replies[Math.floor(Math.random()*replies.length)],time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),isTeacher:true});
+        renderChat(document.getElementById('panel-content'));
+      },1500);
+    }
+  }
+
+  function renderParticipants(container){
+    var participants = [
+      {name:'William',role:'Teacher',initials:'W',mic:true,cam:true,isTeacher:true},
+      {name:'Maria',role:'Student',initials:'M',mic:true,cam:true,isTeacher:false}
+    ];
+    var html = '';
+    for(var i = 0; i < participants.length; i++){
+      var p = participants[i];
+      html += '<div class="participant-item"><div class="p-avatar" style="background:' + (p.isTeacher ? 'rgba(52,211,153,.15)' : 'rgba(34,211,238,.15)') + ';color:' + (p.isTeacher ? '#34d399' : '#22d3ee') + '">' + p.initials + '</div><div class="p-name">' + p.name + ' (' + p.role + ')</div><div class="p-badges">' + (p.cam ? '' : '<div class="p-badge muted">📷</div>') + (p.mic ? '' : '<div class="p-badge muted">🎤</div>') + '</div></div>';
+    }
+    container.innerHTML = html;
+    document.getElementById('participant-count').textContent = participants.length;
+  }
+  // ── SETTINGS ──
+  // Settings state
+  var settings={
+    noiseSuppression:true,
+    echoCancellation:true,
+    hdVideo:true,
+    mirrorView:true,
+    lowLight:false,
+    autoGain:true,
+    pipSize:'medium',   // small, medium, large
+    pipPosition:'bottom-right', // bottom-right, bottom-left, top-right, top-left
+    videoQuality:'720p', // 480p, 720p, 1080p
+    audioInput:'default',
+    audioOutput:'default',
+    micVolume:80,
+    speakerVolume:75,
+    showChatNotifications:true,
+    showParticipantNames:true,
+    compactMode:false,
+    backgroundBlur:'none' // none, light, heavy
+  };
+
+  // Device lists
+  var audioInputs=[{id:'default',name:'Default Microphone'},{id:'headset',name:''}};
+
+  var audioOutputs=[{id:'default',name:'Default Speaker'},{id:'headphones',name:''}}];
+
+  var videoInputs=[{id:'default',name':'Default Camera'},{id:'front',name:''}}];
+
+  function renderSettings(container){
+    var html='';
+
+    // ── AUDIO INPUT ──
+    html+='<div class="settings-section">';
+    html+='<div class="settings-section-title">🎤 Microphone</div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Audio Input</div><div class="setting-desc">Select your microphone</div></div>';
+    html+='<select class="setting-select" id="setting-audio-input" onchange="updateSetting(\'audioInput\',this.value)">';
+    html+='<option value="default" '+(settings.audioInput==='default'?'selected':'')+'>Default Microphone</option>';
+    html+='<option value="system" '+(settings.audioInput==='system'?'selected':'')+'>System Default</option>';
+    html+='</select></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Microphone Volume</div></div>';
+    html+='<div class="slider-wrap"><div class="slider-track" id="slider-mic-vol"><div class="slider-fill" style="width:'+settings.micVolume+'%"></div><div class="slider-thumb" style="left:'+settings.micVolume+'%"></div></div><span class="setting-value" id="val-mic-vol">'+settings.micVolume+'%</span></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Noise Suppression</div><div class="setting-desc">Reduce background noise</div></div>';
+    html+='<div class="toggle '+(settings.noiseSuppression?'on':'')+'" onclick="toggleSetting(\'noiseSuppression\')"></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Echo Cancellation</div><div class="setting-desc">Prevent audio echo</div></div>';
+    html+='<div class="toggle '+(settings.echoCancellation?'on':'')+'" onclick="toggleSetting(\'echoCancellation\')"></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Auto Gain Control</div><div class="setting-desc">Automatically adjust mic volume</div></div>';
+    html+='<div class="toggle '+(settings.autoGain?'on':'')+'" onclick="toggleSetting(\'autoGain\')"></div></div>';
+
+    html+='</div>';
+
+    // ── AUDIO OUTPUT ──
+    html+='<div class="settings-section">';
+    html+='<div class="settings-section-title">🔊 Speaker</div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Audio Output</div><div class="setting-desc">Select your speaker or headphones</div></div>';
+    html+='<select class="setting-select" id="setting-audio-output" onchange="updateSetting(\'audioOutput\',this.value)">';
+    html+='<option value="default" '+(settings.audioOutput==='default'?'selected':'')+'>Default Speaker</option>';
+    html+='<option value="system" '+(settings.audioOutput==='system'?'selected':'')+'>System Default</option>';
+    html+='</select></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Speaker Volume</div></div>';
+    html+='<div class="slider-wrap"><div class="slider-track" id="slider-spk-vol"><div class="slider-fill" style="width:'+settings.speakerVolume+'%"></div><div class="slider-thumb" style="left:'+settings.speakerVolume+'%"></div></div><span class="setting-value" id="val-spk-vol">'+settings.speakerVolume+'%</span></div></div>';
+
+    html+='</div>';
+
+    // ── VIDEO ──
+    html+='<div class="settings-section">';
+    html+='<div class="settings-section-title">📷 Video</div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Video Quality</div><div class="setting-desc">Higher quality uses more bandwidth</div></div>';
+    html+='<select class="setting-select" id="setting-video-quality" onchange="updateSetting(\'videoQuality\',this.value)">';
+    html+='<option value="480p" '+(settings.videoQuality==='480p'?'selected':'')+'>480p (Low)</option>';
+    html+='<option value="720p" '+(settings.videoQuality==='720p'?'selected':'')+'>720p (HD)</option>';
+    html+='<option value="1080p" '+(settings.videoQuality==='1080p'?'selected':'')+'>1080p (Full HD)</option>';
+    html+='</select></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Mirror Self-View</div><div class="setting-desc">Flip your own video horizontally</div></div>';
+    html+='<div class="toggle '+(settings.mirrorView?'on':'')+'" onclick="toggleSetting(\'mirrorView\')"></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Low Light Enhancement</div><div class="setting-desc">Brighten video in dark rooms</div></div>';
+    html+='<div class="toggle '+(settings.lowLight?'on':'')+'" onclick="toggleSetting(\'lowLight\')"></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Background</div><div class="setting-desc">Virtual background effect</div></div>';
+    html+='<select class="setting-select" id="setting-bg" onchange="updateSetting(\'backgroundBlur\',this.value)">';
+    html+='<option value="none" '+(settings.backgroundBlur==='none'?'selected':'')+'>None</option>';
+    html+='<option value="blur" '+(settings.backgroundBlur==='blur'?'selected':'')+'>Blur</option>';
+    html+='<option value="forest" '+(settings.backgroundBlur==='forest'?'selected':'')+'>🌲 Forest</option>';
+    html+='<option value="beach" '+(settings.backgroundBlur==='beach'?'selected':'')+'>🏖️ Beach</option>';
+    html+='<option value="office" '+(settings.backgroundBlur==='office'?'selected':'')+'>🏢 Office</option>';
+    html+='</select></div>';
+
+    html+='</div>';
+
+    // ── PIP (SELF-VIEW) ──
+    html+='<div class="settings-section">';
+    html+='<div class="settings-section-title">🖼️ Self-View (PIP)</div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">PIP Size</div><div class="setting-desc">Size of your self-view window</div></div>';
+    html+='<select class="setting-select" id="setting-pip-size" onchange="updateSetting(\'pipSize\',this.value)">';
+    html+='<option value="small" '+(settings.pipSize==='small'?'selected':'')+'>Small (120px)</option>';
+    html+='<option value="medium" '+(settings.pipSize==='medium'?'selected':'')+'>Medium (180px)</option>';
+    html+='<option value="large" '+(settings.pipSize==='large'?'selected':'')+'>Large (260px)</option>';
+    html+='</select></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">PIP Position</div><div class="setting-desc">Where your self-view appears</div></div>';
+    html+='<select class="setting-select" id="setting-pip-pos" onchange="updateSetting(\'pipPosition\',this.value)">';
+    html+='<option value="bottom-right" '+(settings.pipPosition==='bottom-right'?'selected':'')+'>Bottom Right</option>';
+    html+='<option value="bottom-left" '+(settings.pipPosition==='bottom-left'?'selected':'')+'>Bottom Left</option>';
+    html+='<option value="top-right" '+(settings.pipPosition==='top-right'?'selected':'')+'>Top Right</option>';
+    html+='<option value="top-left" '+(settings.pipPosition==='top-left'?'selected':'')+'>Top Left</option>';
+    html+='</select></div>';
+
+    html+='</div>';
+
+    // ── DISPLAY ──
+    html+='<div class="settings-section">';
+    html+='<div class="settings-section-title">💻 Display</div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Show Participant Names</div><div class="setting-desc">Display name labels on video</div></div>';
+    html+='<div class="toggle '+(settings.showParticipantNames?'on':'')+'" onclick="toggleSetting(\'showParticipantNames\')"></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Chat Notifications</div><div class="setting-desc">Show popup for new messages</div></div>';
+    html+='<div class="toggle '+(settings.showChatNotifications?'on':'')+'" onclick="toggleSetting(\'showChatNotifications\')"></div></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Compact Mode</div><div class="setting-desc">Reduce UI elements for more video space</div></div>';
+    html+='<div class="toggle '+(settings.compactMode?'on':'')+'" onclick="toggleSetting(\'compactMode\')"></div></div>';
+
+    html+='</div>';
+
+    // ── DEVICE STATUS ──
+    html+='<div class="settings-section">';
+    html+='<div class="settings-section-title">📱 Device Status</div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Microphone</div></div>';
+    html+='<span class="device-badge active">● Connected</span></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Camera</div></div>';
+    html+='<span class="device-badge '+(camOn?'active':'inactive')+'">'+(camOn?'● Connected':'○ Off')+'</span></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Speaker</div></div>';
+    html+='<span class="device-badge active">● Connected</span></div>';
+
+    html+='<div class="setting-row">';
+    html+='<div class="setting-left"><div class="setting-label">Connection</div></div>';
+    html+='<span class="device-badge active">● WebRTC Active</span></div>';
+
+    html+='</div>';
+
+    // ── ACTIONS ──
+    html+='<div class="settings-section">';
+    html+='<button class="topbar-btn" style="width:100%;margin-bottom:8px" onclick="testMic()">🎤 Test Microphone</button>';
+    html+='<button class="topbar-btn" style="width:100%;margin-bottom:8px" onclick="testCamera()">📷 Test Camera</button>';
+    html+='<button class="topbar-btn" style="width:100%;margin-bottom:8px" onclick="testSpeaker()">🔊 Test Speaker</button>';
+    html+='<button class="topbar-btn" style="width:100%;color:#fb7185;border-color:rgba(251,113,133,.3)" onclick="resetSettings()">🔄 Reset to Defaults</button>';
+    html+='</div>';
+
+    container.innerHTML=html;
+  }
+
+  // Settings helpers
+  function toggleSetting(key){
+    settings[key]=!settings[key];
+    // Update the toggle UI
+    var panel=document.getElementById('panel-content');
+    var toggles=panel.querySelectorAll('.toggle');
+    var idx=['noiseSuppression','echoCancellation','hdVideo','mirrorView','lowLight','autoGain','showChatNotifications','showParticipantNames','compactMode'].indexOf(key);
+    if(idx>=0&&toggles[idx]){
+      toggles[idx].classList.toggle('on',settings[key]);
+    }
+    // Apply settings immediately
+    applySettings();
+  }
+
+  function updateSetting(key,value){
+    settings[key]=value;
+    applySettings();
+  }
+
+  function applySettings(){
+    // Mirror view
+    var lv=document.getElementById('local-video');
+    if(lv) lv.style.transform=settings.mirrorView?'scaleX(-1)':'none';
+
+    // PIP size
+    var pip=document.getElementById('pip-video-wrap');
+    if(pip){
+      var sizes={small:{w:120,h:75},medium:{w:180,h:110},large:{w:260,h:160}};
+      var s=sizes[settings.pipSize]||sizes.medium;
+      pip.style.width=s.w+'px';pip.style.height=s.h+'px';
+    }
+
+    // PIP position
+    if(pip){
+      pip.style.bottom='auto';pip.style.right='auto';pip.style.top='auto';pip.style.left='auto';
+      var m=16;
+      if(settings.pipPosition.includes('bottom'))pip.style.bottom=m+'px';
+      if(settings.pipPosition.includes('top'))pip.style.top=m+'px';
+      if(settings.pipPosition.includes('right'))pip.style.right=m+'px';
+      if(settings.pipPosition.includes('left'))pip.style.left=m+'px';
+    }
+
+    // Compact mode
+    document.body.classList.toggle('compact-mode',settings.compactMode);
+  }
+
+  function testMic(){
+    if(!localStream) return;
+    // Briefly play back own audio
+    var ctx=new AudioContext();
+    var src=ctx.createMediaStreamSource(localStream);
+    var gain=ctx.createGain();
+    gain.gain.value=0.3;
+    src.connect(gain);gain.connect(ctx.destination);
+    setTimeout(function(){src.disconnect();ctx.close()},2000);
+    alert('You should hear a playback of your microphone for 2 seconds.');
+  }
+
+  function testCamera(){
+    var pip=document.getElementById('pip-video-wrap');
+    if(pip){
+      pip.style.borderColor='#fbbf24';
+      setTimeout(function(){pip.style.borderColor=''},1000);
+      pip.style.borderColor='#22d3ee';
+    }
+    alert('Your camera preview should be visible in the PIP window (bottom corner).');
+  }
+
+  function testSpeaker(){
+    var audio=new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaAjuY2/LVeSsF');
+    audio.play().catch(function(){alert('Audio playback blocked. Please interact with the page first.');});
+  }
+
+  function resetSettings(){
+    settings={
+      noiseSuppression:true,echoCancellation:true,hdVideo:true,mirrorView:true,
+      lowLight:false,autoGain:true,pipSize:'medium',pipPosition:'bottom-right',
+      videoQuality:'720p',audioInput:'default',audioOutput:'default',
+      micVolume:80,speakerVolume:75,showChatNotifications:true,
+      showParticipantNames:true,compactMode:false,backgroundBlur:'none'
+    };
+    applySettings();
+    renderSettings(document.getElementById('panel-content'));
+  }
+
+  // ── KEYBOARD SHORTCUTS ──
+  document.addEventListener('keydown', function(e){
+    if(e.target.tagName === 'INPUT') return;
+    if(e.key === 'm' || e.key === 'M') toggleMic();
+    if(e.key === 'v' || e.key === 'V') toggleCam();
+    if(e.key === 'c' || e.key === 'C') togglePanel('chat');
+    if(e.key === 's' || e.key === 'S') swapVideos();
+    if(e.key === 'Escape'){ togglePanel('none'); document.getElementById('leave-modal').classList.remove('active'); }
+  });
+
+  // ── EXPOSE ──
+  window.toggleSidebar = toggleSidebar;
+  window.togglePanel = togglePanel;
+  window.toggleMic = toggleMic;
+  window.toggleCam = toggleCam;
+  window.shareScreen = shareScreen;
+  window.swapVideos = swapVideos;
+  window.sendChat = sendChat;
+  window.copyInvite = copyInvite;
+  window.confirmLeave = confirmLeave;
+  window.leaveRoom = leaveRoom;
+  window.toggleSetting = toggleSetting;
+  window.updateSetting = updateSetting;
+  window.testMic = testMic;
+  window.testCamera = testCamera;
+  window.testSpeaker = testSpeaker;
+  window.resetSettings = resetSettings;
+  window.resetLayout = resetLayout;
+  window.deleteVocab = deleteVocab;
+
+  // ── LANGUAGE WIDGET ──
+  var vocabList = JSON.parse(localStorage.getItem('eloquenta_vocab') || '[]');
+  var currentTab = 'translate';
+
+  function toggleLangWidget(){
+    var panel = document.getElementById('lang-panel');
+    var toggle = document.getElementById('lang-widget-toggle');
+    panel.classList.toggle('open');
+    toggle.classList.toggle('active');
+  }
+
+  function switchLangTab(tab){
+    currentTab = tab;
+    document.querySelectorAll('.lang-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelector('[data-tab="'+tab+'"]').classList.add('active');
+    document.querySelectorAll('.lang-tab-content').forEach(function(c){ c.style.display = 'none'; });
+    document.getElementById('tab-'+tab).style.display = 'block';
+    if(tab === 'vocab') renderVocabList();
+  }
+
+  function swapLangs(){
+    var from = document.getElementById('lang-from');
+    var to = document.getElementById('lang-to');
+    var tmp = from.value;
+    from.value = to.value;
+    to.value = tmp;
+  }
+
+  // ── TRANSLATE ──
+  function doTranslate(){
+    var input = document.getElementById('lang-input').value.trim();
+    if(!input) return;
+    var from = document.getElementById('lang-from').value;
+    var to = document.getElementById('lang-to').value;
+    var results = document.getElementById('translate-results');
+    results.innerHTML = '<div class="lang-loading"><div class="spinner"></div>Translating...</div>';
+
+    // Use MyMemory Translation API (free, no key needed)
+    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(input) + '&langpair=' + from + '|' + to;
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      var translated = data.responseData.translatedText;
+      var html = '<div class="translate-result">';
+      html += '<div class="translate-result-label">Translation (' + to.toUpperCase() + ')</div>';
+      html += '<div class="translate-result-text">' + escapeHtml(translated) + '</div>';
+      html += '<div class="translate-result-actions">';
+      html += '<button class="lang-action-btn" onclick="speakText(\'' + escapeJs(translated) + '\',\'' + to + '\')">🔊 Listen</button>';
+      html += '<button class="lang-action-btn" onclick="saveVocab(\'' + escapeJs(input) + '\',\'' + escapeJs(translated) + '\',\'' + from + '\',\'' + to + '\')">📚 Save</button>';
+      html += '<button class="lang-action-btn" onclick="copyText(\'' + escapeJs(translated) + '\')">📋 Copy</button>';
+      html += '</div></div>';
+
+      // Add context examples
+      html += '<div class="context-section"><div class="context-title">📖 Examples in context</div>';
+      html += '<div class="context-example"><div class="source">' + escapeHtml(input) + '</div><div class="target">' + escapeHtml(translated) + '</div><div class="source-lang">' + from.toUpperCase() + ' → ' + to.toUpperCase() + '</div></div>';
+      // Add a reversed example
+      html += '<div class="context-example"><div class="source">' + escapeHtml(translated) + '</div><div class="target">' + escapeHtml(input) + '</div><div class="source-lang">' + to.toUpperCase() + ' → ' + from.toUpperCase() + '</div></div>';
+      html += '</div>';
+
+      results.innerHTML = html;
+    }).catch(function(){
+      results.innerHTML = '<div class="translate-result"><div class="translate-result-text" style="color:#f87171">Translation service unavailable. Please check your connection.</div></div>';
+    });
+  }
+
+  // ── SYNONYMS ──
+  function doSynonyms(){
+    var word = document.getElementById('synonym-input').value.trim();
+    if(!word) return;
+    var results = document.getElementById('synonym-results');
+    results.innerHTML = '<div class="lang-loading"><div class="spinner"></div>Finding synonyms...</div>';
+
+    // Use Datamuse API (free, no key needed)
+    var url = 'https://api.datamuse.com/words?rel_syn=' + encodeURIComponent(word) + '&max=20';
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      if(data.length === 0){
+        results.innerHTML = '<div class="translate-result"><div class="translate-result-text" style="color:#64748b">No synonyms found for "' + escapeHtml(word) + '"</div></div>';
+        return;
+      }
+      var html = '<div class="translate-result" style="margin-bottom:10px"><div class="translate-result-label">Synonyms for "' + escapeHtml(word) + '"</div></div>';
+      html += '<div class="synonym-group"><div class="synonym-group-title">Near-exact synonyms</div><div class="synonym-chips">';
+      var count = 0;
+      for(var i = 0; i < data.length && count < 8; i++){
+        if(data[i].score > 500){
+          html += '<span class="synonym-chip near-exact" onclick="lookupWord(\'' + escapeJs(data[i].word) + '\')">' + escapeHtml(data[i].word) + '</span>';
+          count++;
+        }
+      }
+      html += '</div></div>';
+      html += '<div class="synonym-group"><div class="synonym-group-title">Related words</div><div class="synonym-chips">';
+      count = 0;
+      for(var i = 0; i < data.length && count < 12; i++){
+        if(data[i].score <= 500){
+          html += '<span class="synonym-chip" onclick="lookupWord(\'' + escapeJs(data[i].word) + '\')">' + escapeHtml(data[i].word) + '</span>';
+          count++;
+        }
+      }
+      html += '</div></div>';
+      results.innerHTML = html;
+    }).catch(function(){
+      results.innerHTML = '<div class="translate-result"><div class="translate-result-text" style="color:#f87171">Synonym service unavailable.</div></div>';
+    });
+  }
+
+  function lookupWord(word){
+    document.getElementById('synonym-input').value = word;
+    doSynonyms();
+  }
+
+  // ── CONJUGATION ──
+  function doConjugate(){
+    var verb = document.getElementById('conjugate-input').value.trim();
+    if(!verb) return;
+    var lang = document.getElementById('conjugate-lang').value;
+    var results = document.getElementById('conjugate-results');
+    results.innerHTML = '<div class="lang-loading"><div class="spinner"></div>Loading conjugations...</div>';
+
+    // Use Conjugator API (free)
+    var url = 'https://cooljugator.herokuapp.com/api/conjugate/' + lang + '/' + encodeURIComponent(verb);
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      if(!data.conjugations || data.conjugations.length === 0){
+        // Fallback: show basic conjugation info
+        renderBasicConjugation(verb, lang, results);
+        return;
+      }
+      var html = '<div class="translate-result" style="margin-bottom:10px"><div class="translate-result-label">Conjugation of "' + escapeHtml(verb) + '" (' + lang.toUpperCase() + ')</div></div>';
+      html += '<table class="conj-table"><thead><tr><th>Tense</th><th>Form</th></tr></thead><tbody>';
+      var seen = {};
+      for(var i = 0; i < data.conjugations.length; i++){
+        var c = data.conjugations[i];
+        var key = c.tense + '_' + c.form;
+        if(!seen[key]){
+          seen[key] = true;
+          html += '<tr><td class="conj-tense">' + escapeHtml(c.tense || '') + '</td><td>' + escapeHtml(c.form || '') + '</td></tr>';
+        }
+      }
+      html += '</tbody></table>';
+      results.innerHTML = html;
+    }).catch(function(){
+      renderBasicConjugation(verb, lang, results);
+    });
+  }
+
+  function renderBasicConjugation(verb, lang, results){
+    // Fallback basic conjugation
+    var html = '<div class="translate-result" style="margin-bottom:10px"><div class="translate-result-label">Conjugation of "' + escapeHtml(verb) + '" (' + lang.toUpperCase() + ')</div></div>';
+    html += '<table class="conj-table"><thead><tr><th>Tense</th><th>I</th><th>You</th><th>He/She</th><th>We</th><th>They</th></tr></thead><tbody>';
+    if(lang === 'en'){
+      html += '<tr><td class="conj-tense">Present</td><td>' + verb + '</td><td>' + verb + '</td><td>' + verb + 's</td><td>' + verb + '</td><td>' + verb + '</td></tr>';
+      html += '<tr><td class="conj-tense">Past</td><td>' + verb + 'ed</td><td>' + verb + 'ed</td><td>' + verb + 'ed</td><td>' + verb + 'ed</td><td>' + verb + 'ed</td></tr>';
+      html += '<tr><td class="conj-tense">Present Part.</td><td>' + verb + 'ing</td><td>' + verb + 'ing</td><td>' + verb + 'ing</td><td>' + verb + 'ing</td><td>' + verb + 'ing</td></tr>';
+    } else if(lang === 'de'){
+      html += '<tr><td class="conj-tense">Präsens</td><td>' + verb + 'e</td><td>' + verb + 'st</td><td>' + verb + 't</td><td>' + verb + 'en</td><td>' + verb + 'en</td></tr>';
+      html += '<tr><td class="conj-tense">Präteritum</td><td>' + verb + 'te</td><td>' + verb + 'test</td><td>' + verb + 'te</td><td>' + verb + 'ten</td><td>' + verb + 'ten</td></tr>';
+    } else if(lang === 'es'){
+      html += '<tr><td class="conj-tense">Presente</td><td>' + verb + 'o</td><td>' + verb + 'as</td><td>' + verb + 'a</td><td>' + verb + 'amos</td><td>' + verb + 'an</td></tr>';
+      html += '<tr><td class="conj-tense">Pretérito</td><td>' + verb + 'é</td><td>' + verb + 'aste</td><td>' + verb + 'ó</td><td>' + verb + 'amos</td><td>' + verb + 'aron</td></tr>';
+    } else if(lang === 'fr'){
+      html += '<tr><td class="conj-tense">Présent</td><td>' + verb + 'e</td><td>' + verb + 'es</td><td>' + verb + 'e</td><td>' + verb + 'ons</td><td>' + verb + 'ent</td></tr>';
+      html += '<tr><td class="conj-tense">Passé composé</td><td>ai ' + verb + 'é</td><td>as ' + verb + 'é</td><td>a ' + verb + 'é</td><td>avons ' + verb + 'é</td><td>ont ' + verb + 'é</td></tr>';
+    } else if(lang === 'it'){
+      html += '<tr><td class="conj-tense">Presente</td><td>' + verb + 'o</td><td>' + verb + 'i</td><td>' + verb + 'a</td><td>' + verb + 'iamo</td><td>' + verb + 'ano</td></tr>';
+      html += '<tr><td class="conj-tense">Passato</td><td>' + verb + 'ai</td><td>' + verb + 'asti</td><td>' + verb + 'ò</td><td>' + verb + 'ammo</td><td>' + verb + 'arono</td></tr>';
+    }
+    html += '</tbody></table>';
+    results.innerHTML = html;
+  }
+
+  // ── GRAMMAR CHECK ──
+  function doGrammarCheck(){
+    var input = document.getElementById('grammar-input').value.trim();
+    if(!input) return;
+    var results = document.getElementById('grammar-results');
+    results.innerHTML = '<div class="lang-loading"><div class="spinner"></div>Checking grammar...</div>';
+
+    // Use LanguageTool API (free, open source)
+    var url = 'https://api.languagetool.org/v2/check';
+    fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: 'text=' + encodeURIComponent(input) + '&language=en-US'
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(!data.matches || data.matches.length === 0){
+        results.innerHTML = '<div class="grammar-clean">✓ No grammar issues found!</div>';
+        return;
+      }
+      var html = '<div class="translate-result" style="margin-bottom:10px"><div class="translate-result-label">Grammar Check Results</div><div style="color:#f87171;font-size:13px">' + data.matches.length + ' issue(s) found</div></div>';
+      for(var i = 0; i < data.matches.length; i++){
+        var m = data.matches[i];
+        html += '<div class="grammar-error">';
+        html += '<div class="error-text">' + escapeHtml(m.context.text.substring(0, m.context.offset) + '<u>' + m.context.text.substring(m.context.offset, m.context.offset + m.context.length) + '</u>' + m.context.text.substring(m.context.offset + m.context.length)) + '</div>';
+        if(m.replacements && m.replacements.length > 0){
+          html += '<div class="correction-text">→ ' + escapeHtml(m.replacements[0].value) + '</div>';
+        }
+        html += '<div class="error-type">' + escapeHtml(m.message) + '</div>';
+        html += '</div>';
+      }
+      results.innerHTML = html;
+    }).catch(function(){
+      results.innerHTML = '<div class="translate-result"><div class="translate-result-text" style="color:#f87171">Grammar check service unavailable.</div></div>';
+    });
+  }
+
+  // ── VOCABULARY ──
+  function saveVocab(source, translation, fromLang, toLang){
+    // Check if already saved
+    for(var i = 0; i < vocabList.length; i++){
+      if(vocabList[i].source === source && vocabList[i].to === toLang) return;
+    }
+    vocabList.unshift({ source: source, translation: translation, from: fromLang, to: toLang, date: new Date().toISOString() });
+    localStorage.setItem('eloquenta_vocab', JSON.stringify(vocabList));
+    renderVocabList();
+  }
+
+  function deleteVocab(index){
+    vocabList.splice(index, 1);
+    localStorage.setItem('eloquenta_vocab', JSON.stringify(vocabList));
+    renderVocabList();
+  }
+
+  function renderVocabList(){
+    var container = document.getElementById('vocab-list');
+    if(vocabList.length === 0){
+      container.innerHTML = '<div class="vocab-empty"><div class="empty-icon">📚</div><div>Save words during lessons to build your vocabulary list</div></div>';
+      return;
+    }
+    var html = '<div style="font-size:11px;color:#64748b;margin-bottom:8px">' + vocabList.length + ' word(s) saved</div>';
+    for(var i = 0; i < vocabList.length; i++){
+      var v = vocabList[i];
+      html += '<div class="vocab-item">';
+      html += '<div style="flex:1;min-width:0"><div class="vocab-word">' + escapeHtml(v.source) + ' <span class="vocab-lang">' + v.from.toUpperCase() + '</span></div>';
+      html += '<div class="vocab-translation">' + escapeHtml(v.translation) + ' <span class="vocab-lang">' + v.to.toUpperCase() + '</span></div></div>';
+      html += '<button class="vocab-delete" onclick="deleteVocab(' + i + ')" title="Delete">✕</button>';
+      html += '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  function filterVocab(){
+    var query = document.getElementById('vocab-search').value.toLowerCase();
+    var items = document.querySelectorAll('#vocab-list .vocab-item');
+    items.forEach(function(item){
+      var text = item.textContent.toLowerCase();
+      item.style.display = text.indexOf(query) !== -1 ? '' : 'none';
+    });
+  }
+
+  // ── UTILITIES ──
+  function speakText(text, lang){
+    if('speechSynthesis' in window){
+      var utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = 0.9;
+      speechSynthesis.speak(utterance);
+    }
+  }
+
+  function copyText(text){
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text);
+    }
+  }
+
+  function escapeHtml(text){
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function escapeJs(text){
+    return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
+  }
+
+  // ── INIT ──
+  // Start meeting timer
+  let seconds = 0;
+  setInterval(() => {
+    seconds++;
+    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    document.getElementById('meet-timer').textContent = `${mins}:${secs}`;
+  }, 1000);
+
+  // Show device check on load instead of going straight to initMedia
+  showDeviceCheck();
+  renderVocabList();
+
+})();
+</script>
+</body>
+</html>

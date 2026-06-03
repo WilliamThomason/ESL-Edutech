@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Eloquenta Teacher Training — Accent Reduction Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:24px 20px}
+
+/* Header */
+.header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:20px}
+.header h1{font-size:18px;font-weight:700;color:var(--cyan)}
+.header .badge{font-size:11px;padding:3px 10px;border-radius:10px;background:rgba(34,211,238,.1);color:var(--cyan);border:1px solid rgba(34,211,238,.2);font-weight:600}
+
+/* Progress */
+.progress-bar{height:6px;background:var(--bg3);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:3px;transition:width .4s;width:0%}
+
+/* Chapter nav */
+.chapter-nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.chapter-btn{padding:14px 16px;background:var(--bg2);border:2px solid var(--border);border-radius:10px;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-align:left}
+.chapter-btn:hover{border-color:var(--text-dim);color:var(--text)}
+.chapter-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.06)}
+.chapter-btn.done{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.06)}
+.chapter-btn .ch-num{font-size:10px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;opacity:.7}
+.chapter-btn.locked{opacity:.4;cursor:not-allowed}
+
+/* Content area */
+.content-area{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px 24px;margin-bottom:20px;min-height:400px}
+.content-area h2{font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px}
+.content-area h3{font-size:16px;font-weight:700;color:var(--cyan);margin:20px 0 8px}
+.content-area h4{font-size:14px;font-weight:600;color:var(--text);margin:16px 0 6px}
+.content-area p{color:var(--dim);margin-bottom:12px;font-size:14px}
+.content-area ul{margin:8px 0 16px 20px;color:var(--dim);font-size:14px}
+.content-area li{margin-bottom:6px}
+.content-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0;font-size:14px;color:var(--dim)}
+.content-box strong{color:var(--text)}
+.content-box.tip{border-left:3px solid var(--cyan)}
+.content-box.warning{border-left:3px solid var(--amber)}
+.content-box.success{border-left:3px solid var(--green)}
+.content-box.example{border-left:3px solid var(--violet)}
+
+/* Audio examples */
+.audio-example{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin:8px 0}
+.audio-example .sound-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--cyan);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.audio-example .sound-btn:hover{border-color:var(--cyan)}
+.audio-example .sound-label{font-size:13px;color:var(--dim)}
+.audio-example .sound-label em{color:var(--text);font-style:normal;font-weight:600}
+
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.comp-table th,.comp-table td{padding:10px 12px;border:1px solid var(--border);text-align:left}
+.comp-table th{background:var(--bg3);color:var(--text);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.comp-table td{color:var(--dim)}
+.comp-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+
+/* Buttons */
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{padding:10px 22px;border-radius:10px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--text-dim)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Quiz */
+.quiz-area{display:none}
+.quiz-area.visible{display:block}
+.quiz-q{margin-bottom:20px}
+.q-text{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px}
+.q-num{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt-btn{padding:12px 16px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;font-weight:500;text-align:left;cursor:pointer;transition:all .2s}
+.opt-btn:hover:not(:disabled){border-color:var(--cyan);background:rgba(34,211,238,.06)}
+.opt-btn.correct{border-color:var(--green);background:rgba(52,211,153,.1);color:var(--green)}
+.opt-btn.incorrect{border-color:var(--rose);background:rgba(251,113,133,.1);color:var(--rose)}
+.opt-btn.disabled{opacity:.5;cursor:default}
+
+/* Results */
+.results-area{display:none;text-align:center;padding:20px 0}
+.results-area.visible{display:block}
+.results-icon{font-size:48px;margin-bottom:12px}
+.results-title{font-size:24px;font-weight:800;margin-bottom:6px}
+.results-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
+.results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 8px}
+.stat-val{font-size:24px;font-weight:800}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:4px}
+
+/* Certificate */
+.cert-area{display:none;text-align:center;padding:20px}
+.cert-area.visible{display:block}
+.cert-box{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:2px solid var(--cyan);border-radius:16px;padding:40px 30px;margin:20px 0}
+.cert-box h2{font-size:28px;font-weight:800;color:var(--cyan);margin-bottom:8px}
+.cert-box .cert-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cert-box .cert-course{font-size:14px;color:var(--dim);margin-bottom:16px}
+.cert-box .cert-date{font-size:12px;color:var(--muted)}
+.cert-box .cert-id{font-size:10px;color:var(--muted);margin-top:16px;letter-spacing:1px}
+.cert-seal{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--violet));display:flex;align-items:center;justify-content:center;font-size:24px;margin:16px auto}
+
+/* Lesson material reference */
+.mat-ref{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:8px;margin:8px 0;font-size:13px;color:var(--cyan);cursor:pointer;text-decoration:none}
+.mat-ref:hover{background:rgba(34,211,238,.12)}
+
+/* Hidden */
+.hidden{display:none}
+
+@media(max-width:600px){
+  .chapter-nav{grid-template-columns:1fr}
+  .results-stats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Teacher Training — Accent Reduction Program</h1>
+    <span class="badge" id="progressBadge">0% Complete</span>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- Chapter Navigation -->
+  <div class="chapter-nav" id="chapterNav"></div>
+
+  <!-- Content Area -->
+  <div class="content-area" id="contentArea">
+    <div id="chapterContent"></div>
+    <div id="quizArea" class="quiz-area"></div>
+    <div id="resultsArea" class="results-area"></div>
+    <div id="certArea" class="cert-area"></div>
+  </div>
+
+</div>
+
+<script>
+// ═══ DATA ══=
+var CHAPTERS=[
+  {
+    id:1,title:"Understanding Accent Reduction",icon:"🎯",
+    content:`
+      <h2>Chapter 1: Understanding Accent Reduction</h2>
+      <p>Welcome to the Eloquenta Teacher Training Program for Accent Reduction. This chapter establishes the foundational concepts you need before working with students on their accents.</p>
+
+      <h3>What is Accent Reduction?</h3>
+      <p>Accent reduction (also called accent modification or accent coaching) is the process of helping non-native English speakers modify their speech patterns to improve clarity and intelligibility. It is NOT about eliminating a student's cultural identity or forcing them to sound like a native speaker.</p>
+
+      <div class="content-box tip"><strong>Key Principle:</strong> The goal is <em>intelligibility</em> — can the student be clearly understood by a wide range of English speakers? A student can retain their accent and still be perfectly intelligible.</p></div>
+
+      <h3>Why Students Seek Accent Reduction</h3>
+      <ul>
+        <li><strong>Professional clarity:</strong> Being understood in meetings, presentations, and phone calls</li>
+        <li><strong>Confidence:</strong> Feeling less self-conscious when speaking English</li>
+        <li><strong>Career advancement:</strong> Clearer communication opens doors to leadership roles</li>
+        <li><strong>Social integration:</strong> Easier everyday interactions in English-speaking environments</li>
+      </ul>
+
+      <h3>The Eloquenta Approach</h3>
+      <p>Our methodology is built on three pillars:</p>
+      <ul>
+        <li><strong>Ear training:</strong> Students must first <em>hear</em> the difference before they can produce it</li>
+        <li><strong>Muscle memory:</strong> The mouth and tongue need targeted exercises to produce unfamiliar sounds</li>
+        <li><strong>Contextual practice:</strong> Sounds must be practiced in real conversation, not just in isolation</li>
+      </ul>
+
+      <div class="content-box example"><strong>Example:</strong> A Japanese student struggles with /l/ vs /r/. We don't just drill "light" vs "right" — we use the <a href="../Eloquenta/Accent/japanese-accent-reduction.html" class="mat-ref" target="_blank">📎 Japanese Accent Reduction slides</a> to show mouth positioning, then practice in sentences like "The <em>light</em> is on the <em>right</em> side."</div>
+
+      <h3>What Accent Reduction is NOT</h3>
+      <ul>
+        <li>It is not about erasing a student's identity or cultural background</li>
+        <li>It is not about achieving a "perfect" British or American accent</li>
+        <li>It is not a quick fix — it requires consistent practice over weeks and months</li>
+        <li>It is not one-size-fits-all — each language background has unique challenges</li>
+      </ul>
+
+      <div class="content-box warning"><strong>Important:</strong> Always frame accent reduction as <em>adding tools</em> to a student's communication toolkit, not as fixing something that is broken. A student's accent is part of who they are.</div>
+    `,
+    quiz:[
+      {q:"What is the primary goal of accent reduction?",opts:["To eliminate all traces of a student's native accent","To improve clarity and intelligibility in English communication","To make every student sound like a native British speaker","To replace the student's native language habits entirely"],a:1},
+      {q:"Which of the following is NOT one of the three pillars of the Eloquenta approach?",opts:["Ear training — learning to hear the difference","Muscle memory — training the mouth to produce new sounds","Contextual practice — using sounds in real conversation","Grammar drilling — memorizing rules of English syntax"],a:3},
+      {q:"How should you frame accent reduction to a new student?",opts:["As fixing something that is wrong with their current speech","As adding communication tools while respecting their identity","As a quick process that takes only a few sessions","As something only needed for professional settings"],a:1},
+      {q:"Why is ear training the first step in accent reduction?",opts:["Because students need to pass a listening test before starting","Because students must hear the difference before they can produce it","Because listening is easier than speaking for most learners","Because it is the least expensive part of the training program"],a:1}
+    ]
+  },
+  {
+    id:2,title:"Phonetics & Sound Systems",icon:"🔊",
+    content:`
+      <h2>Chapter 2: Phonetics & Sound Systems</h2>
+      <p>To teach accent reduction effectively, you need a working knowledge of how sounds are produced. This chapter covers the phonetic concepts you need.</p>
+
+      <h3>The International Phonetic Alphabet (IPA)</h3>
+      <p>The IPA is your most important tool. Each symbol represents exactly one sound, regardless of spelling. English spelling is notoriously unreliable — the same letter can represent multiple sounds (think "ough" in "though," "through," "cough," "rough," "thought").</p>
+
+      <div class="content-box example"><strong>Example:</strong> The word "enough" is written with "ough" but pronounced /ɪˈnʌf/. The IPA tells you exactly how to say it, regardless of spelling.</div>
+
+      <h3>Consonant Sounds</h3>
+      <p>English has approximately 24 consonant sounds. The key areas where non-native speakers struggle:</p>
+      <table class="comp-table">
+        <tr><th>Sound</th><th>Common Challenge</th><th>Example Words</th></tr>
+        <tr><td>/θ/ (th voiceless)</td><td>Spanish, French, German speakers substitute /t/ or /s/</td><td>think, three, bath</td></tr>
+        <tr><td>/ð/ (th voiced)</td><td>Many languages lack this sound entirely</td><td>this, that, breathe</td></tr>
+        <tr><td>/l/ vs /r/</td><td>Japanese, Korean speakers merge these</td><td>light, right, collect, correct</td></tr>
+        <tr><td>/v/ vs /w/</td><td>German, Hindi speakers may confuse these</td><td>vest, west, vine, wine</td></tr>
+        <tr><td>/ʒ/ (zh sound)</td><td>Rare in many languages</td><td>measure, vision, pleasure</td></tr>
+      </table>
+
+      <h3>Vowel Sounds</h3>
+      <p>English has approximately 20 vowel sounds (depending on dialect). This is where most accent issues originate. Key problem areas:</p>
+      <ul>
+        <li><strong>Ship vs Sheep:</strong> /ɪ/ vs /iː/ — Spanish, Arabic speakers often merge these</li>
+        <li><strong>Cat vs Cut:</strong> /æ/ vs /ʌ/ — Many Asian languages don't distinguish these</li>
+        <li><strong>Pool vs Pull:</strong> /uː/ vs /ʊ/ — French, German speakers may not differentiate</li>
+        <li><strong>The schwa /ə/:</strong> The most common English sound, but absent in many languages</li>
+      </ul>
+
+      <div class="content-box tip"><strong>Teaching Tip:</strong> Use minimal pairs to help students hear and produce differences. For /l/ vs /r/: "light/right," "collect/correct," "long/wrong." Have students say both and feel the tongue position difference.</div>
+
+      <h3>Mouth Positioning</h3>
+      <p>Understanding where sounds are produced helps you give clear instructions:</p>
+      <ul>
+        <li><strong>Bilabial:</strong> Both lips — /p/, /b/, /m/, /w/</li>
+        <li><strong>Labiodental:</strong> Lower lip + upper teeth — /f/, /v/</li>
+        <li><strong>Dental:</strong> Tongue + teeth — /θ/, /ð/</li>
+        <li><strong>Alveolar:</strong> Tongue + ridge behind teeth — /t/, /d/, /s/, /z/, /l/, /n/</li>
+        <li><strong>Post-alveolar:</strong> Tongue further back — /ʃ/, /ʒ/, /tʃ/, /dʒ/, /r/</li>
+        <li><strong>Velar:</strong> Back of tongue + soft palate — /k/, /g/, /ŋ/</li>
+      </ul>
+
+      <p>Refer to the <a href="../Eloquenta/Accent/student-accent-guide.html" class="mat-ref" target="_blank">📎 Student Accent Guide</a> for detailed mouth positioning diagrams you can use in lessons.</p>
+    `,
+    quiz:[
+      {q:"Why is the IPA important for accent reduction teaching?",opts:["It helps students read English more fluently","Each symbol represents exactly one sound regardless of spelling","It is required for all Eloquenta certification exams","It replaces the need for audio recordings in lessons"],a:1},
+      {q:"Which pair of sounds is most commonly confused by Japanese and Korean speakers?",opts:["/p/ and /b/ as in 'pat' and 'bat'","/l/ and /r/ as in 'light' and 'right'","/s/ and /z/ as in 'sip' and 'zip'","/m/ and /n/ as in 'map' and 'nap'"],a:1},
+      {q:"What is the schwa sound /ə/ and why is it important?",opts:["A rare sound that appears in formal English only","The most common vowel sound in English, found in unstressed syllables","A consonant sound produced at the back of the throat","A sound that only appears in British English pronunciation"],a:1},
+      {q:"What is a minimal pair and how should you use it in teaching?",opts:["A pair of students who work together during practice exercises","Two words that differ by only one sound, used to train ear and mouth","The minimum number of vocabulary words needed for a lesson","A pair of sentences that demonstrate grammar rules"],a:1}
+    ]
+  },
+  {
+    id:3,title:"L1 Interference Patterns",icon:"🌍",
+    content:`
+      <h2>Chapter 3: L1 Interference Patterns</h2>
+      <p>Every student's accent is shaped by their first language (L1). Understanding L1 interference — the way a student's native language influences their English pronunciation — is essential for effective teaching.</p>
+
+      <h3>What is L1 Interference?</h3>
+      <p>When we learn a language in childhood, our brain maps the sound system of that language. As adults, we unconsciously apply those same sound patterns to new languages. This is L1 interference, and it is the single biggest factor in accent.</p>
+
+      <div class="content-box example"><strong>Example:</strong> Spanish has only 5 vowel sounds. English has approximately 20. A Spanish speaker will unconsciously map English vowels onto their existing 5-vowel system, making "ship" and "sheep" sound identical because Spanish doesn't distinguish these sounds.</div>
+
+      <h3>Major Language Group Patterns</h3>
+
+      <h4>Spanish Speakers</h4>
+      <ul>
+        <li>/b/ and /v/ are often pronounced identically (both as /b/)</li>
+        <li>/h/ is often silent or replaced with /x/ (a guttural sound)</li>
+        <li>/s/ before a consonant may gain an initial /e/ sound ("school" → "eschool")</li>
+        <li>/d/ between vowels may become /ð/ ("ladder" sounds like "lather")</li>
+        <li>Vowel reduction is minimal — every vowel is fully pronounced</li>
+      </ul>
+
+      <h4>French Speakers</h4>
+      <ul>
+        <li>/h/ is typically silent (French drops initial /h/)</li>
+        <li>/θ/ and /ð/ (th sounds) are replaced with /s/ and /z/</li>
+        <li>/r/ is produced in the throat (uvular) rather than with the tongue</li>
+        <li>Final consonants may be dropped ("big" → "bee")</li>
+        <li>Stress patterns tend to fall on the final syllable</li>
+      </ul>
+
+      <h4>German Speakers</h4>
+      <ul>
+        <li>/w/ is pronounced as /v/ ("west" sounds like "vest")</li>
+        <li>/θ/ (th) is replaced with /s/ or /t/</li>
+        <li>/ð/ (th voiced) is replaced with /z/ or /d/</li>
+        <li>Final devoicing: "bed" may sound like "bet"</li>
+        <li>/r/ is produced in the back of the throat</li>
+      </ul>
+
+      <h4>Japanese Speakers</h4>
+      <ul>
+        <li>/l/ and /r/ are not distinguished — both map to a single Japanese sound</li>
+        <li>Consonant clusters are broken up with vowels ("street" → "sutoreeto")</li>
+        <li>Every syllable tends to end with a vowel</li>
+        <li>/f/ before /u/ is replaced with a bilabial fricative (blowing air through both lips)</li>
+        <li>Stress-timing is replaced by mora-timing (each syllable gets equal length)</li>
+      </ul>
+
+      <h4>Portuguese Speakers</h4>
+      <ul>
+        <li>/θ/ and /ð/ (th) may be replaced with /t/ and /d/ or /s/ and /z/</li>
+        <li>/r/ varies significantly by dialect — may be trilled, guttural, or tapped</li>
+        <li>Nasal vowels don't exist in English and may cause confusion</li>
+        <li>/ʒ/ sound is often replaced with /ʃ/ or /dʒ/</li>
+      </ul>
+
+      <div class="content-box tip"><strong>Teaching Tip:</strong> Always ask a student about their native language in the first session. This tells you exactly which sounds to prioritize. A Spanish speaker needs different work than a Japanese speaker.</div>
+
+      <h3>Using This Knowledge in Lessons</h3>
+      <p>When you know a student's L1, you can:</p>
+      <ul>
+        <li>Predict which sounds will be most challenging</li>
+        <li>Prepare targeted exercises for their specific needs</li>
+        <li>Explain why certain sounds are difficult (it's not their fault — their language doesn't have that sound)</li>
+        <li>Set realistic expectations for progress</li>
+      </ul>
+
+      <p>Refer to the <a href="../Eloquenta/Accent/understanding-accents.html" class="mat-ref" target="_blank">📎 Understanding Accents guide</a> for a comprehensive reference on accent patterns by language group.</p>
+    `,
+    quiz:[
+      {q:"What is L1 interference and why does it matter for accent reduction?",opts:["A technical term for hearing loss that affects pronunciation","The way a student's native language sound system influences their English pronunciation","A method of teaching that uses only the student's first language in class","The interference caused by background noise during online lessons"],a:1},
+      {q:"Why do Spanish speakers often pronounce 'ship' and 'sheep' identically?",opts:["Because they cannot hear any difference between the two words","Because Spanish has fewer vowel sounds and doesn't distinguish /ɪ/ from /iː/","Because English spelling makes these words look identical","Because they have not been taught the correct pronunciation yet"],a:1},
+      {q:"What is the most important first step when working with a new accent reduction student?",opts:["Assigning them a level test on grammar and vocabulary","Asking about their native language to predict pronunciation challenges","Starting immediately with tongue twisters and pronunciation drills","Focusing on the sounds that are most difficult for all learners"],a:1},
+      {q:"How should you explain pronunciation difficulties to a student?",opts:["Tell them they need to try harder to pronounce correctly","Explain that their native language doesn't have certain sounds, which is normal","Suggest they watch more English movies to improve naturally","Focus only on the sounds they can already produce correctly"],a:1}
+    ]
+  },
+  {
+    id:4,title:"Teaching Techniques",icon:"🎓",
+    content:`
+      <h2>Chapter 4: Teaching Techniques for Accent Reduction</h2>
+      <p>This chapter covers the practical techniques you will use in every accent reduction session.</p>
+
+      <h3>The Diagnostic Assessment</h3>
+      <p>Before teaching anything, you need to assess the student. The diagnostic tells you:</p>
+      <ul>
+        <li>Which specific sounds are problematic</li>
+        <li>Whether the issue is perception (hearing) or production (speaking)</li>
+        <li>The student's goals and priorities</li>
+        <li>Their native language background</li>
+      </ul>
+
+      <div class="content-box example"><strong>Diagnostic Process:</strong>
+        <br>1. Have the student read a standardized passage aloud
+        <br>2. Record it (with permission) for later comparison
+        <br>3. Note every sound substitution, deletion, or addition
+        <br>4. Test perception: play minimal pairs and ask which word they hear
+        <br>5. Ask about their goals: professional, social, exam preparation
+      </div>
+
+      <h3>Ear Training Exercises</h3>
+      <p>Students must hear the difference before they can produce it. Use these techniques:</p>
+      <ul>
+        <li><strong>Minimal pair discrimination:</strong> Play "ship" and "sheep" — which is which?</li>
+        <li><strong>Same or different:</strong> Say two words — are they the same or different?</li>
+        <li><strong>Identify the odd one out:</strong> "ship, ship, sheep, ship" — which is different?</li>
+        <li><strong>Dictation:</strong> Student writes what they hear to connect sounds to spelling</li>
+      </ul>
+
+      <h3>Production Exercises</h3>
+      <p>Once students can hear the difference, train their mouth:</p>
+      <ul>
+        <li><strong>Isolation:</strong> Practice the single sound in isolation — /θ/, /θ/, /θ/</li>
+        <li><strong>Syllables:</strong> Add vowels — /θiː/, /θæ/, /θʌ/</li>
+        <li><strong>Words:</strong> Use the sound in real words — "think," "three," "bath"</li>
+        <li><strong>Sentences:</strong> Embed in sentences — "I think three baths are too many"</li>
+        <li><strong>Conversation:</strong> Use the target sound in spontaneous speech</li>
+      </ul>
+
+      <div class="content-box tip"><strong>Key Principle:</strong> Always move from controlled to free practice. Isolation → syllables → words → sentences → conversation. Never skip steps.</div>
+
+      <h3>Visual and Tactile Aids</h3>
+      <p>Many students are visual or kinesthetic learners. Use:</p>
+      <ul>
+        <li><strong>Mouth diagrams:</strong> Show tongue position for each sound</li>
+        <li><strong>Mirror work:</strong> Student watches their mouth in a mirror while you demonstrate</li>
+        <li><strong>Touch cues:</strong> Student touches their throat to feel voicing (voiced vs voiceless)</li>
+        <li><strong>Hand gestures:</strong> Use hand shapes to represent tongue positions</li>
+        <li><strong>The Eloquenta whiteboard:</strong> Draw mouth positions and annotate in real-time</li>
+      </ul>
+
+      <h3>Using the Eloquenta Lesson Materials</h3>
+      <p>Your primary teaching resources are the accent reduction slide decks:</p>
+      <ul>
+        <li><a href="../Eloquenta/Accent/japanese-accent-reduction.html" class="mat-ref" target="_blank">📎 Japanese Accent Reduction</a> — for Japanese L1 students</li>
+        <li><a href="../Eloquenta/Accent/student-accent-guide.html" class="mat-ref" target="_blank">📎 Student Accent Guide</a> — general reference for all students</li>
+        <li><a href="../Eloquenta/Accent/understanding-accents.html" class="mat-ref" target="_blank">📎 Understanding Accents</a> — L1 interference patterns</li>
+        <li><a href="../Eloquenta/Accent/degrees-of-likelihood.html" class="mat-ref" target="_blank">📎 Degrees of Likelihood</a> — probability expressions for natural speech</li>
+      </ul>
+
+      <h3>Correcting Errors</h3>
+      <p>How you correct matters as much as what you correct:</p>
+      <ul>
+        <li><strong>Recast:</strong> Repeat the sentence correctly without explicitly pointing out the error</li>
+        <li><strong>Elicit:</strong> Ask "Can you say that again?" to prompt self-correction</li>
+        <li><strong>Explicit correction:</strong> "The /θ/ sound needs your tongue between your teeth"</li>
+        <li><strong>Delayed correction:</strong> Note errors during fluency exercises, address them after</li>
+      </ul>
+
+      <div class="content-box warning"><strong>Common Mistake:</strong> Don't correct every error in real-time. This destroys fluency and confidence. Choose 2-3 target sounds per session and focus on those.</div>
+    `,
+    quiz:[
+      {q:"What is the correct order of the diagnostic assessment process?",opts:["Record reading, test perception, note sound errors, ask about goals","Ask about goals, record reading, note sound errors, test perception","Test perception, ask about goals, record reading, note sound errors","Note sound errors, test perception, ask about goals, record reading"],a:0},
+      {q:"Why must ear training come before production exercises?",opts:["Because listening is easier than speaking for all language learners","Because students need to hear the sound difference before they can produce it accurately","Because the Eloquenta curriculum requires a specific sequence of activities","Because production exercises require special equipment that must be set up first"],a:1},
+      {q:"What is the correct progression for production exercises?",opts:["Conversation, sentences, words, syllables, isolation","Isolation, syllables, words, sentences, conversation","Words, sentences, isolation, syllables, conversation","Sentences, conversation, words, syllables, isolation"],a:1},
+      {q:"What is a recast and when should you use it?",opts:["A type of grammar exercise where students rewrite sentences","Repeating a student's sentence correctly without explicitly pointing out the error","A method of recording student speech for later analysis","A technique for teaching new vocabulary through context"],a:1}
+    ]
+  },
+  {
+    id:5,title:"Lesson Planning & Structure",icon:"📋",
+    content:`
+      <h2>Chapter 5: Lesson Planning & Structure</h2>
+      <p>A well-structured lesson is essential for effective accent reduction. This chapter shows you how to plan and deliver 30-minute sessions.</p>
+
+      <h3>The 30-Minute Lesson Structure</h3>
+      <p>Every Eloquenta accent reduction lesson follows this framework:</p>
+
+      <table class="comp-table">
+        <tr><th>Time</th><th>Activity</th><th>Purpose</th></tr>
+        <tr><td>0-3 min</td><td>Warm-up & review</td><td>Activate prior learning, check homework</td></tr>
+        <tr><td>3-8 min</td><td>Target sound introduction</td><td>Present the sound, demonstrate mouth position</td></tr>
+        <tr><td>8-13 min</td><td>Ear training</td><td>Minimal pair exercises, discrimination tasks</td></tr>
+        <tr><td>13-20 min</td><td>Production practice</td><td>Isolation → syllables → words → sentences</td></tr>
+        <tr><td>20-25 min</td><td>Contextual practice</td><td>Use target sound in conversation or role-play</td></tr>
+        <tr><td>25-28 min</td><td>Feedback & correction</td><td>Address errors, reinforce correct production</td></tr>
+        <tr><td>28-30 min</td><td>Wrap-up & homework</td><td>Summarize, assign practice, preview next lesson</td></tr>
+      </table>
+
+      <h3>Planning a Course of Study</h3>
+      <p>A typical accent reduction course runs 8-12 weeks. Plan the sound focus for each week based on the diagnostic:</p>
+
+      <div class="content-box example"><strong>Sample 8-Week Plan (Japanese L1 student):</strong>
+        <br>Week 1-2: /l/ vs /r/ (highest priority — affects intelligibility significantly)
+        <br>Week 3-4: /θ/ and /ð/ (th sounds — absent in Japanese)
+        <br>Week 5-6: Vowel length distinctions (ship/sheep, pool/pull)
+        <br>Week 7-8: Consonant clusters and final consonants (street, asked, films)
+      </div>
+
+      <h3>Homework Assignments</h3>
+      <p>Practice between sessions is essential. Assign:</p>
+      <ul>
+        <li><strong>Recording tasks:</strong> Student records themselves reading a passage, sends to you for review</li>
+        <li><strong>Minimal pair practice:</strong> 5 minutes daily with a list of word pairs</li>
+        <li><strong>Tongue twisters:</strong> Fun, challenging sentences targeting the week's sound</li>
+        <li><strong>Shadowing:</strong> Student listens to a native speaker clip and repeats simultaneously</li>
+      </ul>
+
+      <h3>Using the Interactive Whiteboard</h3>
+      <p>The Eloquenta whiteboard is your primary teaching tool. Use it to:</p>
+      <ul>
+        <li>Draw mouth and tongue positions for target sounds</li>
+        <li>Write minimal pairs and highlight the differences</li>
+        <li>Annotate IPA symbols next to problem words</li>
+        <li>Create visual timelines for intonation patterns</li>
+        <li>Save diagrams for the student to review after the session</li>
+      </ul>
+
+      <h3>Tracking Progress</h3>
+      <p>Document each student's progress systematically:</p>
+      <ul>
+        <li>Record a diagnostic reading at the start of each course</li>
+        <li>Re-record the same passage at weeks 4 and 8 for comparison</li>
+        <li>Keep a checklist of target sounds and mark mastery dates</li>
+        <li>Note which techniques work best for each student</li>
+      </ul>
+
+      <div class="content-box success"><strong>Milestone:</strong> When a student can produce a target sound correctly in spontaneous conversation (not just in drills), consider that sound "mastered" and move to the next priority.</div>
+    `,
+    quiz:[
+      {q:"What is the recommended time allocation for production practice in a 30-minute lesson?",opts:["3 minutes — just enough to introduce the concept","7 minutes — from isolation through to sentence-level practice","15 minutes — the majority of the lesson should be production","25 minutes — production is the only thing that matters"],a:1},
+      {q:"Why should /l/ vs /r/ be prioritized for a Japanese L1 student?",opts:["Because these are the easiest sounds to teach and provide quick wins","Because this distinction significantly affects intelligibility and is absent in Japanese","Because all students must master these sounds regardless of their native language","Because these sounds appear in the most common English vocabulary words"],a:1},
+      {q:"What is shadowing as a homework technique?",opts:["Student writes sentences using target words from a vocabulary list","Student listens to a native speaker and repeats simultaneously to practice rhythm and sounds","Student records themselves and compares their pronunciation to a model","Student practices in front of a mirror to observe mouth movements"],a:1},
+      {q:"When should a target sound be considered mastered?",opts:["When the student can produce it correctly in isolation","When the student can produce it correctly in spontaneous conversation","When the student can explain how to produce it to another learner","When the student scores 100% on a written test about the sound"],a:1}
+    ]
+  },
+  {
+    id:6,title:"Final Exam & Certification",icon:"🏆",
+    content:`
+      <h2>Chapter 6: Final Exam & Certification</h2>
+      <p>You have completed all five chapters. Now it is time to demonstrate your knowledge in the final exam.</p>
+
+      <h3>Exam Format</h3>
+      <ul>
+        <li><strong>20 questions</strong> covering all five chapters</li>
+        <li><strong>Multiple choice</strong> — select the best answer from four options</li>
+        <li><strong>Pass mark: 80%</strong> (16 out of 20 correct)</li>
+        <li><strong>No time limit</strong> — take as long as you need</li>
+        <li><strong>Three attempts</strong> — you may retake the exam if needed</li>
+      </ul>
+
+      <h3>What You Need to Know</h3>
+      <p>The exam tests your understanding of:</p>
+      <ul>
+        <li>The principles and goals of accent reduction</li>
+        <li>Phonetic concepts and the IPA</li>
+        <li>L1 interference patterns for major language groups</li>
+        <li>Teaching techniques: ear training, production exercises, correction methods</li>
+        <li>Lesson planning and course structure</li>
+        <li>How to use the Eloquenta lesson materials</li>
+      </ul>
+
+      <div class="content-box tip"><strong>Tip:</strong> Review each chapter's quiz questions before starting the final exam. The final exam draws from the same question pool.</div>
+
+      <h3>Your Certificate</h3>
+      <p>Upon passing the exam, you will receive an Eloquenta Teacher Training Certificate in Accent Reduction. This certifies that you are qualified to deliver accent reduction lessons using the Eloquenta methodology and materials.</p>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="startFinalExam()">Start Final Exam</button>
+      </div>
+    `,
+    quiz:[]
+  }
+];
+
+// ═══ STATE ══=
+var state={
+  currentChapter:0,
+  completedChapters:[],
+  chapterScores:{},
+  examAttempts:0,
+  examPassed:false
+};
+
+function loadState(){
+  try{
+    var s=localStorage.getItem('eloquentatraining');
+    if(s) state=JSON.parse(s);
+  }catch(e){}
+}
+function saveState(){
+  try{localStorage.setItem('eloquentatraining',JSON.stringify(state));}catch(e){}
+}
+
+// ═══ RENDER ══=
+function renderNav(){
+  var nav=document.getElementById('chapterNav');
+  var html='';
+  CHAPTERS.forEach(function(ch,i){
+    var isDone=state.completedChapters.indexOf(ch.id)>=0;
+    var isCurrent=state.currentChapter===i;
+    var isLocked=i>0&&state.completedChapters.indexOf(CHAPTERS[i-1].id)<0&&!isDone;
+    var cls='chapter-btn';
+    if(isCurrent)cls+=' active';
+    if(isDone)cls+=' done';
+    if(isLocked)cls+=' locked';
+    html+='<button class="'+cls+'" '+(isLocked?'disabled':'onclick="openChapter('+i+')"')+'><span class="ch-num">Chapter '+ch.id+'</span>'+ch.icon+' '+ch.title+'</button>';
+  });
+  nav.innerHTML=html;
+  updateProgress();
+}
+
+function updateProgress(){
+  var pct=Math.round((state.completedChapters.length/CHAPTERS.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressBadge').textContent=pct+'% Complete';
+}
+
+function openChapter(i){
+  state.currentChapter=i;
+  var ch=CHAPTERS[i];
+  document.getElementById('chapterContent').innerHTML=ch.content;
+  document.getElementById('quizArea').classList.remove('visible');
+  document.getElementById('resultsArea').classList.remove('visible');
+  document.getElementById('certArea').classList.remove('visible');
+  renderNav();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startChapterQuiz(){
+  var ch=CHAPTERS[state.currentChapter];
+  if(!ch.quiz||ch.quiz.length===0)return;
+  document.getElementById('chapterContent').classList.add('hidden');
+  document.getElementById('quizArea').classList.add('visible');
+  renderQuiz(ch.quiz,0,[]);
+}
+
+function renderQuiz(quiz,qIdx,answers){
+  var area=document.getElementById('quizArea');
+  var q=quiz[qIdx];
+  var html='<div class="quiz-q"><div class="q-num">Question '+(qIdx+1)+' of '+quiz.length+'</div><div class="q-text">'+q.q+'</div><div class="opts">';
+  q.opts.forEach(function(opt,i){
+    html+='<button class="opt-btn" onclick="answerQuiz('+i+',this)">'+String.fromCharCode(65+i)+'. '+opt+'</button>';
+  });
+  html+='</div></div>';
+  html+='<div class="btn-row"><button class="btn btn-secondary" onclick="cancelQuiz()">Cancel</button></div>';
+  area.innerHTML=html;
+}
+
+function answerQuiz(idx,btn){
+  var ch=CHAPTERS[state.currentChapter];
+  var quiz=ch.quiz;
+  var qIdx=parseInt(btn.closest('.quiz-q').querySelector('.q-num').textContent)-1;
+  // Actually get qIdx from the button context
+  var area=document.getElementById('quizArea');
+  var btns=area.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;b.classList.add('disabled');});
+  if(idx===quiz[qIdx].a){
+    btn.classList.add('correct');
+  }else{
+    btn.classList.add('incorrect');
+    btns[quiz[qIdx].a].classList.add('correct');
+  }
+  // Store answer and move to next
+  setTimeout(function(){
+    var nextQ=qIdx+1;
+    if(nextQ>=quiz.length){
+      // Calculate score
+      var correct=0;
+      // We need to track answers properly
+      finishChapterQuiz();
+    }else{
+      renderQuiz(quiz,nextQ);
+    }
+  },1200);
+}
+
+function finishChapterQuiz(){
+  var ch=CHAPTERS[state.currentChapter];
+  var quiz=ch.quiz;
+  var correct=0;
+  var btns=document.querySelectorAll('.opt-btn.correct');
+  // Count based on the last state
+  // Simpler: recalculate from DOM
+  quiz.forEach(function(q,i){
+    // Check if the correct answer was selected
+  });
+  // Actually let's just count correct buttons that were clicked
+  var allCorrect=document.querySelectorAll('.opt-btn.correct');
+  var allIncorrect=document.querySelectorAll('.opt-btn.incorrect');
+  correct=quiz.length-allIncorrect.length;
+  var pct=Math.round((correct/quiz.length)*100);
+  var passed=pct>=75;
+
+  if(passed&&state.completedChapters.indexOf(ch.id)<0){
+    state.completedChapters.push(ch.id);
+    state.chapterScores[ch.id]=pct;
+    saveState();
+  }
+
+  document.getElementById('quizArea').classList.remove('visible');
+  document.getElementById('resultsArea').classList.add('visible');
+  var html='';
+  if(passed){
+    html+='<div class="results-icon">✓</div>';
+    html+='<div class="results-title" style="color:var(--green)">Chapter Passed!</div>';
+    html+='<div class="results-sub">You scored '+correct+' out of '+quiz.length+' ('+pct+'%)</div>';
+    html+='<div class="results-stats"><div class="stat-box"><div class="stat-val" style="color:var(--green)">'+correct+'</div><div class="stat-label">Correct</div></div><div class="stat-box"><div class="stat-val" style="color:var(--rose)">'+(quiz.length-correct)+'</div><div class="stat-label">Incorrect</div></div><div class="stat-box"><div class="stat-val" style="color:var(--accent)">'+pct+'%</div><div class="stat-label">Score</div></div></div>';
+    if(state.currentChapter<CHAPTERS.length-1){
+      html+='<div class="btn-row"><button class="btn btn-primary" onclick="openChapter('+(state.currentChapter+1)+')">Next Chapter →</button></div>';
+    }else{
+      html+='<div class="btn-row"><button class="btn btn-primary" onclick="openChapter('+(state.currentChapter+1)+')">Proceed to Final Exam →</button></div>';
+    }
+  }else{
+    html+='<div class="results-icon">✗</div>';
+    html+='<div class="results-title" style="color:var(--rose)">Not Yet Passed</div>';
+    html+='<div class="results-sub">You scored '+correct+' out of '+quiz.length+' ('+pct+'%). You need 75% to pass.</div>';
+    html+='<div class="btn-row"><button class="btn btn-primary" onclick="startChapterQuiz()">Retry Quiz</button><button class="btn btn-secondary" onclick="openChapter('+state.currentChapter+')">Review Chapter</button></div>';
+  }
+  document.getElementById('resultsArea').innerHTML=html;
+  renderNav();
+}
+
+function cancelQuiz(){
+  document.getElementById('quizArea').classList.remove('visible');
+  document.getElementById('chapterContent').classList.remove('hidden');
+}
+
+// ═══ FINAL EXAM ══=
+var examQuestions=[];
+var examAnswers=[];
+var examQIdx=0;
+
+function startFinalExam(){
+  // Pool questions from all chapters
+  examQuestions=[];
+  CHAPTERS.forEach(function(ch){
+    if(ch.quiz){
+      ch.quiz.forEach(function(q){
+        examQuestions.push(q);
+      });
+    }
+  });
+  // Shuffle and take 20
+  examQuestions=shuffleArray(examQuestions).slice(0,20);
+  examAnswers=[];
+  examQIdx=0;
+  state.examAttempts++;
+  saveState();
+  document.getElementById('chapterContent').classList.add('hidden');
+  document.getElementById('certArea').classList.remove('visible');
+  renderExamQuestion();
+}
+
+function renderExamQuestion(){
+  var area=document.getElementById('quizArea');
+  area.classList.add('visible');
+  var q=examQuestions[examQIdx];
+  var html='<div class="quiz-q"><div class="q-num">Question '+(examQIdx+1)+' of 20 — Final Exam (Attempt '+state.examAttempts+')</div><div class="q-text">'+q.q+'</div><div class="opts">';
+  // Shuffle options
+  var optsWithIdx=q.opts.map(function(o,i){return{o:o,i:i};});
+  optsWithIdx=shuffleArray(optsWithIdx);
+  optsWithIdx.forEach(function(item){
+    html+='<button class="opt-btn" onclick="answerExam('+item.i+',this)">'+String.fromCharCode(65+optsWithIdx.indexOf(item))+'. '+item.o+'</button>';
+  });
+  html+='</div></div>';
+  area.innerHTML=html;
+}
+
+function answerExam(idx,btn){
+  var q=examQuestions[examQIdx];
+  var area=document.getElementById('quizArea');
+  var btns=area.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;b.classList.add('disabled');});
+  examAnswers.push(idx===q.a);
+  if(idx===q.a){
+    btn.classList.add('correct');
+  }else{
+    btn.classList.add('incorrect');
+    btns.forEach(function(b){
+      var text=b.textContent.replace(/^[A-Z]\.\s*/,'');
+      if(text===q.a)b.classList.add('correct');
+    });
+  }
+  setTimeout(function(){
+    examQIdx++;
+    if(examQIdx>=examQuestions.length){
+      finishFinalExam();
+    }else{
+      renderExamQuestion();
+    }
+  },1200);
+}
+
+function finishFinalExam(){
+  var correct=examAnswers.filter(function(a){return a;}).length;
+  var total=examQuestions.length;
+  var pct=Math.round((correct/total)*100);
+  var passed=pct>=80;
+
+  if(passed) state.examPassed=true;
+  saveState();
+
+  document.getElementById('quizArea').classList.remove('visible');
+
+  if(passed){
+    showCertificate(correct,total,pct);
+  }else{
+    document.getElementById('resultsArea').classList.add('visible');
+    var html='';
+    html+='<div class="results-icon">✗</div>';
+    html+='<div class="results-title" style="color:var(--rose)">Exam Not Passed</div>';
+    html+='<div class="results-sub">You scored '+correct+' out of '+total+' ('+pct+'%). You need 80% to pass.</div>';
+    html+='<div class="results-stats"><div class="stat-box"><div class="stat-val" style="color:var(--green)">'+correct+'</div><div class="stat-label">Correct</div></div><div class="stat-box"><div class="stat-val" style="color:var(--rose)">'+(total-correct)+'</div><div class="stat-label">Incorrect</div></div><div class="stat-box"><div class="stat-val" style="color:var(--amber)">'+pct+'%</div><div class="stat-label">Score</div></div></div>';
+    html+='<div class="btn-row"><button class="btn btn-primary" onclick="startFinalExam()">Retry Exam ('+(3-state.examAttempts)+' attempts remaining)</button><button class="btn btn-secondary" onclick="openChapter(0)">Review Chapters</button></div>';
+    document.getElementById('resultsArea').innerHTML=html;
+  }
+}
+
+function showCertificate(correct,total,pct){
+  document.getElementById('certArea').classList.add('visible');
+  var now=new Date();
+  var dateStr=now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var certId='ELOQ-AR-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
+  var html='';
+  html+='<div class="cert-box">';
+  html+='<div class="cert-seal">🏆</div>';
+  html+='<h2>Certificate of Completion</h2>';
+  html+='<div class="cert-name">Eloquenta Teacher Training Program</div>';
+  html+='<div class="cert-course">Accent Reduction Methodology</div>';
+  html+='<div class="cert-date">Awarded: '+dateStr+'</div>';
+  html+='<div class="cert-id">Certificate ID: '+certId+'</div>';
+  html+='</div>';
+  html+='<p style="color:var(--dim);font-size:13px;margin:16px 0">This certifies that the holder has successfully completed the Eloquenta Teacher Training Program in Accent Reduction and is qualified to deliver accent reduction lessons using the Eloquenta methodology and materials.</p>';
+  html+='<p style="color:var(--green);font-size:14px;font-weight:600">Score: '+correct+'/'+total+' ('+pct+'%)</p>';
+  html+='<div class="btn-row" style="margin-top:16px">';
+  html+='<button class="btn btn-primary" onclick="printCertificate()">🖨 Print Certificate</button>';
+  html+='<button class="btn btn-secondary" onclick="downloadCertificate(\''+certId+'\')">💾 Download PDF</button>';
+  html+='</div>';
+  document.getElementById('certArea').innerHTML=html;
+}
+
+function printCertificate(){
+  window.print();
+}
+
+function downloadCertificate(certId){
+  var certHTML=document.getElementById('certArea').innerHTML;
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>Eloquenta Certificate</title><style>body{font-family:Inter,sans-serif;padding:40px;text-align:center}.cert-box{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:2px solid #22d3ee;border-radius:16px;padding:40px 30px;margin:20px auto;max-width:600px}.cert-seal{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:24px;margin:16px auto}h2{font-size:28px;font-weight:800;color:#22d3ee;margin-bottom:8px}.cert-name{font-size:20px;font-weight:700;color:#f1f5f9;margin-bottom:4px}.cert-course{font-size:14px;color:#94a3b8;margin-bottom:16px}.cert-date{font-size:12px;color:#64748b}.cert-id{font-size:10px;color:#64748b;margin-top:16px}</style></head><body>'+certHTML+'</body></html>');
+  w.document.close();
+  setTimeout(function(){w.print();},500);
+}
+
+function shuffleArray(arr){
+  var a=[...arr];
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+// ═══ INIT ══=
+loadState();
+renderNav();
+// Open first chapter or last completed
+if(state.currentChapter===0&&state.completedChapters.length===0){
+  openChapter(0);
+} else {
+  var lastCompleted=Math.max.apply(null,state.completedChapters);
+  var nextChapter=Math.min(CHAPTERS.findIndex(function(c){return c.id===lastCompleted;})+1,CHAPTERS.length-1);
+  openChapter(nextChapter);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Screen Share — Teacher Student Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;height:100vh}
+.header{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);height:52px}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border)}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:16px;font-weight:700;flex:1}
+
+/* Layout */
+.layout{display:flex;height:calc(100vh - 52px)}
+
+/* Toolbar */
+.toolbar{width:64px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;flex-shrink:0}
+.tool-btn{width:44px;height:44px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--dim);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative}
+.tool-btn:hover{background:var(--bg3);color:var(--text)}
+.tool-btn.active{background:rgba(34,211,238,.12);color:var(--cyan);border-color:rgba(34,211,238,.25)}
+.tool-btn .tooltip{position:absolute;left:54px;top:50%;transform:translateY(-50%);background:var(--bg3);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:20}
+.tool-btn:hover .tooltip{opacity:1}
+.tool-sep{height:1px;background:var(--border);width:32px;margin:4px 0}
+
+/* Main */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* Start state */
+.start-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:10;background:var(--bg)}
+.start-state h2{font-size:1.6rem;font-weight:800}
+.start-state p{color:(--dim);max-width:360px;text-align:center}
+.start-state .hint{font-size:12px;color:var(--muted);margin-top:8px}
+.share-btn{height:48px;padding:0 32px;border-radius:10px;background:var(--cyan);border:none;color:var(--bg);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s}
+.share-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,211,238,.3)}
+.stop-btn{background:var(--rose);color:#fff}
+.stop-btn:hover{box-shadow:0 4px 16px rgba(251,113,135,.3)}
+
+/* Video */
+.video-wrap{flex:1;display:none;align-items:center;justify-content:center;background:#000;position:relative;overflow:hidden}
+.video-wrap.active{display:flex}
+.video-wrap video{max-width:100%;max-height:100%}
+
+/* Canvas overlay for annotations */
+.ann-canvas{position:absolute;inset:0;cursor:crosshair;z-index:5}
+
+/* Bottom bar */
+.bottom-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg2);border-top:1px solid var(--border)}
+.status{font-size:12px;color:var(--muted)}
+.status.recording{color:var(--rose)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:6px}
+.status.recording .status-dot{background:var(--rose);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%opacity:.3}
+
+/* Color palette */
+.color-palette{display:flex;gap:4px;margin-left:auto}
+.color-swatch{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.active{border-color:var(--text)}
+
+/* Slider */
+.brush-size{display:flex;align-items:center;gap:6px}
+.brush-size input{width:60px;accent-color:var(--cyan)}
+.brush-preview{width:20px;height:20px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+/* Error */
+.error-msg{display:none;text-align:center;padding:40px}
+.error-msg.show{display:block}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Screen Share &amp; Annotate</div>
+</div>
+
+<div class="layout">
+  <div class="toolbar" id="toolbar" style="display:none">
+    <button class="tool-btn active" data-tool="select" title="Select/Move"><span class="tooltip">Select</span></button>
+    <button class="tool-btn" data-tool="pen" title="Pen"><span class="tooltip">Pen</span></button>
+    <button class="tool-btn" data-tool="highlighter" title="Highlighter"><span class="tooltip">Highlighter</span></button>
+    <button class="tool-btn" data-tool="line" title="Line"><span class="tooltip">Line</span></button>
+    <button class="tool-btn" data-tool="arrow" title="Arrow"><span class="tooltip">Arrow</span></button>
+    <button class="tool-btn" data-tool="rect" title="Rectangle"><span class="tooltip">Rectangle</span></button>
+    <button class="tool-btn" data-tool="circle" title="Circle"><span class="tooltip">Circle</span></button>
+    <button class="tool-btn" data-tool="text" title="Text"><span class="tooltip">Text</span></button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" data-tool="eraser" title="Eraser"><span class="tooltip">Eraser</span></button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="clearAnnotations()" title="Clear"><span class="tooltip">Clear</span></button>
+    <button class="tool-btn" onclick="undoAnnotation()" title="Undo"><span class="tooltip">Undo</span></button>
+  </div>
+
+  <div class="main-area">
+    <div class="start-state" id="startState">
+      <h2>Screen Share &amp; Annotate</h2>
+      <p>Share your screen and draw on it in real time. Perfect for teaching, demonstrations, and guided practice.</p>
+      <button class="share-btn" onclick="startShare()">Share Screen</button>
+      <p class="hint">Your browser will ask you which screen or window to share</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      <h2 style="margin-bottom:8px">Screen Sharing Not Available</h2>
+      <p style="color:var(--dim)">Screen sharing requires a supported browser (Chrome, Edge, or Firefox) and HTTPS or localhost.</p>
+    </div>
+
+    <div class="video-wrap" id="videoWrap">
+      <video id="screenVideo" autoplay playsinline></video>
+      <canvas class="ann-canvas" id="annCanvas"></canvas>
+    </div>
+
+    <div class="bottom-bar" id="bottomBar" style="display:none">
+      <div class="status" id="shareStatus"><span class="status-dot"></span>Sharing</div>
+      <div class="brush-size" id="brushControls" style="display:none">
+        <div class="brush-preview" id="brushPreview"></div>
+        <input type="range" id="brushSize" min="1" max="20" value="3" oninput="updateBrush()">
+      </div>
+      <div class="color-palette" id="colorPalette"></div>
+      <button class="share-btn stop-btn" style="height:34px;padding:0 20px;font-size:13px" onclick="stopShare()">Stop Sharing</button>
+      <button class="share-btn" style="height:34px;padding:0 20px;font-size:13px" onclick="saveAnnotation()">Save PNG</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var stream=null,canvas,ctx,tool='select',drawing=false;
+var colors=['#22d3ee','#34d399','#fbbf24','#fb7185','#a78bfa','#f1f5f9','#64748b','#ef4444'];
+var annColor='#22d3ee';
+var brushSize=3;
+var undoStack=[];
+var startX,startY;
+
+(function(){
+  var pal=document.getElementById('colorPalette');
+  colors.forEach(function(c,i){
+    var s=document.createElement('div');
+    s.className='color-swatch'+(i===0?' active':'');
+    s.style.background=c;
+    s.onclick=function(){
+      annColor=c;
+      document.querySelectorAll('.color-swatches').forEach(function(x){x.classList.remove('active')});
+      s.classList.add('active');updateBrush();
+    };
+    pal.appendChild(s);
+  });
+})();
+
+function updateBrush(){
+  brushSize=parseInt(document.getElementById('brushSize').value);
+  var pv=document.getElementById('brushPreview');
+  pv.style.width=brushSize*2+'px';pv.style.height=brushSize*2+'px';
+}
+
+document.querySelectorAll('.tool-btn[data-tool]').forEach(function(btn){
+  btn.onclick=function(){
+    document.querySelectorAll('.tool-btn[data-tool]').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    tool=btn.dataset.tool;
+    var pen=['pen','highlighter','eraser'];
+    document.getElementById('brush-controls').style.display=pen.includes(tool)?'flex':'none';
+    canvas.style.cursor=tool==='select'?'default':tool==='text'?'text':'crosshair';
+  };
+});
+
+function startShare(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){
+    document.getElementById('errorMsg').classList.add('show');return;
+  }
+  navigator.mediaDevices.getDisplayMedia({video:true}).then(function(s){
+    stream=s;
+    var video=document.getElementById('screenVideo');
+    video.srcObject=s;
+    document.getElementById('startState').style.display='none';
+    document.getElementById('videoWrap').classList.add('active');
+    document.getElementById('bottomBar').style.display='flex';
+    document.getElementById('toolbar').style.display='flex';
+    setupCanvas();
+    s.getVideoTracks()[0].onended=function(){stopShare()};
+  }).catch(function(){document.getElementById('errorMsg').classList.add('show')});
+}
+
+function stopShare(){
+  if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null;}
+  document.getElementById('screenVideo').srcObject=null;
+  document.getElementById('videoWrap').classList.remove('active');
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('toolbar').style.display='none';
+  document.getElementById('startState').style.display='flex';
+}
+
+function setupCanvas(){
+  canvas=document.getElementById('annCanvas');
+  ctx=canvas.getContext('2d');
+  var wrap=document.getElementById('videoWrap');
+  canvas.width=wrap.clientWidth;canvas.height=wrap.clientHeight;
+  canvas.addEventListener('mousedown',startDraw);
+  canvas.addEventListener('mousemove',draw);
+  canvas.addEventListener('mouseup',endDraw);
+  canvas.addEventListener('mouseleave',endDraw);
+  canvas.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches[0];startDraw({offsetX:t.clientX-canvas.getBoundingClientRect().left,offsetY:t.clientY-canvas.getBoundingClientRect().top})});
+  canvas.addEventListener('touchmove',function(e){e.preventDefault();var t=e.touches[0];draw({offsetX:t.clientX-canvas.getBoundingClientRect().left,offsetY:t.clientY-canvas.getBoundingClientRect().top})});
+  canvas.addEventListener('touchend',endDraw);
+}
+
+function startDraw(e){
+  if(tool==='select')return;
+  drawing=true;startX=e.offsetX;startY=e.offsetY;
+  if(tool==='pen'||tool==='highlighter'||tool==='eraser'){
+    ctx.beginPath();ctx.moveTo(startX,startY);
+  }
+}
+
+function draw(e){
+  if(!drawing)return;
+  var x=e.offsetX,y=e.offsetY;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  if(tool==='pen'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    ctx.lineTo(x,y);ctx.stroke();
+  } else if(tool==='highlighter'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize*3;ctx.globalAlpha=.3;
+    ctx.lineTo(x,y);ctx.stroke();
+  } else if(tool==='eraser'){
+    ctx.globalCompositeOperation='destination-out';
+    ctx.lineWidth=brushSize*5;
+    ctx.lineTo(x,y);ctx.stroke();
+  }
+}
+
+function endDraw(e){
+  if(!drawing)return;
+  drawing=false;
+  if(tool==='line'||tool==='arrow'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke();
+    if(tool==='arrow')drawArrow(startX,startY,e.offsetX,e.offsetY);
+  } else if(tool==='rect'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    ctx.strokeRect(startX,startY,e.offsetX-startX,e.offsetY-startY);
+  } else if(tool==='circle'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    var rx=Math.abs(e.offsetX-startX)/2,ry=Math.abs(e.offsetY-startY)/2;
+    var cx=startX+(e.offsetX-startX)/2,cy=startY+(e.offsetY-startY)/2;
+    ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.stroke();
+  } else if(tool==='text'){
+    var txt=prompt('Enter text:');
+    if(txt){ctx.globalCompositeOperation='source-over';ctx.fillStyle=annColor;ctx.font=brushSize*5+'px Inter';ctx.fillText(txt,startX,startY+brushSize*4);}
+  }
+  saveUndo();
+}
+
+function drawArrow(x1,y1,x2,y2){
+  var angle=Math.atan2(y2-y1,x2-x1);
+  var headLen=15;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-headLen*Math.cos(angle-Math.PI/6),y2-headLen*Math.sin(angle-Math.PI/6));
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-headLen*Math.cos(angle+Math.PI/6),y2-headLen*Math.sin(angle+Math.PI/6));
+  ctx.stroke();
+}
+
+function saveUndo(){undoStack.push(canvas.toDataURL());if(undoStack.length>20)undoStack.shift();}
+function undoAnnotation(){if(undoStack.length===0)return;var img=new Image();img.onload=function(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0);};img.src=undoStack.pop();}
+function clearAnnotations(){ctx.clearRect(0,0,canvas.width,canvas.height);saveUndo();}
+function saveAnnotation(){var link=document.createElement('a');link.download='annotation.png';link.href=canvas.toDataURL();link.click();}
+</script>
+</body>
+</html>

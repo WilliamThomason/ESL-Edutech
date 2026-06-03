@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Qi Gong — Full Body Morning Workout</title>
+<link href="https://fonts.cdnfonts.com/css/glacial-indifference" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1a1325;--bg2:#241a35;--bg3:#2e2140;--bg-glass:rgba(36,26,53,.75);
+  --border:#4a3a60;--border-light:#6b5a8a;
+  --text:#f0e8ff;--text-muted:#b8a8d8;--text-dim:#7a68a0;
+  --accent:#c4b5f5;--accent2:#a78bfa;--accent-dim:rgba(196,181,245,.1);
+  --sky:#93c5fd;--sage:#d8b4fe;--sand:#fde68a;--rose:#f9a8d4;
+  --wallpaper-overlay:rgba(26,19,37,.6);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;min-height:100vh}
+
+/* Nature wallpaper background */
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;
+  background:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80&auto=format') center/cover no-repeat fixed;
+  filter:brightness(.38) saturate(1.2)}
+body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;
+  background:linear-gradient(180deg,rgba(26,19,37,.7) 0%,rgba(26,19,37,.4) 40%,rgba(26,19,37,.7) 100%)}
+
+.container{max-width:800px;margin:0 auto;padding:40px 24px;position:relative;z-index:1}
+
+/* Header */
+.header{text-align:center;padding:32px 0 40px}
+.header h1{font-family:'Glacial Indifference','Inter',sans-serif;font-size:2.8rem;font-weight:700;margin-bottom:6px;letter-spacing:2px}
+.header h1 .accent{color:var(--accent)}
+.header p{color:var(--text-muted);font-size:1.05rem}
+.session-badge{display:inline-block;margin-top:12px;padding:5px 16px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(167,139,250,.25)}
+
+/* Glass panels */
+.music-section,.timer-section,.voiceover-section,.exercise-card,.music-player{
+  background:var(--bg-glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--border);border-radius:16px}
+.music-section,.voiceover-section{padding:24px;margin-bottom:32px}
+
+/* Music section */
+.music-section h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.music-section h3 .icon{font-size:18px}
+.music-section>h3{margin-top:0}
+
+
+.or-divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.music-tabs{display:flex;gap:4px;margin-bottom:16px}
+.music-tab{height:32px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.music-tab.active{background:var(--accent-dim);border-color:var(--accent2);color:var(--accent2)}
+.music-tab:hover{border-color:var(--accent2)}
+.music-panel{display:none}
+.music-panel.active{display:block}
+.music-input{width:100%;height:40px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:0 14px;color:var(--text);font-size:13px;outline:none;transition:border .2s}
+.music-input:focus{border-color:var(--accent2)}
+.music-input::placeholder{color:var(--text-dim)}
+.music-drop-zone{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(0,0,0,.2)}
+.music-drop-zone:hover{border-color:var(--accent2);background:var(--accent-dim)}
+.music-drop-zone .icon{font-size:2rem;margin-bottom:8px}
+.music-drop-zone p{color:var(--text-muted);font-size:13px}
+.music-drop-zone .formats{font-size:10px;color:var(--text-dim);margin-top:4px}
+
+/* File music player */
+.music-player{display:none;margin-top:16px;background:rgba(0,0,0,.3);border-radius:10px;padding:16px}
+.music-player.active{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.music-play-btn{width:40px;height:40px;border-radius:50%;background:var(--accent2);border:none;color:var(--bg);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .1s}
+.music-play-btn:hover{transform:scale(1.05)}
+.music-info{flex:1;min-width:0}
+.music-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-time{font-size:11px;color:var(--text-dim);font-family:monospace}
+.music-progress{width:100%;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;cursor:pointer}
+.music-progress-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .1s}
+.music-vol{width:60px;display:flex;align-items:center;gap:6px}
+.music-vol input{width:100%;accent-color:var(--accent2)}
+
+/* Timer */
+.timer-section{padding:24px;margin-bottom:32px;text-align:center}
+.timer-section h3{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.timer-display{font-family:'Playfair Display',serif;font-size:4rem;font-weight:700;color:var(--accent2);line-height:1;margin-bottom:8px}
+.timer-sep{font-size:1.5rem;color:var(--text-muted)}
+.timer-label{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+.timer-bar{height:6px;background:rgba(0,0,0,.3);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.timer-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:3px;width:0%;transition:width 1s linear}
+.timer-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.timer-btn{height:36px;padding:0 20px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.timer-btn:hover{border-color:var(--accent2)}
+.timer-btn.primary{background:var(--accent2);border-color:var(--accent2);color:var(--bg)}
+.timer-btn.danger{border-color:var(--rose);color:var(--rose)}
+.timer-btn.danger:hover{background:rgba(249,168,212,.1)}
+
+/* Exercise list */
+.exercise-list{display:flex;flex-direction:column;gap:16px;margin-bottom:48px}
+.exercise-card{overflow:hidden;transition:all .3s;border-radius:16px}
+.exercise-card.active{border-color:var(--accent2);box-shadow:0 0 0 1px var(--accent2),0 8px 30px rgba(167,139,250,.15)}
+.exercise-card.completed{opacity:.45}
+.exercise-num{display:flex;align-items:center;gap:12px;padding:16px 20px;background:rgba(0,0,0,.25);border-bottom:1px solid var(--border)}
+.exercise-num .num{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text-muted)}
+.exercise-card.active .exercise-num .num{background:var(--accent2);border-color:var(--accent2);color:var(--bg)}
+.exercise-num .name{font-size:16px;font-weight:700}
+.exercise-num .duration{font-size:12px;color:var(--text-dim);margin-left:auto}
+.exercise-body{padding:20px}
+.exercise-desc{font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px}
+.exercise-script{background:rgba(0,0,0,.25);border-radius:10px;padding:16px;border-left:3px solid var(--accent2)}
+.exercise-script h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:8px}
+.exercise-script p{font-size:13px;color:var(--text-muted);line-height:1.8;font-style:italic}
+.exercise-tips{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.tip{padding:4px 10px;border-radius:12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(167,139,250,.15)}
+.tip.breath{background:rgba(147,197,253,.1);color:var(--sky);border-color:rgba(147,197,253,.2)}
+.tip.align{background:rgba(216,180,254,.1);color:var(--sage);border-color:rgba(216,180,254,.2)}
+
+/* Breathing indicator */
+.breath-indicator{display:none;text-align:center;padding:20px}
+.breath-indicator.active{display:flex;flex-direction:column;align-items:center;gap:12px}
+.breath-circle{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent2);animation:breathe 8s ease-in-out infinite;box-shadow:0 0 20px rgba(167,139,250,.2)}
+.breath-text{font-size:13px;font-weight:600;color:var(--accent2)}
+.breath-instruction{font-size:11px;color:var(--text-dim)}
+
+/* Voiceover */
+.voiceover-section h3{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.voiceover-controls{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.voice-btn{height:36px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-size:12px;font-weight:600;cursor:pointer}
+.voice-btn:hover{border-color:var(--accent2)}
+.voice-btn.active{background:var(--accent-dim);border-color:var(--accent2);color:var(--accent2)}
+.voice-select{height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-size:12px;outline:none}
+.voice-progress{height:3px;background:rgba(0,0,0,.3);border-radius:2px;overflow:hidden;margin-top:8px}
+.voice-progress-fill{height:100%;background:var(--accent2);width:0%;transition:.3s}
+
+/* Footer */
+.footer{text-align:center;padding:32px 0;border-top:1px solid var(--border)}
+.footer p{font-size:12px;color:var(--text-dim)}
+
+@media(max-width:640px){
+  .header h1{font-size:2rem}
+  .timer-display{font-size:3rem}
+  .exercise-num .name{font-size:14px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Qi Gong <span class="accent">Morning Flow</span></h1>
+  <p>A gentle 30-minute full-body Qi Gong practice to awaken your energy</p>
+  <span class="session-badge">🕉 30 Minutes &middot; 7 Exercises &middot; All Levels</span>
+</div>
+
+<!-- MUSIC PLAYER -->
+<div class="music-section">
+  <div class="or-divider">your own music</div>
+
+  <div class="music-tabs">
+    <button class="music-tab active" onclick="showMusicTab('url',this)">🔗 URL</button>
+    <button class="music-tab" onclick="showMusicTab('file',this)">📁 Upload File</button>
+  </div>
+  <div class="music-panel active" id="music-url-panel">
+    <input type="text" class="music-input" id="musicUrlInput" placeholder="Paste a URL to an audio file (MP3, WAV, OGG)..." onkeydown="if(event.key==='Enter')loadMusicUrl()">
+    <button class="timer-btn primary" style="margin-top:8px;width:100%" onclick="loadMusicUrl()">Load URL</button>
+  </div>
+  <div class="music-panel" id="music-file-panel">
+    <div class="music-drop-zone" id="musicDropZone" onclick="document.getElementById('musicFileInput').click()">
+      <div class="icon">📂</div>
+      <p>Click to browse or drag &amp; drop an audio file here</p>
+      <div class="formats">MP3 &middot; WAV &middot; OGG &middot; FLAC &middot; M4A</div>
+    </div>
+    <input type="file" id="musicFileInput" accept="audio/*" style="display:none" onchange="loadMusicFile(this)">
+  </div>
+  <div class="music-player" id="musicPlayer">
+    <button class="music-play-btn" id="musicPlayBtn" onclick="toggleMusic()">▶</button>
+    <div class="music-info">
+      <div class="music-name" id="musicName">No track loaded</div>
+      <div class="music-time"><span id="musicCurrentTime">0:00</span> / <span id="musicTotalTime">0:00</span></div>
+    </div>
+    <div class="music-progress" id="musicProgress" onclick="seekMusic(event)"><div class="music-progress-fill" id="musicProgressFill"></div></div>
+    <div class="music-vol">
+      <input type="range" id="musicVol" min="0" max="100" value="80" oninput="setMusicVol(this.value)">
+    </div>
+    <button class="music-play-btn" style="background:var(--bg3);color:var(--text-dim);font-size:12px" onclick="stopUserMusic()" title="Stop">■</button>
+  </div>
+  <audio id="musicAudio" preload="auto"></audio>
+</div>
+
+<!-- TIMER -->
+<div class="timer-section">
+  <h3><span class="icon">⏱️</span> Session Timer</h3>
+  <div class="timer-display" id="timerDisplay"><span>30</span><span class="timer-sep">:</span><span>00</span></div>
+  <div class="timer-label" id="timerLabel">Ready to begin</div>
+  <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+  <div class="timer-controls">
+    <button class="timer-btn primary" id="timerStartBtn" onclick="toggleTimer()">▶ Start</button>
+    <button class="timer-btn danger" onclick="resetTimer()">↻ Reset</button>
+  </div>
+</div>
+
+<!-- VOICEOVER -->
+<div class="voiceover-section">
+  <h3><span class="icon">🎙️</span> Voiceover Guide</h3>
+  <div class="voiceover-controls">
+    <button class="voice-btn active" id="voiceToggle" onclick="toggleVoiceover()">🔊 Voice</button>
+    <span style="font-size:11px;color:var(--text-dim)">Imogen</span>
+  </div>
+  <div style="display:flex;gap:16px;margin-top:12px">
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--text-muted)">🔊 Volume</span>
+        <span style="font-size:11px;color:var(--accent2)" id="exVolVal">85%</span>
+      </div>
+      <input type="range" id="exVolume" min="0" max="100" value="85" oninput="setExerciseVolume(this.value)" style="width:100%;accent-color:var(--accent2)">
+    </div>
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--text-muted)">🌊 Reverb</span>
+        <span style="font-size:11px;color:var(--accent2)" id="exRevVal">0%</span>
+      </div>
+      <input type="range" id="exReverb" min="0" max="100" value="0" oninput="setExerciseReverb(this.value)" style="width:100%;accent-color:var(--accent2)">
+    </div>
+  </div>
+  <div style="margin-top:12px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:11px;color:var(--text-muted)">⚡ Voice Speed</span>
+      <span style="font-size:11px;color:var(--accent2)" id="exSpeedVal">1.0x</span>
+    </div>
+    <input type="range" id="exSpeed" min="50" max="150" value="100" step="10" oninput="setExerciseSpeed(this.value)" style="width:100%;accent-color:var(--accent2)">
+    <div style="display:flex;justify-content:space-between;margin-top:2px">
+      <span style="font-size:9px;color:var(--text-dim)">0.5x</span>
+      <span style="font-size:9px;color:var(--text-dim)">0.75x</span>
+      <span style="font-size:9px;color:var(--text-dim)">1.0x</span>
+      <span style="font-size:9px;color:var(--text-dim)">1.25x</span>
+      <span style="font-size:9px;color:var(--text-dim)">1.5x</span>
+    </div>
+  </div>
+  <div class="voice-progress"><div class="voice-progress-fill" id="voiceProgressFill"></div></div>
+</div>
+
+<!-- Breathing indicator -->
+<div class="breath-indicator" id="breathIndicator">
+  <div class="breath-circle" id="breathCircle"></div>
+  <div class="breath-text" id="breathText">Breathe In</div>
+  <div class="breath-instruction" id="breathInstruction">Slow, deep, through the nose</div>
+</div>
+
+<div class="exercise-list" id="exerciseList"></div>
+
+<div class="footer">
+  <p>Find a quiet space. Wear comfortable clothing. Breathe deeply. Move slowly.</p>
+  <p style="margin-top:8px">🙏 Qi Gong &mdash; cultivating life force energy through gentle movement</p>
+</div>
+
+</div>
+
+<script>
+// ═══ EXERCISE DATA ═══
+var EXERCISES=[
+  {
+    name:"Standing Meditation & Centering",
+    duration:240,
+    audio:"audio/qi-gong/ex1.mp3",
+    desc:"Begin by standing with feet shoulder-width apart, arms relaxed at your sides. Close your eyes. Feel the ground beneath you. Let your breath become slow and natural.",
+    script:"Stand tall, feet shoulder-width apart. Let your arms hang heavy at your sides. Soften your knees — just a slight bend. Close your eyes. Feel the soles of your feet connecting with the earth. Now bring your awareness to your breath. Inhale slowly through your nose... and exhale gently through your mouth. With each exhale, let your shoulders drop a little more. Let your jaw soften. Let your belly be soft. You are arriving in this moment. There is nowhere else to be. Feel the weight of your body sinking down. Feel the sky above you. You are held between heaven and earth. Stay here for a few breaths. When you feel centered, gently open your eyes.",
+    tips:["Grounding","Centering","Breath awareness"]
+  },
+  {
+    name:"Lifting the Sky",
+    duration:300,
+    audio:"audio/qi-gong/ex2.mp3",
+    desc:"Slowly raise your arms in front of you as you inhale, palms facing down. Continue lifting overhead, then turn palms up and press gently toward the sky. Lower as you exhale.",
+    script:"Begin with arms relaxed at your sides. As you inhale slowly, begin to raise both arms in front of you, palms facing the ground, fingers relaxed and slightly apart. Let the movement be so slow — as if you are moving through water. Arms rising... rising... when your hands reach shoulder height, continue lifting. Now turn your palms to face the sky. Gently press your palms upward toward the ceiling. Feel the stretch along your sides, through your ribs, into your armpits. Hold this stretch for one breath. Now as you exhale, slowly lower your arms back down in front of you, palms still facing up. Let them float down like feathers. Return to your starting position. Let's do this again. Inhale, arms rising slowly... palms turning up at the top... gentle stretch... and exhale, arms floating down. One more time. Inhale... lifting the sky... feeling your whole body lengthen... and exhale... returning home. Lower your arms completely. Feel the energy in your palms.",
+    tips:["Spinal stretch","Shoulder opening","Inhale up, exhale down"]
+  },
+  {
+    name:"Parting the Wild Horse's Mane",
+    duration:300,
+    audio:"audio/qi-gong/ex3.mp3",
+    desc:"Step into a gentle bow stance. One hand pushes forward while the other pulls back, as if parting a curtain. Shift weight slowly between sides.",
+    script:"Step your right foot forward into a gentle bow stance — front knee soft, back leg straight but not locked. Now extend your right arm forward, palm facing out, as if you are gently pushing something away. At the same time, your left hand pulls back beside your hip, palm facing down. Look forward past your right hand. Feel the gentle stretch across your chest. Now slowly shift your weight to your back leg. As you do, your hands switch — left hand comes forward, right hand pulls back. Let the movement be continuous, like a slow wave flowing through your body. Shift forward again... and back... forward... and back. Your eyes follow the leading hand. Feel the gentle rotation in your waist and spine. This is a meditation in motion. There is no rush. Each shift is an opportunity to feel your body more deeply. Now step your feet back together. Pause. Feel the warmth in your palms. Now step the left foot forward and repeat on the other side. Left hand forward, right hand back... shifting weight slowly... feeling the wave move through you.",
+    tips:["Balance","Core rotation","Slow weight shifts"]
+  },
+  {
+    name:"Wave Hands Like Clouds",
+    duration:360,
+    audio:"audio/qi-gong/ex4.mp3",
+    desc:"The signature Qi Gong movement. Shift weight side to side while your hands trace gentle arcs in front of you, like clouds drifting across the sky.",
+    script:"Feet shoulder-width apart, knees soft. Begin with both hands at your sides. Now slowly shift your weight to your left foot. As you do, your right hand rises in front of you, palm facing your chest, at about heart height. Your left hand rests near your left hip, palm facing down. Now begin to shift your weight to the right. As you do, your hands begin to trace a gentle arc — the right hand descends while the left hand rises. Your hands pass each other at about navel height, palms facing each other but not touching. Continue the arc — left hand rising to heart height on the right side, right hand descending to the hip. Now shift left again, and the hands reverse. Right hand rises... left hand descends... passing each other... continuing the wave. Your whole body moves together — weight shifting, waist turning gently, hands tracing clouds. Let your eyes follow the upper hand. Breathe naturally. Inhale as the hand rises... exhale as it descends. This movement should feel like a gentle, continuous wave. There are no sharp edges. Everything flows. Keep going... side to side... like clouds drifting... like water flowing... your body is the sky and your hands are the clouds. After several repetitions, slowly bring your hands to rest at your sides. Stand quietly and feel the energy moving through you.",
+    tips:["Continuous flow","Weight shifting","Eyes follow hands"]
+  },
+  {
+    name:"Holding the Balloon",
+    duration:300,
+    audio:"audio/qi-gong/ex5.mp3",
+    desc:"Hold your hands as if cradling a large balloon in front of you. Slowly shift the balloon from side to side, then raise it overhead and lower it.",
+    script:"Begin standing with feet shoulder-width apart. Now bring your hands together in front of your chest, palms facing each other, about shoulder-width apart. Imagine you are holding a large, warm balloon between your palms. Feel the gentle energy between your hands. Now slowly shift the balloon to the right — your whole upper body turns gently to the right, left heel lifting slightly. Hold here for a breath. Feel the stretch along your left side. Now slowly shift the balloon to the left. Right heel lifts. Hold. Breathe. Now bring the balloon back to center. This time, slowly raise it overhead — palms still facing each other, arms extending upward. Feel the stretch through your entire body, from your feet to your fingertips. Hold for two breaths. Now slowly lower the balloon back to chest height. Turn it to the right... to the left... and now gently set it down, hands lowering to your sides. Close your eyes for a moment. Feel the warmth and tingling in your palms. This is your Qi — your life force energy.",
+    tips:["Palmer energy","Side stretch","Full body lengthening"]
+  },
+  {
+    name:"Crane Spreads Its Wings",
+    duration:300,
+    audio:"audio/qi-gong/ex6.mp3",
+    desc:"Stand on one leg like a crane. Slowly extend your arms out to the sides and gently lean forward while extending the other leg behind. Return and repeat.",
+    script:"Begin by shifting your weight onto your left foot. Find your balance. Let your right foot lift slightly off the ground, knee bent. Now slowly extend both arms out to the sides at shoulder height, palms facing down, fingers relaxed. You are a crane standing in still water. Now gently lean your torso forward as your right leg extends behind you. Keep your back straight — imagine a line from your head to your back foot. Your arms spread wide like wings. Hold this position for two slow breaths. Feel the balance, the openness in your chest, the strength in your standing leg. Now slowly return to upright, bringing your right knee back up and arms back to your sides. Pause. Feel your heartbeat. Now repeat on the other side. Weight shifts to the right foot. Left knee lifts. Arms extend... torso leans forward... left leg extends behind... crane spreading its wings. Hold... breathe... and return. Step your feet together. Stand quietly. Feel the balance you have cultivated.",
+    tips:["Balance","Chest opening","Single-leg strength"]
+  },
+  {
+    name:"Closing Meditation — Gathering Qi",
+    duration:240,
+    audio:"audio/qi-gong/ex7.mp3",
+    desc:"Bring your hands together in front of your lower dantian. Breathe deeply. Gather the energy you have cultivated and seal it within your body.",
+    script:"Stand with feet together or shoulder-width apart. Close your eyes. Bring your hands to rest in front of your lower abdomen — about two inches below your navel. This is your dantian, the center of your life force energy. Palms facing your body, fingers pointing down, hands about six inches apart. Breathe deeply into this area. With each inhale, imagine golden light gathering in your dantian. With each exhale, feel this light warming and filling your lower belly. Now slowly raise your hands in front of you as you inhale — palms facing up — as if you are lifting a ball of light from your dantian up through your center line. When your hands reach chest height, turn your palms down and slowly press them back down as you exhale — pushing the energy back into your dantian. Inhale, lifting the light... exhale, pressing it down. One more time. Inhale... gathering all the energy from today's practice... exhale... sealing it deep within you. Now place both palms flat against your lower abdomen. Hold here. Breathe naturally. Feel the warmth. Feel the stillness. You have awakened your body. You have cultivated your Qi. Carry this energy with you into your day. When you are ready, gently open your eyes. Bring your palms together in front of your heart. Bow your head slightly. Thank yourself for showing up today. Namaste.",
+    tips:["Energy gathering","Dantian focus","Gratitude"]
+  }
+];
+
+// ═══ RENDER EXERCISES ═══
+function renderExercises(){
+  var list=document.getElementById('exerciseList');
+  var html='';
+  EXERCISES.forEach(function(ex,i){
+    var mins=Math.floor(ex.duration/60);
+    var secs=ex.duration%60;
+    var dur=mins+':'+(secs<10?'0':'')+secs;
+    html+='<div class="exercise-card" id="exCard'+i+'">';
+    html+='<div class="exercise-num"><div class="num">'+(i+1)+'</div><div class="name">'+ex.name+'</div><div class="duration">⏱ '+dur+'</div></div>';
+    html+='<div class="exercise-body">';
+    html+='<p class="exercise-desc">'+ex.desc+'</p>';
+    html+='<div class="exercise-script"><h4>🎙️ Voiceover Script</h4><p>'+ex.script+'</p></div>';
+    html+='<div class="exercise-tips">';
+    ex.tips.forEach(function(t){
+      var cls=(t==='Breath awareness'||t==='Inhale up, exhale down')?'tip breath':(t==='Grounding'||t==='Balance')?'tip align':'tip';
+      html+='<span class="'+cls+'">'+t+'</span>';
+    });
+    html+='</div></div></div>';
+  });
+  list.innerHTML=html;
+}
+renderExercises();
+
+// ═══ TIMER ═══
+var timerInterval=null;
+var timerRemaining=30*60;
+var timerTotal=30*60;
+var timerRunning=false;
+
+function toggleTimer(){
+  if(timerRemaining<=0){resetTimer();return;}
+  if(timerRunning){
+    clearInterval(timerInterval);
+    timerInterval=null;
+    timerRunning=false;
+    document.getElementById('timerStartBtn').innerHTML='Resume';
+    document.getElementById('timerLabel').textContent='Paused';
+    exercisePaused=true;
+    stopExerciseAudio();
+  } else {
+    timerRunning=true;
+    document.getElementById('timerStartBtn').innerHTML='Pause';
+    document.getElementById('timerLabel').textContent='Session in progress...';
+    timerInterval=setInterval(function(){
+      timerRemaining--;
+      updateTimerDisplay();
+      if(timerRemaining<=0){
+        clearInterval(timerInterval);
+        timerInterval=null;
+        timerRunning=false;
+        document.getElementById('timerStartBtn').innerHTML='Start';
+        document.getElementById('timerLabel').textContent='Session complete!';
+        document.getElementById('timerFill').style.width='100%';
+        if('speechSynthesis' in window){
+          var u=new SpeechSynthesisUtterance('Your Qi Gong session is complete. Namaste.');
+          speechSynthesis.speak(u);
+        }
+      }
+    },1000);
+    if(currentExercise<0){startExerciseGuide();}
+  }
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);
+  timerInterval=null;
+  timerRunning=false;
+  timerRemaining=timerTotal;
+  updateTimerDisplay();
+  document.getElementById('timerStartBtn').innerHTML='Start';
+  document.getElementById('timerLabel').textContent='Ready to begin';
+  clearInterval(exerciseInterval);
+  exerciseInterval=null;
+  currentExercise=-1;
+  exerciseTimeRemaining=0;
+  stopExerciseAudio();
+  document.querySelectorAll('.exercise-card').forEach(function(c){c.classList.remove('active','completed')});
+}
+
+function updateTimerDisplay(){
+  var m=Math.floor(timerRemaining/60);
+  var s=timerRemaining%60;
+  document.getElementById('timerDisplay').innerHTML='<span>'+String(m).padStart(2,'0')+'</span><span class="timer-sep">:</span><span>'+String(s).padStart(2,'0')+'</span>';
+  var pct=((timerTotal-timerRemaining)/timerTotal)*100;
+  document.getElementById('timerFill').style.width=pct+'%';
+}
+
+// ═══ EXERCISE GUIDE (pauses with timer) ═══
+var currentExercise=-1;
+var exerciseInterval=null;
+var exerciseTimeRemaining=0;
+var exercisePaused=false;
+
+function startExerciseGuide(){
+  clearInterval(exerciseInterval);
+  exerciseInterval=null;
+  currentExercise=0;
+  exercisePaused=false;
+  showExercise(0);
+  startExerciseTimer(EXERCISES[0].duration);
+}
+
+var userMusicLoaded=false;
+
+function showExercise(idx){
+  document.querySelectorAll('.exercise-card').forEach(function(c){c.classList.remove('active')});
+  document.getElementById('exCard'+idx).classList.add('active');
+  document.getElementById('exCard'+idx).scrollIntoView({behavior:'smooth',block:'center'});
+  var ex=EXERCISES[idx];
+  document.getElementById('timerLabel').textContent='Exercise '+(idx+1)+' of '+EXERCISES.length+': '+ex.name;
+  // Play exercise soundtrack only if user hasn't loaded their own music
+  if(!userMusicLoaded && voiceEnabled && ex.audio){playExerciseAudio(ex.audio);}
+}
+
+function startExerciseTimer(seconds){
+  exerciseTimeRemaining=seconds;
+  clearInterval(exerciseInterval);
+  exerciseInterval=setInterval(function(){
+    if(exercisePaused)return;
+    exerciseTimeRemaining--;
+    if(exerciseTimeRemaining<=0){
+      clearInterval(exerciseInterval);
+      exerciseInterval=null;
+      document.getElementById('exCard'+currentExercise).classList.add('completed');
+      currentExercise++;
+      if(currentExercise<EXERCISES.length){
+        showExercise(currentExercise);
+        startExerciseTimer(EXERCISES[currentExercise].duration);
+      } else {
+        document.getElementById('timerLabel').textContent='All exercises complete! 🙏';
+        speakText('Congratulations. You have completed your Qi Gong morning flow. Take a moment to feel the energy in your body.');
+      }
+    }
+  },1000);
+}
+
+// ═══ FILE MUSIC PLAYER ═══
+var musicAudio=document.getElementById('musicAudio');
+
+function showMusicTab(tab,btnEl){
+  document.querySelectorAll('.music-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.music-panel').forEach(function(p){p.classList.remove('active')});
+  if(btnEl)btnEl.classList.add('active');
+  document.getElementById('music-'+tab+'-panel').classList.add('active');
+}
+
+function loadMusicUrl(){
+  var url=document.getElementById('musicUrlInput').value.trim();
+  if(!url)return;
+  userMusicLoaded=true;
+  stopExerciseAudio();
+  var oldAudio=document.getElementById('musicAudio');
+  var newAudio=document.createElement('audio');
+  newAudio.id='musicAudio';
+  newAudio.preload='auto';
+  oldAudio.parentNode.replaceChild(newAudio,oldAudio);
+  musicAudio=newAudio;
+  // Attach handlers BEFORE setting src
+  musicAudio.onloadedmetadata=function(){
+    var dur=musicAudio.duration;
+    if(!isFinite(dur)){document.getElementById('musicTotalTime').textContent='--:--';return;}
+    var m=Math.floor(dur/60);
+    var s=Math.floor(dur%60);
+    document.getElementById('musicTotalTime').textContent=m+':'+String(s).padStart(2,'0');
+  };
+  musicAudio.ontimeupdate=function(){
+    var cur=musicAudio.currentTime;
+    var m=Math.floor(cur/60);
+    var s=Math.floor(cur%60);
+    document.getElementById('musicCurrentTime').textContent=m+':'+String(s).padStart(2,'0');
+    if(musicAudio.duration){
+      document.getElementById('musicProgressFill').style.width=(cur/musicAudio.duration*100)+'%';
+    }
+  };
+  musicAudio.onended=function(){
+    document.getElementById('musicPlayBtn').textContent='▶';
+  };
+  musicAudio.onerror=function(){
+    document.getElementById('musicName').textContent='Could not load (CORS or invalid URL)';
+    document.getElementById('musicPlayer').classList.remove('active');
+  };
+  musicAudio.oncanplay=function(){
+    musicAudio.play().catch(function(e){
+      document.getElementById('musicName').textContent='Click play to start — autoplay blocked';
+    });
+    document.getElementById('musicPlayBtn').textContent='⏸';
+  };
+  document.getElementById('musicPlayer').classList.add('active');
+  document.getElementById('musicName').textContent='Loading...';
+  musicAudio.src=url;
+}
+
+function loadMusicUrlDirect(url,name){
+  document.getElementById('musicUrlInput').value=url;
+  loadMusicUrl();
+  if(name)document.getElementById('musicName').textContent=name;
+}
+
+function loadMusicFile(input){
+  var file=input.files[0];
+  if(!file)return;
+  userMusicLoaded=true;
+  stopExerciseAudio();
+  var oldAudio=document.getElementById('musicAudio');
+  var newAudio=document.createElement('audio');
+  newAudio.id='musicAudio';
+  newAudio.preload='auto';
+  oldAudio.parentNode.replaceChild(newAudio,oldAudio);
+  musicAudio=newAudio;
+  var url=URL.createObjectURL(file);
+  document.getElementById('musicName').textContent=file.name;
+  document.getElementById('musicPlayer').classList.add('active');
+  musicAudio.onloadedmetadata=function(){
+    var dur=musicAudio.duration;
+    var m=Math.floor(dur/60);
+    var s=Math.floor(dur%60);
+    document.getElementById('musicTotalTime').textContent=m+':'+String(s).padStart(2,'0');
+  };
+  musicAudio.ontimeupdate=function(){
+    var cur=musicAudio.currentTime;
+    var m=Math.floor(cur/60);
+    var s=Math.floor(cur%60);
+    document.getElementById('musicCurrentTime').textContent=m+':'+String(s).padStart(2,'0');
+    if(musicAudio.duration){
+      document.getElementById('musicProgressFill').style.width=(cur/musicAudio.duration*100)+'%';
+    }
+  };
+  musicAudio.onended=function(){
+    document.getElementById('musicPlayBtn').textContent='▶';
+  };
+  musicAudio.src=url;
+  musicAudio.play().catch(function(){});
+  document.getElementById('musicPlayBtn').textContent='⏸';
+}
+
+function toggleMusic(){
+  if(musicAudio.paused){musicAudio.play();document.getElementById('musicPlayBtn').textContent='⏸'}
+  else{musicAudio.pause();document.getElementById('musicPlayBtn').textContent='▶'}
+}
+
+function seekMusic(e){
+  var bar=e.currentTarget;
+  var pct=e.offsetX/bar.offsetWidth;
+  if(musicAudio.duration)musicAudio.currentTime=pct*musicAudio.duration;
+}
+
+function setMusicVol(val){
+  if(musicAudio)musicAudio.volume=val/100;
+}
+
+// Drag and drop
+var dropZone=document.getElementById('musicDropZone');
+dropZone.addEventListener('dragover',function(e){e.preventDefault();this.style.borderColor='var(--accent2)'});
+dropZone.addEventListener('dragleave',function(){this.style.borderColor=''});
+dropZone.addEventListener('drop',function(e){
+  e.preventDefault();
+  this.style.borderColor='';
+  var file=e.dataTransfer.files[0];
+  if(file&&file.type.startsWith('audio/')){
+    var oldAudio=document.getElementById('musicAudio');
+    var newAudio=document.createElement('audio');
+    newAudio.id='musicAudio';
+    newAudio.preload='auto';
+    oldAudio.parentNode.replaceChild(newAudio,oldAudio);
+    musicAudio=newAudio;
+    var url=URL.createObjectURL(file);
+    document.getElementById('musicName').textContent=file.name;
+    document.getElementById('musicPlayer').classList.add('active');
+    musicAudio.onloadedmetadata=function(){
+      var dur=musicAudio.duration;
+      var m=Math.floor(dur/60);
+      var s=Math.floor(dur%60);
+      document.getElementById('musicTotalTime').textContent=m+':'+String(s).padStart(2,'0');
+    };
+    musicAudio.ontimeupdate=function(){
+      var cur=musicAudio.currentTime;
+      var m=Math.floor(cur/60);
+      var s=Math.floor(cur%60);
+      document.getElementById('musicCurrentTime').textContent=m+':'+String(s).padStart(2,'0');
+      if(musicAudio.duration){
+        document.getElementById('musicProgressFill').style.width=(cur/musicAudio.duration*100)+'%';
+      }
+    };
+    musicAudio.onended=function(){
+      document.getElementById('musicPlayBtn').textContent='▶';
+    };
+    musicAudio.src=url;
+    musicAudio.play().catch(function(){});
+    document.getElementById('musicPlayBtn').textContent='⏸';
+  }
+});
+
+function stopUserMusic(){
+  userMusicLoaded=false;
+  if(musicAudio){musicAudio.pause();musicAudio.src='';}
+  document.getElementById('musicPlayBtn').textContent='▶';
+  document.getElementById('musicName').textContent='No track loaded';
+  document.getElementById('musicTotalTime').textContent='0:00';
+  document.getElementById('musicCurrentTime').textContent='0:00';
+  document.getElementById('musicProgressFill').style.width='0%';
+  document.getElementById('musicPlayer').classList.remove('active');
+  document.getElementById('musicUrlInput').value='';
+}
+
+// ═══ VOICEOVER (pre-recorded MP3s with time-stretch) ═══
+var voiceEnabled=true;
+var exerciseVolume=0.85;
+var exerciseReverb=0;
+var exerciseSpeed=1.0;
+var audioCtx=null;
+var reverbNode=null;
+var exerciseSource=null;
+var exerciseGainNode=null;
+var exerciseAnimFrame=null;
+var exerciseStartTime=0;
+var exercisePauseOffset=0;
+var exerciseDuration=0;
+var exerciseBufferCache={};
+
+function ensureAudioCtx(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
+
+function setExerciseVolume(v){
+  exerciseVolume=v/100;
+  document.getElementById('exVolVal').textContent=v+'%';
+  if(exerciseGainNode) exerciseGainNode.gain.value=exerciseVolume;
+}
+
+function setExerciseReverb(v){
+  exerciseReverb=v/100;
+  document.getElementById('exRevVal').textContent=v+'%';
+}
+
+function setExerciseSpeed(v){
+  exerciseSpeed=v/100;
+  document.getElementById('exSpeedVal').textContent=exerciseSpeed.toFixed(1)+'x';
+}
+
+// Granular time-stretch: overlap-add windows with speed-adjusted hop size
+// Preserves pitch while changing playback rate
+function createTimeStretchSource(buffer, rate){
+  var ctx=audioCtx;
+  var channels=buffer.numberOfChannels;
+  var sampleRate=buffer.sampleRate;
+  var bufferLen=buffer.length;
+
+  // Window size ~46ms at 44100Hz, overlap 4x
+  var windowSize=2048;
+  var hopAnalysis=Math.floor(windowSize/4);
+  var hopSynthesis=Math.floor(hopAnalysis*rate);
+
+  // Create offline context to render stretched audio
+  var stretchedDuration=bufferLen/rate;
+  var offlineCtx=new OfflineAudioContext(channels,Math.ceil(stretchedDuration*sampleRate),sampleRate);
+
+  // Deinterleave channels
+  var inputData=[];
+  for(var ch=0;ch<channels;ch++){
+    inputData.push(buffer.getChannelData(ch));
+  }
+
+  // Overlap-add synthesis
+  var outputLen=Math.ceil(bufferLen/rate)+windowSize;
+  var outputData=[];
+  for(var ch=0;ch<channels;ch++){
+    outputData.push(new Float32Array(outputLen));
+  }
+
+  // Hann window
+  var window=new Float32Array(windowSize);
+  for(var i=0;i<windowSize;i++){
+    window[i]=0.5*(1-Math.cos(2*Math.PI*i/(windowSize-1)));
+  }
+
+  var posInput=0;
+  var posOutput=0;
+
+  while(posInput+windowSize<bufferLen){
+    for(var ch=0;ch<channels;ch++){
+      var inp=inputData[ch];
+      var out=outputData[ch];
+      for(var i=0;i<windowSize;i++){
+        out[posOutput+i]+=inp[posInput+i]*window[i];
+      }
+    }
+    posInput+=hopAnalysis;
+    posOutput+=hopSynthesis;
+  }
+
+  // Create buffer from output
+  var result=ctx.createBuffer(channels,outputLen,sampleRate);
+  for(var ch=0;ch<channels;ch++){
+    result.getChannelData(ch).set(outputData[ch]);
+  }
+  return result;
+}
+
+function playExerciseAudio(src){
+  stopExerciseAudio();
+  ensureAudioCtx();
+
+  // Check cache first
+  if(exerciseBufferCache[src]){
+    playDecodedBuffer(exerciseBufferCache[src],src);
+    return;
+  }
+
+  // Fetch and decode
+  fetch(src)
+    .then(function(r){return r.arrayBuffer();})
+    .then(function(ab){return audioCtx.decodeAudioData(ab);})
+    .then(function(buffer){
+      exerciseBufferCache[src]=buffer;
+      playDecodedBuffer(buffer,src);
+    })
+    .catch(function(e){
+      console.warn('Exercise audio failed:',e.name);
+      // Fallback: try plain Audio element
+      exerciseAudio=new Audio(src);
+      exerciseAudio.volume=exerciseVolume;
+      exerciseAudio.playbackRate=exerciseSpeed;
+      exerciseAudio.play().catch(function(){});
+    });
+}
+
+var exerciseAudio=null; // fallback
+
+function playDecodedBuffer(originalBuffer,src){
+  var buffer=originalBuffer;
+
+  // Apply time-stretch if speed is not 1.0
+  if(Math.abs(exerciseSpeed-1.0)>0.05){
+    var stretched=createTimeStretchSource(originalBuffer,exerciseSpeed);
+    buffer=stretched;
+  }
+
+  exerciseDuration=buffer.duration/exerciseSpeed;
+
+  exerciseSource=audioCtx.createBufferSource();
+  exerciseSource.buffer=buffer;
+
+  // Create gain node for volume
+  exerciseGainNode=audioCtx.createGain();
+  exerciseGainNode.gain.value=exerciseVolume;
+
+  exerciseSource.connect(exerciseGainNode);
+
+  if(exerciseReverb>0){
+    try{if(reverbNode)reverbNode.disconnect();}catch(e){}
+    var dryGain=audioCtx.createGain();
+    var wetGain=audioCtx.createGain();
+    dryGain.gain.value=1-exerciseReverb;
+    wetGain.gain.value=exerciseReverb;
+
+    var rate=audioCtx.sampleRate;
+    var length=rate*2.0;
+    var impulse=audioCtx.createBuffer(2,length,rate);
+    for(var ch=0;ch<2;ch++){
+      var d=impulse.getChannelData(ch);
+      for(var i=0;i<length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/length,2);
+    }
+    reverbNode=audioCtx.createConvolver();
+    reverbNode.buffer=impulse;
+
+    exerciseGainNode.connect(dryGain);
+    dryGain.connect(audioCtx.destination);
+    exerciseGainNode.connect(wetGain);
+    wetGain.connect(reverbNode);
+    reverbNode.connect(audioCtx.destination);
+  } else {
+    exerciseGainNode.connect(audioCtx.destination);
+  }
+
+  exerciseStartTime=audioCtx.currentTime;
+  exerciseSource.start(0);
+  exerciseSource.onended=function(){
+    exerciseSource=null;
+    exerciseGainNode=null;
+  };
+
+  // Update progress bar
+  updateVoiceProgress();
+}
+
+function updateVoiceProgress(){
+  if(!exerciseSource) return;
+  var elapsed=audioCtx.currentTime-exerciseStartTime;
+  var pct=Math.min(100,(elapsed/exerciseDuration)*100);
+  document.getElementById('voiceProgressFill').style.width=pct+'%';
+  if(pct<100){
+    exerciseAnimFrame=requestAnimationFrame(updateVoiceProgress);
+  }
+}
+
+function stopExerciseAudio(){
+  if(exerciseAnimFrame){cancelAnimationFrame(exerciseAnimFrame);exerciseAnimFrame=null;}
+  if(exerciseSource){
+    try{exerciseSource.stop();}catch(e){}
+    exerciseSource=null;
+  }
+  if(exerciseGainNode){try{exerciseGainNode.disconnect();}catch(e){}exerciseGainNode=null;}
+  if(exerciseAudio){
+    exerciseAudio.pause();
+    exerciseAudio.src='';
+    exerciseAudio=null;
+  }
+  document.getElementById('voiceProgressFill').style.width='0%';
+}
+
+function toggleVoiceover(){
+  voiceEnabled=!voiceEnabled;
+  var btn=document.getElementById('voiceToggle');
+  btn.classList.toggle('active',voiceEnabled);
+  btn.textContent=voiceEnabled?'🔊 Voice':'🔇 Muted';
+  if(!voiceEnabled)stopExerciseAudio();
+}
+
+function speakText(text){
+  if(!text||!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);
+  u.rate=0.9;u.lang='en-US';
+  speechSynthesis.speak(u);
+}
+
+// ═══ INIT ═══
+renderExercises();
+</script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+title>Eloquenta — Project Timeline & Daily Tasks</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;--violet:#a78bfa;--rose:#fb7185;
+  --p1:#f472b6;--p2:#22d3ee;--p3:#a78bfa;--p4:#34d399;--p5:#fbbf24;--p6:#f97316;--p7:#8b5cf6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px}
+.container{max-width:1400px;margin:0 auto;padding:0 24px}
+
+/* Header */
+.header{padding:40px 0 24px;text-align:center}
+.header h1{font-size:2rem;font-weight:900;letter-spacing:-.5px;margin-bottom:6px}
+.header h1 .o{color:var(--cyan)}
+.header p{color:var(--text-muted);font-size:.95rem}
+
+/* View toggle */
+.view-toggle{display:flex;gap:4px;justify-content:center;margin-bottom:32px}
+.view-btn{padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.view-btn.active{background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan)}
+.view-btn:hover{border-color:var(--text-dim)}
+
+/* ═══ GANTT CHART ═══ */
+#gantt-view{display:block}
+.gantt-wrap{overflow-x:auto;margin-bottom:48px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card)}
+.gantt{min-width:1100px}
+
+/* Phase headers */
+.gantt-head{display:grid;grid-template-columns:280px 1fr;border-bottom:1px solid var(--border)}
+.gantt-head-left{padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
+.gantt-head-right{display:grid;grid-template-columns:repeat(14,1fr)}
+.gantt-week{padding:12px 4px;text-align:center;font-size:10px;font-weight:700;color:var(--text-dim);border-left:1px solid var(--border)}
+
+/* Phase rows */
+.phase-row{display:grid;grid-template-columns:280px 1fr;border-bottom:1px solid var(--border)}
+.phase-row:last-child{border-bottom:none}
+.phase-label{padding:16px;display:flex;gap:10px;align-items:flex-start;border-right:1px solid var(--border)}
+.phase-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.phase-info h3{font-size:13px;font-weight:700;margin-bottom:2px}
+.phase-info p{font-size:11px;color:var(--text-dim)}
+.phase-meta{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+/* Timeline bar area */
+.phase-timeline{padding:12px 0;display:flex;align-items:center;position:relative}
+.bar-wrap{flex:1;position:relative;height:28px}
+.bar{position:absolute;height:24px;border-radius:6px;top:2px;cursor:default;transition:filter .15s;display:flex;align-items:center;padding:0 10px;font-size:10px;font-weight:700;color:rgba(0,0,0,.6);white-space:nowrap;overflow:hidden}
+.bar:hover{filter:brightness(1.15)}
+.bar.sub{height:18px;top:5px;font-size:9px;padding:0 8px;opacity:.85}
+
+/* Today marker */
+.today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--rose);z-index:5;pointer-events:none}
+.today-line::after{content:'TODAY';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:var(--rose);white-space:nowrap}
+
+/* Legend */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;padding:0 16px}
+.legend-item{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text-muted)}
+.legend-dot{width:8px;height:8px;border-radius:3px}
+
+/* ═══ DAILY TASK CALENDAR ═══ */
+#calendar-view{display:none}
+.cal-controls{display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:24px;flex-wrap:wrap}
+.cal-nav{display:flex;gap:4px;align-items:center}
+.cal-nav button{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.cal-nav button:hover{background:var(--bg-hover)}
+.cal-month{font-size:16px;font-weight:700;min-width:160px;text-align:center}
+.cal-export{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--cyan);font-size:13px;font-weight:600;cursor:pointer}
+.cal-export:hover{background:rgba(34,211,238,.1)}
+
+/* Calendar grid */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:32px}
+.cal-day-head{padding:10px 8px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);background:var(--bg-card)}
+.cal-day{min-height:120px;background:var(--bg-card);padding:8px;display:flex;flex-direction:column;gap:4px}
+.cal-day.other-month{background:rgba(15,23,42,.5);opacity:.4}
+.cal-day.today{border:2px solid var(--cyan);border-radius:4px}
+.cal-day-num{font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:4px}
+.cal-day.today .cal-day-num{color:var(--cyan)}
+.cal-task{font-size:10px;padding:3px 6px;border-radius:4px;font-weight:500;cursor:pointer;transition:filter .1s;line-height:1.3}
+.cal-task:hover{filter:brightness(1.2)}
+.cal-task.p1{background:rgba(244,114,182,.15);color:#f472b6;border-left:2px solid #f472b6}
+.cal-task.p2{background:rgba(34,211,238,.15);color:#22d3ee;border-left:2px solid #22d3ee}
+.cal-task.p3{background:rgba(167,139,250,.15);color:#a78bfa;border-left:2px solid #a78bfa}
+.cal-task.p4{background:rgba(52,211,153,.15);color:#34d399;border-left:2px solid #34d399}
+.cal-task.p5{background:rgba(251,191,36,.15);color:#fbbf24;border-left:2px solid #fbbf24}
+.cal-task.p6{background:rgba(249,115,22,.15);color:#f97316;border-left:2px solid #f97316}
+.cal-task.p7{background:rgba(139,92,246,.15);color:#8b5cf6;border-left:2px solid #8b5cf6}
+
+/* Task detail panel */
+.task-panel{position:fixed;right:0;top:0;bottom:0;width:360px;background:var(--bg-card);border-left:1px solid var(--border);padding:24px;z-index:100;overflow-y:auto;transform:translateX(100%);transition:transform .3s}
+.task-panel.open{transform:translateX(0)}
+.task-panel-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.task-panel h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.task-panel .task-phase{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.task-panel p{font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:16px}
+.task-panel .task-duration{font-size:12px;color:var(--text-dim);margin-bottom:16px}
+.task-panel .btn{width:100%;text-align:center;margin-top:8px}
+
+/* Footer */
+.footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;margin-top:48px}
+.footer p{font-size:12px;color:var(--text-dim)}
+.footer .logo{color:#fff;font-weight:700}
+.footer .logo .o{color:var(--cyan)}
+
+@media(max-width:768px){
+  .container{padding:0 12px}
+  .header h1{font-size:1.5rem}
+  .cal-grid{grid-template-columns:repeat(7,1fr)}
+  .cal-day{min-height:80px;padding:4px}
+  .cal-task{font-size:8px;padding:2px 4px}
+  .cal-day-head{font-size:9px;padding:6px 2px}
+}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>📊  <span class="elo-wordmark">El<span class="o">o</span>quenta</span> — Project Timeline</h1>
+  <p>14-week execution plan with 2-hour daily actionable tasks</p>
+</div>
+
+<div class="view-toggle">
+  <button class="view-btn active" onclick="showView('gantt')">📊 Gantt Chart</button>
+  <button class="view-btn" onclick="showView('calendar')">📅 Daily Calendar</button>
+</div>
+
+<!-- GANTT CHART -->
+<div id="gantt-view">
+  <div class="gantt-wrap">
+    <div class="gantt" id="gantt-chart"></div>
+  </div>
+  <div class="legend" id="gantt-legend"></div>
+</div>
+
+<!-- CALENDAR VIEW -->
+<div id="calendar-view">
+  <div class="cal-controls">
+    <div class="cal-nav">
+      <button onclick="changeMonth(-1)">◀</button>
+      <span class="cal-month" id="cal-month-label"></span>
+      <button onclick="changeMonth(1)">▶</button>
+    </div>
+    <button class="cal-export" onclick="exportToGoogleCal()">📅 Export to Google Calendar</button>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+</div>
+
+<div class="footer">
+  <p> <span class="elo-wordmark">El<span class="o">o</span>quenta</span> — Premium ESL with live translations | William Thomason</p>
+</div>
+</div>
+
+<!-- Task detail panel -->
+<div class="task-panel" id="task-panel">
+  <button class="task-panel-close" onclick="closePanel()">✕</button>
+  <div id="task-panel-content"></div>
+</div>
+
+<script>
+// ═══ PROJECT DATA ═
+var TODAY = new Date();
+var PHASES = [
+  {
+    id:1, name:"Strategy & Research", color:"#f472b6", emoji:"🔍",
+    duration:14, startDay:0,
+    tasks:[
+      {name:"Business model finalization",desc:"Define pricing tiers, pack sizes, expiry rules. Research competitor pricing (Fluentify, Preply, iTalki). Set EUR pricing: €55/€48/€44/€40/€36.",days:3},
+      {name:"Market research",desc:"Research EU, Asia, and South America markets. Identify top 3 target segments per region. Analyze search volume and competition.",days:5},
+      {name:"Competitor deep dive",desc:"Analyze 10 competitors: pricing, positioning, strengths, weaknesses. Create comparison matrix. Identify differentiation opportunities.",days:4},
+      {name:"Translation workflow design",desc:"Design the L1 translation delivery process. Choose AI tools (DeepL, Reverso). Create phonetic guide template for accent coaching. Build Eloquence-first lesson structure (speak first, grammar second).",days:2}
+    ]
+  },
+  {
+    id:2, name:"Tech Build", color:"#22d3ee", emoji:"⚙️",
+    duration:21, startDay:14,
+    tasks:[
+      {name:"Cal.com + Google Calendar setup",desc:"Create Cal.com account (william-o8lcqk). Set availability windows. Connect Google Calendar for conflict checking. Configure booking confirmation emails.",days:3},
+      {name:"Website + booking page",desc:"Build landing page with pricing, beta toggle, referral system. Integrate Cal.com embed. Add Stripe payment links. Mobile responsive.",days:7},
+      {name:"Student dashboard",desc:"Build student dashboard: lesson count, progress tracking, booking management, teacher notes access. localStorage state management.",days:10},
+      {name:"Dual-VoIP failover",desc:"Implement Google Meet as primary. Add Talky.io as automatic backup. Student sees single — Join Lesson — button. Build failover detection.",days:5},
+      {name:"Stripe payments",desc:"Create Stripe account. Set up Payment Links for each pricing tier. Add webhook for payment confirmation. Track purchases.",days:4},
+      {name:"GDPR compliance",desc:"Add privacy policy. Cookie consent banner. Data export/delete functionality. Terms of service page.",days:3}
+    ]
+  },
+  {
+    id:3, name:"Curriculum & Method", color:"#a78bfa", emoji:"📚",
+    duration:42, startDay:35,
+    tasks:[
+      {name:"Eloquence-first methodology",desc:"Design the conversation-first lesson framework. Speaking and accent coaching in every lesson from A1-. Grammar as scaffolding, not foundation. Document pedagogical approach for investor deck.",days:5},
+      {name:"Translation glossaries",desc:"Create bilingual glossaries for FL0-FL13 in DE, ES, FR, IT, PT, JA, KO, ZH. Include grammar explanations, example sentences, common errors.",days:14},
+      {name:"Materials FL0-FL5",desc:"Create slide decks, exercises, and conversation questions for beginner levels. Include vocabulary hover definitions. 24+ lessons.",days:21},
+      {name:"Materials FL6-FL10",desc:"Intermediate level materials: business English debates, discussion topics, grammar in context. Speaking-focused exercises.",days:21},
+      {name:"Materials FL11-FL13",desc:"Advanced materials: nuanced grammar, professional communication, exam prep content. C1-C2 level discussions.",days:14},
+      {name:"Exam prep add-ons",desc:"TOEFL, IELTS, OET, IGCSE prep materials. Practice tests, scoring rubrics, targeted skill work.",days:10},
+      {name:"Assessments",desc:"Create placement test. End-of-block assessments for each level. Progress tracking rubrics. Speaking assessment template.",days:5},
+      {name:"Translation QA",desc:"Review all translated glossaries with native speakers. Check for accuracy, naturalness, and appropriateness. Fix errors.",days:7}
+    ]
+  },
+  {
+    id:4, name:"Brand & Marketing", color:"#34d399", emoji:"🎨",
+    duration:21, startDay:49,
+    tasks:[
+      {name:"Brand identity",desc:"Finalize logo (Eloquenta with blue o), color palette, typography. Create social media assets. Brand guidelines document.",days:4},
+      {name:"Social media setup",desc:"Create profiles on Instagram, LinkedIn, Facebook, YouTube. Posting schedule. Content templates. First 10 posts ready.",days:3},
+      {name:"Lead magnets",desc:"Create free resources: English level test, grammar cheat sheets, conversation question PDFs. Email capture pages.",days:5},
+      {name:"Content strategy",desc:"Plan 30-day content calendar. Mix of educational, testimonial, behind-the-scenes. Engagement tactics.",days:5},
+      {name:"Facebook group outreach",desc:"Identify and join 20 Facebook groups for English learners in target markets. Create engagement plan. Post value-first content.",days:4}
+    ]
+  },
+  {
+    id:5, name:"Beta Launch", color:"#fbbf24", emoji:"🚀",
+    duration:14, startDay:70,
+    tasks:[
+      {name:"Recruit beta students",desc:"Post in Facebook groups, Reddit, language learning forums. Offer 30% beta discount. Target 10-15 beta students. Collect applications.",days:7},
+      {name:"Deliver beta lessons",desc:"Conduct 2-3 lessons per beta student. Use speaking assessment document. Collect detailed feedback after each session. Iterate on materials.",days:10},
+      {name:"Collect feedback",desc:"Send feedback survey. Conduct 15-min feedback calls. Document all issues and improvement suggestions. Prioritize fixes.",days:5}
+    ]
+  },
+  {
+    id:6, name:"Public Launch", color:"#f97316", emoji:"🌍",
+    duration:14, startDay:84,
+    tasks:[
+      {name:"Website go-live",desc:"Final testing of all pages, booking flow, payment processing. SEO optimization. Analytics setup. Launch announcement.",days:3},
+      {name:"EU marketing campaign",desc:"Targeted ads on Facebook/Instagram for DE, FR, ES, IT markets. Budget: €50. A/B test ad copy. Track signups.",days:14},
+      {name:"Asia marketing campaign",desc:"Groups and forums for JP, KR, CN learners. Partner with language learning influencers. WeChat/Line outreach.",days:14},
+      {name:"South America outreach",desc:"Brazil-focused campaign. Portuguese-language Facebook groups. WhatsApp community building.",days:14}
+    ]
+  },
+  {
+    id:7, name:"Operations", color:"#8b5cf6", emoji:"🏗️",
+    duration:14, startDay:98,
+    tasks:[
+      {name:"Onboarding system",desc:"Create welcome email sequence. Student orientation document. First lesson checklist. Teacher briefing template.",days:4},
+      {name:"Tracking & analytics",desc:"Set up student progress tracking. Lesson count monitoring. Revenue tracking. Weekly KPI dashboard.",days:3},
+      {name:"Referral program",desc:"Design referral reward system (free lesson for both referrer and referee). Create shareable referral links. Track conversions.",days:3},
+      {name:"Partnership outreach",desc:"Contact 20 companies for corporate packages. Reach out to immigration consultancies. University partnerships.",days:5},
+      {name:"YouTube channel",desc:"Create channel. Film 5 beginner videos. Optimize titles and descriptions for search. Upload schedule.",days:7}
+    ]
+  }
+];
+
+// ═══ GANTT RENDERING ═══
+function renderGantt(){
+  var gantt = document.getElementById('gantt-chart');
+  var totalWeeks = 14;
+  var totalDays = totalWeeks * 7;
+  
+  var html = '';
+  
+  // Header row with week numbers
+  html += '<div class="gantt-head">';
+  html += '<div class="gantt-head-left">Phase / Task</div>';
+  html += '<div class="gantt-head-right">';
+  for(var w=1;w<=totalWeeks;w++){
+    html += '<div class="gantt-week">Wk '+w+'</div>';
+  }
+  html += '</div></div>';
+  
+  // Calculate today's position
+  var projectStart = new Date(TODAY);
+  projectStart.setDate(projectStart.getDate() - 14); // Start 2 weeks ago
+  var todayOffset = Math.floor((TODAY - projectStart) / (1000*60*60*24));
+  
+  PHASES.forEach(function(phase){
+    html += '<div class="phase-row">';
+    html += '<div class="phase-label">';
+    html += '<div class="phase-dot" style="background:'+phase.color+'"></div>';
+    html += '<div class="phase-info">';
+    html += '<h3>'+phase.emoji+' '+phase.name+'</h3>';
+    html += '<p>'+phase.duration+' days</p>';
+    html += '<div class="phase-meta">'+phase.tasks.length+' tasks</div>';
+    html += '</div></div>';
+    html += '<div class="phase-timeline">';
+    
+    // Today marker
+    if(todayOffset >= phase.startDay && todayOffset <= phase.startDay + phase.duration){
+      html += '<div class="today-line" style="left:'+((todayOffset/totalDays)*100)+'%"></div>';
+    }
+    
+    html += '<div class="bar-wrap">';
+    // Main phase bar
+    var leftPct = (phase.startDay / totalDays) * 100;
+    var widthPct = (phase.duration / totalDays) * 100;
+    html += '<div class="bar" style="left:'+leftPct+'%;width:'+widthPct+'%;background:linear-gradient(90deg,'+phase.color+','+phase.color+'dd);color:#fff">';
+    html += phase.name;
+    html += '</div>';
+    
+    // Sub-task bars
+    var dayOffset = phase.startDay;
+    phase.tasks.forEach(function(task){
+      var subLeft = (dayOffset / totalDays) * 100;
+      var subWidth = (task.days / totalDays) * 100;
+      html += '<div class="bar sub" style="left:'+subLeft+'%;width:'+subWidth+'%;background:'+phase.color+'44;border-left:2px solid '+phase.color+'">';
+      html += task.name;
+      dayOffset += task.days;
+    });
+    
+    html += '</div></div></div>';
+  });
+  
+  gantt.innerHTML = html;
+  
+  // Legend
+  var legend = document.getElementById('gantt-legend');
+  var legHtml = '';
+  PHASES.forEach(function(p){
+    legHtml += '<div class="legend-item"><div class="legend-dot" style="background:'+p.color+'"></div>'+p.emoji+' '+p.name+'</div>';
+  });
+  legend.innerHTML = legHtml;
+}
+
+// ═══ CALENDAR RENDERING ═══
+var calMonth = TODAY.getMonth();
+var calYear = TODAY.getFullYear();
+var selectedTask = null;
+
+function getPhaseForDay(dayOffset){
+  var cumulative = 0;
+  for(var i=0;i<PHASES.length;i++){
+    var phase = PHASES[i];
+    if(dayOffset >= phase.startDay && dayOffset < phase.startDay + phase.duration){
+      var dayInPhase = dayOffset - phase.startDay;
+      var taskCumulative = 0;
+      for(var j=0;j<phase.tasks.length;j++){
+        var task = phase.tasks[j];
+        if(dayInPhase >= taskCumulative && dayInPhase < taskCumulative + task.days){
+          return {phase:phase,task:task,phaseIndex:i,taskIndex:j};
+        }
+        taskCumulative += task.days;
+      }
+    }
+  }
+  return null;
+}
+
+function renderCalendar(){
+  var grid = document.getElementById('cal-grid');
+  var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  
+  document.getElementById('cal-month-label').textContent = monthNames[calMonth]+' '+calYear;
+  
+  var firstDay = new Date(calYear, calMonth, 1);
+  var lastDay = new Date(calYear, calMonth + 1, 0);
+  var startDow = firstDay.getDay();
+  var daysInMonth = lastDay.getDate();
+  
+  // Prev month days
+  var prevLastDay = new Date(calYear, calMonth, 0).getDate();
+  
+  var html = '';
+  dayNames.forEach(function(d){ html += '<div class="cal-day-head">'+d+'</div>'; });
+  
+  // Previous month padding
+  for(var i=startDow-1;i>=0;i--){
+    html += '<div class="cal-day other-month"><div class="cal-day-num">'+(prevLastDay-i)+'</div></div>';
+  }
+  
+  // Current month days
+  for(var day=1;day<=daysInMonth;day++){
+    var date = new Date(calYear, calMonth, day);
+    var isToday = date.toDateString() === TODAY.toDateString();
+    var dayOfWeek = date.getDay();
+    var isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    
+    // Calculate day offset for Gantt
+    var projectStart = new Date(TODAY);
+    projectStart.setDate(projectStart.getDate() - 14);
+    var dayOffset = Math.floor((date - projectStart) / (1000*60*60*24));
+    
+    var taskInfo = getPhaseForDay(dayOffset);
+    
+    html += '<div class="cal-day'+(isToday?' today':'')+(isWeekend?' weekend':'')+'">';
+    html += '<div class="cal-day-num">'+day+'</div>';
+    
+    if(taskInfo && !isWeekend){
+      var t = taskInfo.task;
+      var p = taskInfo.phase;
+      html += '<div class="cal-task p'+p.id+'" onclick="showTaskDetail('+p.id+','+taskInfo.taskIndex+')">';
+      html += t.name;
+      html += '</div>';
+    }
+    
+    html += '</div>';
+  }
+  
+  // Next month padding
+  var totalCells = startDow + daysInMonth;
+  var remaining = 42 - totalCells; // 6 rows × 7 days
+  if(remaining < 0) remaining = 7 - (totalCells % 7);
+  if(remaining === 7) remaining = 0;
+  
+  for(var i=1;i<=remaining;i++){
+    html += '<div class="cal-day other-month"><div class="cal-day-num">'+i+'</div></div>';
+  }
+  
+  grid.innerHTML = html;
+}
+
+function changeMonth(delta){
+  calMonth += delta;
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function showTaskDetail(phaseId, taskIndex){
+  var phase = PHASES.find(function(p){return p.id===phaseId;});
+  var task = phase.tasks[taskIndex];
+  
+  var content = document.getElementById('task-panel-content');
+  content.innerHTML = '';
+  content.innerHTML += '<div class="task-phase" style="color:'+phase.color+'">'+phase.emoji+' Phase '+phase.id+': '+phase.name+'</div>';
+  content.innerHTML += '<h3>'+task.name+'</h3>';
+  content.innerHTML += '<div class="task-duration">⏱️ '+task.days+' days (2 hrs/day = '+task.days*2+' total hours)</div>';
+  content.innerHTML += '<p>'+task.desc+'</p>';
+  content.innerHTML += '<button class="btn btn-primary" onclick="addToGoogleCal('+phaseId+','+taskIndex+')">📅 Add to Google Calendar</button>';
+  content.innerHTML += '<button class="btn btn-secondary" style="background:transparent" onclick="closePanel()">Close</button>';
+  
+  document.getElementById('task-panel').classList.add('open');
+}
+
+function closePanel(){
+  document.getElementById('task-panel').classList.remove('open');
+}
+
+function addToGoogleCal(phaseId, taskIndex){
+  var phase = PHASES.find(function(p){return p.id===phaseId;});
+  var task = phase.tasks[taskIndex];
+  
+  var projectStart = new Date(TODAY);
+  projectStart.setDate(projectStart.getDate() - 14);
+  
+  var dayOffset = phase.startDay;
+  for(var i=0;i<taskIndex;i++) dayOffset += phase.tasks[i].days;
+  
+  var startDate = new Date(projectStart);
+  startDate.setDate(startDate.getDate() + dayOffset);
+  startDate.setHours(10, 0, 0, 0);
+  
+  var endDate = new Date(startDate);
+  endDate.setHours(12, 0, 0, 0);
+  
+  // Build Google Calendar URL
+  var params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: '[Eloquenta] ' + task.name,
+    dates: formatGCalDate(startDate) + '/' + formatGCalDate(endDate),
+    details: phase.name + ' - ' + task.desc + '\\n\\nPart of Eloquenta 14-week project plan.',
+    location: 'Online'
+  });
+  
+  window.open('https://calendar.google.com/calendar/render?' + params.toString(), '_blank');
+}
+
+function formatGCalDate(date){
+  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+function exportToGoogleCal(){
+  // Export all tasks as individual events
+  // For now, open a summary
+  var msg = 'Google Calendar Integration\n\nClick on any task in the calendar view and select "Add to Google Calendar" to create individual 2-hour blocks.\n\nAlternatively, use the "Export All" button below.';
+  alert(msg);
+}
+
+function showView(view){
+  document.getElementById('gantt-view').style.display = view === 'gantt' ? 'block' : 'none';
+  document.getElementById('calendar-style');
+  document.getElementById('calendar-view').style.display = view === 'calendar' ? 'block' : 'none';
+  document.querySelectorAll('.view-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(event && event.target) event.target.classList.add('active');
+}
+
+// ═══ INIT ═══
+renderGantt();
+renderCalendar();
+</script>
+</body>
+</html>

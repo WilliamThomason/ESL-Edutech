@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spell Boss — Spelling Basketball Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--violet:#a78bfa;--rose:#fb7185}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--position:sticky;top:0;z-index:10}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border)}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:18px;font-weight:800;flex:1}
+.score-display{display:flex;gap:8px;align-items:center}
+.score-box{background:var(--bg3);padding:6px 14px;border-radius:8px;font-size:13px;font-weight:700}
+.score-box.c{color:var(--cyan)}.score-box.g{color:var(--green)}.score-box.a{color:var(--amber)}
+
+/* Game area */
+.game-pad{padding:24px 20px;max-width:800px;margin:0 auto}
+
+/* Difficulty select */
+.diff-select{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.diff-btn{height:34px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer}
+.diff-btn:hover{border-color:var(--text)}
+.diff-btn.active{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+
+/* Court area */
+.court{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:30px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden}
+.court-hoop{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:80px;height:80px;border:3px solid var(--amber);border-radius:50%;opacity:.3}
+.word-display{font-size:2.4rem;font-weight:900;margin:20px 0 8px;letter-spacing:3px}
+.word-hint{font-size:13px;color:var(--muted);margin-bottom:16px}
+.letter-input{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;min-height:52px}
+.letter-cell{width:48px;height:52px;background:var(--bg);border:2px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;text-transform:uppercase;transition:all .15s}
+.letter-cell.correct{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.1)}
+.letter-cell.wrong{border-color:var(--rose);color:var(--rose);background:rgba(251,113,133,.1);animation:shake .3s}
+.letter-cell.current{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(34,211,238,.3)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* Keyboard */
+.kb-wrap{display:flex;flex-direction:column;gap:4px;align-items:center;margin-top:16px}
+.kb-row{display:flex;gap:4px}
+.kb-key{width:36px;height:40px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .1s;text-transform:uppercase}
+.kb-key:hover{background:var(--cyan);color:var(--bg);border-color:var(--cyan)}
+.kb-key:active{transform:scale(.95)}
+.kb-key.wide{width:56px;font-size:11px}
+
+/* Controls */
+.controls{display:flex;gap:8px;justify:center;margin-top:16px;flex-wrap:wrap}
+.ctrl-btn{height:36px;padding:0 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer}
+.ctrl-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.ctrl-btn.primary{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+
+/* Stats bar */
+.stats-bar{display:flex;gap:16px;justify-content:center;margin-top:16px;font-size:12px;color:var(--dim)}
+.stats-bar span{color:var(--text);font-weight:600}
+
+/* Progress */
+.progress-track{height:4px;background:var(--bg);border-radius:2px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+
+/* Basket animation */
+.basket-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;font-weight:900;color:var(--green);pointer-events:none;opacity:0;z-index:100}
+.basket-msg.show{animation:basketPop .8s ease-out}
+@keyframes basketPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}
+
+/* Results */
+.results{display:none;text-align:center;padding:40px 20px}
+.results.show{display:block}
+.results h2{font-size:2rem;font-weight:900;margin-bottom:8px}
+.stars{font-size:3rem;margin:16px 0}
+.results-stats{display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.rstat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:100px}
+.rstat .val{font-size:1.6rem;font-weight:800;display:block}
+.rstat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+/* Start screen */
+.start-screen{text-align:center;padding:60px 20px}
+.start-screen h2{font-size:1.8rem;font-weight:800;margin-bottom:8px}
+.start-screen p{color:var(--dim);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
+
+/* Timer option */
+.timer-toggle{display:flex;gap:8px;justify-content:center;margin-bottom:12px;font-size:12px;color:var(--dim);align-items:center}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Spell Boss</div>
+  <div class="score-display">
+    <div class="score-box c" id="scoreBox">0/0</div>
+    <div class="score-box g" id="streakBox">Streak: 0</div>
+    <div class="score-box a" id="timerBox">--:--</div>
+  </div>
+</div>
+
+<div class="game-pad">
+  <!-- Start Screen -->
+  <div class="start-screen" id="startScreen">
+    <h2>Spelling Basketball</h2>
+    <p>Spell the word correctly to score a basket. Build your streak for bonus points.</p>
+    <div class="diff-select" id="startDiff">
+      <button class="diff-btn active" onclick="setDiff('easy',this)">Easy</button>
+      <button class="diff-btn" onclick="setDiff('medium',this)">Medium</button>
+      <button class="diff-btn" onclick="setDiff('hard',this)">Hard</button>
+    </div>
+    <div class="timer-toggle">
+      <label>Timed mode:</label>
+      <button class="diff-btn" id="timedToggle" onclick="toggleTimed(this)">Off</button>
+      <span style="margin-left:8px">Time:</span>
+      <button class="diff-btn active" onclick="setTime(60,this)">60s</button>
+      <button class="diff-btn" onclick="setTime(120,this)">120s</button>
+      <button class="diff-btn" onclick="setTime(180,this)">180s</button>
+    </div>
+    <br>
+    <button class="ctrl-btn primary" style="height:44px;padding:0 28px;font-size:14px" onclick="startGame()">Start Game</button>
+  </div>
+
+  <!-- Game Area -->
+  <div id="gameArea" style="display:none">
+    <div class="diff-select">
+      <button class="diff-btn active" id="dEasy" onclick="setDiff('easy',this)">Easy</button>
+      <button class="diff-btn" id="dMedium" onclick="setDiff('medium',this)">Medium</button>
+      <button class="diff-btn" id="dHard" onclick="setDiff('hard',this)">Hard</button>
+    </div>
+
+    <div class="court">
+      <div class="court-hoop"></div>
+      <div class="word-display" id="wordDisplay">--</div>
+      <div class="word-hint" id="wordHint">Listen and spell the word</div>
+      <button class="ctrl-btn" onclick="speakCurrent()" style="margin-bottom:12px">Listen</button>
+      <div class="letter-input" id="letterInput"></div>
+      <div class="controls">
+        <button class="ctrl-btn" onclick="clearWord()">Clear</button>
+        <button class="ctrl-btn" onclick="skipWord()">Skip</button>
+        <button class="ctrl-btn primary" onclick="checkWord()">Enter</button>
+      </div>
+    </div>
+
+    <div class="kb-wrap" id="keyboard"></div>
+
+    <div class="stats-bar">
+      <span id="wordsDone">0</span> words done &middot;
+      Accuracy: <span id="accDisplay">--</span> &middot;
+      Time: <span id="timeDisplay">0:00</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+    <h2 id="resTitle">Game Over</h2>
+    <div class="stars" id="resStars"></div>
+    <div class="results-stats">
+      <div class="rstat"><span class="val" id="resScore">0</span><span class="lbl">Score</span></div>
+      <div class="rstat"><span class="val" id="resAcc">0%</span><span class="lbl">Accuracy</span></div>
+      <div class="rstat"><span class="val" id="resStreak">0</span><span class="lbl">Best Streak</span></div>
+      <div class="rstat"><span class="val" id="resTime">0:00</span><span class="lbl">Time</span></div>
+      <div class="rstat"><span class="val" id="resWPM">0</span><span class="lbl">Words/Min</span></div>
+    </div>
+    <div class="missed-words" id="missedWords" style="margin-bottom:20px"></div>
+    <button class="ctrl-btn primary" style="height:44px;padding:0 28px;font-size:14px" onclick="restartGame()">Play Again</button>
+  </div>
+</div>
+
+<div class="basket-msg" id="basketMsg">BASKET!</div>
+
+<script>
+var DIFF='easy',TIMED=false,TIME_LIMIT=120;
+var words=[],wi=0,correct=0,total=0,streak=0,bestStreak=0;
+var currentWord='',currentLetters=[],cursorPos=0;
+var gameStart=0,gameTimer=null,missed=[];
+
+var WORD_LISTS={
+  easy:['cat','dog','sun','run','big','red','hat','cup','box','pen','map','bus','fly','jam','leg','arm','toy','ice','oil','ant','bee','owl','fox','hen','pie','gem','zig','vow','fin','dig','hop','mud','rug','web','yam','zap','jog','kin','lid','mix','nod','pal','rag','sip','tan','wax'],
+  medium:['apple','bridge','castle','danger','eastern','fabric','garden','harbor','island','jungle','keeper','legend','market','nature','orange','palace','quilt','rabbit','silver','tunnel','unicorn','valley','window','yellow','zipper','anchor','breeze','candle','dancer','falcon','guitar','hunger','iceberg','jacket','knight','laptop','marble'],
+  hard:['abstract','behavior','calendar','delivery','electric','flexibility','guarantee','horizon','invisible','judgment','kilometer','landscape','magnetic','navigate','operate','platform','quantity','resource','satellite','telescope','umbrella','velocity','withdraw','yacht','zephyr','algorithm','biodiversity','cryptocurrency','democracy','encyclopedia','frequency']
+};
+
+function setDiff(d,btn){
+  DIFF=d;
+  document.querySelectorAll('#startDiff .diff-btn,#gameArea .diff-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  var other=d==='easy'?'#dEasy':d==='medium'?'#dMedium':'#dHard';
+  var ob=document.querySelector(other);
+  if(ob)ob.classList.add('active');
+}
+function toggleTimed(btn){
+  TIMED=!TIMED;
+  btn.textContent=TIMED?'On':'Off';
+  btn.classList.toggle('active',TIMED);
+}
+function setTime(s,btn){
+  TIME_LIMIT=s;
+  document.querySelectorAll('.timer-toggle .diff-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+}
+
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+function startGame(){
+  words=shuffle(WORD_LISTS[DIFF].slice());
+  wi=0;correct=0;total=0;streak=0;bestStreak=0;
+  missed=[];currentLetters=[];cursorPos=0;
+  gameStart=Date.now();
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('results').classList.remove('show');
+  buildKeyboard();
+  nextWord();
+  if(TIMED){
+    updateTimerDisplay();
+    gameTimer=setInterval(function(){
+      var elapsed=Math.floor((Date.now()-gameStart)/1000);
+      var remaining=TIME_LIMIT-elapsed;
+      if(remaining<=0){endGame();return;}
+      updateTimerDisplay();
+    },1000);
+  }
+}
+
+function buildKeyboard(){
+  var rows=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+  var kb=document.getElementById('keyboard');
+  kb.innerHTML='';
+  rows.forEach(function(row,i){
+    var div=document.createElement('div');
+    div.className='kb-row';
+    if(i===2){
+      var ent=document.createElement('button');
+      ent.className='kb-key wide';ent.textContent='ENTER';ent.onclick=function(){checkWord()};
+      div.appendChild(ent);
+    }
+    row.split('').forEach(function(ch){
+      var b=document.createElement('button');
+      b.className='kb-key';b.textContent=b.onclick=function(){typeLetter(ch)};
+      div.appendChild(b);
+    });
+    if(i===2){
+      var bs=document.createElement('button');
+      bs.className='kb-key wide';bs.textContent='DEL';bs.onclick=function(){deleteLetter()};
+      div.appendChild(bs);
+    }
+    kb.appendChild(div);
+  });
+}
+
+function nextWord(){
+  if(wi>=words.length){endGame();return;}
+  currentWord=words[wi].toUpperCase();
+  currentLetters=[];cursorPos=0;
+  var lettersEl=document.getElementById('letterInput');
+  lettersEl.innerHTML='';
+  for(var i=0;i<currentWord.length;i++){
+    var cell=document.createElement('div');
+    cell.className='letter-cell'+(i===0?' current':'');
+    cell.id='lc'+i;
+    lettersEl.appendChild(cell);
+  }
+  document.getElementById('wordDisplay').textContent=currentWord.split('').map(function(){return '_'}).join(' ');
+  document.getElementById('wordHint').textContent='Tap letters or type to spell the word';
+  speakWord(currentWord);
+  updateProgress();
+}
+
+function typeLetter(ch){
+  if(cursorPos>=currentWord.length)return;
+  currentLetters[cursorPos]=ch;
+  var cell=document.getElementById('lc'+cursorPos);
+  cell.textContent=ch;
+  cell.classList.remove('current');
+  cursorPos++;
+  if(cursorPos<currentWord.length){
+    document.getElementById('lc'+cursorPos).classList.add('current');
+  }
+}
+
+function deleteLetter(){
+  if(cursorPos<=0)return;
+  cursorPos--;
+  currentLetters[cursorPos]='';
+  var cell=document.getElementById('lc'+cursorPos);
+  cell.textContent='';
+  cell.classList.remove('correct','wrong');
+  cell.classList.add('current');
+}
+
+function clearWord(){
+  currentLetters=[];cursorPos=0;
+  for(var i=0;i<currentWord.length;i++){
+    var cell=document.getElementById('lc'+i);
+    cell.textContent='';
+    cell.classList.remove('correct','wrong');
+    cell.classList.toggle('current',i===0);
+  }
+}
+
+function checkWord(){
+  var guess=currentLetters.join('');
+  if(guess.length!==currentWord.length)return;
+  total++;
+  var isCorrect=true;
+  for(var i=0;i<currentWord.length;i++){
+    var cell=document.getElementById('lc'+i);
+    if(currentLetters[i]===currentWord[i]){
+      cell.classList.add('correct');
+    } else {
+      cell.classList.add('wrong');
+      isCorrect=false;
+    }
+    cell.classList.remove('current');
+  }
+  if(isCorrect){
+    correct++;streak++;
+    if(streak>bestStreak)bestStreak=streak;
+    showBasket();
+    updateScore();
+    setTimeout(function(){wi++;nextWord();},800);
+  } else {
+    streak=0;
+    missed.push({word:currentWord,guess:guess});
+    updateScore();
+    document.getElementById('wordHint').textContent='Correct spelling: '+currentWord;
+    setTimeout(function(){wi++;nextWord();},1500);
+  }
+}
+
+function updateScore(){
+  document.getElementById('scoreBox').textContent=correct+'/'+total;
+  document.getElementById('streakBox').textContent='Streak: '+streak;
+}
+
+function updateProgress(){
+  var pct=(wi/words.length)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('wordsDone').textContent=wi;
+  document.getElementById('accDisplay').textContent=total>0?Math.round(correct/total*100)+'%':'--';
+  var elapsed=Math.floor((Date.now()-gameStart)/1000);
+  var m=Math.floor(elapsed/60),s=elapsed%60;
+  document.getElementById('timeDisplay').textContent=m+':'+String(s).padStart(2,'0');
+}
+
+function updateTimerDisplay(){
+  var elapsed=Math.floor((Date.now()-gameStart)/1002);
+  var remaining=Math.max(0,TIME_LIMIT-elapsed);
+  var m=Math.floor(remaining/60),s=remaining%60;
+  document.getElementById('timerBox').textContent=m+':'+String(s).padStart(2,'0');
+}
+
+function showBasket(){
+  var msg=document.getElementById('basketMsg');
+  msg.classList.remove('show');
+  void msg.offsetWidth;
+  msg.classList.add('show');
+}
+
+function speakWord(w){
+  if(!window.speechSynthesis)return;
+  var u=new SpeechSynthesisUtterance(w.toLowerCase());
+  u.rate=0.8;u.lang='en-US';
+  speechSynthesis.speak(u);
+}
+function speakCurrent(){if(currentWord)speakWord(currentWord);}
+
+function skipWord(){
+  streak=0;total++;
+  missed.push({word:currentWord,guess:'(skipped)'});
+  updateScore();
+  wi++;nextWord();
+}
+
+function endGame(){
+  if(gameTimer){clearInterval(gameTimer);gameTimer=null;}
+  document.getElementById('gameArea').style.display='none';
+  document.getElementById('results').classList.add('show');
+  var elapsed=Math.floor((Date.now()-gameStart)/1000);
+  var pct=total>0?Math.round(correct/total*100):0;
+  var stars=pct>=80?'3':pct>=50?'2':'1';
+  document.getElementById('resTitle').textContent=pct>=80?'Excellent!':pct>=50?'Good Job!':'Keep Practicing';
+  document.getElementById('resStars').textContent=stars+'/3 Stars';
+  document.getElementById('resScore').textContent=correct+'/'+total;
+  document.getElementById('resAcc').textContent=pct+'%';
+  document.getElementById('resStreak').textContent=bestStreak;
+  var m=Math.floor(elapsed/60),s=elapsed%60;
+  document.getElementById('resTime').textContent=m+':'+String(s).padStart(2,'0');
+  document.getElementById('resWPM').textContent=elapsed>0?Math.round((correct/elapsed)*60):0;
+  var mw=document.getElementById('missedWords');
+  if(missed.length>0){
+    var h='<div style="font-size:12px;color:var(--muted);margin-bottom:6px">Words to review:</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">';
+    missed.forEach(function(m){
+      h+='<span style="background:var(--bg2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:12px">'+m.word+'</span>';
+    });
+    h+='</div>';mw.innerHTML=h;
+  } else {mw.innerHTML='';}
+}
+
+function restartGame(){
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('startScreen').style.display='block';
+}
+
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('gameArea').style.display==='none')return;
+  var key=e.key.toUpperCase();
+  if(key==='ENTER'){checkWord();return;}
+  if(key==='BACKSPACE'){deleteLetter();return;}
+  if(key.length===1&&key>='A'&&key<='Z'){typeLetter(key);}
+});
+</script>
+</body>
+</html>

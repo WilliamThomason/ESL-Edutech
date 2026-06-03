@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Become an ESL Tutor</title>
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.15);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.15);--emerald:#34d399;--emerald-dim:rgba(52,211,153,.15);--violet:#a78bfa;--violet-dim:rgba(167,139,250,.15);--rose:#fb7185;--rose-dim:rgba(251,113,133,.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,6,23,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 0}
+.navbar .inner{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:22px;font-weight:800;text-decoration:none;display:flex;align-items:center;color:var(--text)}
+.logo:hover{text-decoration:none}
+.logo em{color:var(--cyan);font-style:normal}
+.nav-links{display:flex;align-items:center;gap:24px;list-style:none}
+.nav-links a{color:var(--text-muted);font-size:14px;font-weight:500;text-decoration:none}
+.nav-links a:hover{color:var(--text)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all .2s}
+.btn:hover{text-decoration:none}
+.btn-primary{background:#1e3a5f;color:#fff}
+.btn-primary:hover{background:#2a4f7a}
+.btn-cyan{background:var(--cyan);color:var(--bg)}
+.btn-cyan:hover{background:#67e8f9}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border-light)}
+.btn-secondary:hover{background:var(--bg-hover)}
+.btn-large{padding:16px 32px;font-size:16px;border-radius:12px}
+
+/* HERO */
+.hero{padding:140px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(34,211,238,.08) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--emerald-dim);color:var(--emerald);padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:24px;border:1px solid rgba(52,211,153,.2)}
+.hero h1{font-size:52px;font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin-bottom:20px;background:linear-gradient(135deg,#fff 0%,#94a3b8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:18px;color:var(--text-muted);max-width:600px;margin:0 auto 32px;line-height:1.7}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:28px;font-weight:800;color:var(--cyan)}
+.hero-stat .label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* SECTIONS */
+.section{padding:80px 0;border-top:1px solid var(--border)}
+.section-dark{background:var(--bg-card)}
+.section-title{text-align:center;margin-bottom:48px}
+.section-title h2{font-size:32px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.section-title p{font-size:16px;color:var(--text-muted)}
+
+/* REQUIREMENTS */
+.req-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.req-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all .3s}
+.req-card:hover{border-color:var(--border-light);transform:translateY(-2px)}
+.req-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+.req-icon.cyan{background:var(--cyan-dim)}
+.req-icon.amber{background:var(--amber-dim)}
+.req-icon.emerald{background:var(--emerald-dim)}
+.req-icon.violet{background:var(--violet-dim)}
+.req-card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.req-card p{font-size:14px;color:var(--text-muted);line-height:1.6}
+
+/* PROCESS STEPS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.step{text-align:center;padding:24px 16px;position:relative}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--cyan-dim);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;margin:0 auto 16px}
+.step h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.step p{font-size:13px;color:var(--text-muted);line-height:1.6}
+.step-arrow{position:absolute;right:-16px;top:36px;color:var(--text-dim);font-size:20px}
+.step:last-child .step-arrow{display:none}
+
+/* LANGUAGES */
+.lang-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lang-chip{background:var(--bg-card);border:1px solid var(--border);padding:8px 18px;border-radius:20px;font-size:14px;font-weight:500;color:var(--text-muted);transition:all .2s;cursor:default}
+.lang-chip:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* COMPENSATION */
+.comp-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:40px;text-align:center;max-width:600px;margin:0 auto}
+.comp-card .rate{font-size:48px;font-weight:800;color:var(--emerald)}
+.comp-card .rate span{font-size:18px;font-weight:500;color:var(--text-dim)}
+.comp-terms{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid var(--border)}
+.comp-term .num{font-size:20px;font-weight:700}
+.comp-term .label{font-size:12px;color:var(--text-dim)}
+
+/* FAQ */
+.faq-list{max-width:720px;margin:0 auto}
+.faq-item{border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.faq-q{width:100%;text-align:left;padding:18px 20px;background:var(--bg-card);border:none;color:var(--text);font-size:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:inherit}
+.faq-q:hover{background:var(--bg-hover)}
+.faq-q::after{content:"+";color:var(--text-dim);font-size:20px}
+.faq-q.open::after{content:"−"}
+.faq-a{padding:0 20px;max-height:0;overflow:hidden;transition:all .3s;background:var(--bg-card)}
+.faq-a.open{padding:0 20px 18px;max-height:500px}
+.faq-a p{font-size:14px;color:var(--text-muted);line-height:1.7}
+
+/* CTA */
+.cta-section{padding:80px 0;text-align:center;border-top:1px solid var(--background)}
+.cta-box{background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(52,211,153,.08));border:1px solid var(--border);border-radius:16px;padding:60px 40px}
+.cta-box h2{font-size:32px;font-weight:800;margin-bottom:8px}
+.cta-box p{font-size:16px;color:var(--text-muted);margin-bottom:28px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:48px 0 32px}
+.footer-inner{display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:13px;color:var(--text-dim)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--text-muted)}
+
+/* RECRUITMENT STATUS BANNER */
+.recruit-banner{background:var(--amber-dim);border-bottom:1px solid rgba(251,191,36,.2);padding:10px 0;text-align:center;font-size:13px;color:var(--amber)}
+.recruit-banner a{color:var(--amber);text-decoration:underline;font-weight:600}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero h1{font-size:36px}
+  .hero-stats{gap:24px}
+  .req-grid,.steps{grid-template-columns:1fr}
+  .step-arrow{display:none!important}
+  .comp-terms{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="recruit-banner">
+  🎓 We're actively recruiting! Current teacher utilization: <strong>78%</strong> avg · <a href="#apply">Apply now →</a>
+</div>
+
+<nav class="navbar"><div class="container inner">
+  <a href="/site/landing.html" class="logo">Eloqu<em>enta</em></a>
+  <ul class="nav-links">
+    <li><a href="#why">Why Eloquenta</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#compensation">Pay</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#apply" class="btn btn-cyan btn-small">Apply Now</a></li>
+  </ul>
+</div></nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🔥 Hiring ESL Tutors Worldwide</div>
+    <h1>Teach English.<br>On Your Terms.</h1>
+    <p class="hero-sub">Join Eloquenta's global team of elite ESL tutors. Teach 1-on-1 online, set your own schedule, earn competitive rates — and help professionals worldwide master English with the power of their native language.</p>
+    <div class="hero-ctas">
+      <a href="#apply" class="btn btn-cyan btn-large">Start Your Application →</a>
+      <a href="#process" class="btn btn-secondary btn-large">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">€25-55</div><div class="label">Per Hour</div></div>
+      <div class="hero-stat"><div class="num">14</div><div class="label">Levels Taught</div></div>
+      <div class="hero-stat"><div class="num">40+</div><div class="label">Countries</div></div>
+      <div class="hero-stat"><div class="num">96%</div><div class="label">Student Retention</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY ELOQUENTA -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-title"><h2>Why Teach with Eloquenta?</h2><p>We're built differently from every other ESL platform</p></div>
+    <div class="req-grid">
+      <div class="req-card">
+        <div class="req-icon cyan">🌍</div>
+        <h3>Leverage Your Native Language</h3>
+        <p>Our method uses students' L1 as a bridge. Your second language skills aren't just a bonus — they're your superpower. Help German, Spanish, Japanese speakers learn faster through strategic translation.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon amber">📈</div>
+        <h3>Industry Expertise Matters</h3>
+        <p>Doctors, engineers, executives — they need teachers who understand their world. Your professional background in medicine, tech, finance, law makes you invaluable.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon emerald">⏰</div>
+        <h3>Flexible Scheduling</h3>
+        <p>Set your own hours. Teach 10 hours or 40. We match you with students in your timezone. No minimums, no penalties. You're in control.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon violet">🎓</div>
+        <h3>TEFL Certification Included</h3>
+        <p>Don't have a TEFL yet? No problem. Our paid training program includes a recognized TEFL certificate. Invest in yourself — we'll cover the cost.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon cyan">💬</div>
+        <h3>Premium Platform</h3>
+        <p>Our proprietary classroom includes live translation tools, background filters, recording, and an integrated whiteboard. No clunky third-party apps.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon amber">🤝</div>
+        <h3>Real Relationships</h3>
+        <p>1-on-1 means you follow the same student's journey. Watch them progress from shaky first sentences to boardroom confidence. This is teaching with impact.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUIREMENTS -->
+<section class="section section-dark" id="requirements">
+  <div class="container">
+    <div class="section-title"><h2>What We Look For</h2><p>Our bar is high — because our students deserve the best</p></div>
+    <div class="req-grid">
+      <div class="req-card">
+        <div class="req-icon emerald">✅</div>
+        <h3>Native English Speaker</h3>
+        <p>C2-level English proficiency. Native speakers from the US, UK, Canada, Australia, New Zealand, Ireland, South Africa, or equivalent.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon cyan">📚</div>
+        <h3>2+ Years ESL Experience</h3>
+        <p>At an established school, tutoring company, or online platform. We need proven classroom experience — not just travel stories.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon violet">🗣️</div>
+        <h3>Speak a 2nd Language</h3>
+        <p>German, Spanish, French, Japanese, Portuguese, Mandarin — any language your future students speak. B2+ preferred. This is core to our method.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon amber">💼</div>
+        <h3>Professional Background</h3>
+        <p>Experience in medicine, engineering, law, finance, tech, science, or other specialist fields. Your industry knowledge = premium lessons.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon emerald">🎯</div>
+        <h3>Passion & Adaptability</h3>
+        <p>You genuinely care about language learning. You can read a room (even through a screen). You adapt your teaching to individual student needs.</p>
+      </div>
+      <div class="req-card">
+        <div class="req-icon cyan">💻</div>
+        <h3>Tech Comfortable</h3>
+        <p>Stable internet (10+ Mbps), a good webcam, a quiet teaching space, and comfort with browser-based tools. No downloads required for students.</p>
+      </div>
+    </div>
+    <!-- Languages in demand -->
+    <div style="margin-top:48px;text-align:center">
+      <h3 style="font-size:14px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Languages in Highest Demand</h3>
+      <div class="lang-grid">
+        <div class="lang-chip">🇩🇪 German</div>
+        <div class="lang-chip">🇪🇸 Spanish</div>
+        <div class="lang-chip">🇫🇷 French</div>
+        <div class="lang-chip">🇯🇵 Japanese</div>
+        <div class="lang-chip">🇧🇷 Portuguese</div>
+        <div class="lang-chip">🇰🇷 Korean</div>
+        <div class="lang-chip">🇨🇳 Mandarin</div>
+        <div class="lang-chip">🇮🇹 Italian</div>
+        <div class="lang-chip">🇳🇱 Dutch</div>
+        <div class="lang-chip">🇸🇦 Arabic</div>
+        <div class="lang-chip">🇵🇱 Polish</div>
+        <div class="lang-chip">🇹🇷 Turkish</div>
+        <div class="lang-chip">🇷🇺 Russian</div>
+        <div class="lang-chip">🇮🇳 Hindi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section" id="process">
+  <div class="container">
+    <div class="section-title"><h2>The Selection Process</h2><p>4 steps from application to your first lesson</p></div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Apply Online</h3>
+        <p>Submit your CV, tell us about your experience and languages. Takes 15 min.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Screening Quiz</h3>
+        <p>English proficiency test, teaching scenario questions, cultural fit assessment.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Demo Lesson</h3>
+        <p>Record a 15-min mock lesson with one of our scenarios. Show us your teaching style.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Paid Training</h3>
+        <p>Complete our platform training + TEFL module. Get certified. Start teaching.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPENSATION -->
+<section class="section section-dark" id="compensation">
+  <div class="container">
+    <div class="section-title"><h2>Compensation</h2><p>Transparent, competitive, and performance-based</p></div>
+    <div class="comp-card">
+      <div class="rate">€25-55<span>/hour</span></div>
+      <p style="color:var(--text-muted);margin-top:8px">Rate depends on experience, languages, and industry specialization</p>
+      <div class="comp-terms">
+        <div class="comp-term"><div class="num">Monthly</div><div class="label">Payments</div></div>
+        <div class="comp-term"><div class="num">+€5</div><div class="label">Premium Industries</div></div>
+        <div class="comp-term"><div class="num">+10%</div><div class="label">After 20 hrs/week</div></div>
+      </div>
+      <div style="margin-top:24px;font-size:13px;color:var(--text-dim)">
+        💡 Teachers with medical, legal, or technical backgrounds earn the top of the range. TEFL certification bonus paid on completion.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-title"><h2>Common Questions</h2></div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Do I need a TEFL certificate to apply?<span></span></button>
+        <div class="faq-a"><p>No! If you're a native speaker with 2+ years of ESL experience, you can apply without a TEFL. Our paid training program includes a recognized TEFL certificate. You'll earn it during onboarding — we cover the cost.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How many hours do I need to teach?<span></span></button>
+        <div class="faq-a"><p>There's no minimum. Teach as much or as little as you want. Most of our teachers teach 15-25 hours per week. To qualify for the +10% volume bonus, teach at least 20 hours per week.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What's the "live translation" method?<span></span></button>
+        <div class="faq-a"><p>Unlike traditional immersion-only methods, Eloquenta uses strategic L1 translation as a learning bridge. When a student hits a wall, you provide a precise translation in their native language — then practice the concept until the translation is no longer needed. It's faster, clearer, and less frustrating for professionals who need results.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What equipment do I need?<span></span></button>
+        <div class="faq-a"><p>A computer with a stable internet connection (10+ Mbps), a good webcam (720p+), a quality headset with microphone, and a quiet, well-lit teaching space. Everything runs in the browser — no downloads for you or your students.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do students book lessons?<span></span></button>
+        <div class="faq-a"><p>Our operations team handles all booking. Students are matched with you based on their goals, industry, language level, and schedule. You'll see your dashboard with upcoming sessions — you just show up.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Do I need a degree?<span></span></button>
+        <div class="faq-a"><p>A bachelor's degree is preferred but not strictly required if you have significant ESL teaching experience and professional industry expertise. What matters most is your ability to teach effectively and connect with students.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How does recruitment timing work?<span></span></button>
+        <div class="faq-a"><p>We open recruitment in batches. When our current teachers reach an average of 20+ booked hours per week, we know we need more capacity. The banner at the top of this page shows our current utilization. If it says "Hiring," we want to hear from you.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="apply">
+  <div class="container">
+    <div class="cta-box">
+      <h2>Ready to Join?</h2>
+      <p>Complete your application in under 15 minutes. No commitments — just tell us about yourself.</p>
+      <a href="apply.html" class="btn btn-cyan btn-large">Start Your Application →</a>
+      <p style="margin-top:16px;font-size:13px;color:var(--text-dim)">Questions? <a href="mailto:recruit@Eloquenta.com">recruit@Eloquenta.com</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-copy">© 2026 Eloquenta. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="landing.html">Home</a>
+      <a href="dashboard.html">Student Login</a>
+      <a href="apply.html">Apply to Teach</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn){
+  var a=btn.nextElementSibling;
+  var isOpen=a.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-a').forEach(function(el){el.classList.remove('open')});
+  document.querySelectorAll('.faq-q').forEach(function(el){el.classList.remove('open')});
+  // Toggle this one
+  if(!isOpen){a.classList.add('open');btn.classList.add('open')}
+}
+</script>
+</body>
+</html>

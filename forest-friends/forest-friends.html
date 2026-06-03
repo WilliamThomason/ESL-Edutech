@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Friends — English Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #e0f2f1;
+            --primary: #2e7d32;
+            --accent: #ff8f00;
+            --text: #1b5e20;
+            --soft-white: #ffffff;
+            --font-main: 'Quicksand', sans-serif;
+            --font-display: 'Fredoka One', cursive;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-main);
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(27,94,32,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(76,175,80,0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 40%, #a5d6a7 70%, #81c784 100%);
+        }
+        .forest-header {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 16px 20px;
+            text-align: center;
+            font-size: clamp(20px, 4vw, 32px);
+            font-family: var(--font-display);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.35); }
+        #game-area {
+            width: 92%;
+            max-width: 700px;
+            margin-top: 30px;
+            margin-bottom: 40px;
+            background: var(--soft-white);
+            padding: 30px 24px 36px;
+            border-radius: 32px;
+            border: 6px solid #a5d6a7;
+            box-shadow: 0 12px 0 #2e7d32, 0 20px 40px rgba(0,0,0,0.08);
+            text-align: center;
+            position: relative;
+        }
+        .topic-label {
+            display: inline-block;
+            background: #e8f5e9;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            font-family: var(--font-main);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #43a047, #66bb6a);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+        .character-box {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .character-container {
+            width: 150px;
+            height: 150px;
+            background: #fff9c4;
+            border-radius: 50%;
+            border: 6px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .bubble {
+            position: absolute;
+            top: -4px;
+            left: 55%;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 18px;
+            border: 3px solid var(--primary);
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-family: var(--font-display);
+            max-width: 220px;
+            text-align: center;
+        }
+        .bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 18px;
+            border: 8px solid transparent;
+            border-top-color: var(--primary);
+        }
+        .score-display {
+            font-size: 14px;
+            color: #558b2f;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .option-btn {
+            padding: 20px 16px;
+            font-size: 17px;
+            font-weight: 700;
+            border-radius: 20px;
+            border: none;
+            background: #c8e6c9;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-display);
+            box-shadow: 0 5px 0 #81c784;
+        }
+        .option-btn:hover {
+            transform: translateY(-4px);
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 7px 0 #e65100;
+        }
+        .option-btn:active { transform: translateY(0); }
+        .correct {
+            background: #66bb6a !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #388e3c !important;
+            animation: sparkle 0.5s ease;
+        }
+        .wrong {
+            background: #e57373 !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #d32f2f !important;
+            animation: shake 0.3s ease;
+        }
+        @keyframes sparkle {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+            100% { filter: brightness(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        /* Topic select screen */
+        #topic-select {
+            width: 92%;
+            max-width: 700px;
+            margin-top: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .topic-select-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .topic-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .topic-btn {
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: 2px solid #a5d6a7;
+            background: white;
+            color: var(--primary);
+            font-family: var(--font-display);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 0 #c8e6c9;
+        }
+        .topic-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 0 #e65100;
+            transform: translateY(-3px);
+        }
+        /* Win screen */
+        .win-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        .win-screen h1 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .win-screen p {
+            font-size: 18px;
+            color: #558b2f;
+            margin-bottom: 24px;
+        }
+        .play-again-btn {
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 20px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            font-family: var(--font-display);
+            box-shadow: 0 5px 0 #e65100;
+            transition: all 0.2s;
+        }
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #e65100;
+        }
+}
+</style>
+</head>
+<body>
+
+    <div class="forest-header">
+        <button class="back-btn" onclick="goBack()">◀ Back</button>
+        <span>🌳 Forest Friends: English Adventure</span>
+    </div>
+
+    <div id="topic-select">
+        <div class="topic-select-title">📚 Choose a Topic!</div>
+        <div class="topic-btns" id="topic-btns"></div>
+    </div>
+
+    <div id="game-area" style="display:none">
+        <div class="topic-label" id="topic-label"></div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="score-display" id="score-display"></div>
+        <div class="character-box">
+            <div class="character-container" id="char"></div>
+            <div class="bubble" id="activity"></div>
+        </div>
+        <div class="options" id="options"></div>
+    </div>
+
+    <script>
+        const TOPICS = {"Animals": [["🐰", "What is this animal?", "Rabbit", "Rabbit", "Lion", "Bear", "Dog"], ["🐱", "What sound does a cat make?", "Meow", "Meow", "Woof", "Moo", "Quack"], ["🐶", "What is man's best friend?", "Dog", "Dog", "Cat", "Fish", "Bird"], ["🐮", "What animal gives us milk?", "Cow", "Cow", "Horse", "Sheep", "Pig"], ["🐷", "What animal says 'oink oink'?", "Pig", "Pig", "Duck", "Dog", "Cat"], ["🐔", "What animal lays eggs?", "Chicken", "Chicken", "Cow", "Horse", "Pig"], ["🦆", "What sound does a duck make?", "Quack", "Quack", "Moo", "Woof", "Meow"], ["🐴", "What animal runs fast and has a mane?", "Horse", "Horse", "Cow", "Sheep", "Goat"], ["🐑", "What animal gives us wool?", "Sheep", "Sheep", "Dog", "Cat", "Fish"], ["🐘", "What is the biggest land animal?", "Elephant", "Elephant", "Cat", "Dog", "Rabbit"], ["🦁", "What animal is the king of the jungle?", "Lion", "Lion", "Bear", "Wolf", "Fox"], ["🐻", "What big animal loves honey?", "Bear", "Bear", "Bird", "Fish", "Frog"], ["🐸", "What animal jumps and says 'ribbit'?", "Frog", "Frog", "Dog", "Cat", "Duck"], ["🐟", "What animal lives in water?", "Fish", "Fish", "Dog", "Bird", "Cat"], ["🐦", "What animal can fly?", "Bird", "Bird", "Dog", "Fish", "Cow"], ["🦋", "What pretty insect has colorful wings?", "Butterfly", "Butterfly", "Dog", "Cat", "Fish"], ["🐢", "What animal is very slow?", "Turtle", "Turtle", "Horse", "Dog", "Cat"], ["🐵", "What animal likes bananas?", "Monkey", "Monkey", "Cow", "Pig", "Sheep"], ["🦊", "What animal is red and clever?", "Fox", "Fox", "Bear", "Deer", "Wolf"], ["🐿️", "What small animal hides nuts?", "Squirrel", "Squirrel", "Dog", "Cat", "Bird"]], "Colors": [["🍎", "What color is an apple?", "Red", "Red", "Blue", "Green", "Yellow"], ["☀️", "What color is the sun?", "Yellow", "Yellow", "Red", "Blue", "Green"], ["🌊", "What color is the ocean?", "Blue", "Blue", "Red", "Yellow", "Green"], ["🌿", "What color are leaves?", "Green", "Green", "Blue", "Red", "Orange"], ["🍊", "What color is an orange?", "Orange", "Orange", "Red", "Yellow", "Blue"], ["🍇", "What color are grapes?", "Purple", "Purple", "Red", "Yellow", "Blue"], ["🌸", "What color is this flower?", "Pink", "Pink", "Blue", "Green", "Brown"], ["🖤", "What color is the night sky?", "Black", "Black", "White", "Blue", "Red"], ["🤍", "What color is snow?", "White", "White", "Blue", "Red", "Green"], ["🦓", "What colors does a zebra have?", "Black and white", "Black and white", "Red and blue", "Green and yellow", "Pink and purple"], ["🍫", "What color is chocolate?", "Brown", "Brown", "Red", "Blue", "Green"], ["🧡", "Red + yellow = what color?", "Orange", "Orange", "Purple", "Green", "Pink"], ["💙", "What color is the sky on a clear day?", "Blue", "Blue", "Green", "Red", "Yellow"], ["🥕", "What color is a carrot?", "Orange", "Orange", "Red", "Green", "Yellow"], ["🌹", "What color is a rose?", "Red", "Red", "Blue", "Yellow", "Green"], ["🥚", "What color is an egg?", "White", "White", "Yellow", "Brown", "Blue"], ["🐼", "What colors is a panda?", "Black and white", "Black and white", "Brown and white", "Red and black", "Green and yellow"], ["💜", "Blue + red = what color?", "Purple", "Purple", "Orange", "Green", "Pink"], ["🌽", "What color is corn?", "Yellow", "Yellow", "Red", "Blue", "Green"], ["🥬", "What color is lettuce?", "Green", "Green", "Red", "Yellow", "Orange"]], "Numbers": [["1️⃣", "What comes after 1?", "2", "2", "3", "5", "10"], ["5️⃣", "How many fingers on one hand?", "5", "5", "3", "4", "6"], ["🔟", "What is ten minus one?", "9", "9", "8", "10", "11"], ["3️⃣", "How many sides does a triangle have?", "3", "3", "4", "5", "2"], ["4️⃣", "How many legs does a dog have?", "4", "4", "2", "3", "5"], ["2️⃣", "How many eyes do you have?", "2", "2", "1", "3", "4"], ["7️⃣", "How many days in a week?", "7", "7", "5", "6", "10"], ["6️⃣", "What is 5 + 1?", "6", "6", "7", "5", "4"], ["8️⃣", "How many legs does a spider have?", "8", "8", "6", "4", "10"], ["9️⃣", "What is 10 minus 1?", "9", "9", "8", "10", "7"], ["0️⃣", "What number means 'nothing'?", "Zero", "Zero", "One", "Ten", "Five"], ["🔟", "How many toes do you have?", "10", "10", "5", "8", "6"], ["🔢", "How many months in a year?", "12", "12", "10", "6", "7"], ["🔢", "What is 3 + 2?", "5", "5", "4", "6", "7"], ["🔢", "What is 2 + 2?", "4", "4", "3", "5", "6"], ["🔢", "What comes after 10?", "11", "11", "12", "9", "13"], ["🔢", "What number is close to 100?", "99", "99", "90", "10", "9"], ["🔢", "50 + 50 = ?", "100", "100", "50", "90", "10"], ["🔢", "How many fingers and toes together?", "20", "20", "10", "15", "30"], ["🔢", "What is 10 + 10?", "20", "20", "10", "15", "30"]], "Family": [["👨", "What do you call your father's brother?", "Uncle", "Uncle", "Cousin", "Brother", "Grandpa"], ["👩", "What do you call your mother and father?", "Parents", "Parents", "Friends", "Teachers", "Sisters"], ["👧", "A girl in your family who is not you?", "Sister", "Sister", "Brother", "Uncle", "Cousin"], ["👦", "A boy in your family who is not you?", "Brother", "Brother", "Sister", "Aunt", "Uncle"], ["👴", "Your father's father is your...", "Grandpa", "Grandpa", "Uncle", "Brother", "Father"], ["👵", "Your mother's mother is your...", "Grandma", "Grandma", "Aunt", "Sister", "Mother"], ["👶", "A very young baby is called a...", "Baby", "Baby", "Man", "Woman", "Boy"], ["👨‍👩‍👧‍👦", "Mother, father, and children make a...", "Family", "Family", "School", "Team", "Class"], ["👩", "Your father's wife is your...", "Mother", "Mother", "Sister", "Aunt", "Cousin"], ["👨", "Your mother's husband is your...", "Father", "Father", "Uncle", "Brother", "Grandpa"], ["👧", "Your brother's daughter is your...", "Niece", "Niece", "Sister", "Mother", "Cousin"], ["👩", "A mother and a daughter are...", "Women", "Women", "Men", "Boys", "Babies"], ["👦", "Two brothers are...", "Boys", "Boys", "Girls", "Men", "Women"], ["👴", "Grandpa and grandma are...", "Old", "Old", "Young", "Tall", "Small"], ["👫", "A husband and wife are...", "Married", "Married", "Friends", "Students", "Doctors"], ["👶", "A baby boy is called a...", "Boy", "Boy", "Girl", "Man", "Woman"], ["👶", "A baby girl is called a...", "Girl", "Girl", "Boy", "Man", "Woman"], ["👨‍👩‍👧‍👦", "Your uncle's children are your...", "Cousins", "Cousins", "Brothers", "Sisters", "Friends"], ["🐕", "A family pet dog is part of the...", "Family", "Family", "School", "Ocean", "Forest"], ["🏠", "The people you live with are your...", "Family", "Family", "Class", "Team", "Group"]], "Food": [["🍎", "What fruit is red and round?", "Apple", "Apple", "Banana", "Orange", "Grape"], ["🍌", "What fruit is yellow and long?", "Banana", "Banana", "Apple", "Lemon", "Orange"], ["🍞", "What do you make sandwiches with?", "Bread", "Bread", "Milk", "Water", "Juice"], ["🧀", "What yellow food comes from milk?", "Cheese", "Cheese", "Bread", "Rice", "Apple"], ["🍚", "What white grain do people eat?", "Rice", "Rice", "Bread", "Cheese", "Egg"], ["🥚", "What food comes from chickens?", "Eggs", "Eggs", "Milk", "Bread", "Rice"], ["🥛", "What white drink comes from cows?", "Milk", "Milk", "Juice", "Water", "Tea"], ["🍕", "What round food comes from Italy?", "Pizza", "Pizza", "Bread", "Eggs", "Rice"], ["🍝", "What long food from Italy do you eat with a fork?", "Pasta", "Pasta", "Bread", "Rice", "Eggs"], ["🥕", "What orange vegetable do rabbits love?", "Carrot", "Carrot", "Apple", "Egg", "Cheese"], ["🍦", "What cold sweet food?", "Ice cream", "Ice cream", "Bread", "Rice", "Carrot"], ["🍪", "What sweet baked snack?", "Cookie", "Cookie", "Carrot", "Cheese", "Bread"], ["🍔", "What fast food has a bun and meat?", "Burger", "Burger", "Pizza", "Egg", "Rice"], ["🍊", "What fruit do you squeeze for juice?", "Orange", "Orange", "Banana", "Apple", "Carrot"], ["🥗", "A plate of vegetables is a...", "Salad", "Salad", "Soup", "Pizza", "Burger"], ["🍗", "What meat comes from a chicken?", "Chicken", "Chicken", "Fish", "Beef", "Bread"], ["🐟", "What food comes from the sea?", "Fish", "Fish", "Chicken", "Beef", "Bread"], ["🍫", "What brown sweet food?", "Chocolate", "Chocolate", "Bread", "Milk", "Carrot"], ["🥔", "What vegetable makes chips?", "Potato", "Potato", "Carrot", "Apple", "Banana"], ["🍩", "What sweet treat is round with a hole?", "Donut", "Donut", "Cookie", "Apple", "Bread"]], "School": [["📚", "What do you read in school?", "Books", "Books", "Pizza", "Cars", "Shoes"], ["✏️", "What do you write with?", "Pencil", "Pencil", "Cup", "Hat", "Ball"], ["👩‍🏫", "Who teaches you at school?", "Teacher", "Teacher", "Doctor", "Chef", "Driver"], ["🎒", "What do you carry your books in?", "Backpack", "Backpack", "Cup", "Shoe", "Hat"], ["🏫", "Where do children go to learn?", "School", "School", "Park", "Beach", "Church"], ["📖", "A book with stories is a...", "Storybook", "Storybook", "Newspaper", "Menu", "Letter"], ["📝", "What do you do with homework?", "Write", "Write", "Eat", "Sleep", "Jump"], ["🎨", "What class has painting?", "Art", "Art", "Math", "Science", "Music"], ["🔢", "What class has adding and subtracting?", "Math", "Math", "Art", "Music", "English"], ["🎵", "What class has singing?", "Music", "Music", "Math", "Art", "Science"], ["🧪", "What class has experiments?", "Science", "Science", "Art", "Math", "Music"], ["🖍️", "What do you color with?", "Crayons", "Crayons", "Fork", "Shoe", "Cup"], ["📐", "What tool measures angles?", "Ruler", "Ruler", "Cup", "Hat", "Ball"], ["📏", "What do you use to draw a straight line?", "Ruler", "Ruler", "Cup", "Spoon", "Hat"], ["🏀", "What sport do you play in the gym?", "Basketball", "Basketball", "Swimming", "Reading", "Writing"], ["⏰", "What tells you when school starts?", "Clock", "Clock", "Book", "Pencil", "Bag"], ["🖐️", "What do you raise to answer a question?", "Hand", "Hand", "Foot", "Nose", "Ear"], ["🗂️", "Where do you keep your papers?", "Folder", "Folder", "Bag", "Cup", "Hat"], ["🎓", "What do students want to do?", "Learn", "Learn", "Sleep", "Eat", "Drive"], ["📋", "A paper with questions is a...", "Test", "Test", "Book", "Menu", "Letter"]], "Home": [["🏠", "Where do you live?", "House", "House", "School", "Park", "Beach"], ["🚪", "What do you open to enter a room?", "Door", "Door", "Window", "Roof", "Floor"], ["🪟", "What do you look through to see outside?", "Window", "Window", "Door", "Wall", "Floor"], ["🛏️", "Where do you sleep?", "Bed", "Bed", "Chair", "Table", "Floor"], ["🛋️", "What do you sit on in the living room?", "Sofa", "Sofa", "Bed", "Lamp", "Stove"], ["🍳", "Where do you cook food?", "Kitchen", "Kitchen", "Bedroom", "Bathroom", "Garden"], ["🚿", "Where do you take a shower?", "Bathroom", "Bathroom", "Kitchen", "Bedroom", "Garden"], ["🛁", "What is bigger than a shower?", "Bathtub", "Bathtub", "Chair", "Table", "Lamp"], ["🍽️", "Where do you eat dinner?", "Table", "Table", "Bed", "Lamp", "Sofa"], ["💡", "What gives you light?", "Lamp", "Lamp", "Bed", "Chair", "Door"], ["🪑", "What do you sit on?", "Chair", "Chair", "Lamp", "Bed", "Table"], ["🪞", "What do you look into to see yourself?", "Mirror", "Mirror", "Window", "Door", "Wall"], ["📺", "What do you watch shows on?", "TV", "TV", "Lamp", "Bed", "Chair"], ["🔑", "What opens a door lock?", "Key", "Key", "Pen", "Cup", "Hat"], ["🧹", "What do you use to clean the floor?", "Broom", "Broom", "Cup", "Pen", "Key"], ["🏠", "A room for sleeping is a...", "Bedroom", "Bedroom", "Kitchen", "Garden", "Bathroom"], ["🌳", "The area outside your house is the...", "Garden", "Garden", "Kitchen", "Bedroom", "Bathroom"], ["🏠", "The top of a house is the...", "Roof", "Roof", "Floor", "Wall", "Door"], ["🧊", "What keeps food cold?", "Fridge", "Fridge", "Oven", "Lamp", "TV"], ["🔥", "What keeps you warm in winter?", "Fire", "Fire", "Fan", "Fridge", "TV"]], "Clothes": [["👕", "What do you wear on your body?", "Shirt", "Shirt", "Hat", "Sock", "Bag"], ["👖", "What do you wear on your legs?", "Pants", "Pants", "Hat", "Shirt", "Sock"], ["👟", "What do you wear on your feet?", "Shoes", "Shoes", "Hat", "Shirt", "Pants"], ["🧢", "What do you wear on your head?", "Hat", "Hat", "Shoes", "Pants", "Gloves"], ["🧦", "What do you wear inside your shoes?", "Socks", "Socks", "Hat", "Gloves", "Scarf"], ["🧤", "What do you wear on your hands in winter?", "Gloves", "Gloves", "Socks", "Hat", "Shoes"], ["🧣", "What do you wear around your neck?", "Scarf", "Scarf", "Belt", "Hat", "Sock"], ["👗", "What do girls wear that is long and pretty?", "Dress", "Dress", "Hat", "Shoes", "Belt"], ["👔", "What do men wear around their neck for work?", "Tie", "Tie", "Belt", "Sock", "Scarf"], ["👒", "A hat for sunny days is a...", "Sun hat", "Sun hat", "Boot", "Glove", "Sock"], ["🥾", "What do you wear to walk in the mountains?", "Boots", "Boots", "Sandals", "Socks", "Gloves"], ["🩱", "What do you wear to swim?", "Swimsuit", "Swimsuit", "Coat", "Sweater", "Tie"], ["🧥", "What warm clothing do you wear outside?", "Coat", "Coat", "Sock", "Hat", "Belt"], ["👚", "A woman's top is a...", "Blouse", "Blouse", "Belt", "Sock", "Hat"], ["🩳", "Short pants for summer are...", "Shorts", "Shorts", "Pants", "Gloves", "Socks"], ["👖", "Blue denim pants are called...", "Jeans", "Jeans", "Socks", "Gloves", "Hat"], ["🧦", "Long socks go up to your...", "Knees", "Knees", "Hands", "Head", "Ears"], ["🧢", "A cap with a front brim is a...", "Baseball cap", "Baseball cap", "Glove", "Scarf", "Sock"], ["🕶️", "What do you wear on your eyes in the sun?", "Sunglasses", "Sunglasses", "Gloves", "Socks", "Hat"], ["🧵", "What do you sew with?", "Needle", "Needle", "Cup", "Hat", "Shoe"]], "Weather": [["☀️", "What is the weather when the sun is out?", "Sunny", "Sunny", "Rainy", "Cloudy", "Snowy"], ["🌧️", "What is the weather when water falls from the sky?", "Rainy", "Rainy", "Sunny", "Windy", "Hot"], ["☁️", "What do you see in the sky when it's not clear?", "Clouds", "Clouds", "Sun", "Moon", "Stars"], ["❄️", "What falls from the sky in winter?", "Snow", "Snow", "Rain", "Leaves", "Flowers"], ["💨", "What is the weather when the air moves fast?", "Windy", "Windy", "Rainy", "Sunny", "Snowy"], ["⛈️", "What do you hear during a storm?", "Thunder", "Thunder", "Music", "Laughter", "Singing"], ["🌈", "What do you see in the sky after rain?", "Rainbow", "Rainbow", "Cloud", "Sun", "Moon"], ["🌡️", "How do you measure how hot or cold it is?", "Temperature", "Temperature", "Wind", "Rain", "Sun"], ["🌤️", "A little sun and some clouds is...", "Partly cloudy", "Partly cloudy", "Very rainy", "Very snowy", "Very hot"], ["🥶", "How do you feel when it's very cold?", "Cold", "Cold", "Hot", "Happy", "Sad"], ["🥵", "How do you feel when it's very hot?", "Hot", "Hot", "Cold", "Happy", "Sad"], ["🌂", "What do you open when it rains?", "Umbrella", "Umbrella", "Hat", "Bag", "Coat"], ["🧤", "What do you wear on cold days?", "Gloves", "Gloves", "Sunglasses", "Sandals", "T-shirt"], ["🌫️", "What is low clouds near the ground?", "Fog", "Fog", "Rain", "Snow", "Wind"], ["🧊", "What is very cold frozen water?", "Ice", "Ice", "Fire", "Sand", "Water"], ["🌞", "Summer is usually...", "Hot", "Hot", "Cold", "Wet", "Snowy"], ["🌬️", "A machine that blows air to cool you is a...", "Fan", "Fan", "Fridge", "Oven", "Lamp"], ["🔥", "What keeps you warm when it's cold?", "Fire", "Fire", "Fan", "Fridge", "Umbrella"], ["☔", "When it rains you need an...", "Umbrella", "Umbrella", "Hat", "Bag", "Shoe"], ["📺", "Where can you check tomorrow's weather?", "TV", "TV", "Fridge", "Cup", "Bag"]], "Body": [["👀", "What do you see with?", "Eyes", "Eyes", "Ears", "Nose", "Mouth"], ["👂", "What do you hear with?", "Ears", "Ears", "Eyes", "Nose", "Teeth"], ["👃", "What do you smell with?", "Nose", "Nose", "Eyes", "Ears", "Tongue"], ["👅", "What do you taste with?", "Tongue", "Tongue", "Nose", "Ears", "Eyes"], ["🖐️", "How many fingers on one hand?", "Five", "Five", "Three", "Four", "Six"], ["🦵", "What do you walk on?", "Legs", "Legs", "Arms", "Hands", "Fingers"], ["💪", "What do you use to lift things?", "Arms", "Arms", "Legs", "Ears", "Nose"], ["🦶", "How many feet do you have?", "Two", "Two", "Three", "Four", "Five"], ["🦷", "What do you brush every day?", "Teeth", "Teeth", "Hair", "Ears", "Hands"], ["🧠", "What helps you think?", "Brain", "Brain", "Heart", "Lungs", "Stomach"], ["❤️", "What organ pumps blood?", "Heart", "Heart", "Brain", "Lungs", "Hand"], ["🤚", "The palm of your hand is on the ___.", "Front", "Front", "Back", "Side", "Top"], ["🦵", "The middle joint of your leg is your...", "Knee", "Knee", "Neck", "Wrist", "Ear"], ["🧍", "The top of your body is your...", "Head", "Head", "Foot", "Hand", "Leg"], ["👄", "What do you speak with?", "Mouth", "Mouth", "Nose", "Eyes", "Ears"], ["💅", "What grows on the ends of your fingers?", "Nails", "Nails", "Hair", "Teeth", "Skin"], ["🦻", "Your ear is ___ your head.", "On", "On", "In", "Under", "Above"], ["🤚", "What do you use to clap?", "Hands", "Hands", "Feet", "Ears", "Nose"], ["🧍", "A person with short hair has ___ hair.", "Short", "Short", "Long", "Blue", "Green"], ["🫁", "What helps you breathe?", "Lungs", "Lungs", "Heart", "Brain", "Stomach"]], "Sports": [["⚽", "What sport uses a round ball and feet?", "Soccer", "Soccer", "Tennis", "Swimming", "Running"], ["🏀", "What sport has a hoop and a bouncing ball?", "Basketball", "Basketball", "Soccer", "Tennis", "Swimming"], ["🏊", "What do you do in a pool?", "Swim", "Swim", "Run", "Jump", "Sleep"], ["🏃", "What do you do with your legs very fast?", "Run", "Run", "Swim", "Sleep", "Eat"], ["🎾", "What sport uses a racket and a small ball?", "Tennis", "Tennis", "Soccer", "Basketball", "Swimming"], ["⚾", "What sport uses a bat and ball?", "Baseball", "Baseball", "Soccer", "Tennis", "Swimming"], ["🚴", "What do you ride with two wheels?", "Bicycle", "Bicycle", "Car", "Boat", "Plane"], ["🤸", "What sport does flips and jumps?", "Gymnastics", "Gymnastics", "Soccer", "Tennis", "Swimming"], ["🥊", "What sport do you use gloves and punch?", "Boxing", "Boxing", "Swimming", "Running", "Cycling"], ["⛳", "What sport uses small clubs and a tiny ball?", "Golf", "Golf", "Tennis", "Soccer", "Hockey"], ["🏐", "What sport do you hit a ball over a net with your hands?", "Volleyball", "Volleyball", "Tennis", "Golf", "Soccer"], ["🏈", "What ball is oval-shaped?", "Rugby ball", "Rugby ball", "Soccer ball", "Tennis ball", "Golf ball"], ["🤺", "What sport uses a sword?", "Fencing", "Fencing", "Swimming", "Running", "Cycling"], ["🏋️", "What do you do to lift heavy weights?", "Lift", "Lift", "Swim", "Run", "Sleep"], ["🧘", "What exercise focuses on breathing and calm?", "Yoga", "Yoga", "Boxing", "Running", "Swimming"], ["🎯", "What sport throws small sharp things?", "Darts", "Darts", "Soccer", "Tennis", "Golf"], ["🏆", "What does the winner get?", "Trophy", "Trophy", "Penalty", "Warning", "Shoe"], ["🥇", "What color medal is first place?", "Gold", "Gold", "Silver", "Bronze", "Blue"], ["⚽", "How many players on a soccer team?", "Eleven", "Eleven", "Five", "Seven", "Three"], ["🤝", "What is it when two teams have the same score?", "Draw", "Draw", "Win", "Lose", "Penalty"]], "Music": [["🎵", "What do you hear when someone plays an instrument?", "Music", "Music", "Rain", "Wind", "Traffic"], ["🎸", "What instrument has strings and you strum it?", "Guitar", "Guitar", "Drums", "Piano", "Flute"], ["🎹", "What instrument has black and white keys?", "Piano", "Piano", "Guitar", "Drums", "Violin"], ["🥁", "What instrument do you hit with sticks?", "Drums", "Drums", "Piano", "Guitar", "Flute"], ["🎤", "What do singers hold in front of their mouth?", "Microphone", "Microphone", "Guitar", "Drum", "Book"], ["🎻", "What small instrument do you hold under your chin?", "Violin", "Violin", "Drums", "Flute", "Piano"], ["🎷", "What brass instrument has a curved shape?", "Saxophone", "Saxophone", "Violin", "Drums", "Piano"], ["🎺", "What brass instrument is bright and loud?", "Trumpet", "Trumpet", "Flute", "Violin", "Guitar"], ["🎶", "A group of musical notes is a...", "Melody", "Melody", "Story", "Picture", "Game"], ["🎵", "What do you call the words of a song?", "Lyrics", "Lyrics", "Book", "Paper", "Newspaper"], ["👂", "What do you do with music?", "Listen", "Listen", "Eat", "Sleep", "Run"], ["💃", "What do you do when music makes you move?", "Dance", "Dance", "Sleep", "Read", "Cook"], ["🎼", "What do musicians read when they play?", "Sheet music", "Sheet music", "Newspaper", "Book", "Menu"], ["🎵", "How loud or soft music is called...", "Volume", "Volume", "Color", "Size", "Weight"], ["🥁", "Tap tap tap — that is a...", "Rhythm", "Rhythm", "Story", "Color", "Smell"], ["🎤", "A person who sings is a...", "Singer", "Singer", "Driver", "Cook", "Doctor"], ["🎸", "Rock music often uses a...", "Guitar", "Guitar", "Flute", "Violin", "Microphone"], ["🎵", "Classical music often uses a...", "Violin", "Violin", "Drums", "Microphone", "Guitar"], ["🎧", "What do you wear on your ears to listen to music?", "Headphones", "Headphones", "Hat", "Gloves", "Glasses"], ["🎪", "A big concert is sometimes called a...", "Show", "Show", "Test", "Homework", "Lunch"]], "Nature": [["🌳", "What tall plant has leaves and branches?", "Tree", "Tree", "Stone", "River", "Mountain"], ["🌸", "What blooms and smells nice in spring?", "Flower", "Flower", "Stone", "River", "Cloud"], ["⛰️", "What is very high and rocky?", "Mountain", "Mountain", "River", "Flower", "Tree"], ["🌊", "What is a very large area of water?", "Ocean", "Ocean", "Mountain", "Tree", "Stone"], ["🏞️", "A river flows through a...", "Valley", "Valley", "Roof", "Table", "Chair"], ["🌿", "What is the green part of a plant?", "Leaf", "Leaf", "Stone", "River", "Cloud"], ["🪨", "What is a hard piece from the ground?", "Rock", "Rock", "Water", "Air", "Fire"], ["🏝️", "Land surrounded by water is an...", "Island", "Island", "Mountain", "Valley", "Forest"], ["🌲", "A place with many trees is a...", "Forest", "Forest", "Desert", "Ocean", "City"], ["🏜️", "A very dry place with sand is a...", "Desert", "Desert", "Forest", "Ocean", "Garden"], ["💧", "What falls from clouds?", "Rain", "Rain", "Snow", "Wind", "Fire"], ["☀️", "What gives us light and heat?", "Sun", "Sun", "Moon", "Star", "Cloud"], ["🌙", "What shines at night?", "Moon", "Moon", "Sun", "Star", "Cloud"], ["⭐", "What twinkles in the night sky?", "Star", "Star", "Moon", "Sun", "Cloud"], ["🌋", "A mountain that can erupt is a...", "Volcano", "Volcano", "River", "Forest", "Garden"], ["🌊", "A small river of water in nature is a...", "Stream", "Stream", "Mountain", "Forest", "Desert"], ["🌻", "A yellow flower that faces the sun?", "Sunflower", "Sunflower", "Tree", "Stone", "Cloud"], ["🌧️", "What do you call water that falls from clouds?", "Rain", "Rain", "Snow", "Wind", "Fog"], ["🌈", "What appears in the sky after rain and sun?", "Rainbow", "Rainbow", "Cloud", "Star", "Moon"], ["🌱", "What is a young plant?", "Seedling", "Seedling", "Mountain", "River", "Stone"]], "Transport": [["🚗", "What has four wheels and drives on roads?", "Car", "Car", "Plane", "Boat", "Bicycle"], ["🚌", "What big vehicle carries many people?", "Bus", "Bus", "Car", "Bicycle", "Plane"], ["✈️", "What flies in the sky with passengers?", "Airplane", "Airplane", "Car", "Boat", "Bicycle"], ["🚂", "What long vehicle runs on tracks?", "Train", "Train", "Car", "Bus", "Boat"], ["🚢", "What big vehicle sails on water?", "Ship", "Ship", "Car", "Plane", "Bicycle"], ["🚲", "What has two wheels and you pedal it?", "Bicycle", "Bicycle", "Car", "Bus", "Plane"], ["🛵", "What fast vehicle has two wheels and a motor?", "Motorcycle", "Motorcycle", "Bicycle", "Bus", "Ship"], ["🚁", "What flying machine has a spinning blade on top?", "Helicopter", "Helicopter", "Airplane", "Car", "Boat"], ["🚕", "What yellow car takes you places for money?", "Taxi", "Taxi", "Bus", "Train", "Bicycle"], ["🚀", "What fast vehicle goes to space?", "Rocket", "Rocket", "Car", "Ship", "Bus"], ["🛳️", "A big ship for vacation is a...", "Cruise ship", "Cruise ship", "Car", "Bus", "Bicycle"], ["🚇", "What train goes underground in a city?", "Subway", "Subway", "Bus", "Ship", "Plane"], ["⛵", "What boat uses wind to move?", "Sailboat", "Sailboat", "Car", "Plane", "Train"], ["🚛", "What big truck carries heavy things?", "Truck", "Truck", "Car", "Bicycle", "Ship"], ["🛴", "What do you push with your foot to ride?", "Scooter", "Scooter", "Car", "Plane", "Boat"], ["🚑", "What vehicle takes sick people to hospital?", "Ambulance", "Ambulance", "Bus", "Car", "Taxi"], ["🚒", "What vehicle puts out fires?", "Fire truck", "Fire truck", "Car", "Bus", "Taxi"], ["🚓", "What vehicle do police drive?", "Police car", "Police car", "Taxi", "Bus", "Train"], ["✈️", "Where do you go to catch a plane?", "Airport", "Airport", "Station", "Harbor", "Garage"], ["🚉", "Where do you go to catch a train?", "Station", "Station", "Airport", "Harbor", "Garage"]], "Hobbies": [["📖", "What do you do with a book?", "Read", "Read", "Cook", "Drive", "Swim"], ["🎮", "What do children like to play on a screen?", "Games", "Games", "Homework", "Shopping", "Cooking"], ["🎨", "What do you do with paint and a brush?", "Paint", "Paint", "Read", "Drive", "Cook"], ["📸", "What do you take with a camera?", "Photos", "Photos", "Books", "Food", "Music"], ["🎣", "What do you do with a rod and line?", "Fish", "Fish", "Fly", "Drive", "Cook"], ["🏕️", "What do you do with a tent and sleeping bag?", "Camp", "Camp", "Read", "Dance", "Cook"], ["🧩", "What do you do with many small pieces?", "Puzzle", "Puzzle", "Cooking", "Driving", "Swimming"], ["🏊", "What do you do in water for fun?", "Swim", "Swim", "Run", "Paint", "Read"], ["📺", "What do you do to watch a movie?", "Watch", "Watch", "Cook", "Run", "Paint"], ["🎤", "What fun activity involves singing?", "Karaoke", "Karaoke", "Cooking", "Reading", "Cycling"], ["🌱", "What hobby is about growing plants?", "Gardening", "Gardening", "Cooking", "Reading", "Driving"], ["🚶", "Walking in nature is called...", "Hiking", "Hiking", "Cooking", "Reading", "Driving"], ["🚴", "Riding a bicycle for fun is...", "Cycling", "Cycling", "Cooking", "Reading", "Sleeping"], ["🧵", "Making clothes with needles is...", "Sewing", "Sewing", "Swimming", "Reading", "Driving"], ["✏️", "Drawing and ___ are similar hobbies.", "Painting", "Painting", "Cooking", "Driving", "Sleeping"], ["🎬", "Watching movies at home is called...", "Movie night", "Movie night", "Homework", "Shopping", "Cooking"], ["🎲", "Monopoly and chess are ___ games.", "Board", "Board", "Water", "Car", "Swimming"], ["📷", "Taking pictures is...", "Photography", "Photography", "Cooking", "Driving", "Running"], ["🎸", "Playing a guitar is a...", "Hobby", "Hobby", "Test", "Homework", "Shopping"], ["📝", "Writing in a book about your day is...", "Journaling", "Journaling", "Cooking", "Driving", "Running"]], "States": [["😊", "How do you feel when things go well?", "Happy", "Happy", "Sad", "Tired", "Hungry"], ["😢", "How do you feel when something bad happens?", "Sad", "Sad", "Happy", "Angry", "Hot"], ["😡", "How do you feel when someone is unfair?", "Angry", "Angry", "Happy", "Sad", "Hot"], ["😴", "How do you feel when you need rest?", "Sleepy", "Sleepy", "Hungry", "Happy", "Angry"], ["🥵", "How do you feel on a very hot day?", "Hot", "Hot", "Cold", "Happy", "Sad"], ["🥶", "How do you feel on a very cold day?", "Cold", "Cold", "Hot", "Happy", "Sad"], ["😃", "Another word for very happy is...", "Excited", "Excited", "Angry", "Tired", "Sad"], ["😰", "How do you feel before a test?", "Nervous", "Nervous", "Happy", "Sleepy", "Hot"], ["🤢", "How do you feel when food is bad?", "Sick", "Sick", "Happy", "Sad", "Angry"], ["😲", "How do you see something surprising?", "Surprised", "Surprised", "Happy", "Sad", "Angry"], ["🤗", "How do you feel when you see a friend?", "Happy", "Happy", "Sad", "Angry", "Sick"], ["😎", "How do you feel when you are cool?", "Confident", "Confident", "Sad", "Sick", "Angry"], ["🥱", "How do you feel when you're not interested?", "Bored", "Bored", "Happy", "Angry", "Nervous"], ["😌", "How do you feel when everything is OK?", "Calm", "Calm", "Angry", "Sad", "Nervous"], ["💧", "How do you feel when you need water?", "Thirsty", "Thirsty", "Happy", "Sad", "Angry"], ["🍽️", "How do you feel when you need food?", "Hungry", "Hungry", "Happy", "Sad", "Angry"], ["😨", "How do you feel when you see danger?", "Scared", "Scared", "Happy", "Sad", "Hot"], ["😂", "How do you feel when something is funny?", "Amused", "Amused", "Angry", "Sad", "Scared"], ["😤", "How do you feel when things don't work?", "Frustrated", "Frustrated", "Happy", "Calm", "Sad"], ["🙏", "How do you feel when good things happen?", "Grateful", "Grateful", "Angry", "Sad", "Tired"]], "Jobs": [["👨‍⚕️", "Who helps sick people?", "Doctor", "Doctor", "Chef", "Driver", "Farmer"], ["👩‍🏫", "Who teaches children?", "Teacher", "Teacher", "Doctor", "Pilot", "Farmer"], ["👨‍🍳", "Who cooks food in a restaurant?", "Chef", "Chef", "Doctor", "Teacher", "Pilot"], ["👨‍🚒", "Who puts out fires?", "Firefighter", "Firefighter", "Chef", "Teacher", "Farmer"], ["👮", "Who keeps people safe?", "Police officer", "Police officer", "Chef", "Teacher", "Driver"], ["👩‍🌾", "Who grows food on a farm?", "Farmer", "Farmer", "Chef", "Doctor", "Pilot"], ["👨‍✈️", "Who flies an airplane?", "Pilot", "Pilot", "Doctor", "Farmer", "Chef"], ["👩‍🔧", "Who fixes cars?", "Mechanic", "Mechanic", "Teacher", "Chef", "Farmer"], ["👨‍🎨", "Who paints and draws for work?", "Artist", "Artist", "Doctor", "Chef", "Driver"], ["👩‍⚖️", "Who works in a courtroom?", "Judge", "Judge", "Chef", "Farmer", "Artist"], ["👨‍🔬", "Who works in a lab?", "Scientist", "Scientist", "Artist", "Chef", "Driver"], ["👩‍💼", "Who works in an office?", "Secretary", "Secretary", "Farmer", "Chef", "Pilot"], ["🚌", "Who drives a bus?", "Driver", "Driver", "Artist", "Chef", "Doctor"], ["💇", "Who cuts your hair?", "Hairdresser", "Hairdresser", "Driver", "Doctor", "Pilot"], ["🏋️", "Who helps you exercise?", "Trainer", "Trainer", "Chef", "Driver", "Pilot"], ["🧑‍🍳", "A person who bakes bread is a...", "Baker", "Baker", "Doctor", "Pilot", "Driver"], ["👨‍🎤", "Who performs music for people?", "Singer", "Singer", "Doctor", "Driver", "Farmer"], ["📦", "Who delivers packages to your door?", "Postman", "Postman", "Doctor", "Chef", "Pilot"], ["🧑‍⚖️", "A lawyer works with...", "Law", "Law", "Food", "Music", "Driving"], ["👨‍🏭", "Who makes things in a factory?", "Worker", "Worker", "Artist", "Driver", "Singer"]], "Time": [["🕐", "What tells you what time it is?", "Clock", "Clock", "Cup", "Book", "Shoe"], ["🌅", "What time of day does the sun rise?", "Morning", "Morning", "Night", "Afternoon", "Evening"], ["🌞", "What time of day is bright and sunny?", "Day", "Day", "Night", "Evening", "Midnight"], ["🌙", "What time of day do you sleep?", "Night", "Night", "Morning", "Afternoon", "Day"], ["☀️", "What comes after morning?", "Afternoon", "Afternoon", "Night", "Morning", "Evening"], ["🌇", "What comes after afternoon?", "Evening", "Evening", "Morning", "Night", "Afternoon"], ["📅", "How many days in a week?", "Seven", "Seven", "Five", "Six", "Ten"], ["📅", "How many months in a year?", "Twelve", "Twelve", "Ten", "Seven", "Six"], ["🗓️", "The day before today is...", "Yesterday", "Yesterday", "Today", "Tomorrow", "Monday"], ["📅", "The day after today is...", "Tomorrow", "Tomorrow", "Yesterday", "Today", "Sunday"], ["🕐", "60 seconds = 1 ___", "Minute", "Minute", "Hour", "Day", "Week"], ["⏰", "60 minutes = 1 ___", "Hour", "Hour", "Minute", "Day", "Week"], ["🌞", "Saturday and Sunday are the...", "Weekend", "Weekend", "Weekday", "Morning", "Evening"], ["🕛", "12 o'clock at night is...", "Midnight", "Midnight", "Noon", "Morning", "Afternoon"], ["🕐", "12 o'clock in the day is...", "Noon", "Noon", "Midnight", "Morning", "Night"], ["📆", "January is the first ___.", "Month", "Month", "Day", "Week", "Hour"], ["🌞", "Spring, summer, autumn, winter are...", "Seasons", "Seasons", "Days", "Weeks", "Months"], ["🕐", "The big hand on a clock shows...", "Minutes", "Minutes", "Hours", "Days", "Weeks"], ["⏳", "What do you do when you wait for time to pass?", "Wait", "Wait", "Jump", "Eat", "Sleep"], ["📅", "Your birthday comes once a...", "Year", "Year", "Day", "Week", "Hour"]], "Feelings": [["😊", "How are you? I am ___.", "Good", "Good", "Cat", "Blue", "Run"], ["😢", "When you lose something you feel...", "Sad", "Sad", "Happy", "Big", "Fast"], ["😡", "When someone takes your toy you feel...", "Angry", "Angry", "Happy", "Tall", "Small"], ["🥰", "How do you feel about your pet?", "Love", "Love", "Hate", "Tired", "Cold"], ["🥺", "When you want something a lot, you feel...", "Wishful", "Wishful", "Tired", "Old", "Fast"], ["😌", "How do you feel after a nice meal?", "Satisfied", "Satisfied", "Angry", "Sad", "Tired"], ["🤗", "How do you feel when you get a gift?", "Excited", "Excited", "Sick", "Tired", "Angry"], ["😨", "How do you feel in the dark?", "Scared", "Scared", "Happy", "Sad", "Hungry"], ["😆", "When something is very funny you feel...", "Amused", "Amused", "Sad", "Angry", "Tired"], ["💔", "When someone you love goes away you feel...", "Lonely", "Lonely", "Happy", "Hungry", "Hot"], ["😎", "How do you feel when you do well?", "Proud", "Proud", "Sad", "Angry", "Scared"], ["🤒", "When you have a fever you feel...", "Sick", "Sick", "Happy", "Sad", "Proud"], ["😔", "How do you feel when you make a mistake?", "Sorry", "Sorry", "Happy", "Angry", "Hot"], ["🤩", "How do you feel on your birthday?", "Happy", "Happy", "Sad", "Angry", "Tired"], ["😬", "How do you feel when waiting for results?", "Nervous", "Nervous", "Happy", "Sad", "Hot"], ["🥰", "Cats and dogs can make you feel...", "Happy", "Happy", "Sad", "Angry", "Tired"], ["😯", "How do you feel when you hear good news?", "Surprised", "Surprised", "Sad", "Angry", "Sleepy"], ["😠", "What is the opposite of happy?", "Sad", "Sad", "Big", "Fast", "Hot"], ["🤒", "I don't feel good. I am ___.", "Sick", "Sick", "Happy", "Big", "Fast"], ["🥱", "When you need sleep you are...", "Tired", "Tired", "Angry", "Hot", "Big"]], "Holidays": [["🎄", "What holiday is in December?", "Christmas", "Christmas", "Easter", "Halloween", "Birthday"], ["🎃", "What holiday has pumpkins and costumes?", "Halloween", "Halloween", "Christmas", "Easter", "Valentine's"], ["🐣", "What holiday has chocolate eggs?", "Easter", "Easter", "Christmas", "Halloween", "New Year"], ["🎂", "What holiday celebrates you?", "Birthday", "Birthday", "Easter", "Halloween", "Christmas"], ["🎆", "What holiday is on January 1st?", "New Year", "New Year", "Easter", "Halloween", "Christmas"], ["🍾", "What do people drink on New Year's Eve?", "Champagne", "Champagne", "Water", "Milk", "Juice"], ["🎁", "What do you get on Christmas morning?", "Presents", "Presents", "Homework", "Tests", "Chores"], ["❄️", "In winter holidays many people have...", "Snow", "Snow", "Sun", "Rain", "Wind"], ["🦃", "What bird is eaten on Thanksgiving?", "Turkey", "Turkey", "Chicken", "Duck", "Fish"], ["🥧", "What food is often eaten at Thanksgiving?", "Pie", "Pie", "Sushi", "Pasta", "Bread"], ["❤️", "What holiday is for love?", "Valentine's Day", "Valentine's Day", "Christmas", "Easter", "Halloween"], ["💝", "What do you give on Valentine's Day?", "Heart", "Heart", "Egg", "Pumpkin", "Tree"], ["🧨", "Chinese New Year has...", "Fireworks", "Fireworks", "Pumpkins", "Eggs", "Trees"], ["👻", "What do children dress as on Halloween?", "Ghosts", "Ghosts", "Penguins", "Bears", "Frogs"], ["🎅", "Who brings presents at Christmas?", "Santa Claus", "Santa Claus", "Easter Bunny", "Tooth Fairy", "Pirate"], ["🎄", "What do people put a star on top of?", "Christmas tree", "Christmas tree", "Table", "Car", "House"], ["🕎", "Hanukkah uses a...", "Menorah", "Menorah", "Christmas tree", "Pumpkin", "Easter egg"], ["🥳", "What do people say at midnight on New Year?", "Happy New Year", "Happy New Year", "Happy Birthday", "Merry Christmas", "Happy Easter"], ["🎊", "A New Year's party has...", "Celebrations", "Celebrations", "Homework", "Tests", "Lessons"], ["🍫", "What sweet treat is given at Easter?", "Chocolate", "Chocolate", "Pizza", "Soup", "Bread"]], "Space": [["🌍", "What planet do we live on?", "Earth", "Earth", "Mars", "Moon", "Sun"], ["☀️", "What is at the center of our solar system?", "Sun", "Sun", "Moon", "Earth", "Mars"], ["🌙", "What shines at night and is not a star?", "Moon", "Moon", "Sun", "Earth", "Mars"], ["⭐", "What twinkles in the sky at night?", "Stars", "Stars", "Clouds", "Rain", "Wind"], ["🚀", "What takes astronauts to space?", "Rocket", "Rocket", "Car", "Bus", "Bicycle"], ["👨‍🚀", "What person travels in space?", "Astronaut", "Astronaut", "Teacher", "Doctor", "Chef"], ["🪐", "What planet has rings?", "Saturn", "Saturn", "Earth", "Mars", "Moon"], ["🌌", "What is a group of stars in the sky?", "Galaxy", "Galaxy", "Ocean", "Forest", "City"], ["🔭", "What tool do you use to see stars clearly?", "Telescope", "Telescope", "Cup", "Spoon", "Book"], ["🌑", "What is the dark side of the Moon?", "Dark side", "Dark side", "Bright side", "Blue side", "Red side"], ["🌍", "How many planets are in our solar system?", "Eight", "Eight", "Five", "Ten", "Three"], ["🛸", "A flying saucer is also called a...", "UFO", "UFO", "Bus", "Car", "Boat"], ["☄️", "A shooting star is actually a...", "Meteor", "Meteor", "Planet", "Moon", "Cloud"], ["🌙", "The Moon is ___ the Earth.", "Near", "Near", "Inside", "Above", "Below"], ["🌡️", "The Sun is very ___.", "Hot", "Hot", "Cold", "Small", "Slow"], ["🌍", "The Earth is shaped like a ___.", "Ball", "Ball", "Square", "Triangle", "Star"], ["🌠", "If you see a 'shooting star' make a...", "Wish", "Wish", "Sandwich", "Homework", "Dinner"], ["👽", "A creature from space is...", "Alien", "Alien", "Human", "Animal", "Plant"], ["🪐", "Mars is called the ___ planet.", "Red", "Red", "Blue", "Green", "Yellow"], ["🌌", "Our solar system is part of a...", "Galaxy", "Galaxy", "Ocean", "Forest", "Desert"]], "Ocean": [["🌊", "What moves up and down in the sea?", "Waves", "Waves", "Trees", "Clouds", "Mountains"], ["🐠", "What lives in the ocean?", "Fish", "Fish", "Dog", "Cat", "Bird"], ["🐙", "What sea animal has eight arms?", "Octopus", "Octopus", "Fish", "Crab", "Shark"], ["🦈", "What big fish has sharp teeth?", "Shark", "Shark", "Goldfish", "Octopus", "Crab"], ["🐋", "What is the biggest animal in the ocean?", "Whale", "Whale", "Fish", "Shark", "Crab"], ["🐬", "What smart animal jumps out of the water?", "Dolphin", "Dolphin", "Shark", "Whale", "Crab"], ["🦀", "What ocean animal walks sideways?", "Crab", "Crab", "Fish", "Whale", "Shark"], ["🐚", "What do you find on the beach?", "Shells", "Shells", "Trees", "Flowers", "Rocks"], ["🏖️", "Where the ocean meets the land is the...", "Beach", "Beach", "Mountain", "Forest", "Desert"], ["🐢", "What ocean animal has a shell?", "Turtle", "Turtle", "Shark", "Fish", "Crab"], ["🐟", "A goldfish is a type of...", "Fish", "Fish", "Bird", "Dog", "Cat"], ["🦑", "What ocean animal can squirt ink?", "Squid", "Squid", "Dolphin", "Whale", "Turtle"], ["👨‍✈️", "A person who sails a ship is a...", "Sailor", "Sailor", "Farmer", "Teacher", "Doctor"], ["🚢", "What do you sail on the ocean?", "Boat", "Boat", "Car", "Bus", "Bicycle"], ["🏊", "What do you do in the ocean?", "Swim", "Swim", "Run", "Jump", "Sleep"], ["🧜", "A mermaid has the tail of a...", "Fish", "Fish", "Dog", "Bird", "Cat"], ["🌊", "Ocean water is...", "Salty", "Salty", "Sweet", "Fresh", "Hot"], ["⚓", "What keeps a ship in place?", "Anchor", "Anchor", "Sail", "Wheel", "Book"], ["🌊", "The Pacific is an...", "Ocean", "Ocean", "Lake", "River", "Pond"], ["🐡", "What fish can puff up big?", "Pufferfish", "Pufferfish", "Shark", "Whale", "Dolphin"]], "Garden": [["🌧️", "What do plants need to grow?", "Water", "Water", "Sun", "Wind", "Sand"], ["🌻", "What is a tall yellow flower?", "Sunflower", "Sunflower", "Mushroom", "Rock", "Tree"], ["🌹", "What flower has thorns?", "Rose", "Rose", "Daisy", "Mushroom", "Tulip"], ["🌷", "What spring flower grows from a bulb?", "Tulip", "Tulip", "Rose", "Sunflower", "Cactus"], ["🌱", "What is a baby plant?", "Seedling", "Seedling", "Tree", "Rock", "Stone"], ["🌿", "What do you plant in soil?", "Seeds", "Seeds", "Shoes", "Hats", "Books"], ["🥀", "What happens to a flower without water?", "Die", "Die", "Grow", "Fly", "Jump"], ["🍅", "What red vegetable grows in a garden?", "Tomato", "Tomato", "Apple", "Orange", "Banana"], ["🥒", "What green vegetable is long and cool?", "Cucumber", "Cucumber", "Potato", "Orange", "Apple"], ["🥕", "What orange vegetable grows underground?", "Carrot", "Carrot", "Tomato", "Apple", "Flower"], ["🍓", "What small red fruit grows on the ground?", "Strawberry", "Strawberry", "Apple", "Orange", "Grape"], ["🌳", "What big plant gives us shade?", "Tree", "Tree", "Flower", "Grass", "Seed"], ["🌺", "What tropical flower is very colorful?", "Hibiscus", "Hibiscus", "Rose", "Cactus", "Tree"], ["🍄", "What grows in damp, dark places?", "Mushroom", "Mushroom", "Apple", "Carrot", "Flower"], ["🏠", "What do you grow plants in?", "Pot", "Pot", "Shoe", "Hat", "Book"], ["🚿", "What do you use to water plants?", "Hose", "Hose", "Spoon", "Cup", "Book"], ["🐝", "What insect helps flowers?", "Bee", "Bee", "Cat", "Dog", "Bird"], ["🐛", "What small creature eats leaves?", "Caterpillar", "Caterpillar", "Bird", "Fish", "Dog"], ["🍂", "What falls from trees in autumn?", "Leaves", "Leaves", "Stones", "Water", "Seeds"], ["🌸", "A place where flowers grow is a...", "Garden", "Garden", "Kitchen", "Bedroom", "School"]], "My Day": [["⏰", "What do you do in the morning?", "Wake up", "Wake up", "Sleep", "Eat", "Run"], ["🌅", "What time of day do you get up?", "Morning", "Morning", "Night", "Afternoon", "Evening"], ["🪥", "What do you do after waking up?", "Brush teeth", "Brush teeth", "Watch TV", "Play", "Sleep"], ["🍳", "What meal do you eat in the morning?", "Breakfast", "Breakfast", "Dinner", "Lunch", "Snack"], ["🚌", "How do children go to school?", "Bus", "Bus", "Boat", "Plane", "Bicycle"], ["📖", "What do you do at school?", "Study", "Study", "Sleep", "Eat", "Run"], ["🍽️", "What meal is at midday?", "Lunch", "Lunch", "Breakfast", "Dinner", "Snack"], ["🌇", "What time do you go home?", "Afternoon", "Afternoon", "Midnight", "Morning", "Night"], ["🏃", "What can you do after school?", "Play", "Play", "Sleep", "Eat", "Study"], ["📺", "What do you watch in the evening?", "TV", "TV", "Book", "Shoe", "Bike"], ["🍽️", "What is the last meal of the day?", "Dinner", "Dinner", "Breakfast", "Lunch", "Snack"], ["🦷", "What do you do before bed?", "Brush teeth", "Brush teeth", "Eat", "Run", "Study"], ["😴", "What do you do at night?", "Sleep", "Sleep", "Eat", "Run", "Play"], ["🛏️", "Where do you sleep?", "Bed", "Bed", "Chair", "Table", "Floor"], ["🌙", "What comes out at night?", "Moon", "Moon", "Sun", "Star", "Cloud"], ["📖", "What can you do before sleep?", "Read", "Read", "Run", "Swim", "Drive"], ["🧸", "What might a child sleep with?", "Teddy bear", "Teddy bear", "Dog", "Cat", "Fish"], ["🌞", "What does the sun do in the morning?", "Rise", "Rise", "Set", "Sleep", "Hide"], ["🏠", "Where do you come after school?", "Home", "Home", "Park", "Beach", "School"], ["🛁", "What do you use to get clean?", "Bath", "Bath", "Bed", "Book", "Chair"]]};
+
+        let currentTopic = null;
+        let currentIdx = 0;
+        let score = 0;
+        let questions = [];
+
+        // Check URL for topic param
+        const urlParams = new URLSearchParams(window.location.search);
+        const topicParam = urlParams.get('topic');
+
+        if (topicParam && TOPICS[topicParam]) {
+            startTopic(topicParam);
+        } else {
+            showTopicSelect();
+        }
+
+        function showTopicSelect() {
+            document.getElementById('topic-select').style.display = 'block';
+            document.getElementById('game-area').style.display = 'none';
+            const btns = document.getElementById('topic-btns');
+            btns.innerHTML = '';
+            Object.keys(TOPICS).forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'topic-btn';
+                btn.textContent = t;
+                btn.onclick = () => startTopic(t);
+                btns.appendChild(btn);
+            });
+        }
+
+        function startTopic(topic) {
+            currentTopic = topic;
+            currentIdx = 0;
+            score = 0;
+            questions = shuffleArray([...TOPICS[topic]]);
+            document.getElementById('topic-select').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('topic-label').textContent = '📚 ' + topic;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIdx >= questions.length) {
+                showWin();
+                return;
+            }
+            const q = questions[currentIdx];
+            document.getElementById('char').textContent = q[0];
+            document.getElementById('activity').textContent = q[1];
+            document.getElementById('score-display').textContent =
+                `Question ${currentIdx + 1} of ${questions.length}  •  Score: ${score}`;
+            document.getElementById('progress-fill').style.width =
+                ((currentIdx) / questions.length * 100) + '%';
+
+            const optDiv = document.getElementById('options');
+            optDiv.innerHTML = '';
+            const opts = shuffleArray([q[2], q[3], q[4], q[5]]);
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, q[2], btn);
+                optDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+            if (selected === correct) {
+                btn.classList.add('correct');
+                score++;
+                setTimeout(() => { currentIdx++; loadQuestion(); }, 1000);
+            } else {
+                btn.classList.add('wrong');
+                // highlight correct
+                allBtns.forEach(b => {
+                    if (b.textContent === correct) b.classList.add('correct');
+                });
+                setTimeout(() => { currentIdx++; loadQuestion(); }, 1500);
+            }
+        }
+
+        function showWin() {
+            document.getElementById('progress-fill').style.width = '100%';
+            document.getElementById('score-display').textContent = '';
+            document.getElementById('game-area').innerHTML =
+                `<div class="win-screen">
+                    <h1>🎉 Great Job!</h1>
+                    <p>You scored ${score} out of ${questions.length}!</p>
+                    <button class="play-again-btn" onclick="startTopic(currentTopic)">Play Again</button>
+                    <br><br>
+                    <button class="play-again-btn" onclick="showTopicSelect()" style="background:#43a047;box-shadow:0 5px 0 #2e7d32;">Choose Topic</button>
+                </div>`;
+        }
+
+        function goBack() {
+            if (currentTopic && currentIdx > 0) {
+                showTopicSelect();
+            } else {
+                window.location.href = 'forest-home.html';
+            }
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+    </script>
+</body>
+</html>

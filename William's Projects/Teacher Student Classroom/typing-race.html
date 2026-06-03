@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typing Race</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0f1a;
+    --bg2: #111827;
+    --bg3: #1e293b;
+    --border: #374151;
+    --text: #f1f5f9;
+    --text-dim: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #22d3ee;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --violet: #a78bfa;
+    --rose: #fb7185;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .back-btn:hover {
+    background: var(--border);
+    color: var(--text);
+  }
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+  }
+
+  /* Setup screen */
+  .setup-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    max-width: 600px;
+    width: 100%;
+  }
+  .setup-title {
+    font-size: 36px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text);
+  }
+  .setup-subtitle {
+    font-size: 16px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: -16px;
+  }
+
+  .difficulty-selector {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .diff-btn {
+    padding: 12px 24px;
+    background: var(--bg3);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .diff-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .diff-btn.active {
+    border-color: var(--accent);
+    background: rgba(34, 211, 238, 0.1);
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
+  }
+
+  .start-btn {
+    padding: 16px 48px;
+    background: linear-gradient(135deg, var(--accent), #06b6d4);
+    border: none;
+    border-radius: 12px;
+    color: var(--bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(34, 211, 238, 0.3);
+  }
+
+  /* Game screen */
+  .game-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 700px;
+    width: 100%;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.amber { color: var(--amber); }
+
+  /* Timer bar */
+  .timer-bar-container {
+    width: 100%;
+    height: 6px;
+    background: var(--bg3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .timer-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 3px;
+    transition: width 0.1s linear, background 0.3s;
+    width: 100%;
+  }
+  .timer-bar.warning {
+    background: linear-gradient(90deg, var(--amber), var(--rose));
+  }
+
+  /* Word display */
+  .word-display {
+    width: 100%;
+    padding: 40px;
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-height: 200px;
+    justify-content: center;
+  }
+  .word-display.waiting {
+    border-color: var(--accent);
+    animation: pulse-border 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-border {
+    0%, 100% { border-color: var(--accent); box-shadow: 0 0 0 0 rgba(34,211,238,0); }
+    50% { border-color: var(--accent); box-shadow: 0 0 20px 4px rgba(34,211,238,0.15); }
+  }
+  .current-word {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    word-break: break-all;
+    text-align: center;
+    font-variant-nums: tabular-nums;
+  }
+  .char-correct { color: var(--green); }
+  .char-incorrect { color: var(--rose); text-decoration: underline; }
+  .char-current {
+    background: rgba(34, 211, 238, 0.2);
+    border-bottom: 3px solid var(--accent);
+    color: var(--text);
+    border-radius: 2px;
+  }
+  .char-pending { color: var(--text-muted); }
+
+  .word-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Input field */
+  .input-container {
+    width: 100%;
+  }
+  .typing-input {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--bg3);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 1px;
+  }
+  .typing-input:focus {
+    border-color: var(--accent);
+  }
+  .typing-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  /* Results screen */
+  .results-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    max-width: 600px;
+    width: 100%;
+  }
+  .results-title {
+    font-size: 36px;
+    font-weight: 800;
+    text-align: center;
+  }
+  .results-ranking {
+    font-size: 64px;
+    font-weight: 800;
+    text-align: center;
+  }
+  .results-ranking.r1 { color: var(--amber); }
+  .results-ranking.r2 { color: var(--text-dim); }
+  .results-ranking.r3 { color: var(--amber); opacity: 0.7; }
+  .results-ranking.r4 { color: var(--violet); }
+  .results-ranking.r5 { color: var(--accent); }
+  .results-ranking.r6 { color: var(--text-muted); }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+  .result-stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .result-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .result-stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  .results-ranking-text {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  .restart-btn {
+    padding: 16px 48px;
+    background: linear-gradient(135deg, var(--accent), #06b6d4);
+    border: none;
+    border-radius: 12px;
+    color: var(--bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .restart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(34, 211, 238, 0.3);
+  }
+
+  /* Difficulty badge */
+  .diff-badge {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(34, 211, 238, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+  }
+
+  /* Utility */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <a href="index.html" class="back-btn">&larr; Back</a>
+    <span class="header-title">Typing Race</span>
+  </div>
+  <div class="diff-badge" id="setupDiffBadge">Beginner</div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Setup Screen -->
+  <div class="setup-screen" id="setupScreen">
+    <div class="setup-title">Ready to Race?</div>
+    <div class="setup-subtitle">Choose your difficulty and test your typing speed</div>
+    <div class="difficulty-selector">
+      <button class="diff-btn active" data-diff="beginner">Beginner</button>
+      <button class="diff-btn" data-diff="common">Common</button>
+      <button class="diff-btn" data-diff="intermediate">Intermediate</button>
+      <button class="diff-btn" data-diff="advanced">Advanced</button>
+    </div>
+    <button class="start-btn" id="startBtn">Start Race</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="game-screen" id="gameScreen">
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-label">Time</span>
+        <span class="stat-value accent" id="timerDisplay">60</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">WPM</span>
+        <span class="stat-value" id="wpmDisplay">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Accuracy</span>
+        <span class="stat-value green" id="accuracyDisplay">100%</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Words</span>
+        <span class="stat-value amber" id="wordsDisplay">0</span>
+      </div>
+    </div>
+    <div class="timer-bar-container">
+      <div class="timer-bar" id="timerBar"></div>
+    </div>
+    <div class="word-display waiting" id="wordDisplay">
+      <div class="current-word" id="wordText"></div>
+      <div class="word-count" id="wordCount"></div>
+    </div>
+    <div class="input-container">
+      <input type="text" class="typing-input" id="typingInput" placeholder="Type the word here..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="results-screen" id="resultsScreen">
+    <div class="results-title">Race Complete!</div>
+    <div class="results-ranking" id="rankingDisplay"></div>
+    <div class="results-ranking-text" id="rankingText"></div>
+    <div class="results-stats">
+      <div class="result-stat-card">
+        <div class="result-stat-value" id="finalWpm">0</div>
+        <div class="result-stat-label">Words/Min</div>
+      </div>
+      <div class="result-stat-card">
+        <div class="result-stat-value" id="finalAccuracy">0%</div>
+        <div class="result-stat-label">Accuracy</div>
+      </div>
+      <div class="result-stat-card">
+        <div class="result-stat-value" id="finalWords">0</div>
+        <div class="result-stat-label">Words Typed</div>
+      </div>
+      <div class="result-stat-card">
+        <div class="result-stat-value" id="finalChars">0</div>
+        <div class="result-stat-label">Characters</div>
+      </div>
+    </div>
+    <button class="restart-btn" id="restartBtn">Race Again</button>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  // ---- Word Lists ----
+  var WORD_LISTS = {
+    beginner: [
+      "cat","dog","run","sun","fun","bat","hat","map","cup","red","big","sit","hit","bit","fit","lit","hot","lot","pot","dot",
+      "pen","ten","men","hen","den","fox","box","log","fog","dog","job","sob","mob","zed","wax","tax","sax","fix","mix","six",
+      "jam","yam","ram","ham","dam","cam","pal","gal","all","ball","call","fall","hall","tall","wall","mall","bell","tell","sell","well","yell",
+      "dig","fig","pig","wig","jig","zig","ink","link","pink","sink","wink","ant","can","fan","man","pan","ran","tan","van","ban","band","hand","land","sand",
+      "ate","date","gate","hate","late","mate","rate","bake","cake","fake","lake","make","take","wake","game","name","same","came","fame","damp","lamp","camp","ramp",
+      "bed","fed","red","led","get","let","met","net","pet","set","wet","yet","den","hen","men","pen","ten"
+    ],
+    common: [
+      "about","after","again","also","back","been","before","being","below","between","both","came","come","could","days","does","down","each","even","find","first","from",
+      "give","good","great","hand","have","here","high","home","into","just","keep","kind","know","last","left","life","like","line","long","look","made","make",
+      "many","might","more","most","much","must","name","need","never","next","only","other","over","part","place","point","right","same","seem","shall","show",
+      "side","since","some","still","such","take","tell","than","that","them","then","there","these","they","thing","think","this","those","time","under","very",
+      "want","well","went","were","what","when","where","which","while","white","with","work","world","would","year","your","years","young","water","school","house",
+      "mother","father","people","children","between","another","through","because","without","around","little","number","always","different","together"
+    ],
+    intermediate: [
+      "absolute","abstract","academic","accepted","accident","accurate","achieved","acquired","activity","actually","addition","adequate","adjusted","advanced","affected","afforded","although","analysis","announce","anything","anywhere","apparent",
+      "approach","approval","argument","arranged","assembly","assuming","attached","attacked","attempts","attended","audience","autonomy","bachelor","backward","balanced","bargains","baseball","becoming","behavior","believed","benefits",
+      "birthday","boundary","breaking","breeding","bringing","brothers","building","bulletin","business","calendar","campaign","capacity","captured","category","cautious","cellular","centered","chairman","changing","chapters","charging",
+      "chemical","choosing","circular","civilian","claiming","cleaning","climbing","clinical","clothing","coaching","collapse","colonial","combined","comeback","commerce","commonly","communal","compared","complete","composed","compound",
+      "computer","concepts","concerned","concrete","conflict","confused","connects","consider","constant","consumer","contains","contents","continue","contract","contrast","controls","convince","cookbook","coverage","creating","creative",
+      "criminal","critical","crossing","cultural","currency","customer","database","daughter","deadline","deciding","decision","declared","declined","decrease","defaults","defeated","defender","defining","definite","delegate","delicate",
+      "delivery","demanded","democrat","departed","depicted","deployed","deposits","describe","designed","designer","detailed","detected","develops","dialogue","diamonds","dictator","different","difficult","diplomat","directed","director",
+      "disabled","disaster","discount","discover","discrete","dispatch","displays","disposal","distance","distinct","district","divided","division","doctrine","document","domestic","dominant","dominate","donation","doubling","download",
+      "downtown","dramatic","drinking","dropping","duration","dynamics","earnings","economic","educated","educator","eighteen","election","electric","electron","eligible","embedded","emerging","emission","emphasis","employee","employer",
+      "enabling","enclosed","encoding","engaging","engineer","enhanced","enormous","enrolled","entering","entirely","entitled","entrance","envelope","equality","equation","equipped","estimate","ethernet","european","evaluate","eventual",
+      "everyday","everyone","evidence","evolving","examined","examiner","examples","exceeded","exchange","excluded","executed","exercise","existing","expanded","expected","explicit","explains","explorer","exported","exposure","extended",
+      "external","facility","factored","familiar","families","favorite","featured","features","feedback","feminist","filename","filtered","finalist","finally","findings","finished","firewall","flagship","flexible","floating","flooding",
+      "focusing","followed","follower","football","foremost","formerly","formulas","fortunes","founding","fourteen","fraction","fragment","franklin","frequent","friendly","frontier","function","generate","generous","genetics","geometry",
+      "gigantic","globally","gorgeous","governed","governor","graduate","graphics","grateful","greatest","greeting","guardian","guidance","handling","handsome","happened","hardware","headline","heavenly","heritage","highland","historic",
+      "homepage","homeless","homework","honestly","horrible","hospital","hostages","humanity","hundreds","hydrogen","identify","identity","ideology","ignorant","illusion","imperial","implicit","imported","imposed","improved","incident",
+      "included","indicate","indirect","inferior","infinite","informal","informed","inherent","innocent","inspired","instance","integral","intended","interact","interest","interior","internal","interval","intimate","invasion","investor",
+      "involved","isolated","judgment","judicial","junction","keyboard","keywords","kindness","knockout","labeling","landmark","language","latitude","laughing","launched","laureate","learning","leftover","leverage","liberals","licensed",
+      "lifetime","lighting","likewise","limiting","literary","locating","logistic","longtime","magnetic","maintain","majority","managers","managing","manually","marathon","marginal","marriage","material","maximize","measured","mechanic",
+      "medicine","medieval","membrane","memorial","merchant","midnight","military","millions","minimize","minerals","minister","minority","moderate","modified","momentum","monetary","monopoly","moreover","mortgage","mountain","mounting",
+      "movement","multiple","multiply","murdered","national","navigate","nearest","negative","networks","nineteen","nitrogen","normally","northern","notebook","notified","numerous","objected","observed","observer","obtained","occasion",
+      "occupied","occurred","offering","official","offshore","operator","opponent","opposite","optional","ordinary","organize","oriental","original","outbreak","outdoors","outlined","outreach","overcome","overhead","overlook","overseas",
+      "overview","painting","parallel","parental","particle","partisan","passport","password","patience","peaceful","peculiar","pedagogy","pentagon","perceive","periodic","personal","petition","pharmacy","physical","pipeline","platform",
+      "pleasant","pleasure","pointing","policing","policies","polished","politics","populate","portable","portrait","position","positive","possible","possibly","powerful","practice","precious","pregnant","premiere","premises","presence",
+      "preserve","pressing","pressure","prestige","previous","princess","printing","priority","prisoner","probable","problems","proceeds","produces","products","profiles","profound","progress","projects","promised","promoted","prompted",
+      "properly","property","proposal","proposed","prospect","protocol","provider","province","publicly","purchase","pursuing","quantity","quarters","question","railway","randomly","ranking","rapidly","reaction","readable","realized",
+      "reasoned","received","receiver","recently","receptor","recorded","recovery","reducing","referred","regional","register","regulate","rejected","relating","relation","relative","released","relevant","reliable","relieved","religion",
+      "remained","remember","reminded","removing","rendered","repeated","reported","reporter","republic","required","research","reserved","resident","resigned","resolved","resource","response","restored","restrict","resulted","retailer",
+      "retained","retired","retrieve","returned","revealed","revenues","reversal","reviewed","revision","rhetoric","rigorous","romantic","sampling","sanction","sandwich","saturday","scenario","schedule","sciences","scissors",
+      "scotland","seasoned","secondly","sections","segments","selected","selector","semester","senator","sensible","sentence","separate","sequence","sergeant","services","sessions","settings","settling","severely","shipping",
+      "shocking","shooting","shopping","shortage","shortly","shoulder","shutdown","siblings","sickness","sideways","signaled","silently","simplest","simplify","singular","situated","skeleton","sleeping","slightly","slipping",
+      "smallest","snapshot","socially","software","soldier","solution","somebody","somewhat","southern","speaking","specific","spelling","spending","spinning","sponsored","spotting","spraying","springer","squadron","squarely",
+      "staffing","standard","standing","starting","statute","steadily","steering","stepping","stimulus","stopping","straight","stranger","strategy","strength","stressed","strictly","striking","strongly","struggle","students",
+      "studying","stunning","subjects","suburban","suddenly","suffered","suitable","sullivan","summoned","superior","supplied","supplier","supports","supposed","suppress","surfaces","surgical","surprise","surround","survival",
+      "survivor","suspects","swimming","symbolic","sympathy","syndrome","tactical","tailored","talented","tangible","targeted","teaching","teammate","teamwork","teenager","telegram","temporal","tendency","terminal","terrible",
+      "terrific","textbook","thankful","theology","theories","thinking","thirteen","thorough","thousand","threaten","thriller","thriving","throwing","thursday","together","tomorrow","touching","toughest","tracking","traction",
+      "transfer","transmit","treasure","treating","triangle","triggers","tropical","troubled","trusting","truthful","tutorial","twelfth","ultimate","umbrella","unbiased","uncommon","underway","unfairly","unhappy","unifying",
+      "universe","unlikely","unlocked","unmarked","unsigned","unstable","upcoming","updating","upgraded","upheaval","upstairs","upstream","vacation","valuable","variable","variance","velocity","vertical","veterans","vicinity",
+      "victoria","villages","violence","virginia","visiting","volatile","volumes","voluntar","walkthrough","wanting","warming","warnings","warrant","washing","weakness","weaponry","weighted","welcomed","whatever","whenever",
+      "wherever","wildlife","williams","wireless","withdraw","wondered","woodland","workshop","worrying","worthing","wrapping","writings","youngest","yourself"
+    ],
+    advanced: [
+      "accommodate","acknowledgment","acquaintance","acquisition","administrate","advantageous","aesthetically","allegiance","ambidextrous","antithesis","apparatus","approximate","archaeology","assassination","bureaucracy","camaraderie",
+      "catastrophe","choreographer","circumlocution","clandestine","coincidentally","collaboration","commemorate","compassionate","comprehensive","concatenation","conscientious","consciousness","consequence","consolidate","contemplate",
+      "continuation","contradiction","contribution","controversial","conversational","crystallize","decomposition","defensibility","degradation","deliberately","denomination","disadvantageous","disappointed","discretionary",
+      "dissemination","distinguished","documentary","eccentricity","ecclesiastical","embarrassment","encouragement","encyclopedia","entrepreneur","epistemology","establishment","exaggeration","exceptionally","expeditiously",
+      "extraordinary","fantastically","fundamentally","genealogy","generalization","grandiloquent","hallucination","heterogeneous","horticulturachiever","hypothesis","identification","illumination","imagination","immunization",
+      "impersonate","inaccessible","inappropriate","incomparable","independence","indistinguishable","ineligible","inexplicable","infrastructure","innovation","insignificant","intellectual","interdependent","interference",
+      "international","interpolation","interrogation","interruption","intervention","involuntarily","jurisdiction","kaleidoscope","kinesiology","labyrinthine","lexicographer","magnanimous","manifestation","manufacturer",
+      "mathematician","metamorphosis","miscellaneous","misconception","mischievous","modernization","monarchical","multifaceted","municipality","nationality","necessitating","negligible","nonconformist",
+      "notification","nullification","obfuscation","onomatopoeia","opportunistic","optimization","orchestrate","organization","ostentatious","parliamentary","pedestrianize","penitentiary","perpendicular","personification",
+      "pharmaceutical","philosophical","photosynthesis","pneumonoultramicroscopicsilicovolcanoconiosis","politician","predominantly","prestidigitation","procrastinate","professional","prognostication","proportionate",
+      "psychoanalysis","qualification","quarterback","quintessential","rapprochement","realization","rearrangeable","recalibration","reconciliation","reconstruction","rehabilitation","reincarnation","relentlessness",
+      "reorganization","representation","responsibility","retroactive","revolutionary","serendipity","simultaneously","soliloquy","sovereignty","specification","straightforward","substantiation","superintendent",
+      "superlative","surreptitious","susceptibility","symbiosis","technological","telecommunications","temperamental","thermodynamics","totalitarianism","transformation","transplantation","tribunal","triumphant",
+      "ubiquitous","unambiguous","unanimous","unavailability","unconscious","unconventional","undergraduate","undermine","understandable","unforgettable","unprecedented","utilitarian","ventriloquist",
+      "vernacular","vociferous","watershed","xenophobia","xylophone","yesterday","zeitgeist","zoological"
+    ]
+  };
+
+  // ---- Ranking thresholds (WPM) ----
+  var RANKINGS = [
+    { min: 0, label: "Beginner", rankClass: "r6", desc: "Keep practicing, you will improve!" },
+    { min: 15, label: "Getting There", rankClass: "r5", desc: "Good start! Keep building your speed." },
+    { min: 25, label: "Intermediate Typer", rankClass: "r4", desc: "Solid typing skills!" },
+    { min: 35, label: "Advanced Typer", rankClass: "r3", desc: "Great speed and control!" },
+    { min: 45, label: "Fast Typer", rankClass: "r2", desc: "Excellent typing skills!" },
+    { min: 60, label: "Speed Master", rankClass: "r1", desc: "Outstanding! You are a typing champion!" }
+  ];
+
+  // ---- State ----
+  var difficulty = "beginner";
+  var words = [];
+  var currentWordIndex = 0;
+  var totalCorrectChars = 0;
+  var totalCharsTyped = 0;
+  var correctWords = 0;
+  var totalWordsAttempted = 0;
+  var timeLeft = 60;
+  var gameActive = false;
+  var timerInterval = null;
+  var startTime = 0;
+
+  // ---- DOM refs ----
+  var setupScreen = document.getElementById("setupScreen");
+  var gameScreen = document.getElementById("gameScreen");
+  var resultsScreen = document.getElementById("resultsScreen");
+  var wordText = document.getElementById("wordText");
+  var wordDisplay = document.getElementById("wordDisplay");
+  var wordCount = document.getElementById("wordCount");
+  var typingInput = document.getElementById("typingInput");
+  var timerDisplay = document.getElementById("timerDisplay");
+  var timerBar = document.getElementById("timerBar");
+  var wpmDisplay = document.getElementById("wpmDisplay");
+  var accuracyDisplay = document.getElementById("accuracyDisplay");
+  var wordsDisplay = document.getElementById("wordsDisplay");
+  var setupDiffBadge = document.getElementById("setupDiffBadge");
+  var startBtn = document.getElementById("startBtn");
+  var restartBtn = document.getElementById("restartBtn");
+  var diffBtns = document.querySelectorAll(".diff-btn");
+
+  // ---- Difficulty selection ----
+  diffBtns.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      diffBtns.forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      difficulty = btn.getAttribute("data-diff");
+      setupDiffBadge.textContent = btn.textContent;
+    });
+  });
+
+  // ---- Start game ----
+  startBtn.addEventListener("click", startGame);
+  restartBtn.addEventListener("click", startGame);
+
+  function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function startGame() {
+    words = shuffleArray(WORD_LISTS[difficulty] || WORD_LISTS.beginner);
+    currentWordIndex = 0;
+    totalCorrectChars = 0;
+    totalCharsTyped = 0;
+    correctWords = 0;
+    totalWordsAttempted = 0;
+    timeLeft = 60;
+    gameActive = true;
+
+    setupScreen.style.display = "none";
+    gameScreen.style.display = "flex";
+    resultsScreen.style.display = "none";
+
+    renderWord();
+    updateStats();
+    renderTimer();
+
+    if (timerInterval) clearInterval(timerInterval);
+    startTime = Date.now();
+    timerInterval = setInterval(tick, 100);
+
+    typingInput.value = "";
+    typingInput.focus();
+  }
+
+  function tick() {
+    var elapsed = (Date.now() - startTime) / 1000;
+    timeLeft = Math.max(0, 60 - elapsed);
+    renderTimer();
+    updateStats();
+
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  }
+
+  function renderTimer() {
+    timerDisplay.textContent = Math.ceil(timeLeft);
+    var pct = (timeLeft / 60) * 100;
+    timerBar.style.width = pct + "%";
+    if (timeLeft <= 15) {
+      timerBar.classList.add("warning");
+    } else {
+      timerBar.classList.remove("warning");
+    }
+  }
+
+  function renderWord() {
+    if (currentWordIndex >= words.length) {
+      words = shuffleArray(WORD_LISTS[difficulty] || WORD_LISTS.beginner);
+      currentWordIndex = 0;
+    }
+    var word = words[currentWordIndex];
+    var typed = typingInput.value;
+    var html = "";
+
+    for (var i = 0; i < word.length; i++) {
+      var ch = word[i];
+      var cls = "char-pending";
+      if (i < typed.length) {
+        cls = (typed[i] === ch) ? "char-correct" : "char-incorrect";
+      } else if (i === typed.length) {
+        cls = "char-current";
+      }
+      html += '<span class="' + cls + '">' + ch + "</span>";
+    }
+
+    wordText.innerHTML = html;
+    wordCount.textContent = "Word " + (currentWordIndex + 1);
+    wordDisplay.classList.remove("waiting");
+  }
+
+  function updateStats() {
+    var elapsed = (Date.now() - startTime) / 1000;
+    var minutes = elapsed > 0 ? elapsed / 60 : 0.0001;
+    var wpm = Math.round(correctWords / minutes) || 0;
+    var accuracy = totalCharsTyped > 0 ? Math.round((totalCorrectChars / totalCharsTyped) * 100) : 100;
+
+    wpmDisplay.textContent = wpm;
+    accuracyDisplay.textContent = accuracy + "%";
+    wordsDisplay.textContent = correctWords;
+  }
+
+  // ---- Input handling ----
+  typingInput.addEventListener("input", function() {
+    if (!gameActive) return;
+    renderWord();
+  });
+
+  typingInput.addEventListener("keydown", function(e) {
+    if (!gameActive) return;
+
+    if (e.key === " ") {
+      e.preventDefault();
+      submitWord();
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitWord();
+    }
+  });
+
+  function submitWord() {
+    if (!gameActive) return;
+    var word = words[currentWordIndex];
+    var typed = typingInput.value.trim();
+
+    if (typed.length === 0) return;
+
+    totalWordsAttempted++;
+
+    for (var i = 0; i < typed.length; i++) {
+      totalCharsTyped++;
+      if (i < word.length && typed[i] === word[i]) {
+        totalCorrectChars++;
+      }
+    }
+
+    // Count as correct word only if exact match
+    if (typed === word) {
+      correctWords++;
+      totalCorrectChars = word.length + (i < word.length ? 0 : 0);
+    }
+
+    currentWordIndex++;
+    typingInput.value = "";
+    renderWord();
+    updateStats();
+  }
+
+  // ---- End game ----
+  function endGame() {
+    gameActive = false;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    var elapsed = 60; // Always 60 seconds
+    var minutes = elapsed / 60;
+    var finalWpm = Math.round(correctWords / minutes) || 0;
+    var finalAccuracy = totalCharsTyped > 0 ? Math.round((totalCorrectChars / totalCharsTyped) * 100) : 0;
+
+    // Rankings
+    var rank = RANKINGS[0];
+    for (var i = RANKINGS.length - 1; i >= 0; i--) {
+      if (finalWpm >= RANKINGS[i].min) {
+        rank = RANKINGS[i];
+        break;
+      }
+    }
+
+    document.getElementById("rankingDisplay").className = "results-ranking " + rank.rankClass;
+    document.getElementById("rankingDisplay").textContent = rank.label;
+    document.getElementById("rankingText").textContent = rank.desc;
+    document.getElementById("finalWpm").textContent = finalWpm;
+    document.getElementById("finalAccuracy").textContent = finalAccuracy + "%";
+    document.getElementById("finalWords").textContent = correctWords;
+    document.getElementById("finalChars").textContent = totalCharsTyped;
+
+    gameScreen.style.display = "none";
+    resultsScreen.style.display = "flex";
+  }
+
+  // ---- Focus input on click anywhere on game screen ----
+  gameScreen.addEventListener("click", function(e) {
+    if (gameActive && e.target !== typingInput) {
+      typingInput.focus();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

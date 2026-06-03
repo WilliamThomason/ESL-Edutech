@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESL Business — Phase 1: Strategy & Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--hue:180;--sat:60%;--lit:50%;--accent:hsl(var(--hue),var(--sat),var(--lit));--accent-dim:hsla(var(--hue),var(--sat),var(--lit),.15);--accent-glow:hsla(var(--hue),var(--sat),var(--lit),.4);--bg-base:hsl(var(--hue),15%,6%);--bg-card:hsl(var(--hue),12%,12%);--bg-hover:hsl(var(--hue),10%,18%);--text:hsl(var(--hue),5%,92%);--text-muted:hsl(var(--hue),5%,60%);--text-dim:hsl(var(--hue),5%,40%);--border:hsl(var(--hue),8%,25%)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{font-family:"Inter",sans-serif;background:var(--bg-base);color:var(--text);line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-base)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.header h1{font-size:1.2rem;font-weight:900;color:var(--text)}
+.header h1 span{color:var(--accent)}
+.back-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg-base);color:var(--text-muted);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.content{padding:24px;max-width:900px;margin:0 auto}
+.task-section{margin-bottom:32px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border .15s}
+.task-section:hover{border-color:var(--accent)}
+.task-header{padding:16px 20px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.task-header:hover{background:rgba(255,255,255,.04)}
+.task-header h2{font-size:.9rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.task-header .task-id{font-size:.65rem;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:4px}
+.task-header .dur{font-size:.7rem;color:var(--text-muted)}
+.task-header .toggle{font-size:.6rem;color:var(--text-dim);transition:transform .2s}
+.task-header.collapsed .toggle{transform:rotate(-90deg)}
+.task-body{padding:0;display:none}
+.task-body.open{display:block}
+.subtask{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+.subtask:last-child{border-bottom:none}
+.subtask-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.subtask-check:hover{border-color:var(--accent)}
+.subtask-check.checked{background:var(--accent);border-color:var(--accent)}
+.subtask-check.checked::after{content:"✓";color:#fff;font-size:.65rem;font-weight:700}
+.subtask-content{flex:1}
+.subtask-content h4{font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.subtask-content p{font-size:.7rem;color:var(--text-muted);line-height:1.5}
+.subtask-tag{display:inline-block;font-size:.55rem;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px}
+.tag-doc{background:rgba(59,130,246,.2);color:#60a5fa}
+.tag-research{background:rgba(167,139,250,.2);color:#a78bfa}
+.tag-decision{background:rgba(52,211,153,.2);color:#34d399}
+.tag-template{background:rgba(251,191,36,.2);color:#fbbf24}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+.section-progress{padding:8px 20px;background:rgba(255,255,255,.02);border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:.65rem;color:var(--text-dim)}
+.section-progress .bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.section-progress .fill{height:100%;background:var(--accent);border-radius:2px}
+@media(max-width:700px){.content{padding:16px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📋 Phase 1 — <span>Strategy & Research</span></h1>
+  <a href="esl-business-gantt.html" class="back-btn">← Back to Gantt</a>
+</div>
+<div class="content">
+
+  <!-- Task 1.1 -->
+  <div class="task-section">
+    <div class="task-header" onclick="toggleSection(this)">
+      <h2><span class="task-id">1.1</span> Business Model & Pricing <span class="dur">3 days</span></h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="task-body open">
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Define pricing tiers <span class="subtask-tag tag-decision">Decision</span></h4>
+          <p>Research competitor pricing (iTalki, Preply, Cambly). Set premium 1-on-1 rate. Consider PPP (Purchasing Power Parity) adjustments for EU/Asia/SA markets. Define trial lesson discount (50% first lesson?).</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Define USP statement <span class="subtask-tag tag-decision">Decision</span></h4>
+          <p>Your unique advantage: live translations in 8 languages by a native EN/DE/ES speaker. Write a 1-sentence USP. Example: "Premium English tutoring with real-time translations in your language."</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Create pricing page draft <span class="subtask-tag tag-doc">Document</span></h4>
+          <p>Draft the pricing table: Trial lesson (€X), Single lesson (€X), 5-pack (€X), 10-pack (€X). Include currency options (EUR, GBP, JPY, BRL, USD). Add PPP note.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Define target student profiles <span class="subtask-tag tag-doc">Document</span></h4>
+          <p>Create 3 personas: EU professional (B2-C1, business English), Asian student (A2-B1, exam prep), SA executive (B1-B2, conversation). Include their pain points and willingness to pay.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Set up Stripe account <span class="subtask-tag tag-template">Setup</span></h4>
+          <p>Create Stripe account. Enable multi-currency. Set up test mode. Document the pricing IDs for later integration.</p>
+        </div>
+      </div>
+      <div class="section-progress">
+        <span>0/5 done</span>
+        <div class="bar"><div class="fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task 1.2 -->
+  <div class="task-section">
+    <div class="task-header" onclick="toggleSection(this)">
+      <h2><span class="task-id">1.2</span> Market Research <span class="dur">5 days</span></h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="task-body open">
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>EU market analysis <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Research demand in Germany, France, Spain, Italy. Key search terms: "English tutor online", "English lessons [city]". Note average prices. Identify gaps (translation support, business English).</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Asia market analysis <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Research Japan, South Korea, China. Focus on TOEFL/IELTS demand. Note: Japanese market values structure and grammar. Korean market is exam-driven. Chinese market is huge but competitive.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>South America market analysis <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Research Brazil, Colombia, Argentina. Business English demand is high. Price sensitivity is higher. WhatsApp is the primary communication channel.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Create market research doc <span class="subtask-tag tag-doc">Document</span></h4>
+          <p>Compile findings into a single document: market size, average prices, key competitors, gaps/opportunities, recommended pricing per region.</p>
+        </div>
+      </div>
+      <div class="section-progress">
+        <span>0/4 done</span>
+        <div class="bar"><div class="fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task 1.3 -->
+  <div class="task-section">
+    <div class="task-header" onclick="toggleSection(this)">
+      <h2><span class="task-id">1.3</span> Competitor Deep Dive <span class="dur">4 days</span></h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="task-body open">
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>iTalki analysis <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Sign up as student. Book a trial lesson. Document: pricing, teacher quality, platform features, booking flow, student experience. Note weaknesses you can exploit.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Preply analysis <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Same process: sign up, book trial, document everything. Compare to iTalki. Note their subscription model vs per-lesson pricing.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Cambly + local competitors <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Research Cambly (conversation focus). Find 2-3 local competitors in DE, ES, JP markets. Document their pricing and offerings.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Competitive advantage matrix <span class="subtask-tag tag-doc">Document</span></h4>
+          <p>Create a comparison table: Feature vs You vs iTalki vs Preply vs Cambly. Highlight your translation USP, personal attention, and multi-language support.</p>
+        </div>
+      </div>
+      <div class="section-progress">
+        <span>0/4 done</span>
+        <div class="bar"><div class="fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task 1.4 -->
+  <div class="task-section">
+    <div class="task-header" onclick="toggleSection(this)">
+      <h2><span class="task-id">1.4</span> Translation Workflow Design <span class="dur">3 days</span></h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="task-body open">
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Define translation approach <span class="subtask-tag tag-decision">Decision</span></h4>
+          <p>How will live translations work during lessons? Options: (a) Teacher speaks target language directly, (b) Teacher provides written translations in chat, (c) Hybrid. Document the workflow.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Create glossary template <span class="subtask-tag tag-template">Template</span></h4>
+          <p>Design the translation glossary structure: English term → German → Spanish → French → Italian → Portuguese → Japanese → Korean → Chinese. Start with FL0-FL1 common terms.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Test DeepL for initial translations <span class="subtask-tag tag-research">Research</span></h4>
+          <p>Sign up for DeepL API (free tier). Test translation quality for common ESL terms in all 8 languages. Document quality issues and manual review needs.</p>
+        </div>
+      </div>
+      <div class="subtask">
+        <div class="subtask-check" onclick="toggleCheck(this)"></div>
+        <div class="subtask-content">
+          <h4>Write translation QA process <span class="subtask-tag tag-doc">Document</span></h4>
+          <p>Document the workflow: AI translates → You review DE/ES → Hire native reviewers for FR/IT/PT/JA/KO/ZH → Final glossary. Estimate time per language per level.</p>
+        </div>
+      </div>
+      <div class="section-progress">
+        <span>0/4 done</span>
+        <div class="bar"><div class="fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+function toggleSection(header){
+  header.classList.toggle("collapsed");
+  var body = header.nextElementSibling;
+  body.classList.toggle("open");
+}
+function toggleCheck(box){
+  box.classList.toggle("checked");
+  // Update progress
+  var section = box.closest(".task-section");
+  var checks = section.querySelectorAll(".subtask-check");
+  var checked = section.querySelectorAll(".subtask-check.checked").length;
+  var total = checks.length;
+  var pct = Math.round(checked/total*100);
+  section.querySelector(".section-progress span").textContent = checked+"/"+total+" done";
+  section.querySelector(".section-progress .fill").style.width = pct+"%";
+}
+</script>
+<div style="margin-top:32px;padding:16px 24px;border-top:1px solid var(--border);font-size:.65rem;color:var(--text-dim);text-align:center">
+  Phase 1 of 7 — Strategy & Research — ESL Business Launch Plan
+</div>
+</body>
+</html>

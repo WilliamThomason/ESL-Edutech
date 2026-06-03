@@ -104,29 +104,20 @@ a:hover{text-decoration:underline}
   .debat-body{padding-left:0}
   .filter-row{gap:6px}
 }
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
 </style>
-<link rel="stylesheet" href="eloquent-branding.css">
 </head>
-<body style="padding-top:48px">
-<!-- Eloquenta Branded Top Bar -->
-<div class="elo-bar">
-  <a href="landing.html" class="elo-logo" title="Back to Eloquenta Home">
-    El<span class="o">o</span>quenta
-  </a>
-  <span class="elo-tagline">Speaking Lesson</span>
-  <div class="elo-menu">
-    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
-    <a href="dashboard.html" class="elo-menu-link">📊 Dashboard</a>
-    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 All Lessons</a>
-  </div>
-</div>
-<div class="elo-spacer"></div>
+<body>
 
 
 <div class="container">
 
 <div class="header">
-  <h1>🎯 Business English <span>Debates</span></h1>
+  <h1>Business English <span>Debates</span></h1>
   <p>36 discussion questions for B2-C2 learners. Vocabulary, angles, and follow-ups included.</p>
   <div style="margin-top:16px">
     <span class="badge b2">B2</span>
@@ -163,8 +154,8 @@ a:hover{text-decoration:underline}
 <div class="debate-list" id="debateList"></div>
 
 <div class="footer">
-  <p>Part of the <a href="https://eloquent.ee">Eloquenta</a> Knowledge Base — Premium ESL with live translations</p>
-  <p style="margin-top:4px;font-size:11px">Free for all Eloquenta students. Share freely.</p>
+  <p>Business English Debates — Eloquenta</p>
+  <p style="margin-top:4px;font-size:11px">Free for all students. Share freely.</p>
 </div>
 
 </div>
@@ -853,6 +844,14 @@ function updateStats(shown) {
 
 // Init
 renderDebates();
+
+// Shift+wheel for horizontal scroll (side scrolling)
+document.addEventListener('wheel',function(e){
+  if(e.shiftKey){
+    e.preventDefault();
+    window.scrollBy(e.deltaY, 0);
+  }
+},{passive:false});
 </script>
 
 </body>

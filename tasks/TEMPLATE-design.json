@@ -1,0 +1,22 @@
+{
+  "project": "eloquenta|forest-friends|daw|other",
+  "task_title": "short description",
+  "goal": "what we want to achieve",
+  "constraints": [
+    "e.g. must work on mobile",
+    "e.g. no external CDN",
+    "e.g. keep under 50KB"
+  ],
+  "acceptance_criteria": [
+    "testable condition 1",
+    "testable condition 2"
+  ],
+  "assets_needed": {
+    "images": [],
+    "audio": [],
+    "fonts": []
+  },
+  "context": "anything already tried, links, screenshots described",
+  "priority": "high|medium|low",
+  "assigned_to": "william|owl"
+}

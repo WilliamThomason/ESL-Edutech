@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Slide Show Maker — Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.12);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.12);--emerald:#34d399;--emerald-dim:rgba(52,211,153,.12);--violet:#a78bfa;--violet-dim:rgba(167,139,250,.12);--rose:#fb7185;--rose-dim:rgba(251,113,133,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{font-family:'Inter',sans-serif;background:--bg;color:var(--text);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif}
+.page{display:none}.page.active{display:block}
+.hidden{display:none!important}
+.topbar{height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:50}
+.topbar-back{color:var(--text-muted);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .15s}
+.topbar-back:hover{color:var(--text)}
+.topbar-title{font-size:1.1rem;font-weight:700;flex:1}
+.topbar-actions{display:flex;gap:8px}
+.container{max-width:1200px;margin:0 auto;padding:32px 24px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.card:hover{border-color:var(--border-light)}
+label{display:block;font-size:.85rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+input,textarea,select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--cyan)}
+textarea{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--cyan);color:#020617}.btn-primary:hover{background:#67e8f9}
+.btn-secondary{background:var(--bg-hover);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+.btn-success{background:var(--emerald);color:#020617}.btn-success:hover{background:#6ee7b7}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}.btn-ghost:hover{color:var(--text);border-color:var(--border-light)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.btn-block{width:100%;justify-content:center}
+.maker-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:4px}
+.maker-tab{flex:1;padding:10px;border-radius:7px;font-weight:600;font-size:.85rem;cursor:pointer;color:var(--text-muted);transition:all .15s;border:none;background:transparent;font-family:inherit}
+.maker-tab.active{background:var(--cyan-dim);color:var(--cyan)}
+.maker-tab:hover:not(.active){color:var(--text)}
+.maker-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+.maker-inputs{display:flex;flex-direction:column;gap:12px;position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;padding-right:4px}
+.maker-preview{display:flex;flex-direction:column;gap:12px}
+.parse-output{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;max-height:200px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted);white-space:pre-wrap;margin-top:8px}
+.slide-thumb{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative}
+.slide-thumb:hover{border-color:var(--border-light)}
+.slide-thumb.active{border-color:var(--cyan);background:rgba(34,211,238,.05)}
+.slide-thumb .st-num{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-dim);margin-bottom:4px}
+.slide-thumb .st-type{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--cyan);margin-bottom:2px}
+.slide-thumb .st-title{font-size:.85rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slide-thumb .st-preview{font-size:.7rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.slide-thumb .st-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.slide-thumb:hover .st-actions{opacity:1}
+.st-btn{width:24px;height:24px;border-radius:4px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.st-btn:hover{color:var(--text);border-color:var(--border-light)}
+.st-btn.danger:hover{color:var(--rose);border-color:var(--rose)}
+.full-slide{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:14px;padding:40px;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;border:1px solid var(--border)}
+.full-slide .fs-num{position:absolute;top:16px;left:20px;font-size:.65rem;font-weight:700;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase}
+.full-slide .fs-category{display:inline-block;padding:3px 12px;border-radius:12px;font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;border:1px solid}
+.full-slide .fs-title{font-family:'Space Grotesk',sans-serif;font-size:2.2rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:8px;color:var(--text)}
+.full-slide .fs-subtitle{font-size:1rem;font-weight:500;color:var(--text-muted);margin-bottom:16px;line-height:1.5}
+.full-slide .fs-text{font-size:.95rem;color:var(--text-muted);line-height:1.7;max-width:500px}
+.full-slide .fs-footer{position:absolute;bottom:16px;font-size:.65rem;color:var(--text-dim);letter-spacing:1px}
+.fs-scale{display:flex;height:36px;border-radius:8px;overflow:hidden;margin:16px 0;width:100%;max-width:600px}
+.fs-seg{flex:1;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:rgba(255,255,255,.8);border-right:1px solid rgba(0,0,0,.2)}
+.fs-seg:last-child{border-right:none}
+.fs-scale-labels{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%;max-width:600px;margin-top:4px}
+.fs-scale-label{text-align:center;font-size:.55rem;color:var(--text-dim);font-weight:600;text-transform:uppercase}
+.fs-scale-pcts{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%;max-width:600px;margin-bottom:12px}
+.fs-scale-pct{text-align:center;font-size:.65rem;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.fs-vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:12px;width:100%;max-width:600px;text-align:left}
+.fs-vocab-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px}
+.fs-vocab-card .word{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.fs-vocab-card .eg{font-size:.65rem;color:var(--text-dim);font-style:italic;line-height:1.4}
+.fs-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.75rem;max-width:600px}
+.fs-table th{padding:6px 8px;text-align:left;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.fs-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top;color:var(--text-muted)}
+.fs-prompts{display:flex;flex-direction:column;gap:6px;margin-top:12px;text-align:left;max-width:500px;width:100%}
+.fs-prompt{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:10px 14px;font-size:.8rem;line-height:1.5;color:var(--text-muted)}
+.fs-prompt .num{display:inline-block;width:18px;height:18px;border-radius:50%;background:rgba(34,211,238,.12);color:var(--cyan);font-size:.6rem;font-weight:700;text-align:center;line-height:18px;margin-right:8px;vertical-align:middle}
+.fs-end{display:flex;flex-direction:column;align-items:center;gap:12px}
+.fs-end .check{font-size:3rem}.fs-end .title{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;color:var(--emerald)}.fs-end .subtitle{font-size:.9rem;color:var(--text-muted)}
+.parse-help{font-size:.7rem;color:var(--text-dim);line-height:1.6;margin-top:8px;padding:8px;background:rgba(255,255,255,.02);border-radius:6px}
+.parse-help code{background:rgba(34,211,238,.1);color:var(--cyan);padding:1px 4px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.65rem}
+.slide-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stype-btn{padding:10px 6px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text-muted);font-size:.6rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;font-family:inherit;line-height:1.3}
+.stype-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.stype-btn.active{border-color:var(--cyan);background:var(--cyan-dim);color:var(--cyan)}
+.stype-btn .stype-icon{display:block;font-size:1.1rem;margin-bottom:3px}
+.color-presets{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.color-preset{width:20px;height:20px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:transform .1s}
+.color-preset:hover{transform:scale(1.15)}.color-preset.active{border-color:#fff}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:.88rem;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,.3);display:none}
+.toast.show{display:flex;align-items:center;gap:10px}.toast.success{border-color:var(--emerald)}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}.badge-emerald{background:rgba(52,211,153,.12);color:var(--emerald)}
+@media(max-width:900px){.maker-layout{grid-template-columns:1fr}.maker-inputs{position:static}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="teacher-studio.html" class="topbar-back">← Back to Studio</a>
+  <div class="topbar-title">🖼️ Slide Show Maker</div>
+  <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="clearMaker()">🗑️ Clear</button></div>
+</div>
+
+<div class="container">
+  <p style="color:var(--text-muted);margin-bottom:20px">Paste your content — diagram topics, vocabulary lists, grammar points — and we'll build a complete interactive slideshow with the Eloquenta format.</p>
+
+  <div class="maker-tabs">
+    <button class="maker-tab active" onclick="switchMakerTab('paste',this)">1. Paste Content</button>
+    <button class="maker-tab" onclick="switchMakerTab('edit',this)">2. Edit Slides</button>
+    <button class="maker-tab" onclick="switchMakerTab('preview',this)">3. Preview</button>
+  </div>
+
+  <!-- TAB 1: PASTE -->
+  <div class="maker-panel" id="maker-panel-paste">
+    <div class="maker-layout">
+      <div class="maker-inputs">
+        <div class="card" style="margin-bottom:0">
+          <label>Lesson Title</label>
+          <input type="text" id="sm-title" placeholder="e.g. Degrees of Likelihood" style="margin-bottom:12px">
+          <label>Category / Topic</label>
+          <input type="text" id="sm-category" placeholder="e.g. Grammar Infographic" style="margin-bottom:12px">
+          <label>Level</label>
+          <select id="sm-level" style="margin-bottom:12px">
+            <option>A1 — Beginner</option><option>A2 — Elementary</option><option selected>B1 — Intermediate</option><option>B2 — Upper Intermediate</option><option>C1 — Advanced</option>
+          </select>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <label>Paste Your Content</label>
+          <textarea id="sm-content" placeholder="Paste your content here...
+
+Examples that work well:
+• Diagram topics (like Degrees of Likelihood)
+• Vocabulary lists with definitions
+• Grammar explanations
+• Print/Discuss topic lists
+
+The parser will identify sections, vocabulary, examples, and exercises to build slides automatically." style="min-height:200px;margin-bottom:8px;font-family:'JetBrains Mono',monospace;font-size:.8rem"></textarea>
+          <div class="parse-help">
+            <strong>Tips:</strong> Use <code>## Section Headings</code> to split into slides. Use <code>•</code> or <code>-</code> for bullet lists. Use <code>word: definition</code> for vocab pairs. Use <code>Q:</code> for questions.
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-primary" onclick="parseContent()">🔨 Parse & Generate</button>
+            <button class="btn btn-ghost" onclick="loadExampleContent()">📄 Load Example</button>
+          </div>
+        </div>
+        <div class="card hidden" id="parse-log-card" style="margin-bottom:0">
+          <label>Parse Log</label>
+          <div class="parse-output" id="parse-log"></div>
+        </div>
+      </div>
+      <div class="maker-preview">
+        <div class="card" style="margin-bottom:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <label style="margin:0">Generated Slides</label>
+            <span class="badge badge-cyan" id="slide-count">0 slides</span>
+          </div>
+          <div id="slide-thumbs" style="max-height:500px;overflow-y:auto">
+            <p style="color:var(--text-dim);font-size:.85rem;text-align:center;padding:40px 0">Paste content and click "Parse & Generate" to create slides</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: EDIT -->
+  <div class="maker-panel hidden" id="maker-panel-edit">
+    <div class="maker-layout">
+      <div class="maker-inputs">
+        <div class="card" style="margin-bottom:0">
+          <label>Slide Type</label>
+          <div class="slide-type-grid">
+            <button class="stype-btn active" data-type="title" onclick="setSlideType('title',this)"><span class="stype-icon">📋</span>Title</button>
+            <button class="stype-btn" data-type="vocab" onclick="setSlideType('vocab',this)"><span class="stype-icon">📝</span>Vocab</button>
+            <button class="stype-btn" data-type="scale" onclick="setSlideType('scale',this)"><span class="stype-icon">📊</span>Scale</button>
+            <button class="stype-btn" data-type="compare" onclick="setSlideType('compare',this)"><span class="stype-icon">⚖️</span>Compare</button>
+            <button class="stype-btn" data-type="examples" onclick="setSlideType('examples',this)"><span class="stype-icon">💬</span>Examples</button>
+            <button class="stype-btn" data-type="practice" onclick="setSlideType('practice',this)"><span class="stype-icon">🎯</span>Practice</button>
+            <button class="stype-btn" data-type="question" onclick="setSlideType('question',this)"><span class="stype-icon">❓</span>Question</button>
+            <button class="stype-btn" data-type="image" onclick="setSlideType('image',this)"><span class="stype-icon">🖼️</span>Image</button>
+            <button class="stype-btn" data-type="end" onclick="setSlideType('end',this)"><span class="stype-icon">🏆</span>End</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0" id="slide-edit-fields">
+          <label>Slide Title</label>
+          <input type="text" id="edit-title" placeholder="Slide title" style="margin-bottom:10px">
+          <label>Subtitle</label>
+          <input type="text" id="edit-subtitle" placeholder="Subtitle (optional)" style="margin-bottom:10px">
+          <label>Body Text</label>
+          <textarea id="edit-body" placeholder="Main content text" style="min-height:80px;margin-bottom:10px"></textarea>
+          <div id="edit-extra-fields"></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-primary btn-sm" onclick="applySlideEdit()">✓ Apply</button>
+            <button class="btn btn-ghost btn-sm" onclick="addNewSlide()">+ New Slide</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--rose)" onclick="deleteCurrentSlide()">🗑️ Delete</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="moveSlide(-1)">↑ Move Up</button>
+            <button class="btn btn-secondary btn-sm" onclick="moveSlide(1)">↓ Move Down</button>
+            <button class="btn btn-secondary btn-sm" onclick="duplicateSlide()">📋 Duplicate</button>
+          </div>
+        </div>
+      </div>
+      <div class="maker-preview">
+        <div class="card" style="margin-bottom:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <label style="margin:0">Slide Preview</label>
+            <span id="edit-slide-num" style="font-size:.7rem;color:var(--text-dim)">Slide —</span>
+          </div>
+          <div id="full-slide-preview" class="full-slide"><p style="color:var(--text-dim)">Select a slide to preview</p></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <label>All Slides</label>
+          <div id="edit-slide-list" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: PREVIEW -->
+  <div class="maker-panel hidden" id="maker-panel-preview">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="prevPreviewSlide()">◀ Prev</button>
+        <button class="btn btn-secondary btn-sm" onclick="nextPreviewSlide()">Next ▶</button>
+      </div>
+      <span id="preview-counter" style="font-size:.8rem;color:var(--text-muted)">— / —</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        <button class="btn btn-primary btn-sm" onclick="openExportModal()">💾 Export</button>
+      </div>
+    </div>
+    <div id="preview-slide-area" class="full-slide" style="min-height:500px"><p style="color:var(--text-dim)">No slides yet. Go to "Paste Content" to create some.</p></div>
+    <div style="display:flex;justify-content:center;gap:4px;margin-top:12px" id="preview-dots"></div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal">
+    <h3>💾 Export Lesson</h3>
+    <label>Lesson Name</label>
+    <input type="text" id="export-name" placeholder="My Lesson" style="margin-bottom:12px">
+    <label>Format</label>
+    <select id="export-format" style="margin-bottom:12px"><option value="html">Standalone HTML file</option><option value="json">JSON data (for import)</option></select>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeExportModal()">Cancel</button><button class="btn btn-primary" onclick="exportLesson()">💾 Download</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  var makerSlides=[],currentSlideIdx=-1,currentSlideType='title',previewIdx=0;
+
+  function toast(msg,type){var el=document.getElementById('toast');el.innerHTML=(type==='success'?'✅ ':'ℹ️ ')+msg;el.className='toast show'+(type==='success'?' success':'');setTimeout(function(){el.className='toast';},3000);}
+  function switchMakerTab(tab,btn){document.querySelectorAll('.maker-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');document.querySelectorAll('.maker-panel').forEach(function(p){p.classList.add('hidden');});var panel=document.getElementById('maker-panel-'+tab);if(panel)panel.classList.remove('hidden');if(tab==='edit')renderEditSlideList();if(tab==='preview')updatePreview();}
+
+  function parseContent(){
+    var raw=document.getElementById('sm-content').value.trim();
+    if(!raw){toast('Please paste some content first');return;}
+    var title=document.getElementById('sm-title').value.trim()||'Untitled Lesson';
+    var log=[];makerSlides=[];
+    var lines=raw.split('\n');log.push('Parsing '+lines.length+' lines...');
+    var sections=[];var current={heading:'',items:[],examples:[],questions:[]};
+    lines.forEach(function(line){
+      var t=line.trim();
+      if(!t){if(current.heading||current.items.length){sections.push(current);current={heading:'',items:[],examples:[],questions:[]};}return;}
+      if(t.match(/^#{1,3}\s/)){if(current.heading||current.items.length)sections.push(current);current={heading:t.replace(/^#+\s*/,''),items:[],examples:[],questions:[]};}
+      else if(t.match(/^[-•*]\s/)){current.items.push(t.replace(/^[-•*]\s*/,''));}
+      else if(t.match(/^Q:/i)){current.questions.push(t.replace(/^Q:\s*/i,''));}
+      else if(t.match(/^e[.\-]?\s/i)||t.match(/^".*"$/)){current.examples.push(t);}
+      else if(t.match(/\w+\s*[:=]\s*.+/)){var parts=t.split(/[:=]/);current.items.push({word:parts[0].trim(),def:parts.slice(1).join(':').trim()});}
+      else{current.items.push(t);}
+    });
+    if(current.heading||current.items.length)sections.push(current);
+    log.push('Found '+sections.length+' sections');
+    makerSlides.push({type:'title',title:title,subtitle:document.getElementById('sm-category').value||'Speaking Lesson',catColor:'rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)',bg:'https://images.unsplash.com/photo-1509909756405-be0199881695?w=1200&q=80'});
+    sections.forEach(function(sec,si){
+      var heading=sec.heading||'Section '+(si+1);var items=sec.items;
+      var isScale=items.filter(function(it){return typeof it==='string'&&(it.match(/\d+%/)||it.match(/certain|likely|unlikely|impossible|always|never/i));}).length>=3;
+      var vocabItems=items.filter(function(it){return typeof it==='object'&&it.word;});
+      if(isScale){
+        makerSlides.push({type:'scale',title:heading,subtitle:items.filter(function(i){return typeof i==='string';}).join(' • '),scaleLabels:items.filter(function(i){return typeof i==='string';}),catColor:'rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)',bg:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80'});
+      }else if(vocabItems.length>=2){
+        makerSlides.push({type:'vocab',title:heading,subtitle:items.filter(function(i){return typeof i==='string'&&i.length>3}).join(' • '),vocabList:vocabItems.map(function(v){return {word:v.word,eg:v.def||'',pct:''};}),catColor:'rgba(16,185,129,.15);color:#34d399;border-color:rgba(16,185,129,.3)',bg:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80'});
+      }else if(sec.examples.length>=2){
+        makerSlides.push({type:'examples',title:heading,subtitle:sec.examples[0]||'',examples:sec.examples,catColor:'rgba(245,158,11,.15);color:#fbbf24;border-color:rgba(245,158,11,.3)',bg:'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1200&q=80'});
+      }else if(sec.questions.length>=1){
+        makerSlides.push({type:'practice',title:heading+' — Practice',subtitle:sec.questions[0]||'',prompts:sec.questions,catColor:'rgba(52,211,153,.15);color:#34d399;border-color:rgba(52,211,153,.3)',bg:'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=1200&q=80'});
+      }else{
+        makerSlides.push({type:'compare',title:heading,compareRows:items.map(function(it){var s=typeof it==='string'?it:(it.word||'');var p=s.split(/\s+/).slice(0,3);return{level:p[0]||'',adverb:p[1]||'',example:s};}),catColor:'rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)',bg:'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1200&q=80'});
+      }
+    });
+    makerSlides.push({type:'end',title:'Well done!',subtitle:title,text:'Great work! Try to use these structures in your next speaking session.',catColor:'rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)',bg:'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&q=80'});
+    log.push('Generated '+makerSlides.length+' slides');
+    makerSlides.forEach(function(s,i){log.push('  '+(i+1)+'. ['+s.type+'] '+s.title);});
+    document.getElementById('parse-log-card').classList.remove('hidden');
+    document.getElementById('parse-log').textContent=log.join('\n');
+    document.getElementById('slide-count').textContent=makerSlides.length+' slides';
+    renderSlideThumbs();
+    toast('Generated '+makerSlides.length+' slides!','success');
+  }
+
+  function loadExampleContent(){
+    document.getElementById('sm-title').value='Degrees of Likelihood';
+    document.getElementById('sm-category').value='Grammar Infographic';
+    document.getElementById('sm-content').value='## The Likelihood Scale\n100% - Certain: definitely, certainly, undoubtedly, absolutely\n80-90% - High: probably, likely\n50-60% - Medium: possibly, perhaps, might\n20-40% - Low: maybe, conceivably, hardly\n5-10% - Unlikely: unlikely, improbably, barely\n0% - Impossible: impossible, never\n\n## High Certainty\ndefinitely: She definitely won the award.\ncertainly: I will certainly be there tomorrow.\nundoubtedly: This is undoubtedly the best restaurant.\n\n## Medium-High\nprobably: They will probably arrive late.\nlikely: It is likely to rain tomorrow.\n\n## Medium\npossibly: It will possibly rain tomorrow.\nperhaps: Perhaps we should leave early.\nmight: She might come to the party.\n\n## Low\nmaybe: Maybe we should leave early.\nconceivably: It could conceivably work.\n\n## Practice\nQ: Describe a future event at each level of certainty.\nQ: Compare two business decisions - one certain, one doubtful.\nQ: Role-play: one optimistic, one pessimistic about a project.';
+    toast('Example loaded!');
+  }
+
+  function clearMaker(){
+    document.getElementById('sm-title').value='';document.getElementById('sm-category').value='';document.getElementById('sm-content').value='';
+    makerSlides=[];currentSlideIdx=-1;
+    document.getElementById('slide-count').textContent='0 slides';
+    document.getElementById('slide-thumbs').innerHTML='<p style="color:var(--text-dim);font-size:.85rem;text-align:center;padding:40px 0">Paste content and click Parse</p>';
+    document.getElementById('parse-log-card').classList.add('hidden');
+    document.getElementById('full-slide-preview').innerHTML='<p style="color:var(--text-dim)">Select a slide to preview</p>';
+    toast('Cleared');
+  }
+
+  function renderSlideThumbs(){
+    var el=document.getElementById('slide-thumbs');
+    if(!makerSlides.length){el.innerHTML='<p style="color:var(--text-dim);font-size:.85rem;text-align:center;padding:40px 0">Paste content and click Parse</p>';return;}
+    el.innerHTML='';
+    makerSlides.forEach(function(s,i){
+      var h='<div class="slide-thumb'+(i===currentSlideIdx?' active':'')+'" onclick="editSlideAt('+i+')">';
+      h+='<div class="st-num">Slide '+(i+1)+' / '+makerSlides.length+'</div>';
+      h+='<div class="st-type">'+s.type+'</div>';
+      h+='<div class="st-title">'+s.title+'</div>';
+      if(s.subtitle)h+='<div class="st-preview">'+s.subtitle.substring(0,60)+'</div>';
+      h+='<div class="st-actions"><button class="st-btn" onclick="event.stopPropagation();moveSlideAt('+i+',-1)" title="Move Up">↑</button><button class="st-btn" onclick="event.stopPropagation();moveSlideAt('+i+',1)" title="Move Down">↓</button><button class="st-btn danger" onclick="event.stopPropagation();removeSlideAt('+i+')" title="Delete">✕</button></div>';
+      h+='</div>';
+      el.innerHTML+=h;
+    });
+  }
+
+  function editSlideAt(i){currentSlideIdx=i;var s=makerSlides[i];currentSlideType=s.type;document.getElementById('edit-slide-num').textContent='Slide '+(i+1)+' of '+makerSlides.length;document.getElementById('edit-title').value=s.title;document.getElementById('edit-subtitle').value=s.subtitle||'';document.getElementById('edit-body').value=s.text||'';renderFullSlidePreview(s);renderEditSlideList();}
+  function renderEditSlideList(){var el=document.getElementById('edit-slide-list');el.innerHTML='';makerSlides.forEach(function(s,i){var h='<div class="slide-thumb'+(i===currentSlideIdx?' active':'')+'" onclick="editSlideAt('+i+')">';h+='<div class="st-type">'+s.type+'</div>';h+='<div class="st-title">'+s.title+'</div>';h+='</div>';el.innerHTML+=h;});}
+  function setSlideType(type,btn){currentSlideType=type;document.querySelectorAll('.stype-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');}
+  function applySlideEdit(){if(currentSlideIdx<0)return;var s=makerSlides[currentSlideIdx];s.title=document.getElementById('edit-title').value;s.subtitle=document.getElementById('edit-subtitle').value;s.text=document.getElementById('edit-body').value;renderSlideThumbs();renderFullSlidePreview(s);toast('Slide updated','success');}
+  function addNewSlide(){makerSlides.push({type:currentSlideType||'title',title:'New Slide',subtitle:'',catColor:'rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)',bg:'https://images.unsplash.com/photo-1509909756405-be0199881695?w=1200&q=80'});currentSlideIdx=makerSlides.length-1;renderSlideThumbs();editSlideAt(currentSlideIdx);toast('New slide added','success');}
+  function deleteCurrentSlide(){if(currentSlideIdx<0)return;makerSlides.splice(currentSlideIdx,1);currentSlideIdx=-1;renderSlideThumbs();document.getElementById('full-slide-preview').innerHTML='<p style="color:var(--text-dim)">Select a slide to preview</p>';toast('Slide deleted');}
+  function moveSlide(dir){if(currentSlideIdx<0)return;var ni=currentSlideIdx+dir;if(ni<0||ni>=makerSlides.length)return;var tmp=makerSlides[currentSlideIdx];makerSlides[currentSlideIdx]=makerSlides[ni];makerSlides[ni]=tmp;currentSlideIdx=ni;renderSlideThumbs();}
+  function moveSlideAt(idx,dir){var ni=idx+dir;if(ni<0||ni>=makerSlides.length)return;var tmp=makerSlides[idx];makerSlides[idx]=makerSlides[ni];makerSlides[ni]=tmp;if(currentSlideIdx===idx)currentSlideIdx=ni;renderSlideThumbs();}
+  function removeSlideAt(idx){makerSlides.splice(idx,1);if(currentSlideIdx>=makerSlides.length)currentSlideIdx=makerSlides.length-1;renderSlideThumbs();}
+  function duplicateSlide(){if(currentSlideIdx<0)return;var s=JSON.parse(JSON.stringify(makerSlides[currentSlideIdx]));makerSlides.splice(currentSlideIdx+1,0,s);currentSlideIdx++;renderSlideThumbs();toast('Duplicated','success');}
+
+  function renderFullSlidePreview(s){
+    var el=document.getElementById('full-slide-preview');
+    if(!s){el.innerHTML='<p style="color:var(--text-dim)">Select a slide to preview</p>';return;}
+    var h='';
+    if(s.type==='title'){
+      h+='<span class="fs-category" style="background:'+s.catColor+'">'+(s.subtitle||'Lesson')+'</span>';
+      h+='<div class="fs-title">'+s.title+'</div>';
+      if(s.text)h+='<div class="fs-text">'+s.text+'</div>';
+    }else if(s.type==='end'){
+      h+='<div class="fs-end"><div class="check">🎉</div><div class="title">'+s.title+'</div><div class="subtitle">'+s.subtitle+'</div></div>';
+    }else if(s.type==='scale'&&s.scaleLabels){
+      h+='<span class="fs-category" style="background:'+s.catColor+'">Scale</span>';
+      h+='<div class="fs-title">'+s.title+'</div>';
+      h+='<div class="fs-scale">';
+      var colors=['#ef4444','#f97316','#eab308','#84cc16','#22c55e','#10b981'];
+      s.scaleLabels.forEach(function(l,i){h+='<div class="fs-seg" style="background:'+(colors[i%colors.length]||'#6b7280')+'">'+l.substring(0,12)+'</div>';});
+      h+='</div>';
+    }else if(s.type==='vocab'&&s.vocabList){
+      h+='<span class="fs-category" style="background:'+s.catColor+'">Vocabulary</span>';
+      h+='<div class="fs-title">'+s.title+'</div>';
+      h+='<div class="fs-vocab-grid">';
+      s.vocabList.forEach(function(v){h+='<div class="fs-vocab-card"><div class="word">'+v.word+'</div><div class="eg">'+(v.eg||'')+'</div></div>';});
+      h+='</div>';
+    }else if(s.type==='examples'&&s.examples){
+      h+='<span class="fs-category" style="background:'+s.catColor+'">Examples</span>';
+      h+='<div class="fs-title">'+s.title+'</div>';
+      h+='<div class="fs-prompts">';
+      s.examples.forEach(function(e,i){h+='<div class="fs-prompt"><span class="num">'+(i+1)+'</span>'+e+'</div>';});
+      h+='</div>';
+    }else if(s.type==='practice'&&s.prompts){
+      h+='<span class="fs-category" style="background:'+s.catColor+'">Practice</span>';
+      h+='<div class="fs-title">'+s.title+'</div>';
+      h+='<div class="fs-prompts">';
+      s.prompts.forEach(function(p,i){h+='<div class="fs-prompt"><span class="num">'+(i+1)+'</span>'+p+'</div>';});
+      h+='</div>';
+    }else{
+      h+='<span class="fs-category" style="background:'+s.catColor+'">'+s.type+'</span>';
+      h+='<div class="fs-title">'+s.title+'</div>';
+      if(s.subtitle)h+='<div class="fs-subtitle">'+s.subtitle+'</div>';
+      if(s.text)h+='<div class="fs-text">'+s.text+'</div>';
+    }
+    h+='<div class="fs-footer">Eloquenta — Teacher Studio</div>';
+    el.innerHTML=h;
+  }
+
+  function updatePreview(){if(!makerSlides.length){document.getElementById('preview-slide-area').innerHTML='<p style="color:var(--text-dim)">No slides yet.</p>';document.getElementById('preview-counter').textContent='— / —';return;}previewIdx=Math.min(previewIdx,makerSlides.length-1);renderFullSlidePreview(makerSlides[previewIdx]);document.getElementById('preview-counter').textContent=(previewIdx+1)+' / '+makerSlides.length;var dots='';makerSlides.forEach(function(s,i){dots+='<div style="width:8px;height:8px;border-radius:50%;background:'+(i===previewIdx?'var(--cyan)':'var(--border)');cursor:pointer" onclick="previewIdx='+i+';updatePreview()"></div>';});document.getElementById('preview-dots').innerHTML=dots;}
+  function nextPreviewSlide(){if(previewIdx<makerSlides.length-1){previewIdx++;updatePreview();}}
+  function prevPreviewSlide(){if(previewIdx>0){previewIdx--;updatePreview();}}
+  function toggleFullscreen(){var el=document.getElementById('preview-slide-area');if(el.requestFullscreen)el.requestFullscreen();}
+
+  function openExportModal(){document.getElementById('export-name').value=makerSlides[0]?makerSlides[0].title:'';document.getElementById('export-modal').classList.add('show');}
+  function closeExportModal(){document.getElementById('export-modal').classList.remove('show');}
+  function exportLesson(){
+    var name=document.getElementById('export-name').value||'lesson';
+    var fmt=document.getElementById('export-format').value;
+    if(fmt==='json'){var blob=new Blob([JSON.stringify(makerSlides,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.json';a.click();}
+    else{var html=generateStandaloneHTML();var blob=new Blob([html],{type:'text/html'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.html';a.click();}
+    closeExportModal();toast('Downloaded!','success');
+  }
+
+  function generateStandaloneHTML(){
+    var slides=makerSlides;
+    var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>'+(slides[0]?slides[0].title:'Lesson')+'</title>';
+    html+='<style>:root{--bg:#020617;--bg-card:#0f172a;--border:#1e293b;--text:#e2e8f0;--text-muted:#94a3b8;--cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;--violet:#a78bfa}';
+    html+='*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}';
+    html+='.slide{display:none;width:100vw;height:100vh;flex-direction:column;justify-content:center;align-items:center;padding:40px;text-align:center}.slide.active{display:flex}';
+    html+='.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.25) saturate(1.2);z-index:-1}';
+    html+='.slide-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(2,6,23,.9) 0%,rgba(2,6,23,.2) 40%,rgba(2,6,23,.5) 100%);z-index:-1}';
+    html+='.cat{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;border:1px solid}';
+    html+='.stitle{font-size:2.2rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}';
+    html+='.ssubtitle{font-size:1rem;font-weight:500;color:var(--text-muted);margin-bottom:16px}';
+    html+='.stext{font-size:.95rem;color:var(--text-muted);line-height:1.7;max-width:500px}';
+    html+='.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;z-index:50}';
+    html+='.nav-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer}';
+    html+='.progress{position:fixed;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.06);z-index:60}';
+    html+='.progress-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .3s}';
+    html+='</style></head><body>';
+    html+='<div class="progress"><div class="progress-bar" id="pbar" style="width:0%"></div></div>';
+    slides.forEach(function(s,i){
+      html+='<div class="slide'+(i===0?' active':'')+'" id="s'+i+'">';
+      if(s.bg)html+='<div class="slide-bg" style="background-image:url('+s.bg+')"></div>';
+      html+='<span class="cat" style="background:'+s.catColor+'">'+(s.type==='title'?(s.subtitle||'Lesson'):s.type)+'</span>';
+      html+='<div class="stitle">'+s.title+'</div>';
+      if(s.subtitle&&s.type!=='title')html+='<div class="ssubtitle">'+s.subtitle+'</div>';
+      if(s.text)html+='<div class="stext">'+s.text+'</div>';
+      if(s.type==='end')html+='<div style="font-size:3rem;margin-top:16px">🎉</div>';
+      html+='</div>';
+    });
+    html+='<div class="nav"><button class="nav-btn" onclick="prev()">◀</button><span id="scounter" style="font-size:.8rem;color:var(--text-muted);padding:0 8px">1 / '+slides.length+'</span><button class="nav-btn" onclick="next()">▶</button></div>';
+    html+='<script>var cur=0,total='+slides.length+';function show(n){document.querySelectorAll(".slide").forEach(function(s){s.classList.remove("active")});document.getElementById("s"+n).classList.add("active");cur=n;document.getElementById("scounter").textContent=(n+1)+" / "+total;document.getElementById("pbar").style.width=((n+1)/total*100)+"%";}function next(){if(cur<total-1)show(cur+1);}function prev(){if(cur>0)show(cur-1);}document.addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key===" ")next();if(e.key==="ArrowLeft")prev();});';
+    html+='</script></body></html>';
+    return html;
+  }
+
+  window.switchMakerTab=switchMakerTab;window.parseContent=parseContent;window.loadExampleContent=loadExampleContent;window.clearMaker=clearMaker;
+  window.setSlideType=setSlideType;window.applySlideEdit=applySlideEdit;window.addNewSlide=addNewSlide;window.deleteCurrentSlide=deleteCurrentSlide;
+  window.moveSlide=moveSlide;window.moveSlideAt=moveSlideAt;window.removeSlideAt=removeSlideAt;window.duplicateSlide=duplicateSlide;
+  window.editSlideAt=editSlideAt;window.nextPreviewSlide=nextPreviewSlide;window.prevPreviewSlide=prevPreviewSlide;window.toggleFullscreen=toggleFullscreen;
+  window.openExportModal=openExportModal;window.closeExportModal=closeExportModal;window.exportLesson=exportLesson;window.toast=toast;
+})();
+</script>
+</body>
+</html>

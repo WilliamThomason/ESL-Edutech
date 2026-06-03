@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reading Practice — Teacher Student Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border)}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:16px;font-weight:700;flex:1}
+.main{max-width:900px;margin:0 auto;padding:24px 20px}
+
+/* Level select */
+.level-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.level-btn{height:36px;padding:0 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:(--dim);font-size:13px;font-weight:600;cursor:pointer}
+.level-btn:hover{border-color:var(--text)}
+.level-btn.active{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+
+/* Passage select */
+.passage-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.ptab{height:32px;padding:0 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer}
+.ptab.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+
+/* Reading area */
+.reading-area{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:24px;position:relative}
+.passage-title{font-size:1.4rem;font-weight:800;margin-bottom:16px;line-height:1.2}
+.passage-text{font-family:'Merriweather',serif;font-size:1.05rem;line-height:1.9;color:var(--dim);letter-spacing:.2px}
+.passage-text .vocab{color:var(--amber);cursor:help;border-bottom:1px dashed rgba(251,191,36,.4);position:relative}
+.passage-text .vocab:hover{border-bottom-color:var(--amber)}
+.passage-text .vocab .vtip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.passage-text .vocab:hover .vtip{opacity:1}
+.reading-time{font-size:11px;color:var(--muted);text-align:right;margin-top:16px}
+
+/* Questions */
+.questions{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.q-header{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.q-score{font-size:12px;color:var(--muted);margin-left:auto}
+.question{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.question:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-text{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.q-num{color:var(--cyan);margin-right:6px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;transition:all .15s}
+.opt:hover{border-color:var(--cyan)}
+.opt.sel{background:rgba(34,211,238,.08);border-color:var(--cyan)}
+.opt.correct{background:rgba(52,211,153,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(251,113,133,.1);border-color:var(--rose);color:var(--rose)}
+.opt .letter{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--bg3);text-align:center;font-size:11px;font-weight:700;line-height:22px;flex-shrink:0}
+.short-answer{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;resize:vertical;min-height:60px;font-family:'Inter',sans-serif}
+.short-answer:focus{border-color:var(--cyan)}
+
+/* Submit */
+.submit-row{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.btn{height:40px;padding:0 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.primary{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+
+/* Results */
+.results{display:none;text-align:center;padding:40px 20px}
+.results.show{display:block}
+.results h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.res-stats{display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.rstat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:100px}
+.rstat .val{font-size:1.5rem;font-weight:800;display:block}
+.rstat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+/* Start */
+.start-msg{text-align:center;padding:60px 20px}
+.start-msg h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.start-msg p{color:var(--dim);margin-bottom:24px}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Reading Practice</div>
+</div>
+
+<div class="main">
+  <div class="level-bar" id="levelBar">
+    <button class="level-btn active" onclick="setLevel('a1',this)">A1 Beginner</button>
+    <button class="level-btn" onclick="setLevel('a2',this)">A2 Elementary</button>
+    <button class="level-btn" onclick="setLevel('b1',this)">B1 Intermediate</button>
+    <button class="level-btn" onclick="setLevel('b2',this)">B2 Upper Intermediate</button>
+  </div>
+  <div class="passage-tabs" id="passageTabs"></div>
+  <div class="start-msg" id="startMsg">
+    <h2>Reading Practice</h2>
+    <p>Read the passage, then answer comprehension questions. Click any highlighted word for a definition.</p>
+    <button class="btn primary" onclick="startQuiz()">Start</button>
+  </div>
+  <div id="quizArea" style="display:none">
+    <div class="reading-area" id="readingArea"></div>
+    <div class="questions" id="questionsArea"></div>
+    <div class="results" id="resultsArea"></div>
+  </div>
+</div>
+
+<script>
+var LEVEL='a1',PASSAGE=0,questions=[],answers=[],submitted=false,readStart=0;
+
+var PASSAGES={
+  a1:[
+    {title:"The Daily Commuter",text:"Every morning at seven o'clock, Maria walks to the train station near her apartment. She buys a cup of coffee from the small cafe on the corner and catches the 7:15 train to the city. The journey takes about forty minutes. Maria works in a large office building on Park Street. She is a receptionist at a dental clinic. Her job is to greet patients, answer the phone, and schedule appointments. She usually eats lunch at her desk -- a sandwich or some fruit from home. After work, she takes the 5:30 train back to her neighborhood. Sometimes she stops at the grocery store on the way home. Maria enjoys the routine of her daily commute. It gives her time to think and listen to music before the busy day begins.",vocab:{commuter:"a person who travels regularly to work",apartment:"a set of rooms to live in, part of a larger building",receptionist:"a person who greets visitors and answers phones at an office",schedule:"to arrange for something to happen at a particular time",appointments:"arrangements to meet someone at a specific time",grocery:"a shop that sells food and household items",routine:"a regular sequence of actions"},q:[
+      {t:"What time does Maria's train leave?",o:["7:00","7:15","7:30","6:45"],a:1},
+      {t:"Where does Maria work?",o:["A school","A hospital","A dental clinic","A restaurant"],a:2},
+      {t:"What does a receptionist NOT usually do?",o:"free",a:"Perform dental procedures"},
+      {t:"How long is the train journey?",o:["Twenty minutes","Thirty minutes","Forty minutes","One hour"],a:2},
+      {t:"Why does Maria enjoy her commute?",o:["It is very short","She can think and listen to music","She talks to interesting people","The train is always empty"],a:1}
+    ]},
+    {title:"A Weekend Market",text:"On Saturday mornings, the town square transforms into a colourful market. Farmers arrive before sunrise with fresh vegetables, fruit, eggs, and cheese. Bakers display bread and pastries on wooden tables. Sellers of flowers, honey, and handmade crafts fill the remaining spaces. Anna visits the market every weekend. She usually buys tomatoes, cucumbers, and olive oil. Her favourite seller is Mr. Kostas, who grows organic vegetables on his farm outside the town. He always lets her taste his products before she buys them. The market is also a social event. People meet their friends and neighbours there. Children run between the stalls while their parents shop. Musicians sometimes play in the corner. By noon, most of the products are sold, and the square slowly empties until next Saturday.",vocab:{transforms:"changes in appearance or form",crafts:"objects made by hand",organic:"grown without chemicals",stalls:"tables or small shops at a market",social:"relating to meeting and spending time with people"},q:[
+      {t:"When do the farmers arrive?",o:["At noon","In the afternoon","Before sunrise","After the market opens"],a:2},
+      {t:"What does Anna usually buy?",o:["Bread and cheese","Flowers and honey","Tomatoes, cucumbers, and olive oil","Eggs and milk"],a:2},
+      {t:"Who is Mr. Kostas?",o:"free",a:"A farmer who grows organic vegetables"},
+      {t:"What do children do at the market?",o:["Help their parents sell things","Run between the stalls","Sell vegetables","Play music"],a:1},
+      {t:"When does the market end?",o:["At noon","At 10am","In the evening","It doesn't end"],a:0}
+    ]},
+    {title:"Learning to Swim",text:"When David was seven years old, his parents signed him up for swimming lessons at the local pool. David was afraid of the water at first. He held onto the side of the pool and would not let go. His instructor, Maria, was very patient. She showed him how to blow bubbles in the water and how to float on his back. After a few weeks, David could swim across the pool without stopping. He was very proud of himself. Now David is fifteen, and he swims competitively for his school team. He trains four times a week and has won several medals. His parents always come to watch his races. David thinks that learning to swim was one of the best things he ever did. It taught him that with practice and patience, you can overcome your fears.",vocabulary:{patient:"willing to wait and not get angry",float:"to stay on the surface of water without sinking",competitively:"in a way that involves competing against others",medals:"small metal awards given for winning",overcome:"to successfully deal with a problem"},q:[
+      {t:"How old was David when he started swimming lessons?",o:["Five","Seven","Ten","Fifteen"],a:1},
+      {t:"What was David afraid of?",o:["The instructor","The water","Competition","His parents"],a:1},
+      {t:"What did David learn FIRST?",o:"free",a:"How to blow bubbles in the water"},
+      {t:"How often does David train now?",o:["Every day","Four times a week","Once a week","Twice a month"],a:1},
+      {t:"What did swimming teach David?",o:["How to win medals","That practice and patience help overcome fears","How to be competitive","How to teach others"],a:1}
+    ]}
+  ],
+  a2:[
+    {title:"The Pop-Up Restaurant",text:"When chef Thomas Bennett lost his job during the restaurant closures of 2020, he decided to start something new from his tiny home kitchen. With just a laptop and a box of ingredients, he launched a 'virtual restaurant' -- customers ordered meals online, and Thomas cooked and delivered them himself. The first week, he received only three orders. But Thomas experimented with bold flavour combinations and generous portions. By the second month, word of mouth had spread, and he was cooking fifty meals a weekend. His signature dish -- a slow-cooked lamb curry with homemade naan bread -- became a local sensation. Within a year, Thomas had saved enough to rent a small commercial kitchen. He hired two assistants and expanded his menu. Food critics began to take notice. His story was featured in a national newspaper under the headline 'From Unemployment to Five-Star Flavours'. Today, Thomas's pop-up restaurant sells out within hours of posting the weekly menu.",vocabulary:{bold:"showing confidence and willingness to take risks",generous:"larger than usual or expected",portions:"the amount of food served to one person",sensation:"something that causes great excitement",commercial:"used for business purposes",critics:"people who judge and evaluate creative work"},q:[
+      {t:"What caused Thomas to start his own business?",o:["He wanted a change","He lost his job","He inherited money","He won a competition"],a:1},
+      {t:"How many orders did he receive in the first week?",o:["None","Three","Fifty","One hundred"],a:1},
+      {t:"What was his signature dish?",o:"free",a:"A slow-cooked lamb curry with homemade naan bread"},
+      {t:"What happened within a year?",o:["He closed the business","He rented a commercial kitchen","He moved abroad","He opened three restaurants"],a:1},
+      {t:"What was the newspaper headline?",o:["'From Rags to Riches'","'The Best Curry in Town'","'From Unemployment to Five-Star Flavours'","'A Chef's Dream'"],a:2}
+    ]},
+  }
+};
+
+function setLevel(l,btn){
+  LEVEL=l;PASSAGE=0;submitted=false;
+  document.querySelectorAll('.level-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  buildPassageTabs();
+}
+
+function buildPassageTabs(){
+  var tabs=document.getElementById('passageTabs');
+  var p=PASSAGES[LEVEL];
+  tabs.innerHTML='';
+  p.forEach(function(pass,i){
+    var b=document.createElement('button');
+    b.className='ptab'+(i===0?' active':'');
+    b.textContent='Passage '+(i+1);
+    b.onclick=function(){PASSAGE=i;loadPassage();document.querySelectorAll('.ptab').forEach(function(x){x.classList.remove('active')});b.classList.add('active');};
+    tabs.appendChild(b);
+  });
+}
+
+function loadPassage(){
+  var p=PASSAGES[LEVEL][PASSAGE];
+  var html='<div class="passage-title">'+p.title+'</div>';
+  html+='<div class="passage-text">';
+  var words=p.text.split(' ');
+  words.forEach(function(w){
+    var clean=w.toLowerCase().replace(/[^a-z]/g,'');
+    if(p.vocab[clean]){
+      html+='<span class="vocab">'+w+'<span class="vtip"><strong>'+clean+'</strong>: '+p.vocab[clean]+'</span></span> ';
+    } else {
+      html+=w+' ';
+    }
+  });
+  html+='</div>';
+  html+='<div class="reading-time">Reading time started -- <span id="readTimer">0:00</span></div>';
+  document.getElementById('readingArea').innerHTML=html;
+  readStart=Date.now();
+  var ti=setInterval(function(){
+    var el=document.getElementById('readTimer');
+    if(!el){clearInterval(ti);return;}
+    var s=Math.floor((Date.now()-readStart)/1000);
+    el.textContent=Math.floor(s/60)+':' +String(s%60).padStart(2,'0');
+  },1000);
+  buildQuestions();
+}
+
+function buildQuestions(){
+  var p=PASSAGES[LEVEL][PASSAGE];
+  questions=p.q;
+  answers={};
+  var html='<div class="q-header">Comprehension Questions <span class="q-score" id="qScore"></span></div>';
+  questions.forEach(function(q,i){
+    html+='<div class="question" id="q'+i+'">';
+    html+='<div class="q-text"><span class="q-num">'+(i+1)+'.</span>'+q.t+'</div>';
+    if(q.o==='free'){
+      html+='<textarea class="short-answer" id="ans'+i+'" placeholder="Type your answer here..."></textarea>';
+    } else {
+      html+='<div class="opts">';
+      q.o.forEach(function(opt,j){
+        html+='<div class="opt" id="q'+i+'o'+j+'" onclick="selectOpt('+i+','+j+')"><span class="letter">'+String.fromCharCode(65+j)+'</span>'+opt+'</div>';
+      });
+      html+='</div>';
+    }
+    html+='<div id="feedback'+i+'" style="margin-top:8px;font-size:13px;display:none"></div>';
+    html+='</div>';
+  });
+  document.getElementById('questionsArea').innerHTML=html;
+}
+
+function selectOpt(qi,oi){
+  submitted=false;
+  var q=questions[qi];
+  if(q.o==='free')return;
+  for(var j=0;j<q.o.length;j++){
+    document.getElementById('q'+qi+'o'+j).classList.remove('sel');
+  }
+  document.getElementById('q'+qi+'o'+oi).classList.add('sel');
+  answers[qi]=oi;
+}
+
+function startQuiz(){
+  document.getElementById('startMsg').style.display='none';
+  document.getElementById('quizArea').style.display='block';
+  buildPassageTabs();
+  loadPassage();
+}
+
+function submitAnswers(){
+  submitted=true;
+  var correct=0;
+  questions.forEach(function(q,i){
+    var fb=document.getElementById('feedback'+i);
+    fb.style.display='block';
+    if(q.o==='free'){
+      var ans=document.getElementById('ans'+i).value.trim();
+      if(ans.length>0){correct++;fb.style.color='var(--green)';fb.textContent='Your answer: '+ans;} 
+      else {fb.style.color='var(--muted)';fb.textContent='No answer given.';}
+      document.getElementById('ans'+i).readOnly=true;
+      fb.innerHTML+='<br><span style="color:var(--dim)">Expected: '+q.a+'</span>';
+    } else {
+      for(var j=0;j<q.o.length;j++){
+        var el=document.getElementById('q'+i+'o'+j);
+        el.classList.remove('sel');
+        if(j===q.a)el.classList.add('correct');
+        if(answers[i]===j&&j!==q.a)el.classList.add('wrong');
+      }
+      if(answers[i]===q.a){correct++;fb.style.color='var(--green)';fb.textContent='Correct!';}
+      else{fb.style.color='var(--rose)';fb.textContent='Incorrect. The answer is: '+q.o[q.a];}
+    }
+  });
+  document.getElementById('qScore').textContent=correct+'/'+questions.length+' correct';
+  
+  // Show results
+  setTimeout(function(){
+    document.getElementById('resultsArea').classList.add('show');
+    document.getElementById('resultsArea').innerHTML='<h2>Results</h2>'+statHtml(correct, questions.length)+'<button class="btn primary" onclick="restartQuiz()">Try Another Passage</button>';
+  },500);
+}
+
+function statHtml(c,t){
+  var pct=Math.round(c/t*100);
+  return '<div class="res-stats"><div class="rstat"><span class="val">'+pct+'%</span><span class="lbl">Score</span></div><div class="rstat"><span class="val">'+c+'</span><span class="lbl">Correct</span></div><div class="rstat"><span class="val">'+(t-c)+'</span><span class="lbl">Wrong</span></div></div>';
+}
+
+var buildPassageTabs=buildPassageTabs;
+</script>
+</body>
+</html>

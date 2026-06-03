@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>William's Workspace</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0e1a;color:#e0f2fe;min-height:100vh;padding:40px 24px}
+h1{font-size:2rem;margin:6px 0 4px;color:#fff;letter-spacing:1px}
+.sub{color:#94a3b8;font-size:.9rem;margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;max-width:1200px}
+.card{
+  border-radius:14px;padding:0;transition:all .2s;text-decoration:none;color:inherit;display:block;
+  overflow:hidden;position:relative;
+  background:#111827;border:1px solid rgba(255,255,255,.08);
+}
+.card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
+.card-img{
+  width:100%;height:140px;object-fit:cover;display:block;
+  filter:brightness(.7) saturate(1.1);
+}
+.card-body{padding:20px 20px 18px}
+.card h2{font-size:1.1rem;margin-bottom:6px;color:#fff}
+.card p{font-size:.8rem;color:#94a3b8;line-height:1.5}
+.badge{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.blue{background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.2)}
+.purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+.green{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+.amber{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+.rose{background:rgba(251,113,133,.12);color:#fb7185;border:1px solid rgba(251,113,133,.2)}
+.cyan{background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.2)}
+</style>
+</head>
+<body>
+
+<h1>William's Workspace</h1>
+<p class="sub">Learning materials, tools &amp; apps</p>
+
+<div class="grid">
+
+<a href="Eloquenta/Extras/dashboard.html" class="card">
+  <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&q=70" alt="Children learning" class="card-img">
+  <div class="card-body">
+    <h2>Forest Friends Kids</h2>
+    <p>Kids learning product — reading, phonics &amp; vocabulary. Designed for early learners. ZERO Eloquenta branding.</p>
+    <span class="badge green">Kids Product</span>
+  </div>
+</a>
+
+<a href="Eloquenta/Extras/landing.html" class="card">
+  <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=70" alt="Conversation" class="card-img">
+  <div class="card-body">
+    <h2>Forest Friends Adults</h2>
+    <p>Conversation-first ESL platform. Premium accent coaching, live translation &amp; speaking practice.</p>
+    <span class="badge blue">ESL Platform</span>
+  </div>
+</a>
+
+<a href="William's Projects/Teacher Student Classroom/index.html" class="card">
+  <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=70" alt="Classroom" class="card-img">
+  <div class="card-body">
+    <h2>Teacher Student Classroom</h2>
+    <p>Video classroom, spelling games, guitar tools &amp; learning resources. Complete teaching hub.</p>
+    <span class="badge cyan">Classroom</span>
+  </div>
+</a>
+
+<a href="Guitar Fretboard/index.html" class="card">
+  <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&q=70" alt="Guitar fretboard" class="card-img">
+  <div class="card-body">
+    <h2>Guitar Fretboard</h2>
+    <p>Complete scale &amp; chord explorer with 26 scales, 24 chord types, progressions &amp; audio playback.</p>
+    <span class="badge green">Music Tool</span>
+  </div>
+</a>
+
+<a href="William's Projects/Guitar Scales/index.html" class="card">
+  <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=70" alt="Guitar scales" class="card-img">
+  <div class="card-body">
+    <h2>Guitar Scales</h2>
+    <p>Interactive guitar scale reference tool. Visual fretboard with note highlighting.</p>
+    <span class="badge amber">Music Tool</span>
+  </div>
+</a>
+
+<a href="William's Projects/Alien Metronome/index.html" class="card">
+  <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=70" alt="Metronome" class="card-img">
+  <div class="card-body">
+    <h2>Alien Metronome</h2>
+    <p>Web Audio metronome with delay, reverb, ring mod, saturation &amp; Pixabay music. Built for musicians.</p>
+    <span class="badge green">Music Tool</span>
+  </div>
+</a>
+
+<a href="William's Projects/OobzoO/index.html" class="card">
+  <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=70" alt="Space" class="card-img">
+  <div class="card-body">
+    <h2>OobzoO</h2>
+    <p>Alien-themed audio exploration app. Part of the Munumeloo project family.</p>
+    <span class="badge amber">Audio App</span>
+  </div>
+</a>
+
+<a href="Akasha Qi Gong/qi-gong-workout.html" class="card">
+  <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70" alt="Qi Gong" class="card-img">
+  <div class="card-body">
+    <h2>Akasha Qi Gong</h2>
+    <p>Guided morning flow with voiceover, ambient music, reverb control &amp; session timer. 7 exercises, 30 minutes.</p>
+    <span class="badge purple">Wellness</span>
+  </div>
+</a>
+
+<a href="Business & Pitch/pitch-deck.html" class="card">
+  <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=70" alt="Business" class="card-img">
+  <div class="card-body">
+    <h2>Business &amp; Pitch</h2>
+    <p>Pitch deck, grant guide &amp; business planning documents.</p>
+    <span class="badge rose">Business</span>
+  </div>
+</a>
+
+<a href="William's Projects/feedback-guide.html" class="card">
+  <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=70" alt="Live music" class="card-img">
+  <div class="card-body">
+    <h2>Guitar Feedback Guide</h2>
+    <p>Complete guide to avoiding acoustic guitar feedback at gigs — EQ, positioning &amp; stage setup.</p>
+    <span class="badge amber">Guide</span>
+  </div>
+</a>
+
+</div>
+
+</body>
+</html>

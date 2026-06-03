@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Understanding Accents — Teacher's Guide</title>
+<style>
+:root{
+  --bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;
+  --border:#1e293b;--border-light:#334155;
+  --text:#e2e8f0;--text-dim:#64748b;--text-muted:#94a3b8;
+  --cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;
+  --violet:#a78bfa;--rose:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:22px;line-height:1.6;
+  min-height:100vh;
+}
+
+/* Layout */
+.page{max-width:1100px;margin:0 auto;padding:3rem 2rem 6rem}
+.page h1{font-size:3rem;font-weight:800;color:#fff;margin-bottom:.5rem;line-height:1.15}
+.page h1 em{color:var(--cyan);font-style:normal}
+.page h2{font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+.page h3{font-size:1.2rem;font-weight:600;color:#fff;margin-bottom:.3rem}
+.page p{font-size:1.05rem;color:var(--text-muted);line-height:1.65;margin-bottom:1rem}
+
+.tagline{font-size:.9rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;border-left:3px solid var(--cyan);padding-left:1rem;margin-bottom:2.5rem}
+
+.intro{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(167,139,250,.06));border:1px solid var(--border);border-radius:14px;padding:2rem 2.2rem;margin-bottom:3rem}
+.intro p{font-size:1.1rem;color:var(--text);line-height:1.7;margin-bottom:.8rem}
+.intro p:last-child{margin-bottom:0}
+
+/* Accent Sections */
+.accordion{margin-bottom:1.2rem}
+.acc-head{
+  display:flex;align-items:center;gap:14px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+  padding:1.2rem 1.6rem;cursor:pointer;transition:all .25s;
+  user-select:none;
+}
+.acc-head:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.acc-head.open{border-radius:12px 12px 0 0;border-bottom:none}
+.acc-flag{font-size:2.2rem;flex-shrink:0}
+.acc-title{font-size:1.5rem;font-weight:700;color:#fff}
+.acc-sub{font-size:.85rem;color:var(--text-dim);margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+.acc-arrow{margin-left:auto;font-size:1.2rem;color:var(--text-dim);transition:transform .25s}
+.acc-head.open .acc-arrow{transform:rotate(180deg)}
+
+.acc-body{
+  display:none;background:var(--bg-card);border:1px solid var(--border);border-top:none;
+  border-radius:0 0 12px 12px;padding:1.6rem 2rem
+}
+.acc-body.open{display:block}
+
+/* Inner sections */
+.subsec{margin-bottom:1.4rem}
+.subsec:last-child{margin-bottom:0}
+.subsec h3{font-size:1.15rem;font-weight:700;color:var(--cyan);margin-bottom:.5rem;border-bottom:1px solid var(--border);padding-bottom:.3rem}
+.subsec h3.threat{color:var(--rose)}
+.subsec h3.key{color:var(--amber)}
+.subsec h3.listen{color:var(--violet)}
+.subsec h3.drill{color:var(--emerald)}
+
+.subsec p,.subsec li{font-size:1rem;color:var(--text-muted);line-height:1.6}
+.subsec ul{padding-left:1.4rem;margin-bottom:.6rem}
+.subsec li{margin-bottom:.3rem}
+
+/* Difficulty tags */
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.tag.hard{background:rgba(251,113,133,.12);color:var(--rose);border:1px solid rgba(251,113,133,.25)}
+.tag.med{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)}
+.tag.easy{background:rgba(52,211,153,.12);color:var(--emerald);border:1px solid rgba(52,211,153,.25)}
+.tag.info{background:rgba(34,211,238,.1);color:var(--cyan);border:1px solid rgba(34,211,238,.2)}
+
+/* Callout */
+.callout{background:rgba(34,211,238,.05);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:1rem 1.4rem;margin:.8rem 0}
+.callout p{font-size:.95rem;color:var(--text);margin-bottom:.4rem}
+.callout strong{color:var(--cyan)}
+
+/* Audio mini-player */
+.ap-row{display:flex;gap:8px;flex-wrap:wrap;margin:.6rem 0}
+.ap-btn{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;
+  padding:8px 14px;cursor:pointer;transition:all .2s;
+  color:#fff;font-size:.85rem;font-weight:500;font-family:inherit;
+}
+.ap-btn:hover{background:rgba(34,211,238,.1);border-color:var(--cyan)}
+.ap-btn .flag{font-size:1.1rem}
+.ap-btn .play-icon{color:var(--cyan);font-size:.8rem;margin-left:4px}
+.ap-btn.playing{background:rgba(34,211,238,.15);border-color:var(--cyan)}
+.ap-status{font-size:.8rem;color:var(--text-dim);margin-top:.5rem;min-height:1.2rem}
+
+/* Comparison table */
+.comp-table{width:100%;border-spacing:0;margin:.8rem 0}
+.comp-table th{font-size:.8rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;text-align:left;padding:.5rem .7rem;border-bottom:2px solid var(--border-light);font-weight:600}
+.comp-table td{font-size:.95rem;color:#fff;padding:.5rem .7rem;border-bottom:1px solid var(--border);vertical-align:top}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table td:first-child{color:var(--cyan);font-weight:600;white-space:nowrap}
+.comp-table code{font-family:'SF Mono',Monaco,monospace;font-size:.9rem;color:var(--amber)}
+
+/* Listening checklist */
+.checklist{list-style:none;padding:0;margin:.6rem 0}
+.checklist li{padding:.4rem 0 .4rem 1.6rem;position:relative;font-size:.95rem;color:var(--text-muted)}
+.checklist li::before{content:'☐';position:absolute;left:0;color:var(--cyan);font-size:1rem}
+
+/* Footer */
+.footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);text-align:center;font-size:.85rem;color:var(--text-dim)}
+
+/* Responsive */
+@media(max-width:700px){
+  .page{padding:1.5rem 1rem 4rem}
+  .page h1{font-size:2rem}
+  .acc-head{padding:1rem}
+  .acc-title{font-size:1.2rem}
+  .acc-flag{font-size:1.6rem}
+  .acc-body{padding:1rem 1.2rem}
+}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head><<body><!-- Eloquenta Brand Bar --><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+
+<div class="page">
+  <div class="tagline">Eloquenta Teacher's Guide</div>
+  <h1>Understanding Your Student's <em>Accent</em></h1>
+  <h2 style="color:var(--text-dim);font-weight:400;font-size:1.3rem;margin-bottom:1.5rem">Thai · Vietnamese · Chinese · Spanish · Indian</h2>
+
+  <div class="intro">
+    <p><strong>Your student's English accent is not random.</strong> Every pronunciation error traces back to their first language (L1). The sounds your student makes — and the sounds they drop — follow predictable, empirical patterns. Understanding these patterns is the difference between frustrated guessing and effective teaching.</p>
+    <p>This guide covers the five most common L1 groups you will encounter. Each section explains: <strong>why</strong> the accent sounds the way it does, <strong>what</strong> specific errors to expect, <strong>how</strong> to help your student hear the difference, and <strong>what drills</strong> work.</p>
+    <p style="margin-bottom:0;font-size:1rem;color:var(--text-dim)"><strong>Note on ambition:</strong> This guide covers Mandarin/Cantonese together under "Chinese" and major North/South Indian language families under "India." There is significant internal variation within each group. When in doubt, ask your student to read a passage and diagnose their specific profile.</p>
+  </div>
+
+  <!-- ==================== THAI ==================== -->
+  <div class="accordion">
+    <div class="acc-head" onclick="toggle(this)">
+      <span class="acc-flag">🇹🇭</span>
+      <div>
+        <div class="acc-title">Thai Speakers</div>
+        <div class="acc-sub">Thai Phonology → English Interference</div>
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="tags">
+        <span class="tag hard">TH → T/S</span>
+        <span class="tag hard">Final Consonants</span>
+        <span class="tag med">Tone → Stress Confusion</span>
+        <span class="tag med">L/R Merger</span>
+        <span class="tag med">No /v/ /z/</span>
+        <span class="tag info">Tonal Language</span>
+      </div>
+
+      <div class="subsec">
+        <h3 class="key">Why It Sounds the Way It Does</h3>
+        <p>Thai is a <strong>tonal language with 5 phonemic tones</strong> (mid, low, falling, high, rising). English is a stress-timed language with no lexical tones. Thai has only <strong>9 coda consonants</strong> (/p t k ʔ m n ŋ j w/) — all final plosives are <strong>unreleased</strong> [p̚ t̚ k̚]. Thai has no /v/, /z/, /ʃ/, /ʒ/, or /θ/. It distinguishes <strong>aspirated vs unaspirated</strong> plosives rather than voiced vs voiceless.</p>
+      </div>
+
+      <div class="subsec">
+        <h3 class="threat">Critical Error Patterns</h3>
+        <ul>
+          <li><strong>TH → T or S:</strong> Thai lacks dental fricatives. "Think" → "tink" or "sink". "This" → "dis" or "tis"</li>
+          <li><strong>Final consonant deletion/dropping:</strong> Thai only allows /p t k m n ŋ j w/ at syllable end. English final /l/, /r/, /s/, /z/, /f/, /v/, /d/, /g/, /b/, /ʃ/ are often dropped or changed: "world" → "wow", "big" → "bi"</li>
+          <li><strong>No /v/ or /z/:</strong> Replaced by /w/ and /s/. "Very" → "wery". "Zero" → "sero"</li>
+          <li><strong>Unreleased final stops:</strong> "Bad" sounds cut off [baːt̚] — English listeners hear incomplete words</li>
+          <li><strong>Tone applied to English:</strong> Thai speakers may apply tonal pitch patterns to English stress: "interVIEW" might get a high-falling tone instead of loudness</li>
+          <li><strong>L and R merger:</strong> Thai /l/ and /r/ exist but /r/ is often realized as [r] or [lite]. "Frustrated" → "flustelited". "Collection" → "colection"</li>
+          <li><strong>Consonant clusters simplified:</strong> Thai max cluster is CCVC. "Straight" → "sit", "text" → "tek"</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="listen">How to Hear the Difference</h3>
+        <div class="callout">
+          <p><strong>Use the mirror method for TH:</strong> Have the student bite their tongue gently. Show them: for "think" and "this", the tongue tip MUST protrude between the teeth. If the tongue stays behind the teeth, it will sound like "tink" or "dis". The visible tongue is the proof — make it a physical habit first.</p>
+        </div>
+        <ul>
+          <li><strong>Record and compare:</strong> Say "I think this through" with correct TH, then with T-substitutions. The student will hear "tink dis troo" — it sounds completely different. Awareness is 80% of the cure.</li>
+          <li><strong>Final consonant awareness:</strong> Thai speakers literally cannot hear the difference between "bad" [bæd] and "bat" [bæt] because Thai final plosives are unreleased and voicing at the coda is not distinctive. Emphasize that English listeners rely on that final sound to identify the word.</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="drill">Drills That Work</h3>
+        <ul>
+          <li><strong>TH anchoring drill:</strong> Have the student hold their tongue between the teeth for 3 seconds before each TH word. Build the physical memory: <em>"I think this is the three thousand dollar threshold."</em></li>
+          <li><strong>Final consonant completion drill:</strong> Practice words ending in /d/, /g/, /b/, /v/, /z/ by adding an exaggerated final burst: "bad-DAH", "big-GAH", "love-VAH". Gradually reduce the exaggeration until the final consonant is light but present.</li>
+          <li><strong>Cluster recovery drill:</strong> Start from the simplified form and add sounds: "tek" → "tek-s" → "tek-st". "si" → "sit" → "sit-raight" → "straight". Build backward into the correct cluster.</li>
+          <li><strong>Tone-to-stress conversion drill:</strong> Thai students naturally want to use pitch. Convert: instead of a rising tone on "YES", produce a loud, sharp "YES!" — same syllable, different mechanism (loudness not pitch).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VIETNAMESE ==================== -->
+  <div class="accordion">
+    <div class="acc-head" onclick="toggle(this)">
+      <span class="acc-flag">🇻🇳</span>
+      <div>
+        <div class="acc-title">Vietnamese Speakers</div>
+        <div class="acc-sub">Tonal · No Final Consonants · Retroflex Absent</div>
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="tags">
+        <span class="tag hard">Final Consonant Deletion</span>
+        <span class="tag hard">TH → T/S</span>
+        <span class="tag med">Tr → Ch/T</span>
+        <span class="tag med">Aspiration Missing</span>
+        <span class="tag med">Tones Applied to English</span>
+        <span class="tag info">Tonal Language</span>
+      </div>
+
+      <div class="subsec">
+        <h3 class="key">Why It Sounds the Way It Does</h3>
+        <p>Vietnamese is tonal (6 tones in the North, 6 in the South). Final consonant inventory is <strong>extremely limited</strong>: Vietnamese lacks final /l/ (confuses with /n/), final /t/ is confused with /k/ (in the South), and /b f v/ finals are confused with /p/. Initial /p t k tʃ/ are <strong>not aspirated</strong> — Vietnamese listeners hear English "pin" as "bin" because their own /p/ is unaspirated.</p>
+      </div>
+
+      <div class="subsec">
+        <h3 class="threat">Critical Error Patterns</h3>
+        <ul>
+          <li><strong>Final consonant deletion:</strong> Vietnamese allows very few final consonants. "Old" → "oh". "Bad" → "ba". "Watch" → "wa"</li>
+          <li><strong>Final /l/ → /n/:</strong> "Bell" → "ben". "Feel" → "feen". (Some Southern Vietnamese pronounce "bell" as [ɓɛu̯] — a diphthong, no final consonant at all)</li>
+          <li><strong>TH → T or S:</strong> "Think" → "tink", "this" → "dis"</li>
+          <li><strong>/tr/ → /tʃ/ or /dʒ/:</strong> "Travel" → "chavel" or "javel" (Northern Vietnamese especially)</li>
+          <li><strong>/v/ → /j/ (Southern):</strong> "Very" → "jerry". Northern Vietnamese may substitute /v/ differently.</li>
+          <li><strong>/s/ → /ʃ/ (Northern):</strong> "Seat" → "sheet". "Sip" → "ship"</li>
+          <li><strong>No aspiration on word-initial plosives:</strong> "Pin" → "bin" (Vietnamese has no aspirated/voiceless distinction for initial stops)</li>
+          <li><strong>Confused phonemes:</strong> /θ/ ↔ /t/ /s/; /ɪ/ ↔ /iː/; /tr/ ↔ /dʒ/ /tʃ/ /t/</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3>Regional Variation Matters</h3>
+        <ul>
+          <li><strong>Northern (Hanoi):</strong> /s/ → /ʃ/, /tr/ → /tʃ/, preserves some final /l/ distinction</li>
+          <li><strong>Central (Hue):</strong> Pattern closest to the standard described above</li>
+          <li><strong>Southern (HCMC):</strong> /t/ → /k/ in final position, /v/ → /j/, tends to drop /l/ → no sound or /n/</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="listen">How to Hear the Difference</h3>
+        <ul>
+          <li><strong>The "pin/bin" trap:</strong> Demonstrate the difference physically. Have the student hold a tissue in front of their mouth. For "pin" [pʰɪn], the tissue moves (aspiration). For "bin" [bɪn], it doesn't. This is the single most important perceptual distinction for Vietnamese students.</li>
+          <li><strong>Final consonant awareness:</strong> Vietnamese students literally cannot hear that "old" and "oh" are different words in English train. Record both and play back. If they can't distinguish, train the muscles first — tongue to alveolar ridge for /l/, lips for /p b m/.</li>
+          <li><strong>/tr/ cluster teaching:</strong> This is hard. Break it into two separate movements: the tongue tip taps for /t/ then immediately curls back for /r/. Practice slowly: "t-ruh". Gradually speed up to "truh".</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="drill">Drills That Work</h3>
+        <ul>
+          <li><strong>Aspiration drill with tissue:</strong> Hold tissue, say "pin pen ten kin" — the tissue should flutter on each initial /p t k/. Then "bin den gen" — tissue should not flutter. 50 repetitions per session.</li>
+          <li><strong>Final consonant anchoring:</strong> Exaggerate final sounds, then scale back: "BAAA-DUH" → "ba-D" → "bad". Let the student hear the progression.</li>
+          <li><strong>L vs N final drill:</strong> Alternate: feel-feel-feel-feel vs fen-fen-fen-fen. Have the student place a finger on the nose — /n/ causes nasal vibration, /l/ does not.</li>
+          <li><strong>/tr/ build-up drill:</strong> "tuh" → "truh" → "truh-ruh" → "travel" → "travelling" → "We're traveling to Toronto". Speed up gradually.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHINESE ==================== -->
+  <div class="accordion">
+    <div class="acc-head" onclick="toggle(this)">
+      <span class="acc-flag">🇨🇳</span>
+      <div>
+        <div class="acc-title">Chinese Speakers (Mandarin &amp; Cantonese)</div>
+        <div class="acc-sub">Syllable-Timed · Tonal · No Consonant Clusters · Final /ŋ/ Limited</div>
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="tags">
+        <span class="tag hard">L/R Confusion</span>
+        <span class="tag hard">Consonant Cluster Simplification</span>
+        <span class="tag med">TH → S/D</span>
+        <span class="tag med">No Past Tense /-ed/</span>
+        <span class="tag med">Monotone Prosody</span>
+        <span class="tag info">Tonal Language</span>
+      </div>
+
+      <div class="subsec">
+        <h3 class="key">Why It Sounds the Way It Does</h3>
+        <p>Mandarin and Cantonese are both tonal languages with primarily <strong>(C)V syllable structure</strong> — almost no consonant clusters. This is the single biggest factor: Chinese speakers will simplify English consonant clusters by either <strong>deleting a consonant</strong> or <strong>inserting a vowel</strong> between them. Mandarin has retroflex /ʂ/ and /ɻ/ but NOT English /l/ and /r/ as separate phonemes. Cantonese has a /l/ sound in many positions where Mandarin wouldn't.</p>
+      </div>
+
+      <div class="subsec">
+        <h3 class="threat">Critical Error Patterns</h3>
+        <ul>
+          <li><strong>L/R confusion (especially Southern Chinese and Cantonese):</strong> "Flight" → "Fright". "Long" → "wrong". "Collect" → "correct". The degree of confusion varies significantly by home dialect.</li>
+          <li><strong>Consonant cluster simplification:</strong> "Breakfast" ↓ "Bek-fas". "Test" ↓ "Tes". "Hand" ↓ "Han". Chinese syllables resist clusters beyond (C)V(C).</li>
+          <li><strong>Final /l/ often dropped:</strong> "Small" → "smao" or "smar". "School" → "schoo". "People" → "peopo"</li>
+          <li><strong>Vowel epenthesis in clusters:</strong> "Product" → "po-duc" or "poloduk". An extra vowel is inserted between consonants the student can't sequence.</li>
+          <li><strong>TH → S or D:</strong> "Think" → "sink". "The" → "de". "Three" → "sree" or "dree"</li>
+          <li><strong>Past tense /-ed/ often dropped:</strong> Chinese has no grammatical past tense morphology. "Yesterday I walk to the store" is not a random error — it's the grammar of their L1 transferring to English.</li>
+          <li><strong>Third-person -s dropped:</strong> Same reason — Chinese has no verb conjugation for person/number.</li>
+          <li><strong>Monotone intonation:</strong> Chinese uses tone to distinguish word meanings, not sentence emotions/emphasis. Questions may not rise. Statements may not fall. Emphasis is flat. Use the audio player below to contrast question intonation.</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3>Key Differences: Mandarin vs Cantonese</h3>
+        <table class="comp-table">
+          <tr><th>Feature</th><th>Mandarin</th><th>Cantonese</th></tr>
+          <tr><td>Tones</td><td>4 + neutral</td><td>6 (or 9 with entering tones)</td></tr>
+          <tr><td>L/R</td><td>Both present but merged in perception; /l/ and /r/ are distinct phonemes but production is variable</td><td>/l/ often becomes syllable-initial [n] ("noodle" for "lao"); /r/ less of an issue</td></tr>
+          <tr><td>Final consonants</td><td>Only /n/ and /ŋ/</td><td>/p t k m n ŋ/ (richer than Mandarin)</td></tr>
+          <tr><td>TH</td><td>→ /s/ or /d/</td><td>→ /t/ or /f/ (some Cantonese speakers produce [f] for TH: "fink" for "think")</td></tr>
+          <tr><td>Common error</td><td>Polo → "po-lo", Elvis → "Evis"</td><td>Noon → "Nun", Light → "Nite"</td></tr>
+        </table>
+      </div>
+
+      <div class="subsec">
+        <h3 class="listen">How to Hear the Difference</h3>
+        <div class="callout">
+          <p><strong>The "cluster to syllable" ear retraining:</strong> Chinese students hear "breakfast" as 3 syllables because their brain counts consonant-vowel units. Clapping drill: clap for each syllable. "Break-fast" (2 claps). "Be-kuh-fas-tuh" (4 claps = wrong). Gradually the student learns to count English syllables correctly.</p>
+        </div>
+        <ul>
+          <li><strong>L/R mirror test (same as Japanese):</strong> /l/ = tongue tip to alveolar ridge. /r/ = tongue curled back, not touching. Mirror work is essential.</li>
+          <li><strong>Past tense awareness drill:</strong> Read pairs: "I walk / I walked". "She works / she worked". If the student can't hear the difference, explain that -ed is a grammatical necessity in English, not just pronunciation.</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="drill">Drills That Work</h3>
+        <ul>
+          <li><strong>Cluster-building (backward chaining):</strong> Start from the end: "t" → "es" → "tes" → "test". "k" → "as" → "kas" → "task". Build one sound at a time, then blend.</li>
+          <li><strong>L/R minimal pairs with recording:</strong> light/right, load/road, collect/correct, glass/grass, belly/berry. Record and listen back 50 times per pair.</li>
+          <li><strong>Past tense anchoring:</strong> Have the student tap their hand on the desk every time they produce a past tense -ed. Physical rhythm anchors the grammar: "walk-TAP, play-TAP, work-TAP".</li>
+          <li><strong>Intonation copying drill:</strong> Model an English question ("Could you OPEN the DOOR?") with rising pitch. Have the student repeat EXACTLY — not the words, the melody. "Sing" the English intonation before speaking it.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SPANISH ==================== -->
+  <div class="accordion">
+    <div class="acc-head" onclick="toggle(this)">
+      <span class="acc-flag">🇪🇸</span>
+      <div>
+        <div class="acc-title">Spanish Speakers</div>
+        <div class="acc-sub">5 Vowels · No VOICE Contrast · Syllable-Timed</div>
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="tags">
+        <span class="tag hard">/b/ and /v/ Merger</span>
+        <span class="tag hard">/s/ + Consonant Epenthesis</span>
+        <span class="tag med">/ð/ and /d/ Merger</span>
+        <span class="tag med">/s/ vs /z/</span>
+        <span class="tag easy">Vowel Quality</span>
+        <span class="tag info">Stress-Timed ≠ Syllable-Timed</span>
+      </div>
+
+      <div class="subsec">
+        <h3 class="key">Why It Sounds the Way It Does</h3>
+        <p>Spanish has <strong>5 pure vowels</strong> (/a e i o u/) — dramatically fewer than English. Spanish is <strong>syllable-timed</strong> (each syllable gets equal weight) rather than stress-timed. Spanish doesn't have a /v/ phoneme (it's an allophone of /b/), and /b/ and /v/ are <strong>completely interchangeable</strong>. Spanish allows only 5 word-final consonants (/θ s n r d l/ in most dialects). Spanish /s/ must be followed by a vowel — word-initial "s + consonant" is impossible without epenthesis.</p>
+      </div>
+
+      <div class="subsec">
+        <h3 class="threat">Critical Error Patterns</h3>
+        <ul>
+          <li><strong>/b/ = /v/ complete merger:</strong> "Very" → "bery" (or equally "berry"). "Ban" = "van". "Robe" = "rove". This is THE hallmark of Spanish-accented English.</li>
+          <li><strong>/s/ + consonant → add vowel "e":</strong> "Stop" → "e-stop". "School" → "e-school". "Speak" → "e-speak". Spanish phonotactics demands a vowel before "s + consonant".</li>
+          <li><strong>/ð/ and /d/ confusion:</strong> Both merge. "Then" and "den" sound identical. "This" → "dis" (intervocalically, [ð] → [d]).</li>
+          <li><strong>/s/ and /z/ no contrast:</strong> Spanish has no [z]. "Sip" = "zip". "Rice" = "rise". London: "dogs" → [daɡs] not [dɒɡz].</li>
+          <li><strong>/dʒ/ and /j/ merger (some dialects):</strong> "Judge" → "yudge". "Just" → "yust"</li>
+          <li><strong>Nasal neutralization in coda:</strong> All word-final nasals become [ŋ] or the nasal assimilates to the next consonant. "Welcome" → [weɫˈkoŋ]</li>
+          <li><strong>/θ/ differs by Spanish dialect:</strong> Spaniard Castilian uses /θ/ (so "think" might be closer) — Latin American Spanish uses /s/ instead (so "think" → "sink")</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3>Regional Variation: Spain vs Latin America</h3>
+        <table class="comp-table">
+          <tr><th>Feature</th><th>Spain (Castilian)</th><th>Latin America</th></tr>
+          <tr><td>TH sound</td><td>Has /θ/ (think → close)</td><td>NO /θ/ → uses /t/ or /s/</td></tr>
+          <tr><td>C/Z</td><td>/θ/ on c+e,i and z+vowel</td><td>All /s/ (seseo)</td></tr>
+          <tr><td>/ʎ/</td><td>Distinguishes "ll" vs "y" (yeismo variable)</td><td>Usually merged to /j/ or /ʒ/</td></tr>
+          <tr><td>Final /d/</td><td>Often [θ] (Madriθ)</td><td>Often dropped (Madri')</td></tr>
+        </table>
+      </div>
+
+      <div class="subsec">
+        <h3 class="listen">How to Hear the Difference</h3>
+        <ul>
+          <li><strong>/b/ vs /v/ (the Spanish signature):</strong> Demonstrate: /b/ = both lips, [voiced bilabial plosive]. /v/ = upper teeth on lower lip + voice [voiced labiodental fricative]. The student MUST feel their upper teeth touch their lower lip. Record "very berry bury" — these sound identical to Spanish ears. The physical contact is the difference.</li>
+          <li><strong>Epenthesis awareness:</strong> Record the student saying "e-speak e-school e-stop". Play it back. It sounds absurd even to native Spanish ears. The "e" is the Spanish phonotactic rule — it must be actively suppressed.</li>
+          <li><strong>/s/ vs /z/:</strong> Hold your throat. /z/ vibrates, /s/ doesn't. "Sip" (no vibration) vs "zip" (vibration). "Face" (no vibration) vs "phase" (vibration).</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="drill">Drills That Work</h3>
+        <ul>
+          <li><strong>/v/ anchoring with teeth-lip touch:</strong> Before every /v/ word, have the student consciously bite their lower lip. <em>A very viable approach, We've verified the value.</em> 30 repetitions with mirror.</li>
+          <li><strong>Stripped /s/ + consonant drill:</strong> Whisper "ssss-stop" with no vowel between s and t. Do it 20 times. Then say it at normal volume without the "e". Practice: speak, stop, school, stay, small, snake.</li>
+          <li><strong>/z/ vibration drill:</strong> Throat on hand: "z-z-zip, z-z-zone, z-z-zero" — feel it buzz. "s-s-sip, s-s-sit" — no buzz. Alternate: zip-sip, zone-sewn, buzz-bus. 50 pairs.</li>
+          <li><strong>Vowel expansion drill:</strong> Spanish 5 vowels → English expanded set. Minimal sets: ship-sheep [ɪ-iː], full-fool [ʊ-uː], cat-cut-caught [æ-ʌ-ɔː]. Spanish doesn't have these contrasts — they must be created from scratch.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INDIAN ==================== -->
+  <div class="accordion">
+    <div class="acc-head" onclick="toggle(this)">
+      <span class="acc-flag">🇮🇳</span>
+      <div>
+        <div class="acc-title">Indian Speakers</div>
+        <div class="acc-sub">Retroflex Consonants · Aspirated Stops · Syllable-Timed · Spelling Pronunciation</div>
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="tags">
+        <span class="tag hard">Retroflex /t/ /d/</span>
+        <span class="tag hard">/v/ → /w/</span>
+        <span class="tag med">No Aspiration on /p t k/</span>
+        <span class="tag med">Spelling Pronunciation</span>
+        <span class="tag med">Syllable-Timed Rhythm</span>
+        <span class="tag info">Rhotic Variation</span>
+      </div>
+
+      <div class="subsec">
+        <h3 class="key">Why It Sounds the Way It Does</h3>
+        <p>Indian English is shaped by <strong>15+ major language families</strong> (Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, etc.), each with different phonological inventories. What unites them: retroflex consonants (tongue curled back), a strong aspiration distinction (aspirated vs unaspirated is phonemic), variable rhoticity, and the tendency to pronounce English words <strong>exactly as spelled</strong>. Indian English is <strong>syllable-timed</strong> — every syllable gets equal weight, producing the characteristic "machine-gun" rhythm.</li>
+      </div>
+
+      <div class="subsec">
+        <h3 class="threat">Critical Error Patterns</h3>
+        <ul>
+          <li><strong>Retroflex /t/ and /d/:</strong> The hallmark of Indian English. English alveolar [t d] become retroflex [ʈ ɖ] — the tongue curls back to the hard palate. "Ten" sounds strangely deep, almost like a drum. This is the most identifiable feature of Indian-accented English worldwide.</li>
+          <li><strong>No aspiration on word-initial /p t k/:</strong> Indian languages have phonemic aspiration, but English uses aspiration differently. "Pin" → [pɪn] (no puff) — English ears may hear "bin". However, see nuance below.</li>
+          <li><strong>/v/ → /w/ or /pʰ/:</strong> Many Indian languages lack /v/. Hindi uses [ʋ] (labiodental approximant) — midway between /v/ and /w/. "Very" → "wery". Some Gujarati/Telugu speakers use [pʰ] for /f/: "Fine" → "phine" (aspirated p).</li>
+          <li><strong>TH → dental plosive [t̪ʰ] or [d̪]:</strong> Indian languages have dental stops (tongue to teeth) where English has alveolar + fricative. "Think" → [t̪ʰɪŋk] — close to /t/ but with tongue forward, producing a dentalized sound that's very different from English /θ/.</li>
+          <li><strong>/z/ → /dʒ/ ->:</strong> Many Indian languages lack /z/. "Zero" → [ˈdʒiːroː]. "Rose" → [ˈroːdʒiː].</li>
+          <li><strong>Syllable-timed rhythm:</strong> Every syllable gets roughly equal stress. "DEVELOPMENT" → "de-vel-op-ment" (4 equal beats) instead of English "de-VEL-op-MENT". This makes Indian English sound staccato.</li>
+          <li><strong>Spelling pronunciation:</strong> Because Indian scripts are phonetic, Indians read English as written. "Of" → /ɒf/ not /əv/. "Knight" → [knaɪt] (the k is pronounced). "Island" → [aɪlənd] (the s is pronounced from the spelling). This is systematic, not careless.</li>
+          <li><strong>Syllabic /l/ /m/ /n/ → vowel + consonant:</strong> "Button" /ˈbəʈən/ → [ˈbʌʈʌn]. "Little" → [ˈliʈil]. The schwa becomes a full vowel from the preceding alphabet letter.</li>
+          <li><strong>Non-rhotic or rhotic variation:</strong> Older generation (RP-influenced): non-rhotic. Younger generation (US-influenced): increasingly rhotic. Know your student's specific pattern.</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3>Retroflex Deep Dive — The Trickiest Pattern</h3>
+        <div class="callout">
+          <p><strong>Retroflex /t d/</strong> is the single hardest feature to correct because it is deeply embedded in the phonological system. Indian languages have TWO sets of coronal stops: dental (tongue to teeth) and retroflex (tongue curled back). English alveolar is perceived as closer to retroflex. Correcting this requires the student to <strong>flatten the tongue and move it forward</strong> to the alveolar ridge — a completely different tongue position from anything in their L1. Mirror work + tongue diagram + consistent correction. Report: slow but achievable with drilling.</p>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <h3 class="listen">How to Hear the Difference</h3>
+        <ul>
+          <li><strong>Retroflex detection with mirror:</strong> Have the student say "ten" — if the tongue tip curls back/up, it's retroflex. The correct English position: tongue tip visible touching the alveolar ridge (bump behind teeth), not the soft palate area. Side-view mirror helps.</li>
+          <li><strong>/v/ vs /w/ throat test:</strong> /v/ = voiced, upper teeth on lower lip, continuous airflow. /w/ = rounded lips, NO teeth-lip contact. Student places finger on lip: if they feel teeth touching lip during "very" → good. "Wery" = no contact, just lip rounding.</li>
+          <li><strong>Syllable stress awareness:</strong> Clap for stressed syllables. Indian English: "de-VEL-op-MENT" (4 claps). Correct: "de-vel-OP-ment" (clap only on VEL). Have the student practice saying words with ONE clap: PHOtograph / phoTOgrapher / photoGRAPHic.</li>
+        </ul>
+      </div>
+
+      <div class="subsec">
+        <h3 class="drill">Drills That Work</h3>
+        <ul>
+          <li><strong>Retroflex-to-alveolar conversion:</strong> "Flat tongue" drill. Student places tongue flat against the alveolar ridge (tip visible in mirror when mouth slightly open). Say: tuh-duh-tuh-duh. The tongue must NOT curl back. Practice with tongue depressor or flat lollipop: hold it flat against the ridge, then say words: tea, ten, time, tell, top. Start painfully slow.</li>
+          <li><strong>/v/ teeth-lip anchoring:</strong> Bite lower lip for every /v/: "A valuable vendor verified the veto. We've visited various venues." Mirror check each time.</li>
+          <li><strong>Spelling pronunciation correction list:</strong> Build a personal list: "of" → /əv/, "island" → /ˈaɪlənd/, "knight" → /naɪt/, "listen" → /ˈlɪsən/, "climb" → /klaɪm/, "wrist" → /rɪst/. Practice the correct form 3x each.</li>
+          <li><strong>Stress-shift drill (photograph family):</strong> PHO-to-graph → pho-TOG-ra-pher → pho-to-GRAPH-ic. Clap. Move the stress. This is not natural for Indian English — it must be explicitly practiced in every word family.</li>
+          <li><strong>Syllable-timed to stress-timed bridge:</strong> Start with equal stress (Indian pattern), then exaggerate the English stress pattern: "de-VEL-op-MENT" → "DEEEE-vel-op-ment" → "de-VEL-op-ment". Scale the exaggeration down gradually.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== COMPARISON ==================== -->
+  <h1 style="margin-top:3rem;font-size:2.2rem">Quick <em>Comparison</em></h1>
+  <p style="margin-bottom:1.5rem">One error pattern across all five L1 groups — for at-a-glance reference</p>
+
+  <table class="comp-table">
+    <tr><th>Error Pattern</th><th>🇹🇭 Thai</th><th>🇻🇳 Vietnamese</th><th>🇨🇳 Chinese</th><th>🇪🇸 Spanish</th><th>🇮🇳 Indian</th></tr>
+    <tr>
+      <td>TH /θ ð/</td>
+      <td>→ /t/ or /s/</td>
+      <td>→ /t/ or /s/</td>
+      <td>→ /s/ or /d/</td>
+      <td>→ /t/ or /s/ (LAm); /θ/ (Spain)</td>
+      <td>→ /t̪ʰ/ or /d̪/ (dental stop)</td>
+    </tr>
+    <tr>
+      <td>/v/</td>
+      <td>→ /w/</td>
+      <td>→ /j/ (South)</td>
+      <td>often OK</td>
+      <td><em>= /b/</em> (merger)</td>
+      <td>→ /w/ or /pʰ/</td>
+    </tr>
+    <tr>
+      <td>/z/</td>
+      <td>→ /s/</td>
+      <td>→ /s/</td>
+      <td>often OK</td>
+      <td>→ /s/</td>
+      <td>→ /dʒ/</td>
+    </tr>
+    <tr>
+      <td>Final /l/</td>
+      <td>→ dropped</td>
+      <td>→ /n/ or dropped</td>
+      <td>→ dropped</td>
+      <td>OK (in Spanish)</td>
+      <td>OK</td>
+    </tr>
+    <tr>
+      <td>R/L</td>
+      <td>Confused</td>
+      <td>Usually OK</td>
+      <td>Confused (esp. Southern/Cantonese)</td>
+      <td>OK (Spanish has both)</td>
+      <td>Usually OK</td>
+    </tr>
+    <tr>
+      <td>Consonant clusters</td>
+      <td>Simplified</td>
+      <td>Simplified</td>
+      <td>Simplified + epenthesis</td>
+      <td>Add /e/ before s+C</td>
+      <td>Usually OK</td>
+    </tr>
+    <tr>
+      <td>Rhythm</td>
+      <td>Syllable-timed</td>
+      <td>Syllable-timed</td>
+      <td>Syllable-timed</td>
+      <td>Syllable-timed</td>
+      <td>Syllable-timed</td>
+    </tr>
+    <tr>
+      <td>Intonation</td>
+      <td>Tonal patterns</td>
+      <td>Tonal patterns</td>
+      <td>Tonal patterns</td>
+      <td>OK (close match)</td>
+      <td>Flat/monotone stress</td>
+    </tr>
+  </table>
+
+  <div class="callout" style="margin-top:1.5rem">
+    <p><strong>The rhythm problem is universal:</strong> Thai, Vietnamese, Chinese, Spanish, and Indian English all share <strong>syllable-timed rhythm</strong>. This is the single biggest factor making non-native English sound "foreign" — not consonants, not vowels, but <strong>timing</strong>. In your lessons, always prioritize rhythm correction. A student who corrects their syllables timing will improve their perceived accent more than one who fixes every individual consonant.</p>
+  </div>
+
+  <!-- ==================== REFERENCES ==================== -->
+  <div class="footer">
+    <p>Sources: Wikipedia — Non-native Pronunciations of English; Thai Phonology; Vietnamese Phonology; Indian English Phonology · Hwa-Froelich et al. (2003), "Characteristics of Vietnamese Phonology" · Ball & Muller (2014), Phonetics for Communication Disorders · Gargesh (2008), Indian English: phonology · Nihalani et al. (2004), Indian and British English: A Handbook of Usage · MacDonald (1989), The Influence of Spanish Phonology · Mackey (1989). Compiled May 2026.</p>
+  </div>
+</div>
+
+<script>
+function toggle(head){
+  var body = head.nextElementSibling;
+  var wasOpen = body.classList.contains('open');
+  // Close all (optional — remove this block for multi-open behavior)
+  document.querySelectorAll('.acc-head').forEach(function(h){ h.classList.remove('open'); });
+  document.querySelectorAll('.acc-body').forEach(function(b){ b.classList.remove('open'); });
+  // Toggle
+  if(!wasOpen){
+    head.classList.add('open');
+    body.classList.add('open');
+    // Scroll into view
+    setTimeout(function(){ head.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+  }
+}
+</script>
+</body></html>

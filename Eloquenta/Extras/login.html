@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eloquenta Login</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #020617; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-card { background: #0f172a; padding: 40px; border-radius: 12px; width: 350px; border: 1px solid #1e293b; }
+        h1 { font-size: 24px; margin-bottom: 24px; text-align: center; }
+        input { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 8px; border: 1px solid #334155; background: #020617; color: #fff; }
+        button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #22d3ee; color: #020617; font-weight: 700; cursor: pointer; }
+        button:hover { background: #67e8f9; }
+        .error { color: #fb7185; font-size: 13px; margin-bottom: 16px; display: none; text-align: center; }
+    /* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body><div style="text-align:center;margin-bottom:32px"><br><span style="font-size:28px;font-weight:700;color:#f1f5f9;letter-spacing:-.5px">El<span style="color:#22d3ee">o</span>quenta</span></div>
+    <div class="login-card">
+        <h1>Eloquenta Sign In</h1>
+        <div id="error-msg" class="error">Invalid email or password.</div>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="handleLogin()">Log In</button>
+    </div>
+
+    <script>
+        function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simulation check against local test accounts
+            if (email === 'maria@eloquenta.com' && password === 'Pass123!') {
+                window.location.href = 'dashboard.html';
+            } else if (email === 'william@eloquenta.com' && password === 'Pass123!') {
+                window.location.href = 'teacher-studio.html';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

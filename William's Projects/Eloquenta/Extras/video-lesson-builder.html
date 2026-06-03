@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Video Lesson Builder — Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;--violet:#a78bfa;--rose:#fb7185}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif}
+.topbar{height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:50}
+.topbar-back{color:var(--text-muted);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .15s}
+.topbar-back:hover{color:var(--text)}
+.topbar-title{font-size:1.1rem;font-weight:700;flex:1}
+.container{max-width:1100px;margin:0 auto;padding:32px 24px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.card:hover{border-color:var(--border-light)}
+label{display:block;font-size:.85rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+input,textarea,select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--cyan)}
+textarea{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--cyan);color:#020617}.btn-primary:hover{background:#67e8f9}
+.btn-secondary{background:var(--bg-hover);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+.btn-block{width:100%;justify-content:center}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.video-preview{background:#000;border-radius:12px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;overflow:hidden;cursor:pointer;border:2px solid var(--border);transition:border-color .15s}
+.video-preview:hover{border-color:var(--cyan)}
+.video-preview video{width:100%;height:100%;object-fit:cover}
+.video-preview .placeholder{color:var(--text-dim);font-size:.9rem;text-align:center;padding:20px}
+.video-preview .play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);opacity:0;transition:opacity .15s}
+.video-preview:hover .play-overlay{opacity:1}
+.play-btn{width:64px;height:64px;border-radius:50%;background:rgba(34,211,238,.9);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.q-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;position:relative}
+.q-card:hover{border-color:var(--border-light)}
+.q-card .q-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.q-card .q-type{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:6px}
+.q-card .q-actions{position:absolute;top:12px;right:12px;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.q-card:hover .q-actions{opacity:1}
+.q-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.q-btn:hover{color:var(--text);border-color:var(--border-light)}
+.type-fillgap{background:rgba(34,211,238,.1);color:var(--cyan)}
+.type-order{background:rgba(251,191,36,.1);color:var(--amber)}
+.type-mcq{background:rgba(167,139,250,.1);color:var(--violet)}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
+.badge-emerald{background:rgba(52,211,153,.12);color:var(--emerald)}
+.badge-violet{background:rgba(167,139,250,.12);color:var(--violet)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:.88rem;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,.3);display:none}
+.toast.show{display:flex;align-items:center;gap:10px}.toast.success{border-color:var(--emerald)}
+.checkbox-row{display:flex;align-items:center;gap:8px}
+.checkbox-row input{width:16px;height:16px;cursor:pointer}
+.hidden{display:none!important}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="teacher-studio.html" class="topbar-back">← Back to Studio</a>
+  <div class="topbar-title">🎬 Video Lesson Builder</div>
+  <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="clearAll()">🗑️ Clear</button></div>
+</div>
+
+<div class="container">
+  <p style="color:var(--text-muted);margin-bottom:24px">Upload a video or paste a YouTube URL, then auto-generate interactive questions for your students.</p>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <label>Video Source</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button class="btn btn-secondary btn-sm" onclick="setVideoSource('youtube')" id="src-youtube">📺 YouTube</button>
+          <button class="btn btn-secondary btn-sm" onclick="setVideoSource('url')" id="src-url">🔗 URL</button>
+        </div>
+        <div id="video-input-area">
+          <label>YouTube URL</label>
+          <input type="url" id="video-url" placeholder="https://www.youtube.com/watch?v=..." style="margin-bottom:12px">
+        </div>
+        <label>Lesson Title</label>
+        <input type="text" id="video-title" placeholder="e.g. Daily Routine Listening Practice" style="margin-bottom:12px">
+        <label>Level</label>
+        <select id="video-level" style="margin-bottom:12px">
+          <option>A1 — Beginner</option><option>A2 — Elementary</option>
+          <option selected>B1 — Intermediate</option><option>B2 — Upper Intermediate</option>
+          <option>C1 — Advanced</option>
+        </select>
+        <label>Target Language (for translations)</label>
+        <select id="video-lang" style="margin-bottom:12px">
+          <option value="ja">日本語 (Japanese)</option>
+          <option value="de">Deutsch (German)</option>
+          <option value="es">Español (Spanish)</option>
+          <option value="ko">한국어 (Korean)</option>
+          <option value="pt">Português (Portuguese)</option>
+        </select>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">⚙️ Question Settings</h3>
+        <label>Question Types</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+          <label class="checkbox-row"><input type="checkbox" checked id="q-fillgap"> <span>Fill the Gap — remove a word and students type it in</span></label>
+          <label class="checkbox-row"><input type="checkbox" checked id="q-order"> <span>Order the Words — scramble a sentence</span></label>
+          <label class="checkbox-row"><input type="checkbox" checked id="q-mcq"> <span>Multiple Choice — 4 options, 1 correct</span></label>
+        </div>
+        <label>Questions per minute</label>
+        <select id="q-density" style="margin-bottom:16px">
+          <option value="2">Light (every 30s)</option>
+          <option value="3" selected>Medium (every 20s)</option>
+          <option value="4">Dense (every 15s)</option>
+        </select>
+        <button class="btn btn-primary btn-block" onclick="buildVideoLesson()">🎬 Generate Video Lesson</button>
+      </div>
+    </div>
+    <div>
+      <div class="video-preview" id="video-preview-area" onclick="document.getElementById('video-url').focus()">
+        <div class="placeholder">📺 Paste a YouTube URL above<br><span style="font-size:.75rem">Video preview will appear here</span></div>
+        <div class="play-overlay"><div class="play-btn">▶</div></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <label style="margin:0">Generated Questions</label>
+          <span class="badge badge-cyan" id="q-count">0 questions</span>
+        </div>
+        <div id="questions-list" style="max-height:400px;overflow-y:auto">
+          <p style="color:var(--text-dim);font-size:.85rem;text-align:center;padding:30px 0">Generate a video lesson to see questions here</p>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-secondary btn-sm" onclick="addManualQuestion()">+ Add Question</button>
+          <button class="btn btn-success btn-sm" onclick="saveVideoLesson()">💾 Save Lesson</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD QUESTION MODAL -->
+<div class="modal-overlay" id="q-modal">
+  <div class="modal">
+    <h3>➕ Add Question</h3>
+    <label>Question Type</label>
+    <select id="modal-q-type" style="margin-bottom:12px">
+      <option value="fillgap">Fill the Gap</option>
+      <option value="order">Order the Words</option>
+      <option value="mcq">Multiple Choice</option>
+    </select>
+    <div id="modal-q-fields"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeQModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveQuestion()">✓ Add Question</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal">
+    <h3>💾 Export Lesson</h3>
+    <label>Lesson Name</label>
+    <input type="text" id="export-name" placeholder="My Video Lesson" style="margin-bottom:12px">
+    <label>Format</label>
+    <select id="export-format" style="margin-bottom:12px">
+      <option value="html">Standalone HTML file</option>
+      <option value="json">JSON data (for import)</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeExportModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="exportLesson()">💾 Download</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  var videoQuestions=[];
+  var editingQIdx=-1;
+
+  function toast(msg,type){var el=document.getElementById('toast');el.innerHTML=(type==='success'?'✅ ':'ℹ️ ')+msg;el.className='toast show'+(type==='success'?' success':'');setTimeout(function(){el.className='toast';},3000);}
+
+  function setVideoSource(src){
+    document.querySelectorAll('#src-youtube,#src-url').forEach(function(b){b.classList.remove('active');});
+    document.getElementById('src-'+src).classList.add('active');
+    var inp=document.getElementById('video-url');
+    if(src==='youtube')inp.placeholder='https://www.youtube.com/watch?v=...';
+    else inp.placeholder='https://.../video.mp4';
+  }
+
+  function buildVideoLesson(){
+    var url=document.getElementById('video-url').value.trim();
+    if(!url){toast('Please enter a video URL');return;}
+    var title=document.getElementById('video-title').value.trim()||'Video Lesson';
+    var level=document.getElementById('video-level').value;
+    var lang=document.getElementById('video-lang').value;
+    var density=parseInt(document.getElementById('q-density').value);
+    var useFillgap=document.getElementById('q-fillgap').checked;
+    var useOrder=document.getElementById('q-order').checked;
+    var useMcq=document.getElementById('q-mcq').checked;
+
+    // Extract YouTube ID if applicable
+    var ytId=null;
+    var ytMatch=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if(ytMatch)ytId=ytMatch[1];
+
+    // Show video preview
+    var preview=document.getElementById('video-preview-area');
+    if(ytId){
+      preview.innerHTML='<iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ytId+'?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+    }else{
+      preview.innerHTML='<video src="'+url+'" controls style="width:100%;height:100%;object-fit:cover"></video>';
+    }
+
+    // Generate sample questions based on density
+    videoQuestions=[];
+    var qTypes=[];
+    if(useFillgap)qTypes.push('fillgap');
+    if(useOrder)qTypes.push('order');
+    if(useMcq)qTypes.push('mcq');
+    if(!qTypes.length){toast('Select at least one question type');return;}
+
+    // Generate placeholder questions
+    for(var i=0;i<density*3;i++){
+      var qt=qTypes[i%qTypes.length];
+      if(qt==='fillgap'){
+        videoQuestions.push({type:'fillgap',sentence:'This is a sample sentence with a _____ missing word.',answer:'missing',time:i*20});
+      }else if(qt==='order'){
+        videoQuestions.push({type:'order',words:['This','is','a','sample','sentence'],correct:'This is a sample sentence',time:i*20});
+      }else{
+        videoQuestions.push({type:'mcq',question:'What is the main topic of this video?',options:['Option A','Option B','Option C','Option D'],correct:0,time:i*20});
+      }
+    }
+
+    document.getElementById('q-count').textContent=videoQuestions.length+' questions';
+    renderQuestions();
+    toast('Generated '+videoQuestions.length+' questions!','success');
+  }
+
+  function renderQuestions(){
+    var el=document.getElementById('questions-list');
+    if(!videoQuestions.length){el.innerHTML='<p style="color:var(--text-dim);font-size:.85rem;text-align:center;padding:30px 0">Generate a video lesson to see questions here</p>';return;}
+    el.innerHTML='';
+    videoQuestions.forEach(function(q,i){
+      var h='<div class="q-card">';
+      h+='<div class="q-header"><span class="q-type type-'+q.type+'">'+q.type+'</span><span style="font-size:.7rem;color:var(--text-dim);margin-left:auto">@ '+q.time+'s</span></div>';
+      if(q.type==='fillgap')h+='<div style="font-size:.85rem;margin-bottom:6px">'+q.sentence.replace('_____','<span style="background:rgba(251,191,36,.2);padding:2px 6px;border-radius:4px;color:var(--amber)">_____</span>')+'</div>';
+      else if(q.type==='order')h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">'+q.words.map(function(w){return'<span style="background:var(--bg);border:1px solid var(--border);padding:3px 8px;border-radius:4px;font-size:.75rem">'+w+'</span>';}).join('')+'</div>';
+      else if(q.type==='mcq'){h+='<div style="font-size:.85rem;font-weight:600;margin-bottom:6px">'+q.question+'</div>';h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';q.options.forEach(function(o,oi){h+='<span style="font-size:.75rem;padding:4px 8px;border-radius:4px;background:'+(oi===q.correct?'rgba(52,211,153,.1)':'var(--bg)')+';border:1px solid '+(oi===q.correct?'var(--emerald)':'var(--border)')+';color:'+(oi===q.correct?'var(--emerald)':'var(--text-muted)')+'">'+o+'</span>';});h+='</div>';}
+      h+='<div class="q-actions"><button class="q-btn" onclick="editQuestion('+i+')" title="Edit">✏️</button><button class="q-btn" onclick="deleteQuestion('+i+')" style="color:var(--rose)" title="Delete">✕</button></div>';
+      h+='</div>';
+      el.innerHTML+=h;
+    });
+  }
+
+  function addManualQuestion(){editingQIdx=-1;document.getElementById('modal-q-type').value='fillgap';renderQModalFields();document.getElementById('q-modal').classList.add('show');}
+  function closeQModal(){document.getElementById('q-modal').classList.remove('show');}
+  function renderQModalFields(){
+    var type=document.getElementById('modal-q-type').value;
+    var el=document.getElementById('modal-q-fields');
+    if(type==='fillgap'){
+      el.innerHTML='<label>Sentence with _____ for the gap</label><textarea id="mq-sentence" placeholder="This is a _____ example." style="margin-bottom:8px"></textarea><label>Answer</label><input type="text" id="mq-answer" placeholder="missing word">';
+    }else if(type==='order'){
+      el.innerHTML='<label>Words (comma separated)</label><input type="text" id="mq-words" placeholder="This, is, a, sentence" style="margin-bottom:8px"><label>Correct sentence</label><input type="text" id="mq-correct" placeholder="This is a sentence">';
+    }else{
+      el.innerHTML='<label>Question</label><input type="text" id="mq-question" placeholder="What is...?" style="margin-bottom:8px"><label>Options (one per line, first is correct)</label><textarea id="mq-options" placeholder="Correct answer&#10;Wrong answer 1&#10;Wrong answer 2&#10;Wrong answer 3" style="min-height:80px"></textarea>';
+    }
+  }
+  document.getElementById('modal-q-type').addEventListener('change',renderQModalFields);
+
+  function saveQuestion(){
+    var type=document.getElementById('modal-q-type').value;
+    var q={type:type,time:0};
+    if(type==='fillgap'){q.sentence=document.getElementById('mq-sentence').value;q.answer=document.getElementById('mq-answer').value;}
+    else if(type==='order'){q.words=document.getElementById('mq-words').value.split(',').map(function(s){return s.trim();});q.correct=document.getElementById('mq-correct').value;}
+    else{q.question=document.getElementById('mq-question').value;q.options=document.getElementById('mq-options').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);q.correct=0;}
+    if(editingQIdx>=0){videoQuestions[editingQIdx]=q;}else{videoQuestions.push(q);}
+    closeQModal();renderQuestions();document.getElementById('q-count').textContent=videoQuestions.length+' questions';toast('Question saved','success');
+  }
+
+  function editQuestion(idx){editingQIdx=idx;var q=videoQuestions[idx];document.getElementById('modal-q-type').value=q.type;renderQModalFields();if(q.type==='fillgap'){document.getElementById('mq-sentence').value=q.sentence;document.getElementById('mq-answer').value=q.answer;}else if(q.type==='order'){document.getElementById('mq-words').value=q.words.join(', ');document.getElementById('mq-correct').value=q.correct;}else{document.getElementById('mq-question').value=q.question;document.getElementById('mq-options').value=q.options.join('\n');}document.getElementById('q-modal').classList.add('show');}
+  function deleteQuestion(idx){videoQuestions.splice(idx,1);renderQuestions();document.getElementById('q-count').textContent=videoQuestions.length+' questions';}
+
+  function saveVideoLesson(){
+    if(!videoQuestions.length){toast('No questions to save');return;}
+    var data={title:document.getElementById('video-title').value||'Video Lesson',url:document.getElementById('video-url').value,level:document.getElementById('video-level').value,lang:document.getElementById('video-lang').value,questions:videoQuestions};
+    localStorage.setItem('video-lesson-'+Date.now(),JSON.stringify(data));toast('Lesson saved!','success');
+  }
+
+  function clearAll(){
+    document.getElementById('video-url').value='';document.getElementById('video-title').value='';
+    videoQuestions=[];document.getElementById('q-count').textContent='0 questions';
+    document.getElementById('questions-list').innerHTML='<p style="color:var(--text-dim);font-size:.85rem;text-align:center;padding:30px 0">Generate a video lesson to see questions here</p>';
+    document.getElementById('video-preview-area').innerHTML='<div class="placeholder">📺 Paste a YouTube URL above<br><span style="font-size:.75rem">Video preview will appear here</span></div><div class="play-overlay"><div class="play-btn">▶</div></div>';
+    toast('Cleared');
+  }
+
+  function openExportModal(){document.getElementById('export-name').value=document.getElementById('video-title').value||'video-lesson';document.getElementById('export-modal').classList.add('show');}
+  function closeExportModal(){document.getElementById('export-modal').classList.remove('show');}
+  function exportLesson(){
+    var name=document.getElementById('export-name').value||'video-lesson';
+    var fmt=document.getElementById('export-format').value;
+    var data={title:document.getElementById('video-title').value||'Video Lesson',url:document.getElementById('video-url').value,level:document.getElementById('video-level').value,questions:videoQuestions};
+    if(fmt==='json'){var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.json';a.click();}
+    else{var html=generateVideoHTML(data);var blob=new Blob([html],{type:'text/html'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.html';a.click();}
+    closeExportModal();toast('Downloaded!','success');
+  }
+
+  function generateVideoHTML(data){
+    var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>'+data.title+'</title>';
+    html+='<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,sans-serif;background:#020617;color:#e2e8f0;line-height:1.6}.container{max-width:900px;margin:0 auto;padding:40px 24px}h1{font-size:1.8rem;margin-bottom:20px}.video-wrap{background:#000;border-radius:12px;aspect-ratio:16/9;margin-bottom:24px;overflow:hidden}.video-wrap iframe{width:100%;height:100%}.q-card{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:16px;margin-bottom:12px}.q-type{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px}.type-fillgap{background:rgba(34,211,238,.1);color:#22d3ee}.type-order{background:rgba(251,191,36,.1);color:#fbbf24}.type-mcq{background:rgba(167,139,250,.1);color:#a78bfa}.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.opt{padding:8px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid #1e293b;font-size:.85rem}.opt.correct{border-color:#34d399;color:#34d399;background:rgba(52,211,153,.08)}</style></head><body>';
+    html+='<div class="container"><h1>🎬 '+data.title+'</h1>';
+    if(data.url){var ytMatch=data.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);if(ytMatch){html+='<div class="video-wrap"><iframe src="https://www.youtube.com/embed/'+ytMatch[1]+'?rel=0" frameborder="0" allowfullscreen></iframe></div>';}else{html+='<div class="video-wrap"><video src="'+data.url+'" controls style="width:100%;height:100%"></video></div>';}}
+    html+='<h2 style="margin-bottom:16px">Questions</h2>';
+    data.questions.forEach(function(q,i){
+      html+='<div class="q-card"><span class="q-type type-'+q.type+'">'+q.type+'</span>';
+      if(q.type==='fillgap'){html+='<p>'+q.sentence.replace('_____','<input type="text" style="background:transparent;border:none;border-bottom:2px solid #fbbf24;color:#fbbf24;padding:2px 8px;width:120px;font-size:1rem;outline:none" placeholder="_____">')+'</p>';}
+      else if(q.type==='order'){html+='<div style="display:flex;gap:4px;flex-wrap:wrap">'+q.words.sort(function(){return Math.random()-0.5}).map(function(w){return'<button style="background:rgba(255,255,255,.05);border:1px solid #334155;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.85rem" onclick="this.style.opacity=this.style.opacity==='.3'?'1':'.3';this.style.textDecoration=this.style.textDecoration==='line-through'?'none':'line-through'">'+w+'</button>';}).join('')+'</div>';}
+      else{html+='<p style="font-weight:600;margin-bottom:8px">'+q.question+'</p><div class="opts">';q.options.forEach(function(o,oi){html+='<div class="opt'+(oi===q.correct?' correct':'')+'">'+o+'</div>';});html+='</div>';}
+      html+='</div>';
+    });
+    html+='</div></body></html>';
+    return html;
+  }
+
+  window.setVideoSource=setVideoSource;window.buildVideoLesson=buildVideoLesson;window.addManualQuestion=addManualQuestion;
+  window.closeQModal=closeQModal;window.saveQuestion=saveQuestion;window.editQuestion=editQuestion;window.deleteQuestion=deleteQuestion;
+  window.saveVideoLesson=saveVideoLesson;window.clearAll=clearAll;window.openExportModal=openExportModal;window.closeExportModal=closeExportModal;window.exportLesson=exportLesson;window.toast=toast;
+})();
+</script>
+</body>
+</html>

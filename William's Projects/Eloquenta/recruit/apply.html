@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Tutor Application</title>
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.15);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.15);--emerald:#34d399;--emerald-dim:rgba(52,211,153,.15);--violet:#a78bfa;--violet-dim:rgba(167,139,250,.15);--rose:#fb7185;--rose-dim:rgba(251,113,133,.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--cyan)}a:hover{text-decoration:underline}
+
+/* NAV */
+.navbar{background:rgba(2,6,23,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100}
+.navbar .inner{max-width:900px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:20px;font-weight:800;color:var(--text);text-decoration:none}
+.logo:hover{text-decoration:none}
+.logo em{color:var(--cyan);font-style:normal}
+.progress-dots{display:flex;gap:6px;align-items:center}
+.progress-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .3s}
+.progress-dot.active{background:var(--cyan);transform:scale(1.2)}
+.progress-dot.done{background:var(--emerald)}
+.progress-text{font-size:12px;color:var(--text-dim);margin-left:8px}
+
+/* FORM */
+.form-wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+.step{display:none}
+.step.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.step-header{margin-bottom:32px}
+.step-num{font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.step-title{font-size:28px;font-weight:800;margin-bottom:6px}
+.step-desc{font-size:15px;color:var(--text-muted);line-height:1.6}
+
+/* FIELDS */
+.field{margin-bottom:24px}
+.field label{display:block;font-size:14px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.field label .hint{font-weight:400;color:var(--text-dim);font-size:13px}
+.field label .req{color:var(--rose)}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);font-size:15px;font-family:inherit;transition:border-color .2s
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.field textarea{resize:vertical;min-height:100px}
+.field select{cursor:pointer}
+.field .error{font-size:13px;color:var(--rose);margin-top:4px;display:none}
+.field.has-error input,.field.has-error select,.field.has-error textarea{border-color:var(--rose)}
+.field.has-error .error{display:block}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* TAGS / CHIPS */
+.chip-select{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);
+  font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:inherit
+}
+.chip:hover{border-color:var(--border-light);color:var(--text)}
+.chip.selected{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+
+/* RADIO */
+.radio-group{display:flex;flex-direction:column;gap:8px}
+.radio-option{
+  padding:14px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card);
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px
+}
+.radio-option:hover{border-color:var(--border-light)}
+.radio-option.selected{border-color:var(--cyan);background:var(--cyan-dim)}
+.radio-option input{display:none}
+.radio-option .radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border-light);flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.radio-option.selected .radio-dot{border-color:var(--cyan)}
+.radio-option.selected .radio-dot::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--cyan)}
+.radio-option .radio-label{font-size:14px;font-weight:500}
+
+/* FILE UPLOAD */
+.file-upload{border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .2s}
+.file-upload:hover{border-color:var(--cyan);background:var(--bg-card)}
+.file-upload input{display:none}
+.file-upload .icon{font-size:32px;margin-bottom:8px}
+.file-upload .label{font-size:14px;font-weight:600}
+.file-upload .sub{font-size:12px;color:var(--text-dim)}
+
+/* BUTTONS */
+.form-actions{display:flex;align-items:center;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all .2s;font-family:inherit}
+.btn:hover{text-decoration:none}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{background:#67e8f9}
+.btn-secondary{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.btn-secondary:hover{color:var(--text);border-color:var(--border-light)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* SUMMARY */
+.summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.summary-card h3{font-size:14px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.summary-row:last-child{border-bottom:none}
+.summary-row .label{color:var(--text-muted)}
+.summary-row .value{font-weight:500}
+
+/* SCREENING QUIZ */
+.quiz-progress{height:4px;background:var(--border);border-radius:2px;margin-bottom:24px;overflow:hidden}
+.quiz-progress .fill{height:100%;background:var(--cyan);border-radius:2px;transition:width .3s}
+.quiz-question{font-size:18px;font-weight:700;margin-bottom:20px;line-height:1.4}
+.quiz-question .q-num{color:var(--cyan);font-size:14px;font-weight:600}
+.quiz-opt{
+  display:block;width:100%;text-align:left;padding:14px 18px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bg-card);font-size:14px;color:var(--text);cursor:pointer;margin-bottom:8px;transition:all .2s;font-family:inherit
+}
+.quiz-opt:hover{border-color:var(--cyan)}
+.quiz-opt.selected{border-color:var(--cyan);background:var(--cyan-dim);color:var(--cyan)}
+.quiz-opt.correct{border-color:var(--emerald);background:var(--emerald-dim);color:var(--emerald)}
+.quiz-opt.wrong{border-color:var(--rose);background:var(--rose-dim);color:var(--rose)}
+.quiz-explanation{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px;font-size:14px;color:var(--text-muted);display:none}
+.quiz-explanation.show{display:block}
+.quiz-score{text-align:center;padding:32px 0}
+.quiz-score .score-num{font-size:56px;font-weight:800}
+.quiz-score .score-label{font-size:14px;color:var(--text-dim)}
+
+/* SUCCESS */
+.success-box{text-align:center;padding:60px 24px}
+.success-icon{font-size:64px;margin-bottom:16px}
+.success-box h2{font-size:28px;font-weight:800;margin-bottom:8px}
+.success-box p{font-size:16px;color:var(--text-muted);max-width:480px;margin:0 auto 24px}
+.success-next{text-align:left;max-width:480px;margin:32px auto 0}
+.success-next h3{font-size:14px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.next-step{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px}
+.next-step .num{width:28px;height:28px;border-radius:50%;background:var(--cyan-dim);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.next-step .num.done{background:var(--emerald-dim);color:var(--emerald)}
+.next-step .num.pending{background:var(--border);color:var(--text-dim)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .field-row{grid-template-columns:1fr}
+  .form-actions{flex-direction:column;gap:12px}
+  .form-actions .btn{width:100%;justify-content:center}
+  .step-title{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar"><div class="inner">
+  <a href="index.html" class="logo">Eloqu<em>enta</em></a>
+  <div style="display:flex;align-items:center">
+    <div class="progress-dots" id="progressDots">
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+    </div>
+    <span class="progress-text" id="progressText">Step 1 of 6</span>
+  </div>
+</div></nav>
+
+<div class="form-wrap">
+
+<!-- STEP 1: Personal Info -->
+<div class="step active" id="step1">
+  <div class="step-header">
+    <div class="step-num">Step 1 — Personal Information</div>
+    <h2 class="step-title">Let's get to know you</h2>
+    <p class="step-desc">Basic info so we can reach you. We'll need your CV in a later step.</p>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="firstName" placeholder="Your first name"><div class="error">Required</div></div>
+    <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="lastName" placeholder="Your last name"><div class="error">Required</div></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="email" placeholder="you@example.com"><div class="error">Valid email required</div></div>
+    <div class="field"><label>WhatsApp / Phone</label><input type="tel" id="phone" placeholder="+49 170 1234567"></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Country of Residence <span class="req">*</span></label>
+      <select id="country"><option value="">Select...</option><option>Germany</option><option>United States</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>New Zealand</option><option>Ireland</option><option>South Africa</option><option>Netherlands</option><option>Spain</option><option>France</option><option>Japan</option><option>South Korea</option><option>Brazil</option><option>Other</option></select>
+      <div class="error">Required</div>
+    </div>
+    <div class="field"><label>Timezone <span class="req">*</span></label>
+      <select id="timezone"><option value="">Select...</option><option>UTC-8 to UTC-5 (Americas)</option><option>UTC+0 (UK/Ireland/W. Africa)</option><option>UTC+1 (Central Europe)</option><option>UTC+2 (E. Europe/Middle East)</option><option>UTC+3 to UTC+5 (Russia/Central Asia)</option><option>UTC+8 to UTC+9 (East Asia)</option><option>UTC+10 to UTC+12 (Oceania)</option></select>
+      <div class="error">Required</div>
+    </div>
+  </div>
+  <div class="field">
+    <label>City / Region</label>
+    <input type="text" id="city" placeholder="e.g. Berlin, Germany">
+  </div>
+</div>
+
+<!-- STEP 2: Teaching Background -->
+<div class="step" id="step2">
+  <div class="step-header">
+    <div class="step-num">Step 2 — Teaching Background</div>
+    <h2 class="step-title">Your ESL Experience</h2>
+    <p class="step-desc">We need at least 2 years of ESL teaching at an established organization. Tell us about it.</p>
+  </div>
+  <div class="field">
+    <label>Years of ESL Teaching Experience <span class="req">*</span></label>
+    <div class="radio-group" id="expYears">
+      <label class="radio-option"><input type="radio" name="expYears" value="2-3"><div class="radio-dot"></div><div class="radio-label">2–3 years</div></label>
+      <label class="radio-option"><input type="radio" name="expYears" value="3-5"><div class="radio-dot"></div><div class="radio-label">3–5 years</div></label>
+      <label class="radio-option"><input type="radio" name="expYears" value="5-10"><div class="radio-dot"></div><div class="radio-label">5–10 years</div></label>
+      <label class="radio-option"><input type="radio" name="expYears" value="10+"><div class="radio-dot"></div><div class="radio-label">10+ years</div></label>
+    </div>
+    <div class="error">Required</div>
+  </div>
+  <div class="field">
+    <label>Current or Most Recent Employer <span class="req">*</span> <span class="hint">(school, academy, platform, or company)</span></label>
+    <input type="text" id="employer" placeholder="e.g. Berlitz, iTalki, EF Education First, local language school">
+    <div class="error">Required</div>
+  </div>
+  <div class="field">
+    <label>Your Role There <span class="req">*</span></label>
+    <input type="text" id="role" placeholder="e.g. ESL Tutor, English Instructor, Online Teacher">
+    <div class="error">Required</div>
+  </div>
+  <div class="field">
+    <label>What did you teach? <span class="req">*</span> <span class="hint">(levels, age groups, specializations)</span></label>
+    <textarea id="taughtWhat" placeholder="e.g. Business English to German professionals (B1-C1), IELTS prep, conversation classes for adults"></textarea>
+    <div class="error">Required</div>
+  </div>
+  <div class="field">
+    <label>Do you have a TEFL/TESOL/CELTA certificate?</label>
+    <div class="radio-group" id="tefl">
+      <label class="radio-option"><input type="radio" name="tefl" value="tefl"><div class="radio-dot"></div><div class="radio-label">Yes — TEFL (120hr+)</div></label>
+      <label class="radio-option"><input type="radio" name="tefl" value="tesol"><div class="radio-dot"></div><div class="radio-label">Yes — TESOL / CELTA / DELTA</div></label>
+      <label class="radio-option"><input type="radio" name="tefl" value="other"><div class="radio-dot"></div><div class="radio-label">Yes — other teaching certificate</div></label>
+      <label class="radio-option"><input type="radio" name="tefl" value="none"><div class="radio-dot"></div><div class="radio-label">No certificate (training provided by Eloquenta)</div></label>
+    </div>
+  </div>
+  <div class="field">
+    <label>Highest Education Level</label>
+    <select id="education">
+      <option value="">Select...</option>
+      <option>High School</option>
+      <option>Some College</option>
+      <option>Bachelor's Degree</option>
+      <option>Master's Degree</option>
+      <option>Doctorate (PhD)</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Field of Study / Degree</label>
+    <input type="text" id="degree" placeholder="e.g. English Literature, Medicine, Engineering, Business">
+  </div>
+</div>
+
+<!-- STEP 3: Languages -->
+<div class="step" id="step3">
+  <div class="step-header">
+    <div class="step-num">Step 3 — Languages & Specializations</div>
+    <h2 class="step-title">Your Languages</h2>
+    <p class="step-desc">Tell us about your English proficiency and any second languages. This is central to Eloquenta's teaching method.</p>
+  </div>
+  <div class="field">
+    <label>Native English Accent / Variety <span class="req">*</span></label>
+    <select id="accent">
+      <option value="">Select...</option>
+      <option>American (US)</option>
+      <option>British (UK)</option>
+      <option>Canadian</option>
+      <option>Australian</option>
+      <option>New Zealand</option>
+      <option>Irish</option>
+      <option>South African</option>
+    </select>
+    <div class="error">Required</div>
+  </div>
+  <div class="field">
+    <label>Second Languages <span class="req">*</span> <span class="hint">(Select all you speak at B2 level or above)</span></label>
+    <div class="chip-select" id="langChips">
+      <button type="button" class="chip" data-lang="German">🇩🇪 German</button>
+      <button type="button" class="chip" data-lang="Spanish">🇪🇸 Spanish</button>
+      <button type="button" class="chip" data-lang="French">🇫🇷 French</button>
+      <button type="button" class="chip" data-lang="Japanese">🇯🇵 Japanese</button>
+      <button type="button" class="chip" data-lang="Portuguese">🇧🇷 Portuguese</button>
+      <button type="button" class="chip" data-lang="Korean">🇰🇷 Korean</button>
+      <button type="button" class="chip" data-lang="Mandarin">🇨🇳 Mandarin</button>
+      <button type="button" class="chip" data-lang="Italian">🇮🇹 Italian</button>
+      <button type="button" class="chip" data-lang="Dutch">🇳🇱 Dutch</button>
+      <button type="button" class="chip" data-lang="Arabic">🇸🇦 Arabic</button>
+      <button type="button" class="chip" data-lang="Polish">🇵🇱 Polish</button>
+      <button type="button" class="chip" data-lang="Turkish">🇹🇷 Turkish</button>
+      <button type="button" class="chip" data-lang="Russian">🇷🇺 Russian</button>
+      <button type="button" class="chip" data-lang="Hindi">🇮🇳 Hindi</button>
+      <button type="button" class="chip" data-lang="Other">🌍 Other</button>
+    </div>
+    <input type="hidden" id="selectedLangs">
+    <div class="error" id="langError">Please select at least one second language</div>
+  </div>
+  <div class="field">
+    <label>Industry / Professional Background <span class="hint">(select all that apply)</span></label>
+    <div class="chip-select" id="industryChips">
+      <button type="button" class="chip" data-industry="Medicine">🏥 Medicine / Healthcare</button>
+      <button type="button" class="chip" data-industry="Engineering">⚙️ Engineering</button>
+      <button type="button" class="chip" data-industry="Finance">💰 Finance / Banking</button>
+      <button type="button" class="chip" data-industry="Law">⚖️ Law / Legal</button>
+      <button type="button" class="chip" data-industry="Tech">💻 Technology / IT</button>
+      <button type="button" class="chip" data-industry="Science">🔬 Science / Research</button>
+      <button type="button" class="chip" data-industry="Business">📊 Business / Management</button>
+      <button type="button" class="chip" data-industry="Education">📚 Education</button>
+      <button type="button" class="chip" data-industry="Marketing">📢 Marketing / Communications</button>
+      <button type="button" class="chip" data-industry="Other_industry">🔧 Other</button>
+    </div>
+    <input type="hidden" id="selectedIndustries">
+  </div>
+</div>
+
+<!-- STEP 4: Schedule & Availability -->
+<div class="step" id="step4">
+  <div class="step-header">
+    <div class="step-num">Step 4 — Availability</div>
+    <h2 class="step-title">When Can You Teach?</h2>
+    <p class="step-desc">Set your schedule. You can change this anytime later.</p>
+  </div>
+  <div class="field">
+    <label>How many hours per week can you teach? <span class="req">*</span></label>
+    <div class="radio-group" id="hoursPerWeek">
+      <label class="radio-option"><input type="radio" name="hours" value="5-10"><div class="radio-dot"></div><div class="radio-label">5–10 hours (part-time, supplemental)</div></label>
+      <label class="radio-option"><input type="radio" name="hours" value="10-20"><div class="radio-dot"></div><div class="radio-label">10–20 hours (regular part-time)</div></label>
+      <label class="radio-option"><input type="radio" name="hours" value="20-30"><div class="radio-dot"></div><div class="radio-label">20–30 hours (eligible for volume bonus)</div></label>
+      <label class="radio-option"><input type="radio" name="hours" value="30+"><div class="radio-dot"></div><div class="radio-label">30+ hours (full-time)</div></label>
+    </div>
+    <div class="error">Required</div>
+  </div>
+  <div class="field">
+    <label>Preferred Teaching Times <span class="req">*</span> <span class="hint">(your local time)</span></label>
+    <div class="chip-select" id="timeChips">
+      <button type="button" class="chip" data-time="early_am">🌅 Early Morning (6–9 AM)</button>
+      <button type="button" class="chip" data-time="morning">☀️ Morning (9 AM–12 PM)</button>
+      <button type="button" class="chip" data-time="lunch">🍽️ Lunch (12–2 PM)</button>
+      <button type="button" class="chip" data-time="afternoon">🌤️ Afternoon (2–5 PM)</button>
+      <button type="button" class="chip" data-time="evening">🌆 Evening (5–8 PM)</button>
+      <button type="button" class="chip" data-time="night">🌙 Night (8–11 PM)</button>
+      <button type="button" class="chip" data-time="weekend_Sat">📅 Saturday</button>
+      <button type="button" class="chip" data-time="weekend_Sun">📅 Sunday</button>
+    </div>
+    <input type="hidden" id="selectedTimes">
+    <div class="error" id="timeError">Please select at least one time slot</div>
+  </div>
+  <div class="field">
+    <label>Setup <span class="req">*</span></label>
+    <div class="radio-group" id="setup">
+      <label class="radio-option"><input type="radio" name="setup" value="ready"><div class="radio-dot"></div><div class="radio-label">I have a quiet space, good webcam, and stable internet (10+ Mbps)</div></label>
+      <label class="radio-option"><input type="radio" name="setup" value="need_webcam"><div class="radio-dot"></div><div class="radio-label">Good internet and space, but I need to upgrade my webcam</div></label>
+      <label class="radio-option"><input type="radio" name="setup" value="need_both"><div class="radio-dot"></div><div class="radio-label">I need to set up my teaching environment</div></label>
+    </div>
+    <div class="error">Required</div>
+  </div>
+</div>
+
+<!-- STEP 5: CV + Motivation -->
+<div class="step" id="step5">
+  <div class="step-header">
+    <div class="step-num">Step 5 — CV & Motivation</div>
+    <h2 class="step-title">Tell Us More</h2>
+    <p class="step-desc">Upload your CV and tell us why Eloquenta. This is your chance to stand out.</p>
+  </div>
+  <div class="field">
+    <label>Upload CV / Resume <span class="hint">(PDF or DOC, max 5MB)</span></label>
+    <div class="file-upload" id="cvUpload" onclick="document.getElementById('cvFile').click()">
+      <input type="file" id="cvFile" accept=".pdf,.doc,.docx">
+      <div class="icon">📄</div>
+      <div class="label" id="cvLabel">Click to upload your CV</div>
+      <div class="sub">PDF or Word document</div>
+    </div>
+  </div>
+  <div class="field">
+    <label>Why do you want to teach with Eloquenta? <span class="req">*</span> <span class="hint">(2-3 sentences minimum)</span></label>
+    <textarea id="motivation" placeholder="What draws you to our method? Why teach ESL online? What makes you a good fit?"></textarea>
+    <div class="error">Please write at least 30 characters</div>
+  </div>
+  <div class="field">
+    <label>Is there anything else we should know?</label>
+    <textarea id="additional" placeholder="Special skills, certifications, unique experience — anything that makes you stand out."></textarea>
+  </div>
+  <div class="field">
+    <label>Where did you hear about us?</label>
+    <select id="source">
+      <option value="">Select...</option>
+      <option>LinkedIn</option>
+      <option>Indeed / Job Board</option>
+      <option>Facebook / Social Media</option>
+      <option>Friend / Referral</option>
+      <option>Google Search</option>
+      <option>Current Eloquenta Teacher</option>
+      <option>Other</option>
+    </select>
+  </div>
+</div>
+
+<!-- STEP 6: Screening Quiz -->
+<div class="step" id="step6">
+  <div class="step-header">
+    <div class="step-num">Step 6 — Screening Quiz</div>
+    <h2 class="step-title">Quick Assessment</h2>
+    <p class="step-desc">8 questions to check your English proficiency, teaching instincts, and cultural fit. No tricks — just be yourself. Takes about 5 minutes.</p>
+  </div>
+  <div style="margin-bottom:16px;color:var(--text-dim);font-size:13px" id="quizStatus">Answer all questions to continue →</div>
+  <div class="quiz-progress"><div class="fill" id="quizProgress" style="width:0%"></div></div>
+  <div id="quizContainer"></div>
+</div>
+
+<!-- FORM ACTIONS -->
+<div class="form-actions" id="formActions">
+  <button class="btn btn-secondary" id="btnBack" onclick="prevStep()" style="visibility:hidden">← Back</button>
+  <button class="btn btn-primary" id="btnNext" onclick="nextStep()">Continue →</button>
+</div>
+
+<!-- SUCCESS -->
+<div class="step" id="step7">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <h2>Application Submitted!</h2>
+    <p>Thanks, <span id="successName">candidate</span>! We've received your application. Here's what happens next:</p>
+    <div class="success-next">
+      <h3>Next Steps</h3>
+      <div class="next-step"><div class="num done">✓</div><div><strong>Application received</strong><br><span style="font-size:12px;color:var(--text-dim)">We'll review within 3 business days</span></div></div>
+      <div class="next-step"><div class="num pending">2</div><div><strong>Screening quiz review</strong><br><span style="font-size:12px;color:var(--text-dim)">Your quiz answers are being evaluated</span></div></div>
+      <div class="next-step"><div class="num pending">3</div><div><strong>Demo lesson invitation</strong><br><span style="font-size:12px;color:var(--text-dim)">Shortlisted candidates get a scenario brief</span></div></div>
+      <div class="next-step"><div class="num pending">4</div><div><strong>Paid training + TEFL</strong><br><span style="font-size:12px;color:var(--text-dim)">Platform onboarding and certification</span></div></div>
+    </div>
+    <p style="margin-top:24px;font-size:13px;color:var(--text-dim)">Check your email at <span id="successEmail" style="color:var(--cyan)">your@email.com</span> for updates.</p>
+  </div>
+</div>
+
+</div><!-- end form-wrap -->
+
+<script>
+(function(){
+  'use strict';
+  var currentStep=1, totalSteps=6;
+  var quizData=[
+    {
+      q:"A German student says: 'I am here since 3 years.' Which correction is MOST effective for a B1 professional?",
+      opts:[
+        {text:"It should be 'I have been here for 3 years.' We use present perfect with 'since' and 'for' when the action started in the past and continues now.",correct:true,exp:"This directly explains the grammar rule while modeling the correct sentence."},
+        {text:"Wrong. 'Since' goes with present perfect, not present simple. Try again.",correct:false,exp:"Correct grammar but too blunt. B1 professionals need explanation, not just correction."},
+        {text:"Jetzt machen wir eine Übung mit Present Perfect.",correct:false,exp:"Switching entirely to L1 doesn't help bridge to English. Strategic translation is fine, but not full immersion in German."},
+        {text:"In German you say 'Ich bin seit 3 Jahren hier' — the English equivalent uses a different tense. You need 'I have been here for 3 years.' The verb 'be' changes to 'have been'.",correct:false,exp:"Good explanation using L1 bridge, but slightly over-complicated. Option A is cleaner."}
+      ]
+    },
+    {
+      q:"What does 'She has been working here for 5 years' imply that 'She worked here for 5 years' does NOT?",
+      opts:[
+        {text:"That she might have had a break in between.",correct:false,exp:"No — this is about continuous action, not breaks."},
+        {text:"That she is still working there now.",correct:true,exp:"Present perfect continuous emphasizes an ongoing action. Past simple implies completed."},
+        {text:"That she is unhappy about the job.",correct:false,exp:"No emotional implication — this is a tense distinction."},
+        {text:"That 5 years is a long time.",correct:false,exp:"Length of time isn't the grammatical distinction here."}
+      ]
+    },
+    {
+      q:"A doctor student tells you: 'I didn't understand the grammar but my patient understood the medicine words.' What's the BEST response?",
+      opts:[
+        {text:"Don't worry, grammar comes later. Let's just practice vocabulary.",correct:false,exp:"Dismissing grammar isn't teaching. Both matter."},
+        {text:"That's great your medical English is strong! Let's bridge that confidence into grammar. Think of grammar like anatomy — it's the structure that holds everything together.",correct:true,exp:"Connects to their expertise, validates their strength, and reframes grammar in their professional context."},
+        {text:"You need to study grammar more. I'll give you homework.",correct:false,exp:"Too mechanical. Doesn't leverage the student's strengths or Eloquenta's method."},
+        {text:"医学用語は英語で何と言いますか？",correct:false,exp:"Random Japanese switch — irrelevant unless the student is Japanese."}
+      ]
+    },
+    {
+      q:"Which sentence uses the present perfect correctly?",
+      opts:[
+        {text:"I have went to the meeting yesterday.",correct:false,"exp":"'Have went' is grammatically incorrect. Should be 'I went' (past simple with 'yesterday')."},
+        {text:"She has written three reports this week.",correct:true,exp:"Correct! Present perfect + 'this week' (a time period that's still ongoing)."},
+        {text:"They have finished the project last Monday.",correct:false,"exp":"'Last Monday' is a specific past time — should be past simple: 'They finished.'"},
+        {text:"We have knowing each other for years.",correct:false,"exp":"'Have knowing' is incorrect. Should be 'have known' (past participle)."}
+      ]
+    },
+    {
+      q:"Your student keeps saying 'more better.' After correcting them twice, they still make the error. What do you do?",
+      opts:[
+        {text:"Stop correcting — it's clearly not working. Just let them speak.",correct:false,"exp":"Giving up isn't teaching. Try a different approach."},
+        {text:"'Better' already IS the comparative — adding 'more' is like saying 'more taller.' Let's practice: good → better → best. Can you make 3 sentences with 'better'?",correct:true,exp:"Clear explanation with a memorable analogy, then immediate practice. Effective and respectful."},
+        {text:"You're making the same mistake again. Pay attention.",correct:false,exp:"Confrontational. Demotivating for a professional adult learner."},
+        {text:"Schreiben Sie 10 Mal: 'better, not more better.'",correct:false,exp:"Mechanical punishment-style drilling. Not appropriate for adult professionals."}
+      ]
+    },
+    {
+      q:"A Japanese B1 student asks: 'What's the difference between “I ate” and “I have eaten”?' How do you explain it clearly?",
+      opts:[
+        {text:"Past simple = specific time in past. Present perfect = connection to now, or time period not finished. 'I ate at 6pm' vs 'I have eaten (so I'm not hungry now).'",correct:true,exp:"Clear, concise, with concrete examples. Perfect for B1."},
+        {text:"Both mean the same thing. Just use whichever sounds right.",correct:false,exp:"They're not the same. This is wrong and unhelpful."},
+        {text:"In Japanese you would use the same tense for both, so just pick one.",correct:false,exp:"Incorrect linguistic information, and dismissive of the learning opportunity."},
+        {text:"Think about it this way: 日本語で言うと、'食べた'はpast simple、'食べています'的なニュアンスがpresent perfectで…",correct:false,exp:"Dumping into full Japanese. A quick translation note is fine, but this loses the English learning focus."}
+      ]
+    },
+    {
+      q:"Eloquenta's method uses the student's native language strategically. What does this mean in practice?",
+      opts:[
+        {text:"Teach entirely in the student's language, then translate at the end.",correct:false,"exp":"That's the opposite of Eloquenta's method."},
+        {text:"Use precise, targeted translations at key moments — then immediately practice the English. The L1 is a bridge, not the destination.",correct:true,"exp":"This is exactly right. Strategic L1 use accelerates understanding without replacing English practice."},
+        {text:"Don't use the student's language at all — English only.",correct:false,"exp":"That's immersion-only. Eloquenta specifically does NOT do this."},
+        {text:"Translate every sentence the student says into their language.",correct:false,"exp":"Constant translation prevents thinking in English. Too much L1 use."}
+      ]
+    },
+    {
+      q:"You have 5 minutes left in a lesson. Your student is struggling with a grammar concept and getting frustrated. What do you do?",
+      opts:[
+        {text:"Push through and finish the concept. Time is limited.",correct:false,"exp":"Risk of frustrating the student further. Diminishing returns."},
+        {text:"'Let's pause here. Grammar is like building a house — we need the foundation solid first. Let's review this next session. For now, let's do a quick speaking exercise on what you DO know well — describe your typical workday.'",correct:true,"exp":"Validates the struggle, uses a professional analogy, and ends on a confidence-building activity. Great teaching instinct."},
+        {text:"End the lesson early. You've done enough for today.",correct:false,"exp":"Wastes paid time. The student expects a full session."},
+        {text:"Send them a YouTube video to watch before next class.",correct:false,"exp":"Passive. You're the teacher — teach."}
+      ]
+    }
+  ];
+  var quizAnswers={};
+
+  /* ── NAVIGATION ── */
+  window.nextStep=function(){
+    if(!validateStep(currentStep))return;
+    if(currentStep===6){submitApplication();return}
+    currentStep++;
+    showStep(currentStep);
+  };
+  window.prevStep=function(){
+    if(currentStep<=1)return;
+    currentStep--;
+    showStep(currentStep);
+  };
+  function showStep(n){
+    for(var i=1;i<=totalSteps;i++){
+      document.getElementById('step'+i).classList.remove('active');
+    }
+    document.getElementById('step'+n).classList.add('active');
+    // progress dots
+    var dots=document.querySelectorAll('.progress-dot');
+    for(var d=0;d<dots.length;d++){
+      dots[d].classList.remove('active','done');
+      if(d<n-1)dots[d].classList.add('done');
+      if(d===n-1)dots[d].classList.add('active');
+    }
+    document.getElementById('progressText').textContent='Step '+n+' of '+totalSteps;
+    // buttons
+    document.getElementById('btnBack').style.visibility=n===1?'hidden':'visible';
+    if(n===totalSteps){
+      document.getElementById('btnNext').textContent='Submit Application →';
+    } else {
+      document.getElementById('btnNext').textContent='Continue →';
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  /* ── VALIDATION ── */
+  function validateStep(n){
+    var ok=true;
+    if(n===1){
+      ok=require('firstName')&&require('lastName')&&requireEmail('email')&&require('country')&&require('timezone');
+    }
+    if(n===2){
+      ok=radioSelected('expYears')&&require('employer')&&require('role')&&requireMin('taughtWhat',10);
+    }
+    if(n===3){
+      var langs=getSelectedChips();
+      if(langs.length===0){document.getElementById('langError').style.display='block';ok=false}
+      else{document.getElementById('langError').style.display='none'}
+    }
+    if(n===4){
+      ok=radioSelected('hoursPerWeek')&&radioSelected('setup');
+      var times=getSelectedTimes();
+      if(times.length===0){document.getElementById('timeError').style.display='block';ok=false}
+      else{document.getElementById('timeError').style.display='none'}
+    }
+    if(n===5){
+      ok=requireMin('motivation',30);
+    }
+    if(n===6){
+      // quiz must be complete
+      if(Object.keys(quizAnswers).length<quizData.length){
+        document.getElementById('quizStatus').textContent='⚠️ Please answer all ' + quizData.length + ' questions';
+        document.getElementById('quizStatus').style.color='var(--rose)';
+        ok=false;
+      } else {
+        document.getElementById('quizStatus').textContent='✓ All questions answered';
+        document.getElementById('quizStatus').style.color='var(--emerald)';
+      }
+    }
+    return ok;
+  }
+  function require(id){
+    var el=document.getElementById(id);
+    var field=el.closest('.field');
+    if(!el.value.trim()){field.classList.add('has-error');return false}
+    field.classList.remove('has-error');return true;
+  }
+  function requireEmail(id){
+    var el=document.getElementById(id);
+    var field=el.closest('.field');
+    var re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!re.test(el.value.trim())){field.classList.add('has-error');return false}
+    field.classList.remove('has-error');return true;
+  }
+  function requireMin(id,min){
+    var el=document.getElementById(id);
+    var field=el.closest('.field');
+    if(el.value.trim().length<min){field.classList.add('has-error');return false}
+    field.classList.remove('has-error');return true;
+  }
+  function radioSelected(name){
+    var els=document.getElementsByName(name);
+    for(var i=0;i<els.length;i++){if(els[i].checked)return true}
+    var group=document.getElementById(name)||els[0].closest('.radio-group');
+    if(group)group.closest('.field').querySelector('.error').style.display='block';
+    return false;
+  }
+  function getSelectedChips(){
+    var sel=[];document.querySelectorAll('#langChips .chip.selected').forEach(function(c){sel.push(c.getAttribute('data-lang'))});return sel;
+  }
+  function getSelectedTimes(){
+    var sel=[];document.querySelectorAll('#timeChips .chip.selected').forEach(function(c){sel.push(c.getAttribute('data-time'))});return sel;
+  }
+
+  /* ── CHIP SELECT ── */
+  document.querySelectorAll('#langChips .chip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      this.classList.toggle('selected');
+      document.getElementById('selectedLangs').value=getSelectedChips().join(',');
+    });
+  });
+  document.querySelectorAll('#industryChips .chip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      this.classList.toggle('selected');
+      document.getElementById('selectedIndustries').value=getSelectedChipValues('#industryChips .chip.selected','data-industry');
+    });
+  });
+  document.querySelectorAll('#timeChips .chip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      this.classList.toggle('selected');
+      document.getElementById('selectedTimes').value=getSelectedTimes().join(',');
+    });
+  });
+  function getSelectedChipValues(sel,attr){
+    var vals=[];document.querySelectorAll(sel).forEach(function(c){vals.push(c.getAttribute(attr))});return vals.join(',');
+  }
+
+  /* ── RADIO STYLING ── */
+  document.querySelectorAll('.radio-option input').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var group=this.closest('.radio-group');
+      group.querySelectorAll('.radio-option').forEach(function(o){o.classList.remove('selected')});
+      this.closest('.radio-option').classList.add('selected');
+      var err=group.closest('.field').querySelector('.error');
+      if(err)err.style.display='none';
+    });
+  });
+
+  /* ── FILE UPLOAD ── */
+  document.getElementById('cvFile').addEventListener('change',function(){
+    if(this.files.length>0){
+      document.getElementById('cvLabel').textContent='✓ '+this.files[0].name;
+    }
+  });
+
+  /* ── QUIZ ── */
+  function renderQuiz(){
+    var container=document.getElementById('quizContainer');
+    var html='';
+    for(var i=0;i<quizData.length;i++){
+      var q=quizData[i];
+      html+='<div style="margin-bottom:28px;" id="q'+i+'">';
+      html+='<div class="quiz-question"><span class="q-num">Q'+(i+1)+'.</span> '+q.q+'</div>';
+      for(var j=0;j<q.opts.length;j++){
+        var o=q.opts[j];
+        html+='<button class="quiz-opt" data-q="'+i+'" data-o="'+j+'" onclick="answerQuiz('+i+','+j+',this)">'+String.fromCharCode(65+j)+'. '+o.text+'</button>';
+      }
+      html+='<div class="quiz-explanation" id="exp'+i+'"><strong>Explanation:</strong> '+q.opts[0].exp+'</div>';
+      html+='</div>';
+    }
+    container.innerHTML=html;
+    // Fix explanation text
+    for(var i=0;i<quizData.length;i++){
+      var correctExp=quizData[i].opts.find(function(o){return o.correct});
+      if(correctExp)document.getElementById('exp'+i).innerHTML='<strong>Explanation:</strong> '+correctExp.exp;
+    }
+    updateQuizProgress();
+  }
+  window.answerQuiz=function(qIdx,oIdx,btn){
+    if(quizAnswers[qIdx]!==undefined)return; // already answered
+    var q=quizData[qIdx];
+    var isCorrect=q.opts[oIdx].correct;
+    quizAnswers[qIdx]={selected:oIdx,correct:isCorrect};
+    // show result
+    var opts=btn.parentElement.querySelectorAll('.quiz-opt');
+    for(var i=0;i<opts.length;i++){
+      opts[i].style.pointerEvents='none';
+      if(q.opts[i].correct)opts[i].classList.add('correct');
+      else if(i===oIdx&&!isCorrect)opts[i].classList.add('wrong');
+    }
+    btn.parentElement.querySelector('.quiz-explanation').classList.add('show');
+    updateQuizProgress();
+  };
+  function updateQuizProgress(){
+    var answered=Object.keys(quizAnswers).length;
+    var pct=Math.round((answered/quizData.length)*100);
+    document.getElementById('quizProgress').style.width=pct+'%';
+    var correct=0;for(var k in quizAnswers){if(quizAnswers[k].correct)correct++;}
+    document.getElementById('quizStatus').textContent=answered+'/'+quizData.length+' answered · '+correct+' correct';
+    if(answered===quizData.length){
+      document.getElementById('quizStatus').textContent='✓ Complete! Score: '+correct+'/'+quizData.length;
+      document.getElementById('quizStatus').style.color=correct>=quizData.length*0.6?'var(--emerald)':'var(--amber)';
+    }
+  }
+
+  /* ── SUBMIT ── */
+  window.submitApplication=function(){
+    if(Object.keys(quizAnswers).length<quizData.length)return;
+    // Calculate score
+    var correct=0;for(var k in quizAnswers){if(quizAnswers[k].correct)correct++;}
+    var pct=Math.round((correct/quizData.length)*100);
+    // Gather data
+    var data={
+      personal:{
+        firstName:document.getElementById('firstName').value,
+        lastName:document.getElementById('lastName').value,
+        email:document.getElementById('email').value,
+        phone:document.getElementById('phone').value,
+        country:document.getElementById('country').value,
+        timezone:document.getElementById('timezone').value,
+        city:document.getElementById('city').value
+      },
+      experience:{
+        years:radioValue('expYears'),
+        employer:document.getElementById('employer').value,
+        role:document.getElementById('role').value,
+        taughtWhat:document.getElementById('taughtWhat').value,
+        tefl:radioValue('tefl'),
+        education:document.getElementById('education').value,
+        degreeField:document.getElementById('degree').value
+      },
+      languages:{
+        accent:document.getElementById('accent').value,
+        secondLanguages:document.getElementById('selectedLangs').value,
+        industries:document.getElementById('selectedIndustries').value
+      },
+      availability:{
+        hours:radioValue('hoursPerWeek'),
+        times:document.getElementById('selectedTimes').value,
+        setup:radioValue('setup')
+      },
+      motivation:document.getElementById('motivation').value,
+      additional:document.getElementById('additional').value,
+      source:document.getElementById('source').value,
+      quiz:{score:correct,total:quizData.length,pct:pct},
+      submittedAt:new Date().toISOString()
+    };
+    // Save to localStorage (in production, POST to your server)
+    var apps=JSON.parse(localStorage.getItem('eloquenta_applications')||'[]');
+    apps.push(data);
+    localStorage.setItem('eloquenta_applications',JSON.stringify(apps));
+    // Show success
+    document.getElementById('step'+totalSteps).classList.remove('active');
+    document.getElementById('formActions').style.display='none';
+    document.getElementById('step7').classList.add('active');
+    document.querySelectorAll('.progress-dot').forEach(function(d){d.classList.add('done');d.classList.remove('active')});
+    document.getElementById('progressText').textContent='Complete ✓';
+    // Personalize
+    document.getElementById('successName').textContent=data.personal.firstName;
+    document.getElementById('successEmail').textContent=data.personal.email;
+  };
+  function radioValue(name){
+    var els=document.getElementsByName(name);
+    for(var i=0;i<els.length;i++){if(els[i].checked)return els[i].value}
+    return '';
+  }
+
+  /* ── SHOW QUIZ ON STEP 6 ── */
+  var origShowStep=showStep;
+  showStep=function(n){
+    origShowStep(n);
+    if(n===6&&!window._quizRendered){renderQuiz();window._quizRendered=true;}
+  };
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquenta — Tutor Recruitment Dashboard</title>
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.15);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.15);--emerald:#34d399;--emerald-dim:rgba(52,211,153,.15);--violet:#a78bfa;--violet-dim:rgba(167,139,250,.15);--rose:#fb7185;--rose-dim:rgba(251,113,133,.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--cyan)}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--bg-card);border-right:1px solid var(--border);position:fixed;top:0;bottom:0;left:0;z-index:50;display:flex;flex-direction:column}
+.sidebar-logo{padding:20px 22px;font-size:18px;font-weight:700;border-bottom:1px solid var(--border)}
+.sidebar-logo em{color:var(--cyan);font-style:normal}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.sidebar-nav .nav-label{padding:16px 12px 6px;font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.sidebar-nav a{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:500;text-decoration:none;transition:all .2s}
+.sidebar-nav a:hover{background:var(--bg-hover);color:var(--text)}
+.sidebar-nav a.active{background:var(--cyan-dim);color:var(--cyan)}
+.sidebar-nav a .badge{margin-left:auto;background:var(--rose);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.sidebar-nav a .badge.amber{background:var(--amber);color:var(--bg)}
+.sidebar-nav a .badge.emerald{background:var(--emerald);color:var(--bg)}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-dim)}
+
+.main{flex:1;margin-left:220px}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(2,6,23,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.content{padding:28px;max-width:1100px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.stat-box{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat-num{font-size:24px;font-weight:800}
+.stat-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* FILTERS */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-select{background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);padding:7px 12px;border-radius:8px;font-size:13px;cursor:pointer}
+.filter-search{flex:1;min-width:200px;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;font-size:13px}
+.filter-search:focus{outline:none;border-color:var(--cyan)}
+
+/* CANDIDATE LIST */
+.candidate-list{display:flex;flex-direction:column;gap:8px}
+.candidate-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .2s}
+.candidate-card:hover{border-color:var(--border-light);background:var(--bg-hover)}
+.candidate-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.candidate-info{flex:1;min-width:0}
+.candidate-name{font-size:15px;font-weight:700}
+.candidate-meta{font-size:12px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.candidate-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px}
+.tag-lang{background:var(--cyan-dim);color:(--cyan)}
+.tag-industry{background:var(--violet-dim);color:var(--violet)}
+.tag-exp{background:var(--amber-dim);color:var(--amber)}
+.candidate-score{text-align:center;flex-shrink:0}
+.candidate-score .score{font-size:22px;font-weight:800}
+.candidate-score .label{font-size:10px;color:var(--text-dim)}
+.candidate-status{flex-shrink:0}
+.status-badge{padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.status-new{background:var(--cyan-dim);color:var(--cyan)}
+.status-reviewing{background:var(--amber-dim);color:var(--amber)}
+.status-shortlisted{background:var(--emerald-dim);color:var(--emerald)}
+.status-rejected{background:var(--rose-dim);color:var(--rose)}
+.status-training{background:var(--violet-dim);color:var(--violet)}
+.candidate-date{font-size:12px;color:var(--text-dim);flex-shrink:0;width:80px;text-align:right}
+
+/* DETAIL PANEL */
+.detail-overlay{position:fixed;inset:0;z-index:100;display:none;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:24px}
+.detail-overlay.active{display:flex}
+.detail-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:800px;max-height:90vh;overflow-y:auto;position:relative}
+.detail-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:16px;z-index:5}
+.detail-close:hover{background:var(--rose);color:#fff;border-color:var(--rose)}
+.detail-header{padding:28px 28px 16px;border-bottom:1px solid var(--border)}
+.detail-header h2{font-size:22px;font-weight:800;margin-bottom:4px}
+.detail-header .meta{font-size:14px;color:var(--text-muted)}
+.detail-body{padding:24px 28px}
+.detail-section{margin-bottom:24px}
+.detail-section h3{font-size:13px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-item{background:var(--bg);border-radius:8px;padding:12px}
+.detail-item .label{font-size:11px;color:var(--text-dim);margin-bottom:2px}
+.detail-item .value{font-size:14px;font-weight:500}
+.detail-item.full{grid-column:1/-1}
+.quiz-result{display:flex;gap:8px;flex-wrap:wrap}
+.quiz-q-result{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500}
+.quiz-q-result.correct{background:var(--emerald-dim);color:var(--emerald)}
+.quiz-q-result.wrong{background:var(--rose-dim);color:var(--rose)}
+.detail-actions{display:flex;gap:8px;padding:16px 28px;border-top:1px solid var(--border);justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all .2s;font-family:inherit}
+.btn:hover{text-decoration:none}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{background:#67e8f9}
+.btn-success{background:var(--emerald);color:var(--bg)}
+.btn-success:hover{background:#6ee7b7}
+.btn-danger{background:var(--rose);color:#fff}
+.btn-danger:hover{background:#fda4af}
+.btn-secondary{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.btn-secondary:hover{color:var(--text);border-color:var(--border-light)}
+
+/* RECRUITMENT STATUS */
+.recruit-status{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px}
+.recruit-status-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.recruit-status h3{font-size:15px;font-weight:700}
+.utilization-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.utilization-fill{height:100%;border-radius:4px;transition:width .5s}
+.utilization-labels{display:flex;justify-content:space-between;font-size:12px;color:(--text-dim)}
+.recruit-toggle{display:flex;align-items:center;gap:12px}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s}
+.toggle.on{background:var(--emerald)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle.on::after{left:22px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 24px;color:var(--text-dim)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state h3{font-size:16px;font-weight:700;color:var(--text-muted);margin-bottom:4px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .stats-row{grid-template-columns:repeat(3,1fr)}
+  .candidate-card{flex-wrap:wrap}
+  .detail-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">Eloqu<em>enta</em> <span style="font-size:11px;color:var(--text-dim);font-weight:400">Admin</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Recruitment</div>
+      <a href="#" class="active" onclick="showAdminSection('pipeline',this)">📋 Pipeline <span class="badge" id="badge-pipeline">0</span></a>
+      <a href="#" onclick="showAdminSection('shortlisted',this)">⭐ Shortlisted <span class="badge emerald" id="badge-shortlisted">0</span></a>
+      <a href="#" onclick="showAdminSection('training',this)">🎓 In Training <span class="badge amber" id="badge-training">0</span></a>
+      <a href="#" onclick="showAdminSection('rejected',this)">✕ Rejected <span class="badge" id="badge-rejected">0</span></a>
+      <div class="nav-label">Operations</div>
+      <a href="../dashboard.html">📊 Student Dashboard</a>
+      <a href="../voip.html">🎥 Classroom</a>
+      <a href="index.html">📝 Public Recruitment Page</a>
+    </nav>
+    <div class="sidebar-footer">v0.1 · Recruitment System</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1 id="page-title">Tutor Pipeline</h1>
+      <div class="topbar-right">
+        <a href="index.html" class="btn btn-secondary" style="padding:6px 14px;font-size:12px;">View Public Page</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- RECRUITMENT STATUS -->
+      <div class="recruit-status">
+        <div class="recruit-status-header">
+          <div>
+            <h3>📊 Teacher Utilization & Recruitment Status</h3>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">Recruitment opens when average teacher utilization reaches 20+ hrs/week</div>
+          </div>
+          <div class="recruit-toggle">
+            <span style="font-size:13px;font-weight:600;" id="recruit-label">Recruitment: Closed</span>
+            <div class="toggle" id="recruit-toggle" onclick="toggleRecruitment()"></div>
+          </div>
+        </div>
+        <div class="utilization-bar"><div class="utilization-fill" id="util-fill" style="width:68%;background:var(--amber)"></div></div>
+        <div class="utilization-labels">
+          <span>0 hrs/week</span>
+          <span style="color:var(--text-muted);font-weight:600;" id="util-text">Avg: 14.2 hrs/week (68% of 20hr target)</span>
+          <span>20+ hrs/week</span>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num" id="stat-new">0</div><div class="stat-label">New</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-reviewing">0</div><div class="stat-label">Reviewing</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-shortlisted">0</div><div class="stat-label">Shortlisted</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-training">0</div><div class="stat-label">In Training</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-rejected">0</div><div class="stat-label">Rejected</div></div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <select class="filter-select" id="filter-status" onchange="renderCandidates()">
+          <option value="all">All Statuses</option>
+          <option value="new">New</option>
+          <option value="reviewing">Reviewing</option>
+          <option value="shortlisted">Shortlisted</option>
+          <option value="training">In Training</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select class="filter-select" id="filter-lang" onchange="renderCandidates()">
+          <option value="all">All Languages</option>
+          <option value="German">🇩🇪 German</option>
+          <option value="Spanish">🇪🇸 Spanish</option>
+          <option value="French">🇫🇷 French</option>
+          <option value="Japanese">🇯🇵 Japanese</option>
+          <option value="Portuguese">🇧🇷 Portuguese</option>
+          <option value="Korean">🇰🇷 Korean</option>
+          <option value="Mandarin">🇨🇳 Mandarin</option>
+        </select>
+        <select class="filter-select" id="filter-sort" onchange="renderCandidates()">
+          <option value="newest">Newest First</option>
+          <option value="score">Highest Quiz Score</option>
+          <option value="exp">Most Experience</option>
+        </select>
+        <input type="text" class="filter-search" placeholder="Search candidates..." id="filter-search" oninput="renderCandidates()">
+      </div>
+
+      <!-- CANDIDATE LIST -->
+      <div class="candidate-list" id="candidate-list">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <h3>No applications yet</h3>
+          <p>Candidates who apply will appear here. Share the recruitment page to start receiving applications.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div class="detail-header">
+      <h2 id="detail-name">Candidate Name</h2>
+      <div class="meta" id="detail-meta">email · country · submitted</div>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+    <div class="detail-actions" id="detail-actions"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ── DATA ── */
+  function loadApps(){return JSON.parse(localStorage.getItem('eloquenta_applications')||'[]')}
+  function saveApps(apps){localStorage.setItem('eloquenta_applications',JSON.stringify(apps))}
+  function loadStatuses(){return JSON.parse(localStorage.getItem('eloquenta_app_statuses')||'{}')}
+  function saveStatuses(s){localStorage.setItem('eloquenta_app_statuses',JSON.stringify(s))}
+  function loadRecruit(){var v=localStorage.getItem('eloquenta_recruiting');return v===null?false:v==='true'}
+  function saveRecruit(v){localStorage.setItem('eloquenta_recruiting',v)}
+
+  /* ── RECruitment TOGGLE ── */
+  window.toggleRecruitment=function(){
+    var on=!loadRecruit();saveRecruit(on);
+    var t=document.getElementById('recruit-toggle');
+    var l=document.getElementById('recruit-label');
+    if(on){t.classList.add('on');l.textContent='Recruitment: Open';l.style.color='var(--emerald)'}
+    else{t.classList.remove('on');l.textContent='Recruitment: Closed';l.style.color=''}
+  };
+  // Init
+  if(loadRecruit()){document.getElementById('recruit-toggle').classList.add('on');document.getElementById('recruit-label').textContent='Recruitment: Open';document.getElementById('recruit-label').style.color='var(--emerald)'}
+
+  /* ── RENDER LIST ── */
+  window.renderCandidates=function(){
+    var apps=loadApps();
+    var statuses=loadStatuses();
+    var filter=document.getElementById('filter-status').value;
+    var langFilter=document.getElementById('filter-lang').value;
+    var sortBy=document.getElementById('filter-sort').value;
+    var search=document.getElementById('filter-search').value.toLowerCase();
+
+    // Assign default status
+    for(var i=0;i<apps.length;i++){
+      if(!statuses[i])statuses[i]='new';
+    }
+    saveStatuses(statuses);
+
+    // Filter
+    var filtered=[];
+    for(var i=0;i<apps.length;i++){
+      var a=apps[i];
+      var s=statuses[i];
+      if(filter!=='all'&&s!==filter)continue;
+      if(langFilter!=='all'){
+        var langs=a.languages.secondLanguages||'';
+        if(langs.indexOf(langFilter)===-1)continue;
+      }
+      if(search){
+        var haystack=(a.personal.firstName+' '+a.personal.lastName+' '+a.personal.email+' '+a.experience.employer+' '+a.languages.secondLanguages).toLowerCase();
+        if(haystack.indexOf(search)===-1)continue;
+      }
+      filtered.push({idx:i,data:a,status:s});
+    }
+
+    // Sort
+    if(sortBy==='score')filtered.sort(function(a,b){return(b.data.quiz.pct)-(a.data.quiz.pct)});
+    else if(sortBy==='exp')filtered.sort(function(a,b){return expWeight(b.data.experience.years)-expWeight(a.data.experience.years)});
+    else filtered.sort(function(a,b){return new Date(b.data.submittedAt)-new Date(a.data.submittedAt)});
+
+    // Counts
+    var counts={new:0,reviewing:0,shortlisted:0,training:0,rejected:0};
+    for(var s in counts){for(var i=0;i<apps.length;i++){if(statuses[i]===s)counts[s]++}}
+    document.getElementById('stat-new').textContent=counts.new;
+    document.getElementById('stat-reviewing').textContent=counts.reviewing;
+    document.getElementById('stat-shortlisted').textContent=counts.shortlisted;
+    document.getElementById('stat-training').textContent=counts.training;
+    document.getElementById('stat-rejected').textContent=counts.rejected;
+    document.getElementById('badge-pipeline').textContent=counts.new+counts.reviewing;
+    document.getElementById('badge-shortlisted').textContent=counts.shortlisted;
+    document.getElementById('badge-training').textContent=counts.training;
+    document.getElementById('badge-rejected').textContent=counts.rejected;
+
+    // Render
+    var container=document.getElementById('candidate-list');
+    if(filtered.length===0){
+      container.innerHTML='<div class="empty-state"><div class="icon">📋</div><h3>No candidates found</h3><p>Try adjusting your filters.</p></div>';
+      return;
+    }
+    var html='';
+    for(var f=0;f<filtered.length;f++){
+      var c=filtered[f];
+      var a=c.data;
+      var avatarColor=stringColor(a.personal.firstName);
+      var initials=(a.personal.firstName[0]+a.personal.lastName[0]).toUpperCase();
+      var langs=(a.languages.secondLanguages||'').split(',').filter(Boolean);
+      var industries=(a.languages.industries||'').split(',').filter(Boolean);
+      var dateStr=new Date(a.submittedAt).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      var scoreColor=a.quiz.pct>=75?'var(--emerald)':a.quiz.pct>=50?'var(--amber)':'var(--rose)';
+      var statusClass='status-'+c.status;
+      var statusLabel={new:'NEW',reviewing:'REVIEWING',shortlisted:'SHORTLISTED',training:'TRAINING',rejected:'REJECTED'}[c.status];
+
+      html+='<div class="candidate-card" onclick="openDetail('+c.idx+')">';
+      html+='<div class="candidate-avatar" style="background:'+avatarColor+'20;color:'+avatarColor+'">'+initials+'</div>';
+      html+='<div class="candidate-info">';
+      html+='<div class="candidate-name">'+a.personal.firstName+' '+a.personal.lastName+'</div>';
+      html+='<div class="candidate-meta">'+a.experience.years+' yrs · '+a.experience.employer+' · '+a.personal.country+'</div>';
+      html+='<div class="candidate-tags">';
+      for(var l=0;l<Math.min(langs.length,3);l++)html+='<span class="tag tag-lang">'+langs[l]+'</span>';
+      if(langs.length>3)html+='<span class="tag">+'+(langs.length-3)+'</span>';
+      for(var ind=0;ind<Math.min(industries.length,2);ind++)html+='<span class="tag tag-industry">'+industries[ind]+'</span>';
+      html+='</div></div>';
+      html+='<div class="candidate-score"><div class="score" style="color:'+scoreColor+'">'+a.quiz.pct+'%</div><div class="label">Quiz</div></div>';
+      html+='<div class="candidate-status"><span class="status-badge '+statusClass+'">'+statusLabel+'</span></div>';
+      html+='<div class="candidate-date">'+dateStr+'</div>';
+      html+='</div>';
+    }
+    container.innerHTML=html;
+  };
+
+  function expWeight(v){if(v==='2-3')return 1;if(v==='3-5')return 2;if(v==='5-10')return 3;if(v==='10+')return 4;return 0}
+  function stringColor(s){var colors=['var(--cyan)','var(--emerald)','var(--amber)','var(--violet)','var(--rose)'];var h=0;for(var i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return colors[Math.abs(h)%colors.length]}
+
+  /* ── DETAIL ── */
+  window.openDetail=function(idx){
+    var apps=loadApps();
+    var statuses=loadStatuses();
+    var a=apps[idx];
+    var status=statuses[idx]||'new';
+    document.getElementById('detail-name').textContent=a.personal.firstName+' '+a.personal.lastName;
+    document.getElementById('detail-meta').textContent=a.personal.email+' · '+a.personal.country+' · '+new Date(a.submittedAt).toLocaleDateString();
+
+    var langs=(a.languages.secondLanguages||'').split(',').filter(Boolean);
+    var industries=(a.languages.industries||'').split(',').filter(Boolean);
+    var times=(a.availability.times||'').split(',').filter(Boolean);
+
+    var html='';
+    html+='<div class="detail-section"><h3>Personal</h3><div class="detail-grid">';
+    html+='<div class="detail-item"><div class="label">Name</div><div class="value">'+a.personal.firstName+' '+a.personal.lastName+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Email</div><div class="value"><a href="mailto:'+a.personal.email+'">'+a.personal.email+'</a></div></div>';
+    html+='<div class="detail-item"><div class="label">Phone</div><div class="value">'+(a.personal.phone||'—')+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Location</div><div class="value">'+(a.personal.city?a.personal.city+', ':'')+a.personal.country+' ('+a.personal.timezone+')</div></div>';
+    html+='</div></div>';
+
+    html+='<div class="detail-section"><h3>Experience</h3><div class="detail-grid">';
+    html+='<div class="detail-item"><div class="label">Years Teaching ESL</div><div class="value">'+a.experience.years+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Current Employer</div><div class="value">'+a.experience.employer+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Role</div><div class="value">'+a.experience.role+'</div></div>';
+    html+='<div class="detail-item"><div class="label">TEFL/TESOL</div><div class="value">'+(a.experience.tefl==='none'?'No (training provided)':a.experience.tefl.toUpperCase())+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Education</div"><div class="value">'+(a.experience.education||'—')+' '+(a.experience.degreeField?'in '+a.experience.degreeField:'')+'</div></div>';
+    html+='<div class="detail-item"><div class="label">English Accent</div><div class="value">'+a.languages.accent+'</div></div>';
+    html+='</div></div>';
+
+    html+='<div class="detail-section"><h3>What They Taught</h3><div class="detail-item full"><div class="value">'+a.experience.taughtWhat+'</div></div></div>';
+
+    html+='<div class="detail-section"><h3>Languages & Industries</h3><div class="detail-grid">';
+    html+='<div class="detail-item"><div class="label">Second Languages</div><div class="value">'+langs.join(', ')||'—'+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Industry Background</div><div class="value">'+industries.join(', ')||'—'+'</div></div>';
+    html+='</div></div>';
+
+    html+='<div class="detail-section"><h3>Availability</h3><div class="detail-grid">';
+    html+='<div class="detail-item"><div class="label">Hours/Week</div><div class="value">'+a.availability.hours+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Preferred Times</div><div class="value">'+times.join(', ')||'—'+'</div></div>';
+    html+='<div class="detail-item"><div class="label">Setup</div><div class="value">'+(a.availability.setup==='ready'?'Ready to teach':a.availability.setup==='need_webcam'?'Needs webcam upgrade':'Needs full setup')+'</div></div>';
+    html+='</div></div>';
+
+    html+='<div class="detail-section"><h3>Motivation</h3><div class="detail-item full"><div class="value">'+a.motivation+'</div></div>';
+    if(a.additional)html+='<div class="detail-item full" style="margin-top:8px"><div class="label">Additional Info</div><div class="value">'+a.additional+'</div></div>';
+    html+='</div>';
+
+    html+='<div class="detail-section"><h3>Screening Quiz — '+a.quiz.score+'/'+a.quiz.total+' ('+a.quiz.pct+'%)</h3>';
+    html+='<div class="quiz-result">';
+    for(var q=0;q<a.quiz.total;q++){
+      var answered=a.quiz.answers&&a.quiz.answers[q];
+      var isCorrect=answered&&answered.correct;
+      html+='<div class="quiz-q-result '+(isCorrect?'correct':'wrong')+'">Q'+(q+1)+'</div>';
+    }
+    html+='</div></div>';
+
+    document.getElementById('detail-body').innerHTML=html;
+
+    // Actions
+    var actionsHtml='';
+    if(status==='new')actionsHtml+='<button class="btn btn-secondary" onclick="setStatus('+idx+',\'reviewing\')">👁 Start Review</button>';
+    if(status==='new'||status==='reviewing'){
+      actionsHtml+='<button class="btn btn-success" onclick="setStatus('+idx+',\'shortlisted\')">⭐ Shortlist</button>';
+      actionsHtml+='<button class="btn btn-danger" onclick="setStatus('+idx+',\'rejected\')">✕ Reject</button>';
+    }
+    if(status==='shortlisted')actionsHtml+='<button class="btn btn-primary" onclick="setStatus('+idx+',\'training\')">🎓 Send to Training</button>';
+    if(status==='shortlisted')actionsHtml+='<button class="btn btn-danger" onclick="setStatus('+idx+',\'rejected\')">✕ Reject</button>';
+    if(status==='training')actionsHtml+='<button class="btn btn-success" onclick="setStatus('+idx+',\'shortlisted\')">✓ Training Complete</button>';
+    if(status!=='rejected')actionsHtml+='<button class="btn btn-secondary" onclick="setStatus('+idx+',\'rejected\')">✕ Reject</button>';
+    actionsHtml+='<a href="mailto:'+a.personal.email+'?subject=Eloquenta Application" class="btn btn-secondary">📧 Email</a>';
+    document.getElementById('detail-actions').innerHTML=actionsHtml;
+
+    document.getElementById('detail-overlay').classList.add('active');
+  };
+  window.closeDetail=function(){document.getElementById('detail-overlay').classList.remove('active');};
+  window.setStatus=function(idx,status){
+    var statuses=loadStatuses();
+    statuses[idx]=status;
+    saveStatuses(statuses);
+    closeDetail();
+    renderCandidates();
+  };
+  document.getElementById('detail-overlay').addEventListener('click',function(e){if(e.target===this)closeDetail()});
+
+  /* ── ADMIN SECTIONS ── */
+  window.showAdminSection=function(section,el){
+    document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.classList.remove('active')});
+    if(el)el.classList.add('active');
+    var titles={pipeline:'Tutor Pipeline',shortlisted:'Shortlisted Candidates',training:'In Training',rejected:'Rejected'};
+    document.getElementById('page-title').textContent=titles[section]||'Pipeline';
+    document.getElementById('filter-status').value=section==='pipeline'?'all':section;
+    renderCandidates();
+  };
+
+  /* ── DEMO DATA ── */
+  function addDemoData(){
+    if(loadApps().length>0)return;
+    var demo=[
+      {personal:{firstName:'Sarah',lastName:'Mitchell',email:'sarah.m@example.com',phone:'+44 7700 900123',country:'United Kingdom',timezone:'UTC+0 (UK/Ireland/W. Africa)',city:'London'},experience:{years:'5-10',employer:'EF Education First',role:'Senior ESL Instructor',taughtWhat:'Business English to German and Japanese professionals (B1-C1). IELTS preparation. Academic writing for university applicants.',tefl:'tesol',education:"Master's Degree",degreeField:'Applied Linguistics'},languages:{accent:'British (UK)',secondLanguages:'German,Japanese',industries:'Education,Tech'},availability:{hours:'20-30',times:'morning,afternoon,evening,weekend_Sat',setup:'ready'},motivation:"I've been teaching ESL for 7 years and I'm passionate about the translation-bridge method. My German is C1 and I've seen firsthand how strategic L1 use accelerates learning. I want to focus on quality 1-on-1 teaching rather than juggling 30 students in a classroom.",additional:"I have experience with Cambridge exam prep (FCE, CAE). I also have a TEFL certificate from International House London.",source:'LinkedIn',quiz:{score:7,total:8,pct:88,answers:[{correct:true},{correct:true},{correct:true},{correct:true},{correct:true},{correct:true},{correct:true},{correct:false}]},submittedAt:new Date(Date.now()-86400000*2).toISOString()},
+      {personal:{firstName:'James',lastName:'O\'Brien',email:'james.ob@example.com',phone:'+353 87 1234567',country:'Ireland',timezone:'UTC+0 (UK/Ireland/W. Africa)',city:'Dublin'},experience:{years:'3-5',employer:'Berlitz Ireland',role:'ESL Tutor',taughtWhat:'General English and Business English to adult learners. Mostly German and Spanish speakers. Levels A2-C1. Also did corporate training for Siemens Ireland.',tefl:'tefl',education:"Bachelor's Degree",degreeField:'English & Philosophy'},languages:{accent:'Irish',secondLanguages:'German,Spanish',industries:'Engineering,Business'},availability:{hours:'10-20',times:'morning,afternoon,weekend_Sat,weekend_Sun',setup:'ready'},motivation:"After 4 years at Berlitz I'm looking for a more personalized teaching approach. The Eloquenta model of using students' native language as a bridge makes so much sense — I've been doing it informally for years. My German is B2 and I'm conversational in Spanish.",additional:"I'm also a qualified yoga teacher — great for keeping energy up during long teaching days!",source:'Friend / Referral',quiz:{score:6,total:8,pct:75,answers:[{correct:true},{correct:true},{correct:false},{correct:true},{correct:true},{correct:true},{correct:false},{correct:true}]},submittedAt:new Date(Date.now()-86400000*5).toISOString()},
+      {personal:{firstName:'Emily',lastName:'Chen',email:'emily.chen@example.com',phone:'+1 415 5550199',country:'United States',timezone:'UTC-8 to UTC-5 (Americas)',city:'San Francisco'},experience:{years:'2-3',employer:'iTalki',role:'Community Tutor',taughtWhat:'Conversational English and Business English on iTalki platform. Mostly Japanese and Korean professionals. Also helped with resume writing and interview prep.',tefl:'none',education:"Bachelor's Degree",degreeField:'Computer Science'},languages:{accent:'American (US)',secondLanguages:'Japanese,Mandarin',industries:'Tech,Business'},availability:{hours:'20-30',times:'early_am,morning,evening,weekend_Sat',setup:'ready'},motivation:"I'm a software engineer who transitioned to teaching English 3 years ago. My Japanese is N2 level and I understand the tech industry inside out. I want to help Japanese engineers and product managers communicate better in English. Eloquenta's method aligns perfectly with how I already teach.",additional:"I can also teach technical English for software development — Git, code reviews, standups, etc.",source:'Google Search',quiz:{score:5,total:8,pct:63,answers:[{correct:true},{correct:false},{correct:true},{correct:true},{correct:false},{correct:true},{correct:false},{correct:true}]},submittedAt:new Date(Date.now()-86400000*1).toISOString()},
+      {personal:{firstName:'Michael',lastName:'Thompson',email:'m.thompson@example.com',phone:'',country:'Australia',timezone:'UTC+10 to UTC+12 (Oceania)',city:'Sydney'},experience:{years:'10+',employer:'University of Sydney Language Centre',role:'English Language Instructor',taughtWhat:'Academic English for university pathway programs. IELTS and PTE preparation. Students from China, Korea, Japan, Saudi Arabia, and Brazil.',tefl:'tesol',education:"Master's Degree",degreeField:'TESOL'},languages:{accent:'Australian',secondLanguages:'Japanese,Portuguese',industries:'Education,Science'},availability:{hours:'30+',times:'early_am,morning,afternoon,evening',setup:'ready'},motivation:"I've spent 10+ years in academic English and I'm ready for a change. I love the 1-on-1 model and the idea of really following a student's journey. My Japanese is B1 and Portuguese is B2 — enough to provide strategic translations.",additional:"I have extensive experience with academic writing and research paper structure.",source:'Indeed / Job Board',quiz:{score:8,total:8,pct:100,answers:[{correct:true},{correct:true},{correct:true},{correct:true},{correct:true},{correct:true},{correct:true},{correct:true}]},submittedAt:new Date(Date.now()-86400000*7).toISOString()}
+    ];
+    saveApps(demo);
+    var statuses={0:'shortlisted',1:'reviewing',2:'new',3:'training'};
+    saveStatuses(statuses);
+  }
+
+  /* ── INIT ── */
+  addDemoData();
+  renderCandidates();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IELTS Writing Band Scores — Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="eloquent-branding.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow:hidden;height:100vh;padding-top:48px}
+.slide{display:none;width:100vw;height:100vh;position:relative;flex-direction:column;justify-content:center;align-items:center;padding-top:48px}
+.slide.active{display:flex}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.25) saturate(1.2)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.5) 100%)}
+.slide-content{position:relative;z-index:2;max-width:900px;padding:32px;text-align:center;max-height:calc(100vh - 120px);overflow-y:auto}
+.slide-number{position:absolute;top:64px;right:28px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase}
+.slide-category{display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;border:1px solid}
+.slide h1{font-size:2.6rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:6px}
+.slide h2{font-size:1.2rem;font-weight:600;line-height:1.4;margin-bottom:14px;color:rgba(255,255,255,.85)}
+.slide h3{font-size:1rem;font-weight:700;color:#fbbf24;margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px}
+.slide p{font-size:1rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:640px;margin:0 auto}
+.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:8px;align-items:center}
+.nav-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{background:rgba(255,255,255,.25)}
+.nav-dots{display:flex;gap:5px;align-items:center;padding:0 8px;max-width:300px;flex-wrap:wrap;justify-content:center}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.4)}
+.progress{position:fixed;top:48px;left:0;right:0;z-index:60;background:rgba(255,255,255,.06);height:8px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa);transition:width .4s ease-out;border-radius:0 4px 4px 0}
+
+.band-table{display:flex;gap:8px;max-width:860px;margin:14px auto 0;flex-wrap:wrap;justify-content:center}
+.band-col{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;min-width:130px;max-width:150px;flex:1}
+.band-col .b-score{font-size:22px;font-weight:900;margin-bottom:4px}
+.band-col .b-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:6px}
+.band-col .b-desc{font-size:11px;color:rgba(255,255,255,.6);line-height:1.5}
+.band-col .b-example{font-size:10px;color:#22d3ee;margin-top:6px;font-style:italic;line-height:1.4}
+.band-col.highlight{background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
+.band-col.highlight .b-score{color:#22d3ee}
+
+.dialogue-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 20px;max-width:680px;margin:12px auto 0;text-align:left;font-size:14px;line-height:1.8}
+.dialogue-box .speaker{font-weight:700;margin-right:6px}
+.dialogue-box .examiner{color:#22d3ee}
+.dialogue-box .candidate{color:#34d399}
+.dialogue-box .note{color:rgba(255,255,255,.35);font-size:11px;margin-top:8px;font-style:italic;border-top:1px solid rgba(255,255,255,.06);padding-top:6px}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:12px auto 0;text-align:left}
+.compare-col{background:rgba(255,255,255,.04);border-radius:10px;padding:14px 16px}
+.compare-col.bad{border:1px solid rgba(251,113,133,.2)}
+.compare-col.good{border:1px solid rgba(52,211,153,.2)}
+.compare-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.compare-col.bad h4{color:#fb7185}
+.compare-col.good h4{color:#34d399}
+.compare-col p{font-size:12px;color:rgba(255,255,255,.6);line-height:1.6}
+.compare-col .example{font-style:italic;color:rgba(255,255,255,.45);margin-top:6px;font-size:11px}
+
+.grammar-box{max-width:680px;margin:10px auto 0;text-align:left}
+.grammar-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:13px}
+.grammar-row .band-badge{min-width:32px;text-align:center;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:800;margin-top:2px}
+.grammar-row .badge-low{background:rgba(251,113,133,.15);color:#fb7185}
+.grammar-row .badge-mid{background:rgba(251,191,36,.15);color:#fbbf24}
+.grammar-row .badge-high{background:rgba(52,211,153,.15);color:#34d399}
+.grammar-row .badge-top{background:rgba(34,211,238,.15);color:#22d3ee}
+.grammar-row .ex{flex:1;color:rgba(255,255,255,.7);line-height:1.5}
+
+.tips-box{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:14px 18px;max-width:640px;margin:12px auto 0;text-align:left}
+.tips-box h4{font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.tips-box ul{list-style:none;padding:0}
+.tips-box li{font-size:13px;color:rgba(255,255,255,.65);padding:3px 0;line-height:1.5}
+.tips-box li::before{content:"→ ";color:#a78bfa;font-weight:700}
+
+.score-circle{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;border:3px solid}
+
+.quick-nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:4px}
+.qn-btn{padding:4px 10px;border-radius:6px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.5);color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;text-align:center}
+.qn-btn:hover{color:#22d3ee;border-color:rgba(34,211,230,.3)}
+.qn-btn.active{background:rgba(34,211,238,.1);color:#22d3ee;border-color:rgba(34,211,238,.3)}
+
+.slide-footer{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.2);letter-spacing:1px}
+.logo{color:#fff;font-weight:700;letter-spacing:.5px}.logo .o{color:#22d3ee}
+.vocab-word{border-bottom:2px dotted rgba(34,211,238,.5);cursor:help;color:#22d3ee;font-weight:600;position:relative}
+.vocab-word:hover{border-bottom-color:#22d3ee}
+.vocab-word .tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 14px;min-width:200px;max-width:300px;font-size:13px;font-weight:400;color:#e2e8f0;line-height:1.5;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;transition:opacity .3s;pointer-events:none}
+.vocab-word .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#334155}
+.vocab-word:hover .tooltip{visibility:visible;opacity:1}
+
+/* Writing-specific: sample text boxes */
+.sample-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px 22px;max-width:700px;margin:12px auto 0;text-align:left;font-size:13px;line-height:1.8;color:rgba(255,255,255,.7)}
+.sample-box .label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.3);margin-bottom:8px}
+.sample-box .highlight-good{color:#34d399}
+.sample-box .highlight-bad{color:#fb7185}
+.sample-box .highlight-note{color:#fbbf24}
+
+/* Structure diagram */
+.structure-row{display:flex;gap:8px;max-width:700px;margin:10px auto 0;align-items:stretch}
+.structure-block{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;text-align:center;font-size:11px}
+.structure-block .sb-title{font-weight:700;font-size:10px;text-transform:uppercase;letter:1px;color:#22d3ee;margin-bottom:4px}
+.structure-block .sb-desc{color:rgba(255,255,255,.5);line-height:1.4}
+.structure-arrow{display:flex;align-items:center;color:rgba(255,255,255,.2);font-size:16px}
+
+@media(max-width:640px){
+  .slide h1{font-size:1.8rem}
+  .slide h2{font-size:1rem}
+  .slide-content{padding:16px}
+  .band-table{flex-direction:column;align-items:center}
+  .compare{grid-template-columns:1fr}
+  .quick-nav{display:none}
+  .structure-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="elo-bar">
+  <a href="landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
+  <span class="elo-tagline">IELTS Writing</span>
+  <div class="elo-menu">
+    <a href="landing.html" class="elo-menu-link">🏠 Home</a>
+    <a href="speaking-practice-slideshows.html" class="elo-menu-link">📚 Lessons</a>
+  </div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div id="slides-container"></div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<div class="quick-nav" id="quickNav"></div>
+
+<script>
+var SLIDES=[
+
+/* ═══════════════════════════════════════════
+   SECTION 1: INTRODUCTION
+   ═══════════════════════════════════════════ */
+
+// SLIDE 0: Title
+{
+  bg:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&q=80",
+  cat:"IELTS Writing",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Writing Band Score Criteria",subtitle:"Understanding what the examiner looks for in your writing",
+  text:"Simple English explanations with writing samples for each band score.",
+  isTitle:true
+},
+
+// SLIDE 1: IELTS Writing overview
+{
+  bg:"https://images.unsplash.com/photo-1517842645767-c639042777db?w=1920&q=80",
+  cat:"Overview",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"The IELTS Writing Test",subtitle:"60 minutes · 2 tasks",
+  text:"",
+  isAim:true,
+  goals:[
+    {icon:"📊",label:"Task 1 — Report (20 min)",desc:"Describe a graph, chart, table, diagram, or process. Write at least 150 words."},
+    {icon:"✍️",label:"Task 2 — Essay (40 min)",desc:"Write an essay in response to an argument or problem. Write at least 250 words."},
+    {icon:"⚖️",label:"Task 2 counts double",desc:"Task 2 is worth 2/3 of your writing score. Task 1 is worth 1/3. Spend more time on Task 2."}
+  ]
+},
+
+// SLIDE 2: The 4 criteria
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"The 4 Criteria",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"4 Things the Examiner Scores",subtitle:"Each one is worth 25% of your writing score",
+  text:"",
+  isAim:true,
+  goals:[
+    {icon:"✅",label:"1. Task Achievement",desc:"Did you answer the question fully? Did you cover all parts? Is your position clear?"},
+    {icon:"🔗",label:"2. Coherence & Cohesion",desc:"Is your writing well-organised? Do your paragraphs flow? Do you use linking words?"},
+    {icon:"📚",label:"3. Lexical Resource",desc:"Do you use a wide range of vocabulary? Are words used accurately and naturally?"},
+    {icon:"📐",label:"4. Grammatical Range & Accuracy",desc:"Do you use different grammar structures? Are they correct?"}
+  ]
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 2: TASK ACHIEVEMENT
+   ═══════════════════════════════════════════ */
+
+// SLIDE 3: Task Achievement overview
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Criterion 1",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Task Achievement",subtitle:"Did you answer the question?",
+  text:"This is the most important criterion. You can have perfect grammar and vocabulary, but if you do not answer the question, you will not get a high score.<br><br>For <strong>Task 1</strong>: describe the key features. Do not give your opinion.<br>For <strong>Task 2</strong>: answer ALL parts of the question. State your position clearly.",
+  isTitle:true
+},
+
+// SLIDE 4: Task Achievement by band
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Task Achievement",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Task Achievement: Band 5 vs 7 vs 9",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">5</div><div class="b-label">Partial</div><div class="b-desc">Addresses the task only partially. Format is inappropriate. Key features not clearly presented.</div><div class="b-example">Task 1: Describes data but misses main trends. Adds opinion (not asked for).</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Adequate</div><div class="b-desc">Addresses all parts but some may be more fully covered than others. Format is appropriate. Information is relevant but not always accurate.</div><div class="b-example">Task 1: Covers key features but may lack overview. Task 2: Position is clear but development is uneven.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good</div><div class="b-desc">Addresses all parts of the task. Presents a clear position throughout. Main ideas are extended and supported.</div><div class="b-example">Task 1: Clear overview, key features highlighted with data. Task 2: Well-developed arguments with examples.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Covers all requirements fully. Key features are selected, highlighted, and illustrated effectively. Position is clear, relevant, and well-supported.</div><div class="b-example">Task 1: Sophisticated overview, precise data, no irrelevant detail. Task 2: Fully developed, nuanced argument.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 5: Task 1 structure
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Task 1 Structure",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Task 1: How to Structure Your Report",subtitle:"4 paragraphs · 150+ words · 20 minutes",
+  text:"",
+  custom:function(){
+    return '<div class="structure-row">'+
+      '<div class="structure-block"><div class="sb-title">Para 1 — Introduction</div><div class="sb-desc">Paraphrase the question. Do NOT copy it word-for-word.</div></div>'+
+      '<div class="structure-arrow">→</div>'+
+      '<div class="structure-block"><div class="sb-title">Para 2 — Overview</div><div class="sb-desc">Describe the main trend or most important feature. No specific numbers here.</div></div>'+
+      '<div class="structure-arrow">→</div>'+
+      '<div class="structure-block"><div class="sb-title">Para 3 — Detail 1</div><div class="sb-desc">Describe specific data. Use numbers from the chart/graph.</div></div>'+
+      '<div class="structure-arrow">→</div>'+
+      '<div class="structure-block"><div class="sb-title">Para 4 — Detail 2</div><div class="sb-desc">Describe more specific data. Compare where possible.</div></div>'+
+    '</div>'+
+    '<div class="tips-box" style="margin-top:14px"><h4>Task 1 Rules</h4><ul>'+
+      '<li>Do NOT give your opinion. Just describe what you see.</li>'+
+      '<li>Do NOT write a conclusion. An overview is enough.</li>'+
+      '<li>Use specific data: "The figure rose from 25% to 40%" not "It went up a lot."</li>'+
+      '<li>Paraphrase the question: "The graph shows..." → "The bar chart illustrates..."</li>'+
+    '</ul></div>';
+  }
+},
+
+// SLIDE 6: Task 2 structure
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Task 2 Structure",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Task 2: How to Structure Your Essay",subtitle:"4-5 paragraphs · 250+ words · 40 minutes",
+  text:"",
+  custom:function(){
+    return '<div class="structure-row">'+
+      '<div class="structure-block"><div class="sb-title">Para 1 — Introduction</div><div class="sb-desc">Paraphrase the question. State your position or main idea.</div></div>'+
+      '<div class="structure-arrow">→</div>'+
+      '<div class="structure-block"><div class="sb-title">Para 2 — Body 1</div><div class="sb-desc">Main idea + explanation + example. One clear point per paragraph.</div></div>'+
+      '<div class="structure-arrow">→</div>'+
+      '<div class="structure-block"><div class="sb-title">Para 3 — Body 2</div><div class="sb-desc">Second main idea + explanation + example. Or address the other side.</div></div>'+
+      '<div class="structure-arrow">→</div>'+
+      '<div class="structure-block"><div class="sb-title">Para 4 — Conclusion</div><div class="sb-desc">Summarise your position. Do NOT add new ideas here.</div></div>'+
+    '</div>'+
+    '<div class="tips-box" style="margin-top:14px"><h4>Task 2 Rules</h4><ul>'+
+      '<li>Answer ALL parts of the question. Underline the key words before you start.</li>'+
+      '<li>State your position clearly in the introduction and keep it throughout.</li>'+
+      '<li>One idea per paragraph. Start each paragraph with a topic sentence.</li>'+
+      '<li>Do NOT use bullet points or lists. Write in full paragraphs.</li>'+
+    '</ul></div>';
+  }
+},
+
+// SLIDE 7: Task 2 question types
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Task 2 Question Types",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"5 Common Task 2 Question Types",subtitle:"Know what the question is asking you to do",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Type 1</span><span class="ex"><strong>Opinion:</strong> "Do you agree or disagree?" → Say if you agree, disagree, or partly agree. Give reasons.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-mid">Type 2</span><span class="ex"><strong>Discussion:</strong> "Discuss both views and give your opinion." → Write about BOTH sides. Then say what you think.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-mid">Type 3</span><span class="ex"><strong>Advantages/Disadvantages:</strong> "What are the advantages and disadvantages?" → Write about both. Say which is stronger if asked.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-high">Type 4</span><span class="ex"><strong>Problem/Solution:</strong> "What problems does this cause and what can be done?" → Describe problems. Suggest solutions.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-top">Type 5</span><span class="ex"><strong>Two-part question:</strong> "Why is this happening? Is it a positive or negative development?" → Answer BOTH questions. Usually one paragraph each.</span></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 3: COHERENCE & COHESION
+   ═══════════════════════════════════════════ */
+
+// SLIDE 8: Coherence overview
+{
+  bg:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80",
+  cat:"Criterion 2",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Coherence & Cohesion",subtitle:"Is your writing well-organised and easy to follow?",
+  text:"<strong>Coherence</strong> = your ideas make sense and are in a logical order.<br><strong>Cohesion</strong> = your sentences and paragraphs are connected with linking words.<br><br>Think of it like building a road: coherence is the route, cohesion is the road surface.",
+  isTitle:true
+},
+
+// SLIDE 9: Coherence by band
+{
+  bg:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80",
+  cat:"Coherence & Cohesion",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Coherence: Band 5 vs 7 vs 9",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">5</div><div class="b-label">Limited</div><div class="b-desc">Information is not organised clearly. Uses some linking words but they may be incorrect or repetitive.</div><div class="b-example">Uses only: and, but, also, because, so. No paragraphing or very weak.</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Adequate</div><div class="b-desc">Arranges information coherently. Uses paragraphing but not always logically. Uses a range of cohesive devices but with some inaccuracy.</div><div class="b-example">Has paragraphs. Uses: however, moreover, in addition, on the other hand. Some overuse.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good</div><div class="b-desc">Logically organises information and ideas. Clear progression throughout. Uses a range of cohesive devices appropriately.</div><div class="b-example">Clear topic sentences. Uses: nevertheless, furthermore, in contrast, as a result. Paragraphs flow naturally.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Skilfully manages paragraphing. Ideas progress naturally. Uses cohesive devices with flexibility and accuracy.</div><div class="b-example">Seamless flow between paragraphs. Uses: notwithstanding, conversely, in light of this. No overuse.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 10: Linking words guide
+{
+  bg:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80",
+  cat:"Linking Words",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"Linking Words by Function",subtitle:"Do not just use 'and' and 'but'. Show the examiner your range.",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Adding</span><span class="ex">and, also, too → <strong style="color:#34d399">moreover, furthermore, in addition, what is more</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Contrast</span><span class="ex">but, however → <strong style="color:#34d399">nevertheless, on the other hand, conversely, whereas</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Cause/Result</span><span class="ex">because, so → <strong style="color:#34d399">as a result, consequently, due to, owing to</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Example</span><span class="ex">for example → <strong style="color:#34d399">for instance, such as, to illustrate, a case in point</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Opinion</span><span class="ex">I think → <strong style="color:#34d399">I believe, in my view, from my perspective, I am convinced that</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Conclude</span><span class="ex">in conclusion → <strong style="color:#34d399">to summarise, on balance, taking everything into account, all things considered</strong></span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 11: Paragraphing
+{
+  bg:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80",
+  cat:"Paragraphing",catB:"rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.25)",
+  title:"The Power of Paragraphs",subtitle:"Bad paragraphing = automatic Band 5 or below for Coherence",
+  text:"",
+  custom:function(){
+    return '<div class="compare">'+
+      '<div class="compare-col bad"><h4>Bad Paragraphing</h4><p>"I think technology is good. It helps us communicate. Also it is good for education. However there are problems. People spend too much time online. Also it can be dangerous. In conclusion I think..."</p><div class="example">One long block. No clear separation of ideas. The examiner cannot follow your argument easily.</div></div>'+
+      '<div class="compare-col good"><h4>Good Paragraphing</h4><p>"[Intro] Technology has transformed modern life... [Body 1] On the one hand, technology has revolutionised communication... [Body 2] On the other hand, excessive screen time raises concerns... [Conclusion] In conclusion, while technology brings undeniable benefits..."</p><div class="example">Clear 4-paragraph structure. Each paragraph has one main idea. The examiner can follow your logic easily.</div></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 4: LEXICAL RESOURCE (WRITING)
+   ═══════════════════════════════════════════ */
+
+// SLIDE 12: Lexical overview
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Criterion 3",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Lexical Resource",subtitle:"How wide and accurate is your vocabulary?",
+  text:"The examiner looks for: range of vocabulary, precision, spelling, and use of <span class="vocab-word">less common vocabulary<span class="tooltip">Words that most learners at your level would NOT know. For B1: "significant" instead of "big". For C1: "detrimental" instead of "bad".</span></span>.<br><br>Important: It is better to use simple words correctly than complex words incorrectly.",
+  isTitle:true
+},
+
+// SLIDE 13: Lexical by band
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Lexical Resource",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Vocabulary: Band 5 vs 7 vs 9",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">5</div><div class="b-label">Limited</div><div class="b-desc">Basic vocabulary only. Frequent spelling errors. Limited ability to paraphrase. May copy words from the question.</div><div class="b-example">Repeats: "good", "bad", "many", "big". Spelling mistakes in common words.</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Adequate</div><div class="b-desc">Enough vocabulary for the task. Some errors in word choice and spelling but meaning is clear. Attempts paraphrase.</div><div class="b-example">Uses: "important", "increase", "problem". Some awkward phrasing but generally clear.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good</div><div class="b-desc">Uses a sufficient range of vocabulary. Uses some less common words. Flexible paraphrasing. Only occasional errors.</div><div class="b-example">Uses: "significant", "considerable", "detrimental". Natural collocations: "pose a threat", "play a crucial role".</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Wide range of vocabulary used precisely and naturally. Very rare errors. Skilful use of uncommon words and collocations.</div><div class="b-example">Uses: "exacerbate", "unprecedented", "far-reaching implications". Natural idiomatic language throughout.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 14: Collocations
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Collocations",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Collocations = Higher Score",subtitle:"A collocation = words that naturally go together",
+  text:"Using collocations shows the examiner you know English naturally, not just from a textbook.",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Weak</span><span class="ex">make a photo → <strong style="color:#34d399">take a photo</strong> | big rain → <strong style="color:#34d399">heavy rain</strong> | do a mistake → <strong style="color:#34d399">make a mistake</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-mid">Good</span><span class="ex">pay attention to | take into consideration | have an impact on | play a role in</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-high">Strong</span><span class="ex">pose a threat to | give rise to | be detrimental to | be conducive to</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-top">Advanced</span><span class="ex">exacerbate the problem | have far-reaching implications | be a double-edged sword | be a driving force behind</span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 15: Spelling matters
+{
+  bg:"https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1920&q=80",
+  cat:"Spelling",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Spelling Counts",subtitle:"Frequent spelling errors lower your Lexical Resource score",
+  text:"",
+  custom:function(){
+    return '<div class="sample-box">'+
+      '<div class="label">Common IELTS Spelling Mistakes</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">'+
+        '<div><span class="highlight-bad">✗ goverment</span> → <span class="highlight-good">✓ government</span></div>'+
+        '<div><span class="highlight-bad">✗ enviroment</span> → <span class="highlight-good">✓ environment</span></div>'+
+        '<div><span class="highlight-bad">✗ accomodation</span> → <span class="highlight-good">✓ accommodation</span></div>'+
+        '<div><span class="highlight-bad">✗ neccessary</span> → <span class="highlight-good">✓ necessary</span></div>'+
+        '<div><span class="highlight-bad">✗ definately</span> → <span class="highlight-good">✓ definitely</span></div>'+
+        '<div><span class="highlight-bad">✗ seperate</span> → <span class="highlight-good">✓ separate</span></div>'+
+        '<div><span class="highlight-bad">✗ occured</span> → <span class="highlight-good">✓ occurred</span></div>'+
+        '<div><span class="highlight-bad">✗ recieve</span> → <span class="highlight-good">✓ receive</span></div>'+
+        '<div><span class="highlight-bad">✗ arguement</span> → <span class="highlight-good">✓ argument</span></div>'+
+        '<div><span class="highlight-bad">✗ begining</span> → <span class="highlight-good">✓ beginning</span></div>'+
+      '</div>'+
+      '<p class="highlight-note" style="margin-top:10px;font-size:11px">Tip: If you are not sure how to spell a word, use a different word you know is correct. This is better than making a spelling mistake.</p>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 5: GRAMMATICAL RANGE & ACCURACY (WRITING)
+   ═══════════════════════════════════════════ */
+
+// SLIDE 16: Grammar overview
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Criterion 4",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Grammatical Range & Accuracy",subtitle:"Do you use different grammar structures? Are they correct?",
+  text:"<strong>Range</strong> = using simple AND complex sentences.<br><strong>Accuracy</strong> = how many mistakes you make.<br><br>In writing, you have time to check your work. There is no excuse for careless errors. Always leave 3-5 minutes to proofread.",
+  isTitle:true
+},
+
+// SLIDE 17: Grammar by band
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Grammar",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Grammar: Band 5 vs 7 vs 9",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="band-table">'+
+      '<div class="band-col"><div class="b-score" style="color:#fb7185">5</div><div class="b-label">Limited</div><div class="b-desc">Uses only simple sentences. Frequent errors in grammar and punctuation. Errors may cause difficulty for the reader.</div><div class="b-example">Only: "I think... Because... And... But..." Many subject-verb agreement errors.</div></div>'+
+      '<div class="band-col highlight"><div class="b-score">6</div><div class="b-label">Adequate</div><div class="b-desc">Mix of simple and complex sentences. Some errors but they rarely reduce communication. Punctuation is generally OK.</div><div class="b-example">Uses: "Although...", "If... then...", relative clauses. Some errors with articles and prepositions.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#34d399">7</div><div class="b-label">Good</div><div class="b-desc">Frequent use of complex structures. Generally good control. Few errors. Good punctuation.</div><div class="b-example">Uses: passive voice, conditionals, relative clauses, participle clauses. Very few errors.</div></div>'+
+      '<div class="band-col"><div class="b-score" style="color:#22d3ee">8-9</div><div class="b-label">Advanced</div><div class="b-desc">Wide range of structures used naturally and accurately. Very rare errors. Sentence variety adds style and impact.</div><div class="b-example">Uses: inversion, cleft sentences, mixed conditionals, subjunctive. Near-perfect accuracy.</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 18: Grammar structures to use
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Grammar Structures",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Grammar That Impresses Examiners",subtitle:"Use at least 3-4 of these in your Task 2 essay",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-mid">Passive</span><span class="ex"><strong>"It has been argued that..."</strong> / <strong>"Measures should be taken to..."</strong> — More formal and academic than active voice.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-mid">Conditionals</span><span class="ex"><strong>"If governments invested more in education, crime rates would decrease."</strong> — Shows hypothetical thinking.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-high">Relative Clauses</span><span class="ex"><strong>"Technology, which has transformed every aspect of modern life, is a double-edged sword."</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-high">Participle Clauses</span><span class="ex"><strong>"Having considered both arguments, I believe..."</strong> / <strong>"Given the current situation, it is essential that..."</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-top">Inversion</span><span class="ex"><strong>"Not only does technology improve efficiency, but it also creates new opportunities."</strong></span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-top">Cleft Sentences</span><span class="ex"><strong>"What is most concerning is the impact on children."</strong> / <strong>"It is the government that should take responsibility."</strong></span></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 19: Punctuation
+{
+  bg:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1920&q=80",
+  cat:"Punctuation",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Punctuation Matters",subtitle:"Bad punctuation = lower Grammar score",
+  text:"",
+  custom:function(){
+    return '<div class="sample-box">'+
+      '<div class="label">Key Rules</div>'+
+      '<ul style="margin-top:8px;padding-left:18px;color:rgba(255,255,255,.6);font-size:13px;line-height:2">'+
+        '<li>Use a <strong style="color:#fff">comma</strong> after linking words: <em>"However, I believe..."</em> / <em>"In conclusion, it is clear that..."</em></li>'+
+        '<li>Use a <strong style="color:#fff">full stop</strong> at the end of every sentence. Not a comma.</li>'+
+        '<li>Use <strong style="color:#fff">capital letters</strong> for: I, names, countries, languages, first word of sentences.</li>'+
+        '<li>Do NOT use exclamation marks (!) in academic writing.</li>'+
+        '<li>Do NOT use contractions: <span class="highlight-bad">don\'t</span> → <span class="highlight-good">do not</span>, <span class="highlight-bad">can\'t</span> → <span class="highlight-good">cannot</span></li>'+
+      '</ul>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 6: SAMPLE ANSWERS
+   ═══════════════════════════════════════════ */
+
+// SLIDE 20: Sample intro comparison
+{
+  bg:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&q=80",
+  cat:"Sample Answers",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"Introduction: Band 5 vs Band 8",subtitle:"Question: Some people think technology has made our lives more complicated. To what extent do you agree or disagree?",
+  text:"",
+  custom:function(){
+    return '<div class="compare">'+
+      '<div class="compare-col bad"><h4>Band 5 Introduction</h4><p>"Nowadays technology is very important. Some people think it make our life more complicated. I agree with this opinion because technology is very difficult to use and it is bad for our health."</p><div class="example">Problems: Copies question word-for-word ("some people think"). Simple vocabulary. No complex grammar. Position is clear but poorly expressed.</div></div>'+
+      '<div class="compare-col good"><h4>Band 8 Introduction</h4><p>"While technology has undoubtedly transformed modern life in remarkable ways, there is a growing concern that it has also introduced new complexities. I largely agree with this view, as the rapid pace of technological change has created challenges that many people struggle to navigate."</p><div class="example">Strengths: Paraphrases question ("growing concern" = "some people think"). Complex structure (while + as). Sophisticated vocabulary ("undoubtedly", "navigate"). Clear position with nuance ("largely agree").</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 21: Sample body paragraph
+{
+  bg:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&q=80",
+  cat:"Sample Answers",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"Body Paragraph: Band 6 vs Band 8",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="compare">'+
+      '<div class="compare-col bad"><h4>Band 6 Body Paragraph</h4><p>"First of all, technology makes life more complicated because people spend too much time on their phones. They do not talk to their family. Also, there is too much information on the internet and people do not know what is true. This is a big problem nowadays."</p><div class="example">OK structure (First of all, Also). Simple vocabulary. Some good ideas but not developed. No specific examples.</div></div>'+
+      '<div class="compare-col good"><h4>Band 8 Body Paragraph</h4><p>"One of the most significant ways technology has complicated daily life is through information overload. The sheer volume of data available online — from news articles to social media posts — makes it increasingly difficult for individuals to discern reliable information from misinformation. For instance, a 2023 study by the Pew Research Centre found that 64% of adults find it challenging to determine whether online news is credible. This phenomenon not only wastes time but also contributes to anxiety and decision fatigue."</p><div class="example">Clear topic sentence. Specific example with data. Complex grammar (participle clause, relative clause). Sophisticated vocabulary ("discern", "misinformation", "decision fatigue").</div></div>'+
+    '</div>';
+  }
+},
+
+// SLIDE 22: Sample Task 1 paragraph
+{
+  bg:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&q=80",
+  cat:"Task 1 Sample",catB:"rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.25)",
+  title:"Task 1: Overview Paragraph",subtitle:"The overview is the most important paragraph in Task 1",
+  text:"",
+  custom:function(){
+    return '<div class="sample-box">'+
+      '<div class="label">Band 8 Overview Example</div>'+
+      '<p style="margin-top:8px;line-height:1.8">'+
+        '"<strong>Overall, the most striking feature of the chart is the dramatic increase in online shopping across all age groups between 2010 and 2023. While younger demographics consistently led this trend, the most significant growth was observed among the over-65 age group, whose online shopping rates more than tripled over the period.</strong>"'+
+      '</p>'+
+      '<p class="highlight-note" style="margin-top:10px;font-size:11px">'+
+        'Why this works: (1) Clear overview with main trend. (2) Specific comparison ("most significant growth"). (3) Precise data ("more than tripled"). (4) Sophisticated vocabulary ("striking feature", "demographics"). (5) Complex grammar (while-clause, whose-clause).'+
+      '</p>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 7: COMMON MISTAKES
+   ═══════════════════════════════════════════ */
+
+// SLIDE 23: Common mistakes
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Common Mistakes",catB:"rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.25)",
+  title:"Mistakes That Lower Your Score",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="grammar-box">'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Mistake 1</span><span class="ex"><strong>Writing too little.</strong> Task 1: minimum 150 words. Task 2: minimum 250 words. If you write less, you lose marks. Aim for 170-190 (Task 1) and 280-320 (Task 2).</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Mistake 2</span><span class="ex"><strong>Not answering the whole question.</strong> If the question asks "Why is this happening AND what can be done?", you must answer BOTH parts.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Mistake 3</span><span class="ex"><strong>Giving your opinion in Task 1.</strong> Task 1 = describe only. No "I think" or "In my opinion".</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Mistake 4</span><span class="ex"><strong>Memorised answers.</strong> Examiners can tell. You will get a maximum of Band 5 for memorised responses.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Mistake 5</span><span class="ex"><strong>No paragraphs.</strong> One long block of text = automatic Band 5 or below for Coherence.</span></div>'+
+      '<div class="grammar-row"><span class="band-badge badge-low">Mistake 6</span><span class="ex"><strong>Running out of time.</strong> Spend 20 min on Task 1, 40 min on Task 2. Leave 3-5 min to check.</span></div>'+
+    '</div>';
+  }
+},
+
+/* ═══════════════════════════════════════════
+   SECTION 8: PRACTICE & TIPS
+   ═══════════════════════════════════════════ */
+
+// SLIDE 24: Practice task 1
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Practice",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Practice: Task 1 Question",subtitle:"Spend 20 minutes on this task",
+  text:"",
+  custom:function(){
+    return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 24px;max-width:680px;margin:12px auto 0;text-align:left">'+
+      '<p style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700">Task 1 — Academic</p>'+
+      '<p style="font-size:15px;line-height:1.7;color:#fff;margin-bottom:12px">'+
+        'The bar chart below shows the percentage of households with internet access in four European countries from 2005 to 2020.'+
+      '</p>'+
+      '<p style="font-size:14px;color:rgba(255,255,255,.7)">Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</p>'+
+      '<p style="font-size:12px;color:rgba(255,255,255,.4);margin-top:10px">Write at least 150 words.</p>'+
+    '</div>'+
+    '<div class="tips-box" style="margin-top:14px"><h4>Before You Write</h4><ul>'+
+      '<li>What is the main trend? (Going up? Going down? Mixed?)</li>'+
+      '<li>Which country had the highest/lowest percentage?</li>'+
+      '<li>Are there any interesting comparisons?</li>'+
+      '<li>Do NOT describe every number. Pick the important ones.</li>'+
+    '</ul></div>';
+  }
+},
+
+// SLIDE 25: Practice task 2
+{
+  bg:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&q=80",
+  cat:"Practice",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",
+  title:"Practice: Task 2 Question",subtitle:"Spend 40 minutes on this task",
+  text:"",
+  custom:function(){
+    return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 24px;max-width:680px;margin:12px auto 0;text-align:left">'+
+      '<p style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700">Task 2 — Essay</p>'+
+      '<p style="font-size:15px;line-height:1.7;color:#fff;margin-bottom:12px">'+
+        'Some people believe that university education should be free for all students. Others argue that students should pay for their own education. Discuss both views and give your own opinion.'+
+      '</p>'+
+      '<p style="font-size:12px;color:rgba(255,255,255,.4);margin-top:10px">Write at least 250 words.</p>'+
+    '</div>'+
+    '<div class="tips-box" style="margin-top:14px"><h4>Planning (5 minutes)</h4><ul>'+
+      '<li>Underline key words: "free for all" / "pay for own" / "discuss both" / "your opinion"</li>'+
+      '<li>Brainstorm 2-3 points for each side</li>'+
+      '<li>Decide your position</li>'+
+      '<li>Plan your paragraphs: Intro → Body 1 (free) → Body 2 (pay) → Conclusion</li>'+
+    '</ul></div>';
+  }
+},
+
+// SLIDE 26: Final tips
+{
+  bg:"https://images.unsplash.com/photo-1434030216411-0b793f4b4270?w=1920&q=80",
+  cat:"Final Tips",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Your Action Plan",subtitle:"",
+  text:"",
+  custom:function(){
+    return '<div class="tips-box"><h4>Before Your Test</h4><ul>'+
+      '<li><strong>Practice under timed conditions.</strong> 20 min for Task 1, 40 min for Task 2. Use a timer.</li>'+
+      '<li><strong>Learn the 5 Task 2 question types.</strong> Know what each one asks you to do.</li>'+
+      '<li><strong>Memorise a flexible essay structure.</strong> 4-5 paragraphs. Do NOT memorise full essays.</li>'+
+      '<li><strong>Build your collocation list.</strong> Learn 2-3 new collocations every day.</li>'+
+      '<li><strong>Proofread.</strong> Leave 3-5 minutes. Check: subject-verb agreement, articles (a/an/the), spelling, word count.</li>'+
+      '<li><strong>Write clearly.</strong> If the examiner cannot read your writing, you will get a lower score.</li>'+
+    '</ul></div>'+
+    '<div style="margin-top:16px"><p style="font-size:18px;color:#fff;font-weight:700">Good luck with your IELTS exam! 🎯</p></div>';
+  }
+},
+
+// SLIDE 27: Well done
+{
+  bg:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&q=80",
+  cat:"Complete",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",
+  title:"Well Done!",subtitle:"You now understand the IELTS Writing band criteria",
+  text:"Practice writing one Task 1 and one Task 2 every week. Compare your work to the band descriptors.",
+  isTitle:true
+}
+
+];
+
+/* ═══════════════════════════════════════════
+   RENDER ENGINE
+   ═══════════════════════════════════════════ */
+
+function renderSlides(){
+  var container=document.getElementById('slides-container');
+  var dots=document.getElementById('navDots');
+  var qnav=document.getElementById('quickNav');
+  var html='';
+  var dotsHtml='';
+  var qnavHtml='';
+  var currentSection='';
+
+  SLIDES.forEach(function(s,i){
+    if(s.cat && s.cat!==currentSection && !s.isTitle){
+      currentSection=s.cat;
+      qnavHtml+='<div class="qn-btn" onclick="goToSlide('+i+')">'+s.cat.substring(0,12)+'</div>';
+    }
+
+    html+='<div class="slide'+(i===0?' active':'')+'" id="slide'+i+'">';
+    html+='<div class="slide-bg" style="background-image:url(\''+s.bg+'\')"></div>';
+    html+='<div class="slide-content">';
+    html+='<div class="slide-number">'+(i+1)+' / '+SLIDES.length+'</div>';
+    html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+
+    if(s.isTitle){
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+    } else if(s.isAim){
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+      if(s.goals){
+        html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;max-width:750px;margin:16px auto 0;text-align:left">';
+        s.goals.forEach(function(g){
+          html+='<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px">';
+          html+='<div style="font-size:13px;font-weight:700;margin-bottom:4px">'+g.icon+' '+g.label+'</div>';
+          html+='<div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">'+g.desc+'</div>';
+          html+='</div>';
+        });
+        html+='</div>';
+      }
+    } else if(s.custom){
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+      html+=s.custom();
+    } else {
+      html+='<h1>'+s.title+'</h1>';
+      if(s.subtitle) html+='<h2>'+s.subtitle+'</h2>';
+      if(s.text) html+='<p>'+s.text+'</p>';
+    }
+
+    html+='<div class="slide-footer"><span class="logo">El<span class="o">o</span>quenta</span> — IELTS Writing</div>';
+    html+='</div></div>';
+    dotsHtml+='<div class="nav-dot'+(i===0?' active':'')+'" onclick="goToSlide('+i+')"></div>';
+  });
+
+  container.innerHTML=html;
+  dots.innerHTML=dotsHtml;
+  qnav.innerHTML=qnavHtml;
+}
+
+var currentSlide=0;
+function goToSlide(n){
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-dot').forEach(function(d){d.classList.remove('active')});
+  document.getElementById('slide'+n).classList.add('active');
+  document.querySelectorAll('.nav-dot')[n].classList.add('active');
+  currentSlide=n;
+  document.getElementById('progressBar').style.width=((n+1)/SLIDES.length*100)+'%';
+}
+function nextSlide(){if(currentSlide<SLIDES.length-1)goToSlide(currentSlide+1);}
+function prevSlide(){if(currentSlide>0)goToSlide(currentSlide-1);}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' ')nextSlide();
+  if(e.key==='ArrowLeft')prevSlide();
+});
+
+renderSlides();
+</script>
+</body>
+</html>

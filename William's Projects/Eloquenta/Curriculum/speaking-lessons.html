@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Eloquenta — Speaking Lessons</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020617;--bg-card:#0f172a;--border:#1e293b;--text:#e2e8f0;--text-muted:#94a3b8;--cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:800px;margin:0 auto;padding:60px 24px}
+h1{font-size:2.4rem;font-weight:900;text-align:center;margin-bottom:8px;letter-spacing:-.5px}
+h1 span{color:var(--cyan)}
+.subtitle{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-bottom:48px}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.lesson-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .2s;text-decoration:none;color:var(--text);display:block}
+.lesson-card:hover{border-color:var(--cyan);transform:translateY(-3px);text-decoration:none}
+.lesson-icon{font-size:2rem;margin-bottom:12px}
+.lesson-card h3{font-size:1.15rem;font-weight:700;margin-bottom:6px}
+.lesson-card p{font-size:.9rem;color:var(--text-muted);margin-bottom:12px}
+.lesson-meta{display:flex;gap:8px;flex-wrap:wrap}
+.badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-level{background:rgba(34,211,238,.12);color:var(--cyan)}
+.badge-time{background:rgba(251,191,36,.12);color:var(--amber)}
+.badge-type{background:rgba(52,211,153,.12);color:var(--emerald)}
+.footer{text-align:center;margin-top:60px;padding-top:30px;border-top:1px solid var(--border)}
+.footer p{font-size:13px;color:var(--text-muted)}
+@media(max-width:640px){.lesson-grid{grid-template-columns:1fr}h1{font-size:1.8rem}}
+/* Eloquenta Logo */
+  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
+  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
+  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
+  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+</style>
+</head>
+<body><div class="elo-brand-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(15,23,42,.95);border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px)"><a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark" style="font-size:16px">El<span class="o">o</span>quenta</span></a><span style="font-size:10px;color:#64748b;letter-spacing:1px;text-transform:uppercase">English &middot; In Your Language</span></div>
+<div class="container">
+  <h1>📚 Speaking <span>Lessons</span></h1>
+  <p class="subtitle">Interactive slideshows with vocabulary hover definitions. Free for all students.</p>
+
+  <div class="lesson-grid">
+    <a href="../Speaking/natural-world-speaking.html" class="lesson-card">
+      <div class="lesson-icon">🌿</div>
+      <h3>Natural World</h3>
+      <p>20 questions about nature, the environment, and our relationship with the outdoors.</p>
+      <div class="lesson-meta">
+        <span class="badge badge-level">A2-B1</span>
+        <span class="badge badge-time">30 min</span>
+        <span class="badge badge-type">18 vocab words</span>
+      </div>
+    </a>
+
+    <a href="../Speaking/business-finance-speaking.html" class="lesson-card">
+      <div class="lesson-icon">💰</div>
+      <h3>Business &amp; Finance</h3>
+      <p>18 questions covering banking, personal finance, investing, and business essentials.</p>
+      <div class="lesson-meta">
+        <span class="badge badge-level">A2-B1</span>
+        <span class="badge badge-time">30 min</span>
+        <span class="badge badge-type">22 vocab words</span>
+      </div>
+    </a>
+
+    <a href="../Speaking/business-english-debates.html" class="lesson-card">
+      <div class="lesson-icon">🎯</div>
+      <h3>Business Debates</h3>
+      <p>36 debate questions with vocabulary, for-and-against angles, and follow-ups.</p>
+      <div class="lesson-meta">
+        <span class="badge badge-level">B2-C2</span>
+        <span class="badge badge-time">45 min</span>
+        <span class="badge badge-type">144 vocab words</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Part of the <a href="https://eloquent.ee" style="color:var(--cyan)">El<span class="o">o</span>quenta</a> Knowledge Base — Premium ESL with live translations</p>
+    <p style="margin-top:4px;font-size:11px">Free for all Eloquenta students. Share freely.</p>
+  </div>
+</div>
+
+// Shift+wheel for horizontal scroll (side scrolling)
+document.addEventListener('wheel',function(e){
+  if(e.shiftKey){
+    e.preventDefault();
+    window.scrollBy(e.deltaY, 0);
+  }
+},{passive:false});
+
+</body>
+</html>

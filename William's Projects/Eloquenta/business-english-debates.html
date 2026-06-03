@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business English — Discussion & Debate Questions</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--hue:180;--sat:60%;--lit:50%;--accent:hsl(var(--hue),var(--sat),var(--lit));--accent-dim:hsla(var(--hue),var(--sat),var(--lit),.15);--bg-base:hsl(var(--hue),15%,6%);--bg-card:hsl(var(--hue),12%,12%);--bg-hover:hsl(var(--hue),10%,18%);--text:hsl(var(--hue),5%,92%);--text-muted:hsl(var(--hue),5%,60%);--text-dim:hsl(var(--hue),5%,40%);--border:hsl(var(--hue),8%,25%)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{font-family:"Inter",sans-serif;background:var(--bg-base);color:var(--text);line-height:1.6;min-height:100vh}
+.header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.header h1{font-size:1.2rem;font-weight:900;color:var(--text)}
+.header h1 span{color:(--accent)}
+.back-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg-base);color:var(--text-muted);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;text-decoration:none}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.content{padding:24px;max-width:900px;margin:0 auto}
+.intro{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px}
+.intro h2{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:8px}
+.intro p{font-size:.8rem;color:var(--text-muted);line-height:1.6}
+.intro ul{margin-top:8px;padding-left:16px}
+.intro ul li{font-size:.75rem;color:var(--text-muted);margin-bottom:4px}
+.category{margin-bottom:28px}
+.category-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.category-header h2{font-size:.95rem;font-weight:700;color:var(--text)}
+.category-header .count{font-size:.65rem;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:4px}
+.questions{display:flex;flex-direction:column;gap:8px}
+.q-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;cursor:pointer;transition:all .15s;position:relative}
+.q-card:hover{border-color:var(--accent);background:var(--bg-hover)}
+.q-card .q-text{font-size:.85rem;font-weight:600;color:var(--text);line-height:1.5;padding-right:30px}
+.q-card .q-toggle{position:absolute;top:16px;right:16px;font-size:.7rem;color:var(--text-dim);transition:transform .2s}
+.q-card.open .q-toggle{transform:rotate(180deg)}
+.q-card .q-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.q-card.open .q-body{display:block}
+.q-body .vocab-title{font-size:.7rem;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.q-body .vocab-list{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.q-body .vocab-word{font-size:.65rem;padding:2px 8px;border-radius:4px;background:var(--bg-base);color:var(--text-muted);border:1px solid var(--border)}
+.q-body .angles-title{font-size:.7rem;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.q-body .angle{font-size:.75rem;color:var(--text-muted);margin-bottom:6px;line-height:1.5;padding-left:12px;border-left:2px solid var(--border)}
+.q-body .angle strong{color:var(--text)}
+.q-body .follow-title{font-size:.7rem;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;margin-top:10px}
+.q-body .follow-list{padding-left:16px}
+.q-body .follow-list li{font-size:.7rem;color:var(--text-muted);margin-bottom:3px}
+.cefr-badge{display:inline-block;font-size:.55rem;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:6px;vertical-align:middle}
+.cefr-b2{background:rgba(59,130,246,.2);color:#60a5fa}
+.cefr-c1{background:rgba(167,139,250,.2);color:#a78bfa}
+.cefr-c2{background:rgba(251,113,133,.2);color:#fb7185}
+.filter-bar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:4px 12px;border-radius:16px;border:1px solid var(--border);background:var(--bg-base);color:var(--text-muted);font-size:.65rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+@media(max-width:700px){.content{padding:16px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>💬 Business English — <span>Discussion & Debate</span></h1>
+  <a href="esl-business-gantt.html" class="back-btn">← Back</a>
+</div>
+<div class="content">
+
+<div class="intro">
+  <h2>How to Use These Questions</h2>
+  <p>Each question includes:</p>
+  <ul>
+    <li><strong>Key vocabulary</strong> — essential terms students need to discuss the topic</li>
+    <li><strong>Discussion angles</strong> — different perspectives to argue (for/against/both)</li>
+    <li><strong>Follow-up questions</strong> — to extend the conversation and push deeper</li>
+  </ul>
+  <p style="margin-top:8px">Click any question to expand. Use the filters to find questions by topic or level.</p>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCat('all')">All Topics</button>
+  <button class="filter-btn" onclick="filterCat('politics')">🏛️ Politics & Policy</button>
+  <button class="filter-btn" onclick="filterCat('economy')">💰 Economy & Trade</button>
+  <button class="filter-btn" onclick="filterCat('tech')">💻 Technology</button>
+  <button class="filter-btn" onclick="filterCat('society')">👥 Society & Culture</button>
+  <button class="filter-btn" onclick="filterCat('environment')">🌍 Environment</button>
+  <button class="filter-btn" onclick="filterCat('work')">💼 Work & Business</button>
+  <button class="filter-btn" onclick="filterCat('media')">📱 Media & Communication</button>
+</div>
+
+<!-- POLITICS & POLICY -->
+<div class="category" data-cat="politics">
+  <div class="category-header"><h2>🏛️ Politics & Policy</h2><span class="count">8 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Tariffs are an effective policy for nations to protect local industries. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">tariff</span><span class="vocab-word">protectionism</span><span class="vocab-word">free trade</span><span class="vocab-word">domestic industry</span><span class="vocab-word">import duty</span><span class="vocab-word">trade war</span><span class="vocab-word">subsidy</span><span class="vocab-word">WTO</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Tariffs protect infant industries, preserve jobs, and give domestic companies time to compete. Developing nations especially need this protection.</div>
+        <div class="angle"><strong>Disagree:</strong> Tariffs raise consumer prices, invite retaliation, and create inefficiency. Free trade ultimately benefits everyone through specialization.</div>
+        <div class="angle"><strong>Both:</strong> Short-term tariffs can be useful for strategic industries (defense, food security) but long-term protectionism breeds complacency.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should developing countries have different tariff rules than developed ones?</li>
+          <li>Can you think of a tariff that backfired?</li>
+          <li>How do tariffs affect the average consumer?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Social media algorithms pose a greater threat to democracy than state censorship. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">algorithm</span><span class="vocab-word">echo chamber</span><span class="vocab-word">filter bubble</span><span class="vocab-word">censorship</span><span class="vocab-word">disinformation</span><span class="vocab-word">polarization</span><span class="vocab-word">engagement metric</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Algorithms are invisible — people don't know they're being manipulated. State censorship is at least visible and can be protested.</div>
+        <div class="angle"><strong>Disagree:</strong> State censorship is enforced by law and violence. You can install an ad blocker; you can't install a "freedom blocker."</div>
+        <div class="angle"><strong>Both:</strong> They work together — authoritarian governments use social media algorithms as their primary censorship tool.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should governments regulate social media algorithms?</li>
+          <li>Is it possible to have a truly "neutral" algorithm?</li>
+          <li>How has social media changed elections in your country?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">The United States can no longer be viewed as a reliable ally of the EU. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">alliance</span><span class="vocab-word">NATO</span><span class="vocab-word">trade deficit</span><span class="vocab-word">sanctions</span><span class="vocab-word">bilateral</span><span class="vocab-word">multilateral</span><span class="vocab-word">sovereignty</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Recent US administrations have pursued "America First" policies, imposed tariffs on EU goods, and undermined multilateral agreements.</div>
+        <div class="angle"><strong>Disagree:</strong> The US and EU share fundamental values, military cooperation through NATO, and deep economic ties. Disagreements are normal between allies.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should the EU develop its own military independent of NATO?</li>
+          <li>How do US-EU relations affect your country specifically?</li>
+          <li>What would a "European army" look like?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Populism isn't a threat to democracy — it's a symptom of its failure. Discuss. <span class="cefr-badge cefr-c2">C2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">populism</span><span class="vocab-word">establishment</span><span class="vocab-word">elite</span><span class="vocab-word">referendum</span><span class="vocab-word">demagogue</span><span class="vocab-word">institutional trust</span><span class="vocab-word">wealth inequality</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Symptom view:</strong> When mainstream parties fail to address inequality, immigration, or cultural change, people turn to outsiders. The system broke first.</div>
+        <div class="angle"><strong>Threat view:</strong> Populists undermine institutions, attack the press, and concentrate power. They exploit democratic weaknesses to destroy democracy itself.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Can you name a populist leader who improved their country?</li>
+          <li>What's the difference between populism and popular leadership?</li>
+          <li>How should mainstream parties respond to populist movements?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">The British monarchy should be more transparent about the health struggles of its members. Do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">monarchy</span><span class="vocab-word">transparency</span><span class="vocab-word">privacy</span><span class="vocab-word">public interest</span><span class="vocab-word">dignity</span><span class="vocab-word">institution</span><span class="vocab-word">republic</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> The monarchy is publicly funded. Taxpayers have a right to know if the head of state can perform their duties.</div>
+        <div class="angle"><strong>Disagree:</strong> Health is a private matter. The monarchy's value is symbolic — their personal health doesn't affect governance.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should the monarchy exist at all in a modern democracy?</li>
+          <li>How does royal privacy compare to privacy for elected officials?</li>
+          <li>What role does the monarchy play in modern Britain?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">China will overtake the U.S. as the world's dominant superpower in the 21st century. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">superpower</span><span class="vocab-word">hegemony</span><span class="vocab-word">soft power</span><span class="vocab-word">GDP</span><span class="vocab-word">Belt and Road</span><span class="vocab-word">demographics</span><span class="vocab-word">innovation</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> China's economy is growing faster, its population is larger, and its Belt and Road Initiative is building global influence.</div>
+        <div class="angle"><strong>Disagree:</strong> The US has military superiority, the world's reserve currency, leading universities, and a demographic advantage through immigration.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What makes a country a "superpower" — military, economic, or cultural power?</li>
+          <li>Is the Thucydides Trap inevitable between the US and China?</li>
+          <li>How should smaller nations navigate US-China rivalry?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Voting should be compulsory in all democratic countries. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">compulsory voting</span><span class="vocab-word">voter turnout</span><span class="vocab-word">civic duty</span><span class="vocab-word">abstention</span><span class="vocab-word">ballot</span><span class="vocab-word">mandate</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Higher turnout means more legitimate governments. Australia has compulsory voting and stable democracy.</div>
+        <div class="angle"><strong>Disagree:</strong> Forcing people to vote violates freedom. Uninformed voters make worse choices than informed abstainers.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What happens if someone refuses to vote?</li>
+          <li>Does compulsory voting reduce polarization?</li>
+          <li>Should there be a "none of the above" option on ballots?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">International organizations like the UN and WTO have become irrelevant in the 21st century. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">multilateralism</span><span class="vocab-word">sovereignty</span><span class="vocab-word">veto power</span><span class="vocab-word">bilateral agreement</span><span class="vocab-word">global governance</span><span class="vocab-word">deadlock</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Major powers bypass the UN when it suits them. The WTO dispute system is paralyzed. Bilateral deals are replacing multilateral frameworks.</div>
+        <div class="angle"><strong>Disagree:</strong> The UN coordinates humanitarian aid, peacekeeping, and climate agreements. Without it, the world would be more chaotic.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>How should the UN Security Council be reformed?</li>
+          <li>Can regional organizations replace global ones?</li>
+          <li>What would the world look like without the WTO?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ECONOMY & TRADE -->
+<div class="category" data-cat="economy">
+  <div class="category-header"><h2>💰 Economy & Trade</h2><span class="count">6 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Universal Basic Income (UBI) should be implemented in all developed countries. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">universal basic income</span><span class="vocab-word">welfare state</span><span class="vocab-word">automation</span><span class="vocab-word">inflation</span><span class="vocab-word">means testing</span><span class="vocab-word">fiscal policy</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Automation will eliminate millions of jobs. UBI provides a safety net and frees people to pursue education, entrepreneurship, or caregiving.</div>
+        <div class="angle"><strong>Disagree:</strong> UBI is unaffordable at scale, reduces work incentives, and is a blunt instrument. Targeted welfare is more efficient.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What would happen to inflation if everyone received free money?</li>
+          <li>Has any UBI pilot program shown positive results?</li>
+          <li>Should UBI replace existing welfare programs or supplement them?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">The gig economy exploits workers and should be heavily regulated. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">gig economy</span><span class="vocab-word">freelancer</span><span class="vocab-word">benefits</span><span class="vocab-word">job security</span><span class="vocab-word">platform worker</span><span class="vocab-word">precarious</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Gig workers lack health insurance, paid leave, and job security. Companies classify them as "independent contractors" to avoid obligations.</div>
+        <div class="angle"><strong>Disagree:</strong> The gig economy offers flexibility that many workers value. Over-regulation could destroy the model and reduce opportunities.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should gig workers be classified as employees?</li>
+          <li>How does the gig economy affect your country's labor market?</li>
+          <li>What protections should gig workers have without killing the model?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Cryptocurrency will eventually replace traditional banking. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">cryptocurrency</span><span class="vocab-word">blockchain</span><span class="vocab-word">decentralized</span><span class="vocab-word">volatility</span><span class="vocab-word">CBDC</span><span class="vocab-word">regulation</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Crypto offers faster, cheaper transactions without intermediaries. Central banks are already developing their own digital currencies.</div>
+        <div class="angle"><strong>Disagree:</strong> Extreme volatility, energy consumption, and lack of consumer protection make crypto unsuitable as a primary currency.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should governments ban or embrace cryptocurrency?</li>
+          <li>How does crypto affect people in countries with unstable currencies?</li>
+          <li>What's the difference between Bitcoin and a CBDC?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Economic growth should be prioritized over environmental protection. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">GDP growth</span><span class="vocab-word">sustainable development</span><span class="vocab-word">carbon emissions</span><span class="vocab-word">green economy</span><span class="vocab-word">externalities</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Developing nations need growth to lift people out of poverty. Environmental rules can come later when countries are wealthy enough.</div>
+        <div class="angle"><strong>Disagree:</strong> Environmental damage is irreversible. The green economy creates jobs and growth simultaneously — they're not mutually exclusive.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Can a country grow its economy while reducing emissions?</li>
+          <li>Who should pay for climate adaptation — rich or poor countries?</li>
+          <li>Is "degrowth" a realistic economic model?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Remote work is more productive than office work. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">remote work</span><span class="vocab-word">productivity</span><span class="vocab-word">collaboration</span><span class="vocab-word">work-life balance</span><span class="vocab-word">presenteeism</span><span class="vocab-word">hybrid model</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> No commute, fewer interruptions, flexible hours. Studies show remote workers often work longer and report higher satisfaction.</div>
+        <div class="angle"><strong>Disagree:</strong> Spontaneous collaboration suffers. New employees struggle to learn culture. Some roles simply require physical presence.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should remote workers be paid less since they save on commuting?</li>
+          <li>How does remote work affect career advancement?</li>
+          <li>What's the ideal balance between remote and office work?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Multinational corporations have too much power over national governments. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">multinational corporation</span><span class="vocab-word">tax haven</span><span class="vocab-word">regulatory capture</span><span class="vocab-word">lobbying</span><span class="vocab-word">market capitalization</span><span class="vocab-word">GDP</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Some companies have GDP larger than countries. They can relocate to avoid taxes and regulations, holding governments hostage.</div>
+        <div class="angle"><strong>Disagree:</strong> Corporations create jobs, innovation, and tax revenue. Governments set the rules — if they're weak, that's a governance failure, not a corporate one.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should there be a global minimum corporate tax?</li>
+          <li>How do tech giants influence politics in your country?</li>
+          <li>Can a country afford to regulate a company that could leave?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TECHNOLOGY -->
+<div class="category" data-cat="tech">
+  <div class="category-header"><h2>💻 Technology</h2><span class="count">5 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Artificial intelligence will create more jobs than it destroys. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">artificial intelligence</span><span class="vocab-word">automation</span><span class="vocab-word">reskilling</span><span class="vocab-word">displacement</span><span class="vocab-word">productivity</span><span class="vocab-word">white-collar</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Every technological revolution has created more jobs than it destroyed. AI will create new roles we can't yet imagine.</div>
+        <div class="angle"><strong>Disagree:</strong> AI is different — it targets cognitive tasks, not just manual labor. The transition may be too fast for workers to adapt.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Which jobs are most at risk from AI in the next 10 years?</li>
+          <li>Should governments fund universal reskilling programs?</li>
+          <li>Will AI increase or decrease inequality?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Social media companies should be legally responsible for misinformation spread on their platforms. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">misinformation</span><span class="vocab-word">content moderation</span><span class="vocab-word">Section 230</span><span class="vocab-word">liability</span><span class="vocab-word">fact-checking</span><span class="vocab-word">free speech</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Platforms profit from engagement, and misinformation drives engagement. They should be liable like publishers.</div>
+        <div class="angle"><strong>Disagree:</strong> Holding platforms liable would force them to censor everything. The volume of content makes human review impossible.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Where's the line between misinformation and opinion?</li>
+          <li>Who should decide what counts as misinformation?</li>
+          <li>How do other countries regulate social media differently?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Self-driving cars should be banned until they are proven to be 100% safe. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">autonomous vehicle</span><span class="vocab-word">liability</span><span class="vocab-word">algorithmic decision</span><span class="vocab-word">trolley problem</span><span class="vocab-word">safety record</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Human drivers cause 1.3 million deaths per year but we accept that. A single autonomous fatality makes headlines. The standard should be higher.</div>
+        <div class="angle"><strong>Disagree:</strong> 100% safety is impossible for any technology. If self-driving cars are safer than human drivers, they should be allowed.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Who is liable when a self-driving car causes an accident?</li>
+          <li>Should a self-driving car prioritize its passenger or pedestrians?</li>
+          <li>How will autonomous vehicles affect truck drivers and taxi drivers?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Governments should have access to encrypted communications for national security purposes. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">encryption</span><span class="vocab-word">backdoor</span><span class="vocab-word">national security</span><span class="vocab-word">privacy</span><span class="vocab-word">surveillance</span><span class="vocab-word">cybercrime</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Terrorists and criminals use encryption to hide. Law enforcement needs tools to investigate serious threats.</div>
+        <div class="angle"><strong>Disagree:</strong> A backdoor for governments is a backdoor for hackers. Encryption protects journalists, activists, and ordinary citizens.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Can you have both privacy and security?</li>
+          <li>How do authoritarian governments use "national security" to justify surveillance?</li>
+          <li>What happens if a government backdoor is leaked?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">The metaverse will fundamentally change how we work and socialize. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">metaverse</span><span class="vocab-word">virtual reality</span><span class="vocab-word">avatar</span><span class="vocab-word">digital twin</span><span class="vocab-word">immersive</span><span class="vocab-word">spatial computing</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> VR meetings are more immersive than Zoom. Virtual offices could replace physical ones. The technology is improving rapidly.</div>
+        <div class="angle"><strong>Disagree:</strong> VR headsets are uncomfortable for long use. Most people prefer face-to-face interaction. The metaverse is overhyped.</div>
+        <div class="follow-title">Follow-up Questions</li>
+        <ul class="follow-list">
+          <li>Would you attend a virtual office instead of a physical one?</li>
+          <li>What industries would benefit most from the metaverse?</li>
+          <li>Could the metaverse increase social isolation?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SOCIETY & CULTURE -->
+<div class="category" data-cat="society">
+  <div class="category-header"><h2>👥 Society & Culture</h2><span class="count">5 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">In 2025, everyone is sick and tired of the word "sustainability". Do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">sustainability</span><span class="vocab-word">greenwashing</span><span class="vocab-word">buzzword</span><span class="vocab-word">corporate social responsibility</span><span class="vocab-word">fatigue</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> The word has been overused and diluted. Companies use it for marketing without real action. People have become desensitized to it.</div>
+        <div class="angle"><strong>Disagree:</strong> The concept is more important than ever. Just because a word is overused doesn't mean the underlying issue has been solved.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What word should replace "sustainability"?</li>
+          <li>Can you think of a company that practices real sustainability vs. greenwashing?</li>
+          <li>How do you feel when a company says they're "committed to sustainability"?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Immigration benefits the host country more than it harms it. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">immigration</span><span class="vocab-word">integration</span><span class="vocab-word">labor shortage</span><span class="vocab-word">brain drain</span><span class="vocab-word">xenophobia</span><span class="vocab-word">remittances</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Immigrants fill labor gaps, start businesses, pay taxes, and enrich culture. Aging populations need young workers.</div>
+        <div class="angle"><strong>Disagree:</strong> Rapid immigration strains public services, depresses wages for low-skilled workers, and can create social tension if integration fails.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should immigration be based on skills, family reunification, or humanitarian need?</li>
+          <li>How does immigration affect your country?</li>
+          <li>What's the difference between a refugee and an economic migrant?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">The gender pay gap is primarily caused by discrimination, not by personal choices. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">gender pay gap</span><span class="vocab-word">discrimination</span><span class="vocab-word">unconscious bias</span><span class="vocab-word">motherhood penalty</span><span class="vocab-word">negotiation</span><span class="vocab-word">transparency</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Discrimination:</strong> Women are paid less for the same work. They're steered away from high-paying fields. The "motherhood penalty" is real.</div>
+        <div class="angle"><strong>Choices:</strong> Women disproportionately choose lower-paying fields, work fewer hours, and negotiate less. These are personal decisions.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Should salary history be banned from job applications?</li>
+          <li>How does your country compare on the gender pay gap?</li>
+          <li>Is "equal pay for equal work" enough, or do we need "equal outcome"?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">University education is no longer worth the cost. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">tuition fees</span><span class="vocab-word">student debt</span><span class="vocab-word">return on investment</span><span class="vocab-word">vocational training</span><span class="vocab-word">credential inflation</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Tuition has skyrocketed while graduate salaries haven't kept pace. Many successful entrepreneurs and professionals never finished university.</div>
+        <div class="angle"><strong>Disagree:</strong> University graduates still earn significantly more over a lifetime. The network, critical thinking, and credentials remain valuable.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What would you study if you could start over?</li>
+          <li>Are coding bootcamps and online courses replacing university?</li>
+          <li>Should university be free? Who should pay?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Cancel culture does more harm than good. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">cancel culture</span><span class="vocab-word">accountability</span><span class="vocab-word">due process</span><span class="vocab-word">mob justice</span><span class="vocab-word">redemption</span><span class="vocab-word">free expression</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> People lose careers over old tweets or misunderstood comments. There's no proportionality or path to redemption. It chills free expression.</div>
+        <div class="angle"><strong>Disagree:</strong> "Cancel culture" is just accountability. Powerful people facing consequences for harmful behavior is how social change happens.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Where's the line between accountability and mob justice?</li>
+          <li>Can you think of someone who was "canceled" unfairly?</li>
+          <li>How does cancel culture affect your willingness to speak openly?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ENVIRONMENT -->
+<div class="category" data-cat="environment">
+  <div class="category-header"><h2>🌍 Environment</h2><span class="count">4 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Climate change should be treated as a national security threat. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">climate security</span><span class="vocab-word">resource scarcity</span><span class="vocab-word">climate refugee</span><span class="vocab-word">mitigation</span><span class="vocab-word">adaptation</span><span class="vocab-word">carbon budget</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Climate change causes migration, conflict over resources, and infrastructure collapse. Military planners already treat it as a threat multiplier.</div>
+        <div class="angle"><strong>Disagree:</strong> Framing it as "security" leads to militarized responses. It's a humanitarian and economic issue, not a military one.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Which countries are most vulnerable to climate-driven conflict?</li>
+          <li>Should climate refugees have the same status as war refugees?</li>
+          <li>Is the Paris Agreement enough?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Nuclear energy is essential for fighting climate change. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">nuclear energy</span><span class="vocab-word">baseline power</span><span class="vocab-word">radioactive waste</span><span class="vocab-word">meltdown</span><span class="vocab-word">renewable</span><span class="vocab-word">energy mix</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Nuclear provides reliable, low-carbon baseline power. Renewables alone can't meet demand. New reactor designs are safer.</div>
+        <div class="angle"><strong>Disagree:</strong> Nuclear plants take 15+ years to build and cost billions. Waste storage is unsolved. Solar and wind are now cheaper and faster to deploy.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Would you live near a nuclear power plant?</li>
+          <li>How does your country generate its electricity?</li>
+          <li>Is nuclear "green"?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Individual consumer choices have no meaningful impact on climate change — only systemic change matters. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">carbon footprint</span><span class="vocab-word">systemic change</span><span class="vocab-word">corporate emissions</span><span class="vocab-word">individual responsibility</span><span class="vocab-word">green consumerism</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> 100 companies produce 71% of emissions. Recycling and reusable bags are meaningless compared to regulating industry.</div>
+        <div class="angle"><strong>Disagree:</strong> Individual choices drive market demand. If everyone went vegan, the food system would change. Personal action builds political will.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What's the single most impactful individual action for the climate?</li>
+          <li>Is "green consumerism" just a way for corporations to avoid regulation?</li>
+          <li>Should flying be taxed more heavily?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Lab-grown meat will replace traditional animal farming within 20 years. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">cultured meat</span><span class="vocab-word">cell agriculture</span><span class="vocab-word">food security</span><span class="vocab-word">animal welfare</span><span class="vocab-word">scaling production</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> The technology is improving fast. It uses 95% less land and water. Once scaled, it will be cheaper than traditional meat.</div>
+        <div class="angle"><strong>Disagree:</strong> Consumer acceptance is low. "Natural" meat has cultural significance. Scaling production to feed billions is a massive challenge.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Would you eat lab-grown meat? Why or why not?</li>
+          <li>How would this affect farmers in developing countries?</li>
+          <li>Should governments subsidize cultured meat research?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- WORK & BUSINESS -->
+<div class="category" data-cat="work">
+  <div class="category-header"><h2>💼 Work & Business</h2><span class="count">4 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">A four-day work week should become the global standard. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">four-day week</span><span class="vocab-word">productivity</span><span class="vocab-word">burnout</span><span class="vocab-word">work-life balance</span><span class="vocab-word">compressed hours</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Trials show equal or higher productivity. Less burnout, better retention, more time for family and personal development.</div>
+        <div class="angle"><strong>Disagree:</strong> Not all industries can adapt (healthcare, retail). Some people want to work more. It could increase stress to fit 5 days of work into 4.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Would you take a pay cut for a four-day week?</li>
+          <li>Which industries could adopt this and which couldn't?</li>
+          <li>How would a four-day week affect the economy?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Companies should be allowed to use AI to make hiring and firing decisions. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">algorithmic hiring</span><span class="vocab-word">bias</span><span class="vocab-word">transparency</span><span class="vocab-word">discrimination</span><span class="vocab-word">human judgment</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> AI can be more consistent than humans. It can be audited for bias in ways human decisions can't. It processes more data points.</div>
+        <div class="angle"><strong>Disagree:</strong> AI inherits biases from training data. It can't assess cultural fit or potential. Automated firing is inhumane.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Would you want an AI to decide if you get hired?</li>
+          <li>Should companies be required to disclose AI use in HR?</li>
+          <li>Can AI ever be truly unbiased?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Corporate diversity and inclusion programs are effective. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">diversity</span><span class="vocab-word">inclusion</span><span class="vocab-word">tokenism</span><span class="vocab-word">representation</span><span class="vocab-word">systemic barrier</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Diverse teams make better decisions. Programs create accountability. Representation matters for company culture and innovation.</div>
+        <div class="angle"><strong>Disagree:</strong> Many programs are performative. They focus on numbers without addressing systemic issues. Tokenism can be worse than doing nothing.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What makes a D&I program effective vs. performative?</li>
+          <li>Should diversity quotas be mandatory?</li>
+          <li>How do you measure inclusion?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">The retirement age should be raised to 70 in all developed countries. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">retirement age</span><span class="vocab-word">pension system</span><span class="vocab-word">life expectancy</span><span class="vocab-word">labor shortage</span><span class="vocab-word">age discrimination</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> People live longer and healthier. Pension systems are unsustainable. Older workers have valuable experience.</div>
+        <div class="angle"><strong>Disagree:</strong> Physical jobs become impossible with age. Older workers block opportunities for younger generations. Quality of life matters.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>What's the retirement age in your country?</li>
+          <li>Should retirement age differ by profession?</li>
+          <li>How will AI and automation affect retirement planning?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MEDIA & COMMUNICATION -->
+<div class="category" data-cat="media">
+  <div class="category-header"><h2>📱 Media & Communication</h2><span class="count">4 questions</span></div>
+  <div class="questions">
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Traditional journalism will be completely replaced by independent content creators within a decade. To what extent do you agree or disagree? <span class="cefr-badge cefr-c1">C1</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">journalism</span><span class="vocab-word">content creator</span><span class="vocab-word">citizen journalism</span><span class="vocab-word">editorial standards</span><span class="vocab-word">monetization</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Legacy media is losing trust and revenue. Independent creators are more authentic and reach larger audiences. The model is already shifting.</div>
+        <div class="angle"><strong>Disagree:</strong> Professional journalism has editorial standards, fact-checking, and accountability. Most creators lack resources for investigative reporting.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Do you trust independent creators more than traditional media?</li>
+          <li>What's the difference between a journalist and an influencer?</li>
+          <li>How do you verify information online?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Smartphones have destroyed the art of conversation. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">phubbing</span><span class="vocab-word">attention span</span><span class="vocab-word">face-to-face</span><span class="vocab-word">digital detox</span><span class="vocab-word">social skills</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> People check phones during conversations. Attention spans are shrinking. Young people struggle with in-person social skills.</div>
+        <div class="angle"><strong>Disagree:</strong> Smartphones enable new forms of conversation (video calls, messaging). The problem is how we use them, not the devices themselves.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Do you put your phone away during meals?</li>
+          <li>Have you ever been "phubbed" (phone-snubbed)?</li>
+          <li>Should phones be banned in classrooms?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Gaming is a legitimate career path, not a waste of time. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">esports</span><span class="vocab-word">streaming</span><span class="vocab-word">content creation</span><span class="vocab-word">professional gamer</span><span class="vocab-word">career stability</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Esports tournaments offer million-dollar prizes. Streaming generates real income. Game development is a massive industry.</div>
+        <div class="angle"><strong>Disagree:</strong> Only a tiny percentage make a living. Career span is short. Traditional careers offer more stability and benefits.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Would you support a child who wants to be a professional gamer?</li>
+          <li>What skills from gaming transfer to the workplace?</li>
+          <li>Is gaming addiction a real concern?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-card" onclick="toggleQ(this)">
+      <div class="q-text">Books will become obsolete within 50 years. To what extent do you agree or disagree? <span class="cefr-badge cefr-b2">B2</span></div>
+      <span class="q-toggle">▼</span>
+      <div class="q-body">
+        <div class="vocab-title">Key Vocabulary</div>
+        <div class="vocab-list"><span class="vocab-word">obsolete</span><span class="vocab-word">audiobook</span><span class="vocab-word">e-reader</span><span class="vocab-word">deep reading</span><span class="vocab-word">screen fatigue</span></div>
+        <div class="angles-title">Discussion Angles</div>
+        <div class="angle"><strong>Agree:</strong> Digital formats are cheaper, more accessible, and searchable. Younger generations already prefer screens. Print is environmentally costly.</div>
+        <div class="angle"><strong>Disagree:</strong> Physical books offer a different cognitive experience. Deep reading is easier on paper. Books have cultural and aesthetic value beyond content.</div>
+        <div class="follow-title">Follow-up Questions</div>
+        <ul class="follow-list">
+          <li>Do you prefer physical books or e-books?</li>
+          <li>Is reading on a tablet the same as reading a book?</li>
+          <li>What role do libraries play in the digital age?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+<script>
+function toggleQ(card){card.classList.toggle("open")}
+function filterCat(cat){
+  document.querySelectorAll(".filter-btn").forEach(function(b){b.classList.remove("active")});
+  event.target.classList.add("active");
+  document.querySelectorAll(".category").forEach(function(c){
+    c.style.display=(cat==="all"||c.dataset.cat===cat)?"block":"none";
+  });
+}
+</script>
+<div style="margin-top:32px;padding:16px 24px;border-top:1px solid var(--border);font-size:.65rem;color:var(--text-dim);text-align:center">
+  37 Discussion Questions — Business English Curriculum — B2 to C2 Level
+</div>
+</body>
+</html>

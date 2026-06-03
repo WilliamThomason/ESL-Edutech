@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Qi Gong Workout Tester</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0e1a;color:#e0f2fe;padding:20px;line-height:1.6}
+h1{font-size:1.4rem;margin-bottom:4px;color:#22d3ee}
+h2{font-size:1.1rem;margin:20px 0 8px;color:#a78bfa;border-bottom:1px solid #1e3a5f;padding-bottom:4px}
+h3{font-size:.9rem;margin:12px 0 4px;color:#fbbf24}
+.test-section{background:rgba(34,211,238,.05);border:1px solid #1e3a5f;border-radius:8px;padding:16px;margin-bottom:16px}
+.result{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,.05)}
+.result:last-child{border:none}
+.pass{color:#34d399}
+.fail{color:#fb7185}
+.warn{color:#fbbf24}
+.info{color:#22d3ee}
+.status-icon{width:16px;text-align:center;flex-shrink:0;margin-top:1px}
+.detail{font-size:11px;color:#94a3b8;margin-left:24px;margin-top:2px}
+.btn{display:inline-block;padding:8px 16px;border-radius:6px;border:1px solid #22d3ee;background:rgba(34,211,238,.1);color:#22d3ee;font-size:13px;font-weight:600;cursor:pointer;margin:4px;transition:all .15s}
+.btn:hover{background:rgba(34,211,238,.2)}
+.btn.secondary{border-color:#4a3a60;color:#94a3b8;background:transparent}
+.btn.secondary:hover{border-color:#94a3b8}
+.log{background:#000;border-radius:6px;padding:12px;font-family:monospace;font-size:11px;max-height:200px;overflow-y:auto;color:#34d399;white-space:pre-wrap;margin-top:8px}
+.group{margin-bottom:8px}
+</style>
+</head>
+<body>
+<h1>🧪 Qi Gong Workout Tester</h1>
+<p style="color:#94a3b8;font-size:13px;margin-bottom:20px">Automated tests for audio files, exercise rendering, signal flow, and bug detection.</p>
+
+<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+<button class="btn" onclick="runAllTests()">▶ Run All Tests</button>
+<button class="btn secondary" onclick="clearResults()">Clear</button>
+</div>
+
+<div id="results"></div>
+
+<div class="test-section">
+<h2>🔊 Live Audio Test</h2>
+<p style="font-size:13px;color:#94a3b8;margin-bottom:12px">Click to play each exercise audio file directly. If no sound plays, the file path or format is wrong.</p>
+<div id="audioTests"></div>
+</div>
+
+<div class="test-section">
+<h2>🎵 Ambient Music Test</h2>
+<p style="font-size:13px;color:#94a3b8;margin-bottom:12px">Test each ambient track. These are generated WAV files (~2.6MB each).</p>
+<div id="ambientTests"></div>
+</div>
+
+<div class="test-section">
+<h2>🏋️ Exercise Rendering Test</h2>
+<p style="font-size:13px;color:#94a3b8;margin-bottom:12px">Verify all 7 exercises render correctly with audio, tips, and timing.</p>
+<div id="exerciseRenderTests"></div>
+</div>
+
+<div class="test-section">
+<h2>🐛 Bug Scanner</h2>
+<p style="font-size:13px;color:#94a3b8;margin-bottom:12px">Check for the specific bugs you reported.</p>
+<div id="bugTests"></div>
+</div>
+
+<script>
+var RESULTS = [];
+
+function log(msg, type) {
+  type = type || 'info';
+  var icon = type==='pass'?'✓':type==='fail'?'✗':type==='warn'?'⚠':'ℹ';
+  var cls = type==='pass'?'pass':type==='fail'?'fail':type==='warn'?'warn':'info';
+  RESULTS.push({icon, cls, msg});
+}
+
+function renderResults() {
+  var container = document.getElementById('results');
+  if (!RESULTS.length) {
+    container.innerHTML = '<p style="color:#94a3b8;font-size:13px">Click "Run All Tests" to begin.</p>';
+    return;
+  }
+  var html = '';
+  RESULTS.forEach(function(r) {
+    html += '<div class="result"><span class="status-icon '+r.cls+'">'+r.icon+'</span><span class="'+r.cls+'">'+r.msg+'</span></div>';
+  });
+  container.innerHTML = html;
+}
+
+function clearResults() { RESULTS = []; renderResults(); }
+
+// ═══ TEST 1: Audio File Paths ═══
+async function testAudioFiles() {
+  var files = [
+    'ex1.mp3','ex2.mp3','ex3.mp3','ex4.mp3','ex5.mp3','ex6.mp3','ex7.mp3'
+  ];
+  var basePath = 'audio/qi-gong/';
+  var pass = 0, fail = 0;
+  
+  for (var i = 0; i < files.length; i++) {
+    var url = basePath + files[i];
+    try {
+      // Use XHR instead of fetch+AbortSignal for broader compatibility
+      var ok = await checkUrl(url);
+      if (ok) {
+        log('EX' + (i+1) + ' — ' + files[i] + ' exists ✓', 'pass');
+        pass++;
+      } else {
+        log('EX' + (i+1) + ' — ' + files[i] + ' not found (404)', 'fail');
+        fail++;
+      }
+    } catch(e) {
+      log('EX' + (i+1) + ' — ' + files[i] + ' FAILED: ' + (e.message||e.name), 'fail');
+      fail++;
+    }
+  }
+  log('Audio files: ' + pass + '/' + files.length + ' found', pass===files.length?'pass':'warn');
+}
+
+function checkUrl(url) {
+  return new Promise(function(resolve) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, true);
+    xhr.timeout = 5000;
+    xhr.onload = function() { resolve(xhr.status >= 200 && xhr.status < 400); };
+    xhr.onerror = function() { resolve(false); };
+    xhr.ontimeout = function() { resolve(false); };
+    xhr.send();
+  });
+}
+
+// ═══ TEST 2: Audio File Validity ═══
+async function testAudioValidity() {
+  var files = ['ex1.mp3','ex2.mp3','ex3.mp3'];
+  var basePath = 'audio/qi-gong/';
+  
+  for (var i = 0; i < files.length; i++) {
+    var url = basePath + files[i];
+    try {
+      var ok = await checkUrl(url);
+      log(files[i] + ' — ' + (ok ? 'reachable ✓' : 'not reachable ✗'), ok?'pass':'warn');
+    } catch(e) {
+      log(files[i] + ' — error: ' + (e.message||e.name), 'warn');
+    }
+  }
+}
+
+// ═══ TEST 3: Ambient Audio ═══
+async function testAmbientAudio() {
+  var files = [
+    'forest-rain.wav','mountain-wind.wav','flowing-stream.wav','singing-bowls.wav','night-crickets.wav'
+  ];
+  var basePath = 'audio/ambient/';
+  var pass = 0, fail = 0;
+  
+  for (var i = 0; i < files.length; i++) {
+    var url = basePath + files[i];
+    try {
+      var ok = await checkUrl(url);
+      if (ok) {
+        log(files[i].replace('.wav','') + ' — exists ✓', 'pass');
+        pass++;
+      } else {
+        log(files[i].replace('.wav','') + ' — not found', 'fail');
+        fail++;
+      }
+    } catch(e) {
+      log(files[i].replace('.wav','') + ' — FAILED: ' + (e.message||e.name), 'fail');
+      fail++;
+    }
+  }
+  log('Ambient files: ' + pass + '/' + files.length + ' found', pass===files.length?'pass':'warn');
+}
+
+// ═══ TEST 4: Exercise Data Integrity ═══
+function testExerciseData() {
+  // Check if EXERCISES array is defined in the main page
+  var iframe = document.getElementById('testFrame');
+  if (!iframe) {
+    log('Cannot test exercise data — iframe not loaded (expected)', 'info');
+    return;
+  }
+  
+  try {
+    var ex = iframe.contentWindow.EXERCISES;
+    if (!ex) { log('EXERCISES array not defined', 'fail'); return; }
+    log('EXERCISES array found with ' + ex.length + ' exercises', ex.length===7?'pass':'warn');
+    
+    ex.forEach(function(e,i) {
+      var issues = [];
+      if (!e.name) issues.push('no name');
+      if (!e.audio) issues.push('no audio path');
+      if (!e.desc) issues.push('no desc');
+      if (!e.script) issues.push('no script');
+      if (!e.tips || !e.tips.length) issues.push('no tips');
+      if (!e.duration || e.duration <= 0) issues.push('invalid duration');
+      
+      // Check audio path format
+      if (e.audio && !e.audio.match(/^audio\/qi-gong\/ex\d+\.mp3$/)) {
+        issues.push('unexpected audio path: ' + e.audio);
+      }
+      
+      if (issues.length === 0) {
+        log('Exercise ' + (i+1) + ' (' + e.name + ') — all fields valid', 'pass');
+      } else {
+        log('Exercise ' + (i+1) + ' — ' + issues.join(', '), 'warn');
+      }
+    });
+  } catch(e) {
+    log('Error accessing EXERCISES: ' + e.message, 'fail');
+  }
+}
+
+// ═══ TEST 5: Bug Scanner ═══
+function testBugs() {
+  var iframe = document.getElementById('testFrame');
+  if (!iframe) { log('Iframe not available for bug scanning', 'warn'); return; }
+  
+  try {
+    var doc = iframe.contentWindow.document;
+    var win = iframe.contentWindow;
+    
+    // Bug 1: Exercise list not visible
+    var exList = doc.getElementById('exerciseList');
+    if (exList) {
+      var cards = exList.querySelectorAll('.exercise-card');
+      log('Exercise list: ' + cards.length + ' cards rendered', cards.length===7?'pass':'fail');
+      if (cards.length === 0) {
+        log('  → BUG: No exercise cards visible. renderExercises() may not have been called.', 'fail');
+        log('  → The exercises only appear after pressing Start. This is by design but confusing.', 'info');
+      }
+    } else {
+      log('Exercise list container not found', 'fail');
+    }
+    
+    // Bug 2: Check if play button exists and toggles
+    var playBtn = doc.getElementById('playBtn');
+    if (playBtn) {
+      log('Play button found: ' + playBtn.textContent.trim(), 'pass');
+    } else {
+      log('Play button NOT found', 'fail');
+    }
+    
+    // Bug 3: Check timer display
+    var timerDisplay = doc.getElementById('timerDisplay');
+    if (timerDisplay) {
+      log('Timer display: ' + timerDisplay.textContent.trim(), 'pass');
+    }
+    
+    // Bug 4: Check ambient audio system
+    if (win.AMBIENT_CONFIGS) {
+      var configs = win.AMBIENT_CONFIGS;
+      var count = Object.keys(configs).length;
+      log('AMBIENT_CONFIGS has ' + count + ' entries', count===5?'pass':'warn');
+      
+      // Check if paths are relative
+      Object.keys(configs).forEach(function(key) {
+        var url = configs[key].url;
+        if (url && !url.match(/^audio\//)) {
+          log('  → ' + key + ' path may be wrong: ' + url, 'warn');
+        }
+      });
+    } else {
+      log('AMBIENT_CONFIGS not found', 'fail');
+    }
+    
+    // Bug 5: Check audio function exists
+    if (typeof win.playAmbient === 'function') {
+      log('playAmbient() function exists', 'pass');
+    } else {
+      log('playAmbient() NOT found', 'fail');
+    }
+    
+    // Bug 6: Check playExerciseAudio function
+    if (typeof win.playExerciseAudio === 'function') {
+      log('playExerciseAudio() exists', 'pass');
+    } else {
+      log('playExerciseAudio() NOT found', 'fail');
+    }
+    
+    // Bug 7: Check togglePlay for double-stop
+    if (typeof win.togglePlay === 'function') {
+      var src = win.togglePlay.toString();
+      var hasStopFade = src.indexOf('stopFadeTimer') >= 0 || src.indexOf('3100') >= 0 || src.indexOf('3s fade') >= 0;
+      log('togglePlay() exists' + (hasStopFade ? ' (has 3s fade)' : ' (NO fade detected)'), 'pass');
+    }
+    
+    // Bug 8: Check ensureEffectChain is guarded
+    if (typeof win.ensureEffectChain === 'function') {
+      var src = win.ensureEffectChain.toString();
+      var hasGuard = src.indexOf('audioCtx.state') >= 0 || src.indexOf('running') >= 0;
+      log('ensureEffectChain()' + (hasGuard ? ' is guarded' : ' NOT guarded — may fail'), hasGuard?'pass':'warn');
+    }
+    
+  } catch(e) {
+    log('Bug scan error: ' + e.message, 'fail');
+  }
+}
+
+// ═══ TEST Live Audio Play ═══
+function testLiveAudio() {
+  var results = '<div id="liveAudioResults"></div>';
+  document.getElementById('audioTests').innerHTML = results;
+  var container = document.getElementById('liveAudioResults');
+  
+  var files = ['ex1.mp3','ex2.mp3','ex3.mp3','ex4.mp3','ex5.mp3','ex6.mp3','ex7.mp3'];
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px">';
+  files.forEach(function(f,i) {
+    html += '<button class="btn" style="font-size:11px;padding:6px" onclick="playTestAudio(this,\'audio/qi-gong/'+f+'\')">▶ EX'+(i+1)+'</button>';
+  });
+  html += '</div><div id="audioPlayLog" class="log" style="display:none"></div>';
+  container.innerHTML = html;
+  
+  // Same for ambient
+  var ambients = ['forest-rain.wav','mountain-wind.wav','flowing-stream.wav','singing-bowls.wav','night-crickets.wav'];
+  var ambHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-top:8px">';
+  ambients.forEach(function(f) {
+    var name = f.replace('.wav','').replace(/-/g,' ');
+    ambHtml += '<button class="btn secondary" style="font-size:10px;padding:5px" onclick="playTestAudio(this,\'audio/ambient/'+f+'\')">'+name+'</button>';
+  });
+  ambHtml += '</div>';
+  document.getElementById('ambientTests').innerHTML = ambHtml;
+}
+
+var _testAudio = null;
+function playTestAudio(btn, url) {
+  if (_testAudio) { _testAudio.pause(); _testAudio = null; }
+  btn.style.borderColor = '#fbbf24';
+  
+  _testAudio = new Audio();
+  _testAudio.addEventListener('canplaythrough', function() {
+    btn.style.borderColor = '#34d399';
+    log('Playing: ' + url.split('/').pop() + ' (' + (_testAudio.duration||0).toFixed(1) + 's)', 'pass');
+  });
+  _testAudio.addEventListener('error', function() {
+    btn.style.borderColor = '#fb7185';
+    log('FAILED to load: ' + url.split('/').pop(), 'fail');
+  });
+  _testAudio.src = url;
+  _testAudio.play().catch(function(e) {
+    btn.style.borderColor = '#fb7185';
+    log('Playback blocked: ' + e.name, 'fail');
+  });
+  setTimeout(function() {
+    btn.style.borderColor = '';
+  }, 2000);
+}
+
+// ═══ Exercise Render Test ═══
+function testExerciseRender() {
+  var container = document.getElementById('exerciseRenderTests');
+  var html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+  for (var i = 1; i <= 7; i++) {
+    html += '<button class="btn secondary" style="font-size:11px;padding:4px 10px" onclick="testShowExercise('+(i-1)+')">Show EX'+i+'</button>';
+  }
+  html += '</div><div id="exerciseRenderLog" class="log" style="display:none"></div>';
+  container.innerHTML = html;
+}
+
+function testShowExercise(idx) {
+  var iframe = document.getElementById('testFrame');
+  if (!iframe) { alert('Loading... try again in 2 seconds'); return; }
+  try {
+    iframe.contentWindow.showExercise(idx);
+    var doc = iframe.contentWindow.document;
+    var card = doc.getElementById('exCard' + idx);
+    var log = document.getElementById('exerciseRenderLog');
+    log.style.display = 'block';
+    if (card) {
+      var name = card.querySelector('.name');
+      var desc = card.querySelector('.exercise-desc');
+      log.textContent = 'EX' + (idx+1) + ' rendered: ' + (name ? name.textContent : '?') + '\n';
+      log.textContent += 'Active: ' + card.classList.contains('active') + '\n';
+      log.textContent += 'Desc: ' + (desc ? desc.textContent.substring(0, 60) + '...' : 'MISSING');
+    } else {
+      log.textContent = 'Card exCard' + idx + ' not found';
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// ═══ RUN ALL ═══
+async function runAllTests() {
+  RESULTS = [];
+  var start = Date.now();
+  
+  log('═══ Starting Qi Gong Tests ═══', 'info');
+  log('Base URL: ' + window.location.href, 'info');
+  log('');
+  
+  log('── Audio File Paths ──', 'info');
+  await testAudioFiles();
+  log('');
+  
+  log('── Audio File Validity ──', 'info');
+  await testAudioValidity();
+  log('');
+  
+  log('── Ambient Audio Files ──', 'info');
+  await testAmbientAudio();
+  log('');
+  
+  log('── Exercise Data ──', 'info');
+  testExerciseData();
+  log('');
+  
+  log('── Bug Scanner ──', 'info');
+  testBugs();
+  log('');
+  
+  // Setup live audio tests
+  testLiveAudio();
+  testExerciseRender();
+  
+  var elapsed = ((Date.now() - start) / 1000).toFixed(1);
+  log('═══ Tests complete in ' + elapsed + 's ═══', 'info');
+  
+  renderResults();
+}
+
+// Create hidden iframe to load the actual page for testing
+function loadTestFrame() {
+  var iframe = document.createElement('iframe');
+  iframe.id = 'testFrame';
+  iframe.src = 'qi-gong-workout.html';
+  iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;opacity:0;pointer-events:none';
+  iframe.onload = function() {
+    log('Test frame loaded: qi-gong-workout.html', 'pass');
+  };
+  iframe.onerror = function() {
+    log('FAILED to load qi-gong-workout.html', 'fail');
+  };
+  document.body.appendChild(iframe);
+}
+
+loadTestFrame();
+</script>
+</body>
+</html>
