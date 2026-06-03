@@ -9,340 +9,594 @@
 <meta name="theme-color" content="#22d3ee">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#020617;--bg2:#0a0f1a;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;--violet:#a78bfa;--rose:#fb7185;--sidebar-w:260px}
+:root{--bg:#020617;--bg2:#0a0f1a;--bg-card:#0f172a;--bg-hover:#1e293b;--border:#1e293b;--border-light:#334155;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;--cyan:#22d3ee;--amber:#fbbf24;--emerald:#34d399;--violet:#a78bfa;--rose:#fb7185}
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;height:100%}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;height:100%;display:flex;overflow:hidden}
-.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50;overflow-y:auto}
+body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;height:100%;display:flex;overflow:hidden}
+
+/* ═══ LEFT SIDEBAR ═══ */
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50;overflow-y:auto}
 .sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border)}
 .sidebar-logo{font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:10px}
 .sidebar-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .sidebar-tag{font-size:.65rem;color:var(--text-dim);margin-top:2px;text-transform:uppercase;letter-spacing:1px}
-.sidebar-section{padding:16px;border-bottom:1px solid var(--border)}
-.section-label{font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
-.model-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
-.model-card:hover{border-color:var(--border-light)}
-.model-card.active{border-color:var(--cyan);background:rgba(34,211,238,.06)}
-.model-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
-.model-info{flex:1}.model-name{font-size:.8rem;font-weight:600}.model-meta{font-size:.65rem;color:var(--text-dim)}
-.model-cost{font-size:.65rem;padding:2px 6px;border-radius:4px;font-weight:600}
-.cost-free{background:rgba(52,211,153,.1);color:var(--emerald)}.cost-low{background:rgba(251,191,36,.1);color:var(--amber)}.cost-high{background:rgba(251,113,133,.1);color:var(--rose)}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0}
-.setting-label{font-size:.8rem;color:var(--text-muted)}
+
+/* Sidebar Nav */
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{margin-bottom:8px}
+.nav-section-title{padding:8px 20px 4px;font-size:.6rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-muted);font-size:.85rem;cursor:pointer;transition:all .15s;text-decoration:none;border-left:3px solid transparent}
+.nav-item:hover{background:var(--bg-hover);color:var(--text)}
+.nav-item.active{background:rgba(34,211,238,.06);color:var(--cyan);border-left-color:var(--cyan)}
+.nav-item .nav-icon{width:20px;text-align:center;font-size:.9rem}
+.nav-item .nav-badge{margin-left:auto;font-size:.6rem;padding:1px 6px;border-radius:8px;background:rgba(255,255,255,.05);color:var(--text-dim)}
+.nav-item.active .nav-badge{background:rgba(34,211,238,.1);color:var(--cyan)}
+
+/* Sidebar Footer */
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.efficiency-mini{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--text-dim)}
+.mini-bar{flex:1;height:3px;background:var(--bg);border-radius:2px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:2px;background:var(--emerald)}
+
+/* ═══ MAIN CONTENT ═══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.topbar-title{font-size:.95rem;font-weight:600;flex:1}
+.topbar-actions{display:flex;gap:6px;align-items:center}
+.icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.icon-btn:hover{border-color:var(--border-light);color:var(--text)}
+
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* Page sections */
+.page{display:none}
+.page.active{display:block}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:1.6rem;font-weight:800;margin-bottom:4px}
+.page-header p{color:var(--text-muted);font-size:.9rem}
+
+/* Cards */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.card:hover{border-color:var(--border-light)}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* Metrics */
+.metric{text-align:center;padding:16px}
+.metric-num{font-size:2rem;font-weight:800;color:var(--cyan);font-family:"JetBrains Mono",monospace}
+.metric-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.metric-change{font-size:.7rem;margin-top:4px}
+.metric-change.up{color:var(--emerald)}.metric-change.down{color:var(--rose)}
+
+/* Status indicators */
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.status-dot.idle{background:var(--text-dim)}.status-dot.active{background:var(--emerald);box-shadow:0 0 4px var(--emerald)}.status-dot.working{background:var(--amber);animation:pulse 1s infinite}
+.status-dot.error{background:var(--rose)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-weight:600;font-size:.85rem;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--cyan);color:#020617}.btn-primary:hover{background:#67e8f9}
+.btn-secondary{background:var(--bg-hover);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}.btn-ghost:hover{color:var(--text)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.btn-danger{background:var(--rose);color:#fff}
+
+/* Forms */
+label{display:block;font-size:.8rem;font-weight:600;color:var(--text-muted);margin-bottom:4px}
+input,textarea,select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--cyan)}
+textarea{resize:vertical;min-height:80px}
+
+/* Toggle */
 .toggle{width:36px;height:20px;border-radius:10px;cursor:pointer;position:relative;transition:all .2s}
 .toggle.off{background:var(--border)}.toggle.on{background:var(--cyan)}
 .toggle-knob{width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:all .2s}
 .toggle.off .toggle-knob{left:2px}.toggle.on .toggle-knob{left:18px}
-.agent-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:2px}
-.agent-item:hover{background:var(--bg-hover)}
-.agent-item.active{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15)}
-.agent-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
-.agent-info{flex:1}.agent-name{font-size:.8rem;font-weight:600}
-.agent-status{font-size:.65rem;display:flex;align-items:center;gap:4px}
-.status-dot{width:5px;height:5px;border-radius:50%}.status-dot.idle{background:var(--text-dim)}.status-dot.active{background:var(--emerald);box-shadow:0 0 4px var(--emerald)}.status-dot.working{background:var(--amber);animation:pulse 1s infinite}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
-.topbar-tabs{display:flex;gap:2px;flex:1}
-.topbar-tab{padding:6px 14px;border-radius:6px;font-size:.8rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .15s}
-.topbar-tab:hover{color:var(--text);background:var(--bg-hover)}.topbar-tab.active{color:var(--cyan);background:rgba(34,211,238,.08)}
-.topbar-actions{display:flex;gap:6px;align-items:center}
-.icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
-.icon-btn:hover{border-color:var(--border-light);color:var(--text)}
-.content{flex:1;display:flex;overflow:hidden}
-.project-panel{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.project-panel-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.project-panel-title{font-size:.85rem;font-weight:700}
-.project-list{flex:1;overflow-y:auto;padding:10px}
-.project-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .15s}
-.project-card:hover{border-color:var(--border-light)}.project-card.active{border-color:var(--violet);background:rgba(167,139,250,.06)}
-.project-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.project-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
-.project-name{font-size:.85rem;font-weight:600}
-.project-card-bottom{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font-size:.6rem;padding:2px 8px;border-radius:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.chip-agents{background:rgba(34,211,238,.08);color:var(--cyan)}.chip-tasks{background:rgba(251,191,36,.08);color:var(--amber)}.chip-model{background:rgba(167,139,250,.08);color:var(--violet)}
-.workspace{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.workspace-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.workspace-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px}
-.kanban{display:flex;gap:12px;padding:16px;flex:1;overflow-x:auto}
-.kanban-col{min-width:240px;max-width:300px;flex:1}
-.kanban-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 4px}
-.kanban-col-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}
-.kanban-col-count{font-size:.65rem;color:var(--text-dim);background:var(--bg-card);padding:1px 6px;border-radius:6px}
-.kanban-cards{display:flex;flex-direction:column;gap:8px}
-.kanban-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s}
-.kanban-card:hover{border-color:var(--border-light)}
-.kanban-card-title{font-size:.8rem;font-weight:600;margin-bottom:6px}
-.kanban-card-meta{display:flex;align-items:center;gap:6px}
-.kanban-card-agent{font-size:.6rem;padding:1px 6px;border-radius:4px;background:rgba(34,211,238,.08);color:var(--cyan)}
-.kanban-card-cost{font-size:.6rem;padding:1px 6px;border-radius:4px}
-.add-card{margin-top:8px;padding:8px;border-radius:8px;border:1px dashed var(--border);color:var(--text-dim);font-size:.75rem;cursor:pointer;text-align:center;transition:all .15s}
-.add-card:hover{border-color:var(--text-dim);color:var(--text)}
-.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.chat-messages{flex:1;overflow-y:auto;padding:20px}
-.chat-msg{margin-bottom:16px;display:flex;gap:12px}
-.chat-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-.chat-bubble{flex:1}
-.chat-bubble-header{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.chat-bubble-name{font-size:.8rem;font-weight:600}
-.chat-bubble-time{font-size:.65rem;color:var(--text-dim)}
-.chat-bubble-text{font-size:.85rem;color:var(--text-muted);line-height:1.7}
-.chat-bubble-text code{background:var(--bg-card);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.75rem}
-.chat-system{font-size:.75rem;color:var(--text-dim);padding:8px 12px;background:var(--bg-card);border-radius:8px;margin:8px 0;border-left:2px solid var(--violet)}
-.chat-input-area{padding:16px;border-top:1px solid var(--border)}
-.chat-input-wrap{display:flex;gap:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;align-items:flex-end}
-.chat-input{flex:1;background:none;border:none;color:var(--text);font-size:.85rem;font-family:inherit;resize:none;outline:none;max-height:120px;line-height:1.5}
-.chat-input::placeholder{color:var(--text-dim)}
-.chat-send{width:32px;height:32px;border-radius:6px;background:var(--cyan);border:none;color:#000;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.right-panel{width:320px;min-width:320px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.panel-tabs{display:flex;border-bottom:1px solid var(--border)}
-.panel-tab{flex:1;padding:10px;text-align:center;font-size:.7rem;font-weight:600;color:var(--text-muted);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .15s}
-.panel-tab:hover{color:var(--text)}.panel-tab.active{color:var(--cyan);border-bottom:2px solid var(--cyan)}
-.panel-content{flex:1;overflow-y:auto;padding:16px}
-.preview-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
-.preview-card-title{font-size:.8rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.preview-card-desc{font-size:.75rem;color:var(--text-muted);margin-bottom:8px}
-.preview-card-meta{display:flex;gap:6px;align-items:center}
-.preview-tag{font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--text-dim)}
-.efficiency-box{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
-.efficiency-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
-.efficiency-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.efficiency-label{font-size:.75rem;color:var(--text-muted)}.efficiency-val{font-size:.8rem;font-weight:600}
-.efficiency-bar{height:4px;background:var(--bg);border-radius:2px;margin-top:2px;overflow:hidden}
-.efficiency-fill{height:100%;border-radius:2px;transition:width .3s}
-.fill-green{background:var(--emerald)}.fill-amber{background:var(--amber)}.fill-rose{background:var(--rose)}
-.cat-tab{padding:5px 12px;border-radius:15px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.65rem;font-weight:600;cursor:pointer;transition:all .15s}
-.cat-tab:hover{border-color:var(--text-dim)}.cat-tab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.06)}
-.help-slide{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:10px;animation:fadeIn .2s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.help-slide-title{font-size:.9rem;font-weight:700;color:var(--cyan);margin-bottom:8px}
-.help-slide-text{font-size:.8rem;color:var(--text-muted);line-height:1.7}
-.help-slide-text code{background:var(--bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--emerald)}
-.help-example{margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--emerald);white-space:pre-wrap;border-left:2px solid var(--cyan)}
-.help-tip{margin-top:10px;padding:8px 12px;background:rgba(251,191,36,.04);border:1px solid rgba(251,191,36,.15);border-radius:6px}
-.help-tip p{font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:0}
-.help-nav-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text-muted);font-size:.7rem;cursor:pointer;transition:all .15s}
-.help-nav-btn:hover{border-color:var(--text-dim);color:var(--text)}
-.key-box{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:8px;padding:10px 14px;margin-top:10px}
-.key-box p{font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:0}
-.qr-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;display:none;margin-top:10px}
-.qr-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter:1px;color:var(--cyan);margin-bottom:6px}
-.qr-cmds{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-muted);line-height:1.8}
+
+/* Progress bar */
+.progress-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .3s}
+.fill-green{background:var(--emerald)}.fill-amber{background:var(--amber)}.fill-cyan{background:var(--cyan)}.fill-rose{background:var(--rose)}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{text-align:left;padding:8px 12px;font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text-muted)}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* Tags */
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600}
+.tag-cyan{background:rgba(34,211,238,.08);color:var(--cyan)}.tag-emerald{background:rgba(52,211,153,.08);color:var(--emerald)}
+.tag-violet{background:rgba(167,139,250,.08);color:var(--violet)}.tag-amber{background:rgba(251,191,36,.08);color:var(--amber)}
+.tag-rose{background:rgba(251,113,133,.08);color:var(--rose)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:.85rem;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,.3);display:none}
+.toast.show{display:flex;align-items:center;gap:10px}.toast.success{border-color:var(--emerald)}
+
+/* Workflow visualization */
+.workflow{display:flex;align-items:center;gap:8px;padding:12px 0;flex-wrap:wrap}
+.workflow-step{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.75rem;display:flex;align-items:center;gap:6px}
+.workflow-step.active{border-color:var(--cyan);background:rgba(34,211,238,.05)}
+.workflow-step.done{border-color:var(--emerald);background:rgba(52,211,153,.05)}
+.workflow-arrow{color:var(--text-dim);font-size:.8rem}
+
+/* Timeline */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:16px}
+.timeline-item::before{content:"";position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan)}
+.timeline-item.done::before{background:var(--emerald);border-color:var(--emerald)}
+.timeline-time{font-size:.65rem;color:var(--text-dim);margin-bottom:2px}
+.timeline-text{font-size:.8rem;color:var(--text-muted)}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-dim)}
+
+@media(max-width:900px){
+  .sidebar{width:60px;min-width:60px}
+  .sidebar-logo span,.sidebar-tag,.nav-section-title,.nav-item span:not(.nav-icon),.nav-badge,.sidebar-footer{display:none}
+  .nav-item{justify-content:center;padding:12px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- LEFT SIDEBAR -->
+<!-- ═══ LEFT SIDEBAR ═══ -->
 <div class="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo"><span class="dot"></span> Hermes Agent OS</div>
-    <div class="sidebar-tag">Mission Control v2.0</div>
+    <div class="sidebar-tag">Mission Control v3.0</div>
   </div>
-  <div class="sidebar-section">
-    <div class="section-label">Models & Routing</div>
-    <div class="model-card active" onclick="selectModel(this)"><div class="model-icon" style="background:rgba(34,211,238,.1);color:var(--cyan)">🦉</div><div class="model-info"><div class="model-name">OWL Alpha</div><div class="model-meta">Reasoning • Complex</div></div><div class="model-cost cost-high">$</div></div>
-    <div class="model-card" onclick="selectModel(this)"><div class="model-icon" style="background:rgba(251,191,36,.1);color:var(--amber)">⚡</div><div class="model-info"><div class="model-name">Gemini Flash</div><div class="model-meta">Fast • Bulk tasks</div></div><div class="model-cost cost-free">FREE</div></div>
-    <div class="model-card" onclick="selectModel(this)"><div class="model-icon" style="background:rgba(167,139,250,.1);color:var(--violet)">🔮</div><div class="model-info"><div class="model-name">MiniMax M3</div><div class="model-meta">Vision • Ollama</div></div><div class="model-cost cost-free">FREE</div></div>
-  </div>
-  <div class="sidebar-section">
-    <div class="section-label">Settings</div>
-    <div class="setting-row"><span class="setting-label">Auto-route by cost</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-    <div class="setting-row"><span class="setting-label">Human-in-the-loop</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-    <div class="setting-row"><span class="setting-label">Mem0 Memory</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-    <div class="setting-row"><span class="setting-label">Obsidian Sync</span><div class="toggle off" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-  </div>
-  <div class="sidebar-section" style="border-bottom:none">
-    <div class="section-label">Agents</div>
-    <div class="agent-item active"><div class="agent-avatar" style="background:rgba(34,211,238,.1);color:var(--cyan)">H</div><div class="agent-info"><div class="agent-name">Hermes Main</div><div class="agent-status"><span class="status-dot active"></span> Ready</div></div></div>
-    <div class="agent-item"><div class="agent-avatar" style="background:rgba(52,211,153,.1);color:var(--emerald)">C</div><div class="agent-info"><div class="agent-name">Codex Worker</div><div class="agent-status"><span class="status-dot idle"></span> Idle</div></div></div>
-    <div class="agent-item"><div class="agent-avatar" style="background:rgba(167,139,250,.1);color:var(--violet)">V</div><div class="agent-info"><div class="agent-name">Video Agent</div><div class="agent-status"><span class="status-dot idle"></span> Idle</div></div></div>
-    <div class="agent-item"><div class="agent-avatar" style="background:rgba(251,113,36,.1);color:var(--amber)">S</div><div class="agent-info"><div class="agent-name">SEO Agent</div><div class="agent-status"><span class="status-dot working"></span> Working</div></div></div>
+
+  <nav class="sidebar-nav">
+
+    <!-- CORE -->
+    <div class="nav-section">
+      <div class="nav-section-title">Core</div>
+      <a class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span><span>Dashboard</span></a>
+      <a class="nav-item" onclick="showPage('goals',this)"><span class="nav-icon">🎯</span><span>Goals</span><span class="nav-badge">3</span></a>
+      <a class="nav-item" onclick="showPage('agents',this)"><span class="nav-icon">🤖</span><span>Agents</span><span class="nav-badge">5</span></a>
+      <a class="nav-item" onclick="showPage('workflows',this)"><span class="nav-icon">⚡</span><span>Workflows</span></a>
+    </div>
+
+    <!-- ORCHESTRATION -->
+    <div class="nav-section">
+      <div class="nav-section-title">Orchestration</div>
+      <a class="nav-item" onclick="showPage('planner',this)"><span class="nav-icon">📋</span><span>Task Planner</span></a>
+      <a class="nav-item" onclick="showPage('routing',this)"><span class="nav-icon">🔀</span><span>Agent Routing</span></a>
+      <a class="nav-item" onclick="showPage('exceptions',this)"><span class="nav-icon">⚠️</span><span>Exceptions</span><span class="nav-badge">2</span></a>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="nav-section">
+      <div class="nav-section-title">Memory</div>
+      <a class="nav-item" onclick="showPage('short-term',this)"><span class="nav-icon">💭</span><span>Short-Term Context</span></a>
+      <a class="nav-item" onclick="showPage('long-term',this)"><span class="nav-icon">🧠</span><span>Long-Term Memory</span><span class="nav-badge">8</span></a>
+      <a class="nav-item" onclick="showPage('knowledge',this)"><span class="nav-icon">📚</span><span>Knowledge Graph</span></a>
+    </div>
+
+    <!-- TOOLS & INTEGRATION -->
+    <div class="nav-section">
+      <div class="nav-section-title">Tools & Integration</div>
+      <a class="nav-item" onclick="showPage('mcp',this)"><span class="nav-icon">🔌</span><span>MCP Servers</span><span class="nav-badge">0</span></a>
+      <a class="nav-item" onclick="showPage('connections',this)"><span class="nav-icon">🔗</span><span>Connections</span></a>
+      <a class="nav-item" onclick="showPage('tools',this)"><span class="nav-icon">🛠</span><span>Tool Registry</span></a>
+    </div>
+
+    <!-- GOVERNANCE -->
+    <div class="nav-section">
+      <div class="nav-section-title">Governance & Security</div>
+      <a class="nav-item" onclick="showPage('audit',this)"><span class="nav-icon">📝</span><span>Audit Logs</span></a>
+      <a class="nav-item" onclick="showPage('permissions',this)"><span class="nav-icon">🔐</span><span>Permissions</span></a>
+      <a class="nav-item" onclick="showPage('checkpoints',this)"><span class="nav-icon">✋</span><span>HITL Checkpoints</span><span class="nav-badge">1</span></a>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="nav-section">
+      <div class="nav-section-title">Configuration</div>
+      <a class="nav-item" onclick="showPage('models',this)"><span class="nav-icon">🦉</span><span>Models & Routing</span></a>
+      <a class="nav-item" onclick="showPage('cost',this)"><span class="nav-icon">💰</span><span>Cost Optimization</span></a>
+      <a class="nav-item" onclick="showPage('help',this)"><span class="nav-icon">📖</span><span>Help & Commands</span></a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="efficiency-mini">
+      <span>Free tier</span>
+      <div class="mini-bar"><div class="mini-bar-fill" style="width:73%"></div></div>
+      <span>73%</span>
+    </div>
   </div>
 </div>
 
-<!-- MAIN -->
+<!-- ═══ MAIN CONTENT ═══ -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-tabs">
-      <div class="topbar-tab active" onclick="switchTab(this,'kanban')">Kanban</div>
-      <div class="topbar-tab" onclick="switchTab(this,'chat')">Chat</div>
-      <div class="topbar-tab" onclick="switchTab(this,'workspace')">Workspace</div>
-      <div class="topbar-tab" onclick="switchTab(this,'help')">Help & Commands</div>
-    </div>
+    <div class="topbar-title" id="pageTitle">Dashboard</div>
     <div class="topbar-actions">
       <div class="icon-btn" title="New Project">+</div>
-      <div class="icon-btn" title="MCP Control Room">⚙</div>
-      <div class="icon-btn" title="Memory Graph">◈</div>
+      <div class="icon-btn" title="Notifications">🔔</div>
+      <div class="icon-btn" title="Settings">⚙</div>
     </div>
   </div>
+
   <div class="content">
-    <!-- Project panel -->
-    <div class="project-panel">
-      <div class="project-panel-header"><div class="project-panel-title">Projects</div><div class="icon-btn" style="width:24px;height:24px;font-size:11px">+</div></div>
-      <div class="project-list">
-        <div class="project-card active"><div class="project-card-top"><div class="project-icon" style="background:rgba(34,211,238,.1)">🎯</div><div class="project-name">Eloquenta Platform</div></div><div class="project-card-bottom"><span class="chip chip-agents">4 agents</span><span class="chip chip-tasks">12 tasks</span><span class="chip chip-model">Mixed</span></div></div>
-        <div class="project-card"><div class="project-card-top"><div class="project-icon" style="background:rgba(167,139,250,.1)">🎬</div><div class="project-name">Video Production</div></div><div class="project-card-bottom"><span class="chip chip-agents">2 agents</span><span class="chip chip-tasks">8 tasks</span><span class="chip chip-model">Free tier</span></div></div>
-        <div class="project-card"><div class="project-card-top"><div class="project-icon" style="background:rgba(52,211,153,.1)">📊</div><div class="project-name">SEO System</div></div><div class="project-card-bottom"><span class="chip chip-agents">3 agents</span><span class="chip chip-tasks">15 tasks</span><span class="chip chip-model">Flash</span></div></div>
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>📊 Agent OS Dashboard</h1>
+        <p>Overview of your agent ecosystem, active workflows, and system health</p>
       </div>
-    </div>
-    <!-- Workspace -->
-    <div class="workspace">
-      <!-- Kanban -->
-      <div id="kanbanView" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
-        <div class="workspace-header"><div class="workspace-title"><span style="color:var(--cyan)">Eloquenta Platform</span> — Agent Kanban</div></div>
-        <div class="kanban">
-          <div class="kanban-col"><div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--text-dim)">Backlog</span><span class="kanban-col-count">3</span></div><div class="kanban-cards"><div class="kanban-card"><div class="kanban-card-title">Build accent comparison tool</div><div class="kanban-card-meta"><span class="kanban-card-agent">Codex</span><span class="kanban-card-cost cost-free">FREE</span></div></div><div class="kanban-card"><div class="kanban-card-title">Generate speaking lesson slides</div><div class="kanban-card-meta"><span class="kanban-card-agent">Hermes</span><span class="kanban-card-cost cost-free">FREE</span></div></div></div><div class="add-card">+ Add task</div></div>
-          <div class="kanban-col"><div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--amber)">In Progress</span><span class="kanban-col-count">2</span></div><div class="kanban-cards"><div class="kanban-card"><div class="kanban-card-title">Fix metronome FX chain</div><div class="kanban-card-meta"><span class="kanban-card-agent">Hermes</span><span class="kanban-card-cost cost-high">$</span></div></div></div><div class="add-card">+ Add task</div></div>
-          <div class="kanban-col"><div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--rose)">👤 Human Review</span><span class="kanban-col-count">1</span></div><div class="kanban-cards"><div class="kanban-card" style="border-color:rgba(251,113,133,.2)"><div class="kanban-card-title">Approve video script</div><div class="kanban-card-meta"><span class="kanban-card-cost cost-high">EXPENSIVE</span></div></div></div></div>
-          <div class="kanban-col"><div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--emerald)">Done</span><span class="kanban-col-count">8</span></div><div class="kanban-cards"><div class="kanban-card" style="opacity:.6"><div class="kanban-card-title">Business debate vocab deck</div><div class="kanban-card-meta"><span class="kanban-card-agent">Hermes</span><span class="kanban-card-cost cost-free">FREE</span></div></div></div></div>
+      <div class="grid-3" style="margin-bottom:24px">
+        <div class="card metric">
+          <div class="metric-num" id="metric-agents">5</div>
+          <div class="metric-label">Active Agents</div>
+          <div class="metric-change up">▲ 2 this week</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-num" id="metric-goals">3</div>
+          <div class="metric-label">Active Goals</div>
+          <div class="metric-change up">▲ 1 completed</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-num" id="metric-workflows">7</div>
+          <div class="metric-label">Running Workflows</div>
+          <div class="metric-change down">▼ 1 exception</div>
         </div>
       </div>
-      <!-- Chat -->
-      <div id="chatView" class="chat-area" style="display:none">
-        <div class="chat-messages"><div class="chat-msg"><div class="chat-avatar" style="background:rgba(167,139,250,.1);color:var(--violet)">⚙</div><div class="chat-bubble"><div class="chat-bubble-header"><span class="chat-bubble-name">System</span><span class="chat-bubble-time">Now</span></div><div class="chat-bubble-text">Hermes Agent OS initialized. Auto-routing is ON.</div></div></div></div>
-        <div class="chat-input-area"><div class="chat-input-wrap"><textarea class="chat-input" placeholder="Type a message or task..." rows="1" id="chatInput" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea><button class="chat-send" onclick="sendChat()">↑</button></div></div>
-      </div>
-      <!-- Workspace -->
-      <div id="workspaceView" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-        <div class="workspace-header"><div class="workspace-title">📁 Workspace — <span style="color:var(--cyan)">Eloquenta Platform</span></div></div>
-        <div style="padding:20px;overflow-y:auto;flex:1">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
-            <div class="preview-card"><div class="preview-card-title">📄 business-debate-phrases.html</div><div class="preview-card-desc">60 debate phrases with exercises</div><div class="preview-card-meta"><span class="preview-tag">Speaking</span><span class="preview-tag">Today</span></div></div>
-            <div class="preview-card"><div class="preview-card-title">🔬 anandamide-diabetes-research.html</div><div class="preview-card-desc">18-slide research deck</div><div class="preview-card-meta"><span class="preview-tag">Research</span><span class="preview-tag">Today</span></div></div>
-            <div class="preview-card"><div class="preview-card-title">🎵 Alien Metronome</div><div class="preview-card-desc">Parallel FX chain restored</div><div class="preview-card-meta"><span class="preview-tag">Audio</span><span class="preview-tag">Updated</span></div></div>
+      <div class="grid-2" style="margin-bottom:24px">
+        <div class="card">
+          <h3 style="margin-bottom:12px">⚡ Active Workflows</h3>
+          <div class="workflow">
+            <div class="workflow-step done">📋 Parse</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step active">🤖 Route</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step">▶ Execute</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step">✓ Verify</div>
           </div>
-          <div class="efficiency-box" style="margin-top:20px"><div class="efficiency-title">Model Cost Efficiency</div><div class="efficiency-row"><span class="efficiency-label">Tasks on free tier</span><span class="efficiency-val" style="color:var(--emerald)">73%</span></div><div class="efficiency-bar"><div class="efficiency-fill fill-green" style="width:73%"></div></div><div class="efficiency-row" style="margin-top:8px"><span class="efficiency-label">Human-in-the-loop savings</span><span class="efficiency-val" style="color:var(--amber)">~$4.20</span></div></div>
+          <div class="workflow" style="margin-top:8px">
+            <div class="workflow-step done">📋 Parse</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step done">🤖 Route</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step active">▶ Execute</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step">✓ Verify</div>
+          </div>
+          <div class="workflow" style="margin-top:8px">
+            <div class="workflow-step done">📋 Parse</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step done">🤖 Route</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step done">▶ Execute</div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step active">✓ Verify</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">🤖 Agent Status</h3>
+          <table style="font-size:.75rem">
+            <tr><th>Agent</th><th>Status</th><th>Task</th><th>Cost</th></tr>
+            <tr><td><span class="status-dot active"></span> Hermes Main</td><td>Active</td><td>Reasoning</td><td>$</td></tr>
+            <tr><td><span class="status-dot working"></span> Codex Worker</td><td>Working</td><td>File edits</td><td>FREE</td></tr>
+            <tr><td><span class="status-dot working"></span> Video Agent</td><td>Working</td><td>Transcoding</td><td>FREE</td></tr>
+            <tr><td><span class="status-dot idle"></span> SEO Agent</td><td>Idle</td><td>—</td><td>—</td></tr>
+            <tr><td><span class="status-dot idle"></span> Research Agent</td><td>Idle</td><td>—</td><td>—</td></tr>
+          </table>
         </div>
       </div>
-      <!-- HELP VIEW -->
-      <div id="helpView" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-        <div class="workspace-header"><div class="workspace-title">📖 <span id="helpCatTitle">Session Control</span> <span style="font-size:.7rem;color:var(--text-dim);margin-left:8px" id="helpCounter">1/14</span></div><div style="display:flex;gap:4px"><button class="help-nav-btn" onclick="prevCat()">← Cat</button><button class="help-nav-btn" onclick="nextCat()">Cat →</button></div></div>
-        <div style="display:flex;gap:4px;padding:10px 20px;overflow-x:auto;border-bottom:1px solid var(--border)"><button class="cat-tab active" onclick="showCat(0)">Session</button><button class="cat-tab" onclick="showCat(1)">Config</button><button class="cat-tab" onclick="showCat(2)">Tools</button><button class="cat-tab" onclick="showCat(3)">Gateway</button><button class="cat-tab" onclick="showCat(4)">Utility</button><button class="cat-tab" onclick="showCat(5)">Info</button><button class="cat-tab" onclick="showCat(6)">CLI</button></div>
-        <div style="padding:20px;overflow-y:auto;flex:1"><div id="helpSlideArea"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"><button class="help-nav-btn" onclick="prevSlide()">← Prev</button><span style="font-size:.7rem;color:var(--text-dim)" id="helpProgress">1 of 14</span><button class="help-nav-btn" onclick="nextSlide()">Next →</button></div><div style="margin-top:12px"><button class="help-nav-btn" onclick="document.getElementById('qrBox').style.display=document.getElementById('qrBox').style.display==='none'?'block':'none';" style="width:100%;text-align:center">📋 Quick Reference</button><div id="qrBox" class="qr-box"><div class="qr-title" id="qrTitle">Session Control</div><div class="qr-cmds" id="qrCmds">/new /clear /retry /undo /title /compress /stop /rollback /background /queue /steer /agents /resume /goal</div></div></div></div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:12px">🎯 Active Goals</h3>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem;font-weight:600">Fix metronome FX chain</span><span class="tag tag-cyan">In Progress</span></div>
+            <div class="progress-bar"><div class="progress-fill fill-cyan" style="width:65%"></div></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem;font-weight:600">Speaking lesson scroll fix</span><span class="tag tag-emerald">Done</span></div>
+            <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem;font-weight:600">Business debate vocab deck</span><span class="tag tag-emerald">Done</span></div>
+            <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">💰 Cost Efficiency</h3>
+          <div class="metric" style="padding:0 0 12px">
+            <div class="metric-num" style="font-size:2.4rem">$0.00</div>
+            <div class="metric-label">Today (Free tier)</div>
+          </div>
+          <div class="grid-2" style="gap:8px">
+            <div style="text-align:center;padding:8px;background:var(--bg);border-radius:6px">
+              <div style="font-size:1rem;font-weight:700;color:var(--emerald)">73%</div>
+              <div style="font-size:.6rem;color:var(--text-dim)">Free tier</div>
+            </div>
+            <div style="text-align:center;padding:8px;background:var(--bg);border-radius:6px">
+              <div style="font-size:1rem;font-weight:700;color:var(--amber)">27%</div>
+              <div style="font-size:.6rem;color:var(--text-dim)">Paid</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:.75rem;color:var(--text-dim)">Saved ~$6.80 vs all-paid routing</div>
+        </div>
       </div>
     </div>
+
+    <!-- ═══ GOALS ═══ -->
+    <div class="page" id="page-goals">
+      <div class="page-header">
+        <h1>🎯 Goals</h1>
+        <p>Create, decompose, and track autonomous goals across your agent ecosystem</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button class="btn btn-primary" onclick="openModal('goal')">+ New Goal</button>
+        <button class="btn btn-secondary">Import Goal</button>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:1.5rem">🎯</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-weight:700">Fix metronome FX chain</span>
+              <span class="tag tag-cyan">In Progress</span>
+            </div>
+            <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:8px">Restore parallel send/return FX architecture. Ring mod → Delay → Reverb series chain with dry parallel.</p>
+            <div class="workflow">
+              <div class="workflow-step done">📋 Analyze</div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step done">🔀 Route</div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step active">▶ Fix chain</div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step">✓ Test</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:1.5rem">📚</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-weight:700">Speaking lessons scroll fix</span>
+              <span class="tag tag-emerald">Completed</span>
+            </div>
+            <p style="font-size:.8rem;color:var(--text-muted)">Enable mouse scroll, fix centering, add Shift+wheel on 11 speaking lesson slides.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:1.5rem">💬</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-weight:700">Business debate vocab deck</span>
+              <span class="tag tag-emerald">Completed</span>
+            </div>
+            <p style="font-size:.8rem;color:var(--text-muted)">60 native speaker phrases across 6 categories with 4 exercise types.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ AGENTS ═══ -->
+    <div class="page" id="page-agents">
+      <div class="page-header">
+        <h1>🤖 Agents</h1>
+        <p>Manage your agent team — status, capabilities, and assignments</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button class="btn btn-primary" onclick="openModal('agent')">+ New Agent</button>
+        <button class="btn btn-secondary">Import Config</button>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="border-left:3px solid var(--emerald)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(34,211,238,.1);display:flex;align-items:center;justify-content:center;font-size:18px">H</div>
+            <div><div style="font-weight:700">Hermes Main</div><div style="font-size:.7rem;color:var(--text-dim)">Reasoning • Complex tasks • OWL Alpha</div></div>
+            <span class="status-dot active" style="margin-left:auto"></span>
+          </div>
+          <div style="font-size:.75rem;color:var(--text-muted)">Handles planning, complex reasoning, architecture decisions. Paid tier.</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--emerald)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:18px">C</div>
+            <div><div style="font-weight:700">Codex Worker</div><div style="font-size:.7rem;color:var(--text-dim)">Code • File edits • Free tier</div></div>
+            <span class="status-dot working" style="margin-left:auto"></span>
+          </div>
+          <div style="font-size:.75rem;color:var(--text-muted)">Bulk file operations, code generation, automated testing. Free tier via Gemini Flash.</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--amber)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:18px">V</div>
+            <div><div style="font-weight:700">Video Agent</div><div style="font-size:.7rem;color:var(--text-dim)">Vision • Transcoding • Free tier</div></div>
+            <span class="status-dot working" style="margin-left:auto"></span>
+          </div>
+          <div style="font-size:.75rem;color:var(--text-muted)">Video analysis, frame extraction, content summarization. Free tier via MiniMax M3.</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--amber)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(251,191,36,.1);display:flex;align-items:center;justify-content:center;font-size:18px">S</div>
+            <div><div style="font-weight:700">SEO Agent</div><div style="font-size:.7rem;color:var(--text-dim)">Research • Analysis • Flash</div></div>
+            <span class="status-dot idle" style="margin-left:auto"></span>
+          </div>
+          <div style="font-size:.75rem;color:var(--text-muted)">Keyword research, content optimization, competitor analysis. Routed to free tier.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ WORKFLOWS ═══ -->
+    <div class="page" id="page-workflows">
+      <div class="page-header">
+        <h1>⚡ Workflows</h1>
+        <p>Dynamic orchestration — agent routing, task decomposition, exception handling</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button class="btn btn-primary">+ New Workflow</button>
+        <button class="btn btn-secondary">Templates</button>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div><div style="font-weight:700">Content Pipeline</div><div style="font-size:.7rem;color:var(--text-dim)">5 steps · 3 agents · Auto-route: ON</div></div>
+          <span class="tag tag-cyan">Running</span>
+        </div>
+        <div class="workflow">
+          <div class="workflow-step done">📋 Parse</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step done">🤖 Route</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step active">▶ Execute</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step">✓ Review</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step">📤 Publish</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div><div style="font-weight:700">Bug Fix Pipeline</div><div style="font-size:.7rem;color:var(--text-dim)">4 steps · 2 agents · Auto-route: ON</div></div>
+          <span class="tag tag-amber">Exception</span>
+        </div>
+        <div class="workflow">
+          <div class="workflow-step done">🔍 Detect</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step done">📋 Plan</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step" style="border-color:var(--rose);background:rgba(251,113,133,.05)">⚠ Fix</div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step">✓ Test</div>
+        </div>
+        <div style="margin-top:8px;padding:8px;background:rgba(251,113,133,.05);border-radius:6px;font-size:.75rem;color:var(--rose)">⚠ Exception: AudioContext state mismatch. Awaiting human checkpoint.</div>
+      </div>
+    </div>
+
+    <!-- ═══ MEMORY PAGES ═══ -->
+    <div class="page" id="page-short-term">
+      <div class="page-header"><h1>💭 Short-Term Context</h1><p>Current session memory — active tasks, recent tool calls, conversation context</p></div>
+      <div class="card"><h3 style="margin-bottom:12px">Active Context</h3><table style="font-size:.75rem"><tr><th>Key</th><th>Value</th><th>TTL</th></tr><tr><td>current_task</td><td>Fix metronome FX chain</td><td>2h</td></tr><tr><td>active_agent</td><td>Hermes Main</td><td>2h</td></tr><tr><td>last_tool</td><td>patch (ensureEffectChain)</td><td>1h</td></tr><tr><td>error_count</td><td>0</td><td>30m</td></tr><tr><td>retry_count</td><td>0</td><td>30m</td></tr></table></div>
+    </div>
+    <div class="page" id="page-long-term">
+      <div class="page-header"><h1>🧠 Long-Term Memory</h1><p>Institutional knowledge — past decisions, lessons learned, project history</p></div>
+      <div class="card"><h3 style="margin-bottom:12px">Memory Entries <span style="font-weight:400;color:var(--text-dim)">(8 entries)</span></h3><table style="font-size:.75rem"><tr><th>Fact</th><th>Source</th><th>Date</th></tr><tr><td>FX chain: parallel sends, NOT serial</td><td>Session 2026-06-04</td><td>Jun 4</td></tr><tr><td>Quiz rules: full sentences, no period in def</td><td>Session 2026-06-03</td><td>Jun 3</td></tr><tr><td>GitHub: no push without explicit request</td><td>Session 2026-06-03</td><td>Jun 3</td></tr><tr><td>Heartmula: PIP_CACHE_DIR required</td><td>Session 2026-06-03</td><td>Jun 3</td></tr><tr><td>Alien Tuner: alert() blocks UX</td><td>Session 2026-06-03</td><td>Jun 3</td></tr><tr><td>String Theory: separate product, no Eloquenta branding</td><td>Session 2026-06-03</td><td>Jun 3</td></tr><tr><td>Memory expanded to 5000 chars</td><td>Session 2026-06-04</td><td>Jun 4</td></tr><tr><td>Startup: agent-side checklist obligation</td><td>Session 2026-06-04</td><td>Jun 4</td></tr></table></div>
+    </div>
+    <div class="page" id="page-knowledge">
+      <div class="page-header"><h1>📚 Knowledge Graph</h1><p>Interlinked facts, decisions, and relationships across all sessions</p></div>
+      <div class="card"><p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:40px 0">Knowledge graph visualization coming soon. Use Long-Term Memory for now.</p></div>
+    </div>
+
+    <!-- ═══ TOOLS & MCP ═══ -->
+    <div class="page" id="page-mcp">
+      <div class="page-header"><h1>🔌 MCP Servers</h1><p>Connect agents to external systems via Model Context Protocol</p></div>
+      <div style="display:flex;gap:8px;margin-bottom:20px"><button class="btn btn-primary">+ Add MCP Server</button><button class="btn btn-secondary">Browse Registry</button></div>
+      <div class="card" style="text-align:center;padding:40px">
+        <div style="font-size:2rem;margin-bottom:8px">🔌</div>
+        <p style="color:var(--text-muted)">No MCP servers configured yet.</p>
+        <p style="font-size:.75rem;color:var(--text-dim);margin-top:4px">Connect to databases, CRMs, APIs, and more via standard MCP protocol.</p>
+      </div>
+    </div>
+    <div class="page" id="page-connections">
+      <div class="page-header"><h1>🔗 Connections</h1><p>External application integrations and API connections</p></div>
+      <div class="card"><h3 style="margin-bottom:12px">Configured Connections</h3><table style="font-size:.75rem"><tr><th>Service</th><th>Type</th><th>Status</th><th>Auth</th></tr><tr><td>GitHub</td><td>API</td><td><span class="tag tag-emerald">Connected</span></td><td>SSH Key</td></tr><tr><td>OpenRouter</td><td>API</td><td><span class="tag tag-emerald">Connected</span></td><td>API Key</td></tr><tr><td>ElevenLabs</td><td>API</td><td><span class="tag tag-amber">Partial</span></td><td>API Key</td></tr></table></div>
+    </div>
+    <div class="page" id="page-tools">
+      <div class="page-header"><h1>🛠 Tool Registry</h1><p>Available tools and their status across toolsets</p></div>
+      <div class="card"><h3 style="margin-bottom:12px">Toolsets</h3><table style="font-size:.75rem"><tr><th>Toolset</th><th>Tools</th><th>Enabled</th></tr><tr><td>terminal</td><td>12</td><td><span class="tag tag-emerald">Yes</span></td></tr><tr><td>file</td><td>8</td><td><span class="tag tag-emerald">Yes</span></td></tr><tr><td>web</td><td>6</td><td><span class="tag tag-emerald">Yes</span></td></tr><tr><td>browser</td><td>4</td><td><span class="tag tag-amber">Partial</span></td></tr><tr><td>vision</td><td>3</td><td><span class="tag tag-emerald">Yes</span></td></tr><tr><td>memory</td><td>2</td><td><span class="tag tag-emerald">Yes</span></td></tr><tr><td>cronjob</td><td>5</td><td><span class="tag tag-emerald">Yes</span></td></tr><tr><td>delegation</td><td>4</td><td><span class="tag tag-emerald">Yes</span></td></tr></table></div>
+    </div>
+
+    <!-- ═══ GOVERNANCE ═══ -->
+    <div class="page" id="page-audit">
+      <div class="page-header"><h1>📝 Audit Logs</h1><p>Complete audit trail of all agent actions, decisions, and tool calls</p></div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Recent Activity</h3>
+        <div class="timeline">
+          <div class="timeline-item done"><div class="timeline-time">10:52 AM</div><div class="timeline-text">Agent <strong>Hermes Main</strong> patched ensureEffectChain() — guard order fix</div></div>
+          <div class="timeline-item done"><div class="timeline-time">10:48 AM</div><div class="timeline-text">Agent <strong>Hermes Main</strong> deleted paraphrase card from slideshows page</div></div>
+          <div class="timeline-item done"><div class="timeline-time">10:45 AM</div><div class="timeline-text">Agent <strong>Hermes Main</strong> fixed escaped quotes in teacher-studio.html</div></div>
+          <div class="timeline-item done"><div class="timeline-time">10:40 AM</div><div class="timeline-text">Agent <strong>Hermes Main</strong> created slide-maker.html (40KB) and video-lesson-builder.html (25KB)</div></div>
+          <div class="timeline-item done"><div class="timeline-time">10:35 AM</div><div class="timeline-text">Git commit: "publish: Spell Boss as independent page" — 232 files</div></div>
+          <div class="timeline-item done"><div class="timeline-time">10:30 AM</div><div class="timeline-text">Agent <strong>Hermes Main</strong> added 18 education questions to speaking-assessment.html</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="page" id="page-permissions">
+      <div class="page-header"><h1>🔐 Permissions</h1><p>Role-based access control for agents, tools, and data</p></div>
+      <div class="card"><h3 style="margin-bottom:12px">Agent Permissions</h3><table style="font-size:.75rem"><tr><th>Agent</th><th>File Write</th><th>Git Push</th><th>External API</th><th>Destructive</th></tr><tr><td>Hermes Main</td><td><span class="tag tag-emerald">Allow</span></td><td><span class="tag tag-rose">Deny</span></td><td><span class="tag tag-emerald">Allow</span></td><td><span class="tag tag-amber">Checkpoint</span></td></tr><tr><td>Codex Worker</td><td><span class="tag tag-emerald">Allow</span></td><td><span class="tag tag-rose">Deny</span></td><td><span class="tag tag-amber">Limited</span></td><td><span class="tag tag-rose">Deny</span></td></tr><tr><td>Video Agent</td><td><span class="tag tag-amber">Own dir</span></td><td><span class="tag tag-rose">Deny</span></td><td><span class="tag tag-emerald">Allow</span></td><td><span class="tag tag-rose">Deny</span></td></tr></table></div>
+    </div>
+    <div class="page" id="page-checkpoints">
+      <div class="page-header"><h1>✋ HITL Checkpoints</h1><p>Human-in-the-loop checkpoints for high-risk decisions</p></div>
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div style="font-weight:700;margin-bottom:4px">⚠ Pending Checkpoint</div><div style="font-size:.8rem;color:var(--text-muted)">Destructive file operation: delete 13 speaking lesson files</div></div>
+          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-secondary">Reject</button><button class="btn btn-sm btn-primary">Approve</button></div>
+        </div>
+      </div>
+      <div class="card"><p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:20px 0">No other pending checkpoints.</p></div>
+    </div>
+
+    <!-- ═══ SETTINGS PAGES ═══ -->
+    <div class="page" id="page-models">
+      <div class="page-header"><h1>🦉 Models & Routing</h1><p>Configure AI models, cost routing, and auto-assignment rules</p></div>
+      <div class="grid-3" style="margin-bottom:20px">
+        <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(34,211,238,.1);display:flex;align-items:center;justify-content:center;font-size:14px">🦉</div><div><div style="font-weight:600;font-size:.85rem">OWL Alpha</div><div style="font-size:.65rem;color:var(--text-dim)">Reasoning • Complex</div></div></div><div style="font-size:.7rem;padding:4px 8px;border-radius:4px;background:rgba(251,113,133,.1);color:var(--rose);font-weight:600">Paid</div></div>
+        <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(251,191,36,.1);display:flex;align-items:center;justify-content:center;font-size:14px">⚡</div><div><div style="font-weight:600;font-size:.85rem">Gemini Flash</div><div style="font-size:.65rem;color:var(--text-dim)">Fast • Bulk</div></div></div><div style="font-size:.7rem;padding:4px 8px;border-radius:4px;background:rgba(52,211,153,.1);color:var(--emerald);font-weight:600">FREE</div></div>
+        <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:14px">🔮</div><div><div style="font-weight:600;font-size:.85rem">MiniMax M3</div><div style="font-size:.65rem;color:var(--text-dim)">Vision • Ollama</div></div></div><div style="font-size:.7rem;padding:4px 8px;border-radius:4px;background:rgba(52,211,153,.1);color:var(--emerald);font-weight:600">FREE</div></div>
+      </div>
+      <div class="card"><h3 style="margin-bottom:12px">Auto-Routing Rules</h3><table style="font-size:.75rem"><tr><th>Task Type</th><th>Route To</th><th>Why</th></tr><tr><td>Complex reasoning</td><td>OWL Alpha ($)</td><td>Best quality for architecture decisions</td></tr><tr><td>Bulk text/files</td><td>Gemini Flash (FREE)</td><td>Fast, cheap, good enough</td></tr><tr><td>Vision/media</td><td>MiniMax M3 (FREE)</td><td>Local Ollama, no API cost</td></tr><tr><td>Git push</td><td>Human checkpoint</td><td>Never push without explicit approval</td></tr><tr><td>Destructive ops</td><td>Human checkpoint</td><td>Requires human confirmation</td></tr></table></div>
+    </div>
+    <div class="page" id="page-cost">
+      <div class="page-header"><h1>💰 Cost Optimization</h1><p>Track spending, routing efficiency, and savings</p></div>
+      <div class="grid-3" style="margin-bottom:20px">
+        <div class="card metric"><div class="metric-num">$0.00</div><div class="metric-label">Today</div></div>
+        <div class="card metric"><div class="metric-num">$0.00</div><div class="metric-label">This Week</div></div>
+        <div class="card metric"><div class="metric-num" style="color:var(--emerald)">~$6.80</div><div class="metric-label">Saved vs all-paid</div></div>
+      </div>
+      <div class="card"><p style="color:var(--text-muted);font-size:.85rem"><strong>Strategy:</strong> Route bulk tasks and simple operations to free tier models (Gemini Flash, MiniMax M3). Reserve paid models (OWL Alpha) for complex reasoning, architecture decisions, and debugging. Always confirm before destructive operations.</p></div>
+    </div>
+    <div class="page" id="page-help">
+      <div class="page-header"><h1>📖 Help & Commands</h1><p>Hermes CLI commands, Agent OS features, and usage guides</p></div>
+      <div class="card"><h3 style="margin-bottom:12px">Agent OS Architecture</h3><ul style="padding-left:20px"><li style="margin-bottom:8px"><strong>Dynamic Orchestration</strong> — Goals are decomposed into executable steps, routed to specialized agents, with automatic replanning on exceptions.</li><li style="margin-bottom:8px"><strong>Persistent Memory</strong> — Short-term context for current tasks + long-term institutional knowledge that improves over time.</li><li style="margin-bottom:8px"><strong>Tool Integration</strong> — Agents connect to external systems (CRMs, ERPs, databases) via MCP protocol for real read/write operations.</li><li style="margin-bottom:8px"><strong>Governance & Security</strong> — Role-based access, complete audit logs, and human-in-the-loop checkpoints for high-risk decisions.</li></ul></div>
+    </div>
+
+    <!-- ORCHESTRATION PAGES -->
+    <div class="page" id="page-planner"><div class="page-header"><h1>📋 Task Planner</h1><p>Break goals into executable steps with agent assignments</p></div><div class="card"><p style="color:var(--text-muted);text-align:center;padding:20px">Select a goal from the Goals page to view its decomposition.</p></div></div>
+    <div class="page" id="page-routing"><div class="page-header"><h1>🔀 Agent Routing</h1><p>Intelligent task-to-agent assignment based on capabilities and cost</p></div><div class="card"><h3 style="margin-bottom:12px">Routing Rules</h3><table style="font-size:.75rem"><tr><th>Condition</th><th>Agent</th><th>Model</th></tr><tr><td>type == "reasoning" && complexity > 7</td><td>Hermes Main</td><td>OWL Alpha</td></tr><tr><td>type == "file_edit" && files > 3</td><td>Codex Worker</td><td>Gemini Flash</td></tr><tr><td>type == "video"</td><td>Video Agent</td><td>MiniMax M3</td></tr><tr><td>type == "destructive"</td><td>Human Checkpoint</td><td>—</td></tr></table></div></div>
+    <div class="page" id="page-exceptions"><div class="page-header"><h1>⚠️ Exceptions</h1><p>Handle failures, replan workflows, and escalate to human when needed</p></div><div class="card" style="border-left:3px solid var(--amber)"><div style="font-weight:700;margin-bottom:4px">Active Exception</div><div style="font-size:.8rem;color:var(--text-muted);margin-bottom:8px">Bug Fix Pipeline — AudioContext state mismatch in ensureEffectChain()</div><div style="display:flex;gap:8px"><button class="btn btn-sm btn-primary">Retry</button><button class="btn btn-sm btn-secondary">Replan</button><button class="btn btn-sm btn-ghost">Escalate</button></div></div></div>
+
   </div>
 </div>
 
-<!-- RIGHT PANEL -->
-<div class="right-panel">
-  <div class="panel-tabs"><div class="panel-tab active">Preview</div><div class="panel-tab">Tools</div><div class="panel-tab">Skills</div></div>
-  <div class="panel-content">
-    <div class="preview-card"><div class="preview-card-title">🎯 Business Debate Phrases</div><div class="preview-card-desc">60 native speaker phrases</div><div class="preview-card-meta"><span class="preview-tag">Speaking</span><span class="preview-tag">B2-C2</span></div></div>
-    <div class="preview-card"><div class="preview-card-title">🔬 Anandamide Research</div><div class="preview-card-desc">18-slide research deck</div><div class="preview-card-meta"><span class="preview-tag">Research</span><span class="preview-tag">Citations</span></div></div>
-    <div class="preview-card"><div class="preview-card-title">🎵 Alien Metronome</div><div class="preview-card-desc">Parallel FX chain restored</div><div class="preview-card-meta"><span class="preview-tag">Audio</span><span class="preview-tag">Updated</span></div></div>
-    <div class="efficiency-box" style="margin-top:8px"><div class="efficiency-title">Today's Usage</div><div class="efficiency-row"><span class="efficiency-label">Tokens used</span><span class="efficiency-val">12.4k</span></div><div class="efficiency-row"><span class="efficiency-label">Est. cost</span><span class="efficiency-val" style="color:var(--emerald)">$0.00</span></div><div class="efficiency-row"><span class="efficiency-label">Saved vs all-paid</span><span class="efficiency-val" style="color:var(--amber)">~$6.80</span></div></div>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-var _hCat=0,_hSlide=0;
-var HD=[
-{name:"Session Control",cmds:"/new /clear /retry /undo /title /compress /stop /rollback /background /queue /steer /agents /resume /goal",
-slides:[
-{t:"/new (/reset) — Fresh session",d:"Starts a completely new conversation. All context from the previous session is discarded.",x:"/new",p:"Equivalent to closing and reopening the terminal."},
-{t:"/clear — Clear screen + new session",d:"Clears the terminal screen AND starts a new session. The CLI version of /new with a visual reset.",x:"/clear"},
-{t:"/retry — Resend last message",d:"Resends your previous message without retyping. Useful when a tool call fails or the response was cut off.",x:"/retry"},
-{t:"/undo — Remove last exchange",d:"Removes the last user+assistant message pair from the context. Hermes will 'forget' the last turn.",x:"/undo"},
-{t:"/title [name] — Name the session",d:"Gives the current session a human-readable name. Makes it easier to find later with /resume.",x:'/title "Eloquenta FX debug"'},
-{t:"/compress — Compress context",d:"Manually triggers context compression. Hermes summarizes older conversation to free up token space.",x:"/compress",p:"Use in very long sessions before hitting the token limit."},
-{t:"/stop — Kill background processes",d:"Stops all running background processes. Kills any active delegate_task subagents and cron triggers.",x:"/stop"},
-{t:"/rollback [N] — Restore checkpoint",d:"Restores the filesystem to a previous checkpoint. Hermes auto-creates snapshots before destructive file operations.",x:"/rollback\n/rollback 3"},
-{t:"/background <prompt>",d:"Runs a prompt in the background. Hermes processes it while you continue working. Results delivered when complete.",x:'/background "Search for anandamide research papers"'},
-{t:"/queue <prompt> — Queue for next turn",d:"Adds a message to be processed after Hermes finishes its current response. Runs in the main thread.",x:'/queue "Summarize the research above"'},
-{t:"/steer <prompt> — Inject mid-response",d:"Injects a message after the next tool call without interrupting the current response. Hermes adjusts its plan.",x:'/steer "Focus on the diabetes connection only"'},
-{t:"/agents (/tasks) — Show active agents",d:"Lists all running agents, delegate_task subagents, and their current status.",x:"/agents"},
-{t:"/resume [name] — Resume a session",d:"Resumes a previous session by name or ID. Brings back the full conversation context.",x:'/resume "Eloquenta FX debug"\n/resume 20260604_105050_74ef40'},
-{t:"/goal [text|sub] — Set standing goal",d:"Sets a persistent goal Hermes works toward across multiple turns. The agent self-directs until achieved.",x:'/goal "Fix all scroll issues on speaking lesson slides"\n/goal status\n/goal pause\n/goal clear'}
-]},
-{name:"Configuration",cmds:"/config /model /personality /reasoning /verbose /voice /yolo /busy /indicator /footer /skin /statusbar",
-slides:[
-{t:"/config — Show current config",d:"Displays the current Hermes configuration: model, provider, toolsets, and all active settings.",x:"/config"},
-{t:"/model [name] — Change model",d:"Shows or changes the current model. With no args, shows current. With a name, switches to that model.",x:"/model\n/model openrouter/owl-alpha\n/model anthropic/claude-sonnet-4"},
-{t:"/personality [name] — Set personality",d:"Changes the agent's personality/style. Affects tone, verbosity, and response style.",x:"/personality\n/personality concise\n/personality detailed"},
-{t:"/reasoning [level] — Set reasoning depth",d:"Controls how much 'thinking' Hermes shows. Levels: none, minimal, low, medium, high, xhigh, show, hide.",x:"/reasoning high\n/reasoning show\n/reasoning hide"},
-{t:"/verbose — Toggle verbose mode",d:"Cycles through verbosity levels: off → new → all → verbose. More verbose = more tool output.",x:"/verbose"},
-{t:"/voice [on|off|tts] — Voice mode",d:"Controls text-to-speech output. 'on' enables voice-to-voice. 'tts' enables TTS for responses only.",x:"/voice on\n/voice tts\n/voice off"},
-{t:"/yolo — Toggle approval bypass",d:"Toggles YOLO mode. When ON, Hermes skips approval prompts for destructive commands.",x:"/yolo",p:"Use with caution on production systems."},
-{t:"/busy [sub] — Control Enter behavior",d:"Controls what happens when you press Enter while Hermes is working: queue, steer, interrupt, status.",x:"/busy queue\n/busy steer\n/busy interrupt"},
-{t:"/indicator [style] — Busy indicator style",d:"Picks the TUI busy-indicator animation: kaomoji, emoji, unicode, ascii.",x:"/indicator kaomoji"},
-{t:"/footer [on|off] — Gateway footer",d:"Toggles the runtime-metadata footer on final replies when using gateway platforms.",x:"/footer on"},
-{t:"/skin [name] — Change CLI theme",d:"Changes the TUI color theme. Only affects the local terminal interface.",x:"/skin dark\n/skin light"},
-{t:"/statusbar — Toggle status bar",d:"Shows or hides the terminal status bar showing model, provider, and session info.",x:"/statusbar"}
-]},
-{name:"Tools & Skills",cmds:"/tools /toolsets /skills /skill /reload-skills /reload /reload-mcp /cron /curator /kanban /plugins",
-slides:[
-{t:"/tools — Manage toolsets",d:"Interactive toolset manager. Toggle individual tools on/off. Changes take effect on next /reset.",x:"/tools\n/tools enable web\n/tools disable browser"},
-{t:"/toolsets — List toolsets",d:"Lists all available toolsets and whether they are enabled or disabled.",x:"/toolsets"},
-{t:"/skills — Search/install skills",d:"Interactive skill browser. Search the skills hub, preview skills, and install new ones.",x:"/skills\n/skills search eloquenta\n/skills search audio"},
-{t:"/skill <name> — Load a skill",d:"Loads a skill's SKILL.md into the current session context. The agent follows its instructions.",x:"/skill eloquent-project\n/skill alien-guitar-tuner\n/skill hermes-agent"},
-{t:"/reload-skills — Re-scan skills dir",d:"Re-scans ~/.hermes/skills/ for added or removed skills without restarting the session.",x:"/reload-skills"},
-{t:"/reload — Reload .env variables",d:"Reloads environment variables from ~/.hermes/.env into the running session.",x:"/reload",p:"Useful after editing API keys."},
-{t:"/reload-mcp — Reload MCP servers",d:"Reloads MCP server configurations. Required after adding new MCP servers.",x:"/reload-mcp"},
-{t:"/cron — Manage cron jobs",d:"Interactive cron job manager. List, create, edit, pause, resume, run, and remove scheduled jobs.",x:"/cron list\n/cron create 'every 24h'\ncron pause <id>\ncron run <id>\ncron remove <id>"},
-{t:"/curator — Skill lifecycle manager",d:"Manages skill usage tracking, staleness detection, and archiving. Never deletes — max action is archive.",x:"/curator status\n/curator run\n/curator pin eloquent-project\n/curator archive\n/curator backup",p:"Pinned skills are exempt from every auto-transition."},
-{t:"/kanban — Multi-agent board",d:"Multi-profile collaboration board. Create, assign, link, and track tasks across agent teams.",x:"/kanban create\n/kanban list\n/kanban assign\n/kanban complete\n/kanban block\n/kanban link\n/kanban comment"},
-{t:"/plugins — List plugins",d:"Lists all installed plugins, their status, and what tools they provide.",x:"/plugins\n/plugins list\n/plugins install <name>\n/plugins remove <name>"}
-]},
-{name:"Gateway",cmds:"/approve /deny /restart /sethome /update /topic /platforms",
-slides:[
-{t:"/approve — Approve pending command",d:"Approves a command that Hermes is waiting for confirmation on. Used in Telegram/Discord.",x:"/approve"},
-{t:"/deny — Deny pending command",d:"Denies a pending command. Hermes will not execute whatever it was asking permission for.",x:"/deny"},
-{t:"/restart — Restart gateway",d:"Restarts the Hermes gateway service. Useful when platform connections need refreshing.",x:"/restart"},
-{t:"/sethome — Set home channel",d:"Sets the current chat as the home channel. Reports, cron deliveries, and undelivered messages go here.",x:"/sethome"},
-{t:"/update — Update Hermes",d:"Updates Hermes Agent to the latest version. Pulls from the installed source.",x:"/update"},
-{t:"/topic [sub] — Telegram topics",d:"Enable or inspect Telegram DM topic sessions. Topics organize conversations within a single chat.",x:"/topic enable\n/topic status\n/topic list"},
-{t:"/platforms (/gateway) — Connection status",d:"Shows the connection status for all configured messaging platforms (Telegram, Discord, Slack, etc.).",x:"/platforms"}
-]},
-{name:"Utility",cmds:"/branch /fast /browser /history /save /copy /paste /image",
-slides:[
-{t:"/branch (/fork) — Branch session",d:"Creates a new branch of the current session. The branch inherits context but can diverge independently.",x:"/branch\n/fork",p:"Useful for exploring different approaches without losing the main thread."},
-{t:"/fast — Toggle fast mode",d:"Toggles priority/fast processing. When ON, Hermes uses faster but potentially less thorough reasoning.",x:"/fast"},
-{t:"/browser — Open browser",d:"Opens a CDP (Chrome DevTools Protocol) browser connection for web automation and testing.",x:"/browser"},
-{t:"/history — Show conversation history",d:"Displays the full conversation history for the current session including tool calls.",x:"/history"},
-{t:"/save — Save conversation to file",d:"Saves the current conversation transcript to a file for documentation or sharing.",x:"~/conversations/eloquenta-debug.txt"},
-{t:"/copy [N] — Copy last response",d:"Copies the last assistant response (or Nth-to-last) to the system clipboard.",x:"/copy\n/copy 3"},
-{t:"/paste — Attach clipboard image",d:"Attaches an image from the clipboard to the conversation. Hermes can analyze the image.",x:"/paste"},
-{t:"/image — Attach local image",d:"Attaches a local image file to the conversation. Provide a path to the image file.",x:"~/screenshots/metronome.png"}
-]},
-{name:"Info & Exit",cmds:"/help /commands /usage /insights /gquota /status /profile /debug /quit",
-slides:[
-{t:"/help — Show all commands",d:"Displays the full list of available slash commands organized by category.",x:"/help"},
-{t:"/commands [page] — Browse commands",d:"Interactive command browser. Page through commands with descriptions. Gateway-only version of /help.",x:"/commands\n/commands 2"},
-{t:"/usage — Token usage",d:"Shows token usage statistics for the current session: input/output tokens and estimated cost.",x:"/usage"},
-{t:"/insights [days] — Usage analytics",d:"Shows usage analytics over the specified number of days: token counts, costs, and session frequency.",x:"/insights\n/insights 7\n/insights 30"},
-{t:"/gquota — Gemini quota",d:"Shows Google Gemini Code Assist quota usage. Only relevant when using Google as a provider.",x:"/gquota"},
-{t:"/status — Session info",d:"Shows detailed information about the current session: model, provider, toolsets, and memory status.",x:"/status"},
-{t:"/profile — Active profile",d:"Shows the currently active profile and its configuration. Profiles allow isolated Hermes instances.",x:"/profile"},
-{t:"/debug — Upload debug report",d:"Uploads a debug report (system info + logs) and returns a shareable link for troubleshooting.",x:"/debug"},
-{t:"/quit (/exit, /q) — Exit CLI",d:"Exits the Hermes CLI session. Saves the conversation transcript before closing.",x:"/quit\n/exit\n/q"}
-]},
-{name:"CLI Reference",cmds:"hermes chat /hermes config /hermes tools /hermes skills /hermes cron /hermes gateway /hermes profile",
-slides:[
-{t:"Chat Commands",d:"Core commands for interacting with Hermes from the terminal.",x:"hermes                          # Interactive chat\nhermes chat -q \"prompt\"        # Single query\nhermes chat -m owl-alpha       # Specific model\nhermes chat -t web,terminal    # Specific toolsets\nhermes --resume SESSION_ID     # Resume session\nhermes --continue              # Resume most recent\nhermes --skills eloquenta      # Preload skill"},
-{t:"Configuration",d:"Commands for managing Hermes configuration.",x:"hermes setup                  # Setup wizard\nhermes setup model             # Model picker\nhermes config                  # View config\nhermes config edit             # Open in $EDITOR\nhermes config set KEY VAL      # Set value\nhermes config path             # Print path\nhermes config migrate          # Update format"},
-{t:"Tools & Skills",d:"Commands for managing tools and skills from the terminal.",x:"hermes tools                  # Interactive manager\nhermes tools list              # List all tools\nhermes tools enable web        # Enable toolset\nhermes skills list             # List skills\nhermes skills search QUERY     # Search hub\nhermes skills install ID       # Install skill\nhermes skills browse           # Browse all"},
-{t:"Sessions & Cron",d:"Commands for managing sessions and scheduled jobs.",x:"hermes sessions list          # List sessions\nhermes sessions export OUT     # Export JSONL\nhermes sessions delete ID      # Delete session\nhermes sessions prune --older-than 30\nhermes cron list               # List jobs\nhermes cron create \"30m\"       # Create job\nhermes cron run ID             # Trigger now"},
-{t:"Gateway",d:"Commands for managing the messaging gateway.",x:"hermes gateway run             # Start gateway\nhermes gateway install         # Install service\nhermes gateway start/stop      # Control service\nhermes gateway status          # Check status\nhermes gateway setup           # Configure platforms\nhermes gateway restart         # Restart"},
-{t:"Profiles",d:"Commands for managing isolated Hermes profiles.",x:"hermes profile list           # List profiles\nhermes profile create NAME     # Create profile\nhermes profile use NAME        # Set default\nhermes profile show NAME       # Show details\nhermes profile delete NAME     # Delete\nhermes profile clone SOURCE    # Clone existing"},
-{t:"Other Commands",d:"Additional CLI commands for various operations.",x:"hermes doctor [--fix]          # Check health\nhermes status [--all]          # Component status\nhermes login --provider P      # OAuth login\nhermes logout                  # Clear auth\nhermes auth add                # Add credentials\nhermes insights [--days N]     # Analytics\nhermes update                  # Update version\nhermes mcp list                # List MCP servers\nhermes mcp add NAME --url URL  # Add MCP\nhermes webhook subscribe NAME  # Create webhook\nhermes plugins list            # List plugins\nhermes memory setup            # Configure memory\nhermes completion bash         # Shell completions\nhermes uninstall               # Uninstall"}
-]}
-];
-
-function showCat(i){_hCat=i;_hSlide=0;document.querySelectorAll('.cat-tab').forEach(function(t,j){t.classList.toggle('active',j===i)});document.getElementById('helpCatTitle').textContent=HD[i].name;renderSlide()}
-function renderSlide(){var c=HD[_hCat],s=c.slides[_hSlide];document.getElementById('helpCounter').textContent=(_hSlide+1)+'/'+c.slides.length;document.getElementById('helpProgress').textContent='Slide '+(_hSlide+1)+' of '+c.slides.length;document.getElementById('qrTitle').textContent=c.name;document.getElementById('qrCmds').textContent=c.cmds;var h='<div class="help-slide"><div class="help-slide-title">'+s.t+'</div><div class="help-slide-text">'+s.d+'</div>';if(s.x)h+='<div class="help-example">'+s.x+'</div>';if(s.p)h+='<div class="help-tip"><p><strong style="color:var(--amber)">💡 Tip:</strong> '+s.p+'</p></div>';h+='</div>';document.getElementById('helpSlideArea').innerHTML=h}
-function prevSlide(){if(_hSlide>0){_hSlide--;renderSlide()}else if(_hCat>0){_hCat--;_hSlide=HD[_hCat].slides.length-1;showCat(_hCat)}}
-function nextSlide(){if(_hSlide<HD[_hCat].slides.length-1){_hSlide++;renderSlide()}else if(_hCat<HD.length-1){_hCat++;showCat(_hCat)}}
-function prevCat(){if(_hCat>0)showCat(_hCat-1);else showCat(HD.length-1)}
-function nextCat(){if(_hCat<HD.length-1)showCat(_hCat+1);else showCat(0)}
-
-function selectModel(el){document.querySelectorAll('.model-card').forEach(c=>c.classList.remove('active'));el.classList.add('active')}
-function toggleSwitch(el){el.classList.toggle('on');el.classList.toggle('off')}
-function switchTab(el,tab){document.querySelectorAll('.topbar-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.getElementById('kanbanView').style.display=tab==='kanban'?'flex':'none';document.getElementById('chatView').style.display=tab==='chat'?'flex':'none';document.getElementById('workspaceView').style.display=tab==='workspace'?'flex':'none';document.getElementById('helpView').style.display=tab==='help'?'flex':'none';if(tab==='help'&&!window._hInit){window._hInit=true;renderSlide()}}
-function sendChat(){var i=document.getElementById('chatInput'),m=i.value.trim();if(!m)return;var c=document.querySelector('.chat-messages');var d=document.createElement('div');d.className='chat-msg';d.innerHTML='<div class="chat-avatar" style="background:rgba(148,163,184,.1);color:var(--text-muted)">U</div><div class="chat-bubble"><div class="chat-bubble-header"><span class="chat-bubble-name">You</span><span class="chat-bubble-time">Just now</span></div><div class="chat-bubble-text">'+m.replace(/</g,'&lt;')+'</div></div>';c.appendChild(d);i.value='';c.scrollTop=c.scrollHeight}
-document.addEventListener('wheel',function(e){if(e.shiftKey){e.preventDefault();window.scrollBy(e.deltaY,0)}},{passive:false});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
+function showPage(id, el){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+  document.querySelectorAll(".nav-item").forEach(function(n){n.classList.remove("active")});
+  var page=document.getElementById("page-"+id);
+  if(page)page.classList.add("active");
+  if(el)el.classList.add("active");
+  var titles={dashboard:"Dashboard",goals:"Goals",agents:"Agents",workflows:"Workflows",planner:"Task Planner",routing:"Agent Routing",exceptions:"Exceptions","short-term":"Short-Term Context","long-term":"Long-Term Memory",knowledge:"Knowledge Graph",mcp:"MCP Servers",connections:"Connections",tools:"Tool Registry",audit:"Audit Logs",permissions:"Permissions",checkpoints:"HITL Checkpoints",models:"Models & Routing",cost:"Cost Optimization",help:"Help & Commands"};
+  document.getElementById("pageTitle").textContent=titles[id]||id;
+}
+function openModal(type){alert("New "+type+" modal — coming soon")}
+document.addEventListener("wheel",function(e){if(e.shiftKey){e.preventDefault();window.scrollBy(e.deltaY,0)}},{passive:false});
 </script>
 </body>
 </html>
