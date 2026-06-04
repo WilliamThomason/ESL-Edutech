@@ -376,6 +376,102 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .chord-dot.muted{background:transparent;color:var(--rose);font-size:16px}
 .chord-dot.open{background:transparent;border:2px solid var(--text-muted);color:transparent}
 .barre-indicator{position:absolute;height:10px;border-radius:5px;background:var(--accent);opacity:.6;z-index:9}
+
+/* ═══════════════════════════════════════════
+   CHORD DISPLAY — large diagram below fretboard
+   ═══════════════════════════════════════════ */
+.chord-display-section {
+  display:flex;gap:20px;padding:16px 24px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  margin:12px 0;align-items:flex-start;
+}
+.chord-display-left{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+.chord-display-right{width:220px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.cd-big-title{font-size:24px;font-weight:800;color:var(--text);text-align:center}
+.cd-big-grid{
+  position:relative;width:380px;height:480px;
+  border:1px solid var(--border);border-radius:10px;
+  background:var(--neck-dark);overflow:hidden;
+}
+.cd-big-grid .cd-nut{position:absolute;left:0;right:0;height:5px;background:rgba(220,200,170,.8);top:0;z-index:2}
+.cd-big-grid .cd-string{position:absolute;top:0;bottom:0;width:1px;background:var(--string-color);z-index:1}
+.cd-big-grid .cd-fret-line{position:absolute;left:0;right:0;height:1px;background:var(--fret-wire);z-index:1}
+.cd-big-grid .cd-dot{
+  position:absolute;width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;z-index:5;cursor:pointer;
+  transition:all .1s;box-sizing:border-box;
+}
+.cd-big-grid .cd-dot:hover{transform:scale(1.25)}
+.cd-big-grid .cd-dot.root{background:var(--accent);color:#000;box-shadow:0 0 10px var(--accent-glow)}
+.cd-big-grid .cd-dot.note{background:var(--highlight);color:#000}
+.cd-big-grid .cd-dot.muted{font-size:18px;color:var(--rose);background:transparent}
+.cd-big-grid .cd-dot.open{width:30px;height:30px;border:2px solid var(--text-muted);background:transparent}
+.cd-big-grid .cd-finger{position:absolute;font-size:10px;font-weight:700;color:#000;pointer-events:none}
+.cd-big-grid .cd-barre{position:absolute;height:12px;border-radius:6px;background:var(--accent);opacity:.5;z-index:4}
+.cd-big-grid .cd-fret-label{position:absolute;font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.cd-voices-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
+.cd-voices-list{display:flex;flex-direction:column;gap:4px}
+.cd-voice-btn{
+  padding:8px 12px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text-muted);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;text-align:left;display:flex;justify-content:space-between;gap:8px;
+}
+.cd-voice-btn:hover{border-color:var(--accent);color:var(--accent)}
+.cdvoice-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.cd-strum-row{display:flex;gap:8px;margin-top:4px}
+.cd-strum-btn{
+  flex:1;height:40px;border-radius:8px;border:1px solid var(--accent);
+  background:var(--accent-dim);color:var(--accent);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .15s;
+}
+.cd-strum-btn:hover{background:var(--accent);color:#000}
+.cd-arpeggio-btn{
+  flex:1;height:40px;border-radius:8px;border:1px solid var(--violet);
+  background:rgba(167,139,250,.1);color:var(--violet);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .15s;
+}
+.cd-arpeggio-btn:hover{background:var(--violet);color:#000}
+
+/* ═══════════════════════════════════════════
+   SCALE DISPLAY below fretboard
+   ═══════════════════════════════════════════ */
+.scale-display-section{
+  padding:12px 24px;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;margin:0 0 12px;
+}
+.sd-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.sd-title{font-size:18px;font-weight:700;color:var(--text)}
+.sd-notes{font-size:13px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.sd-play-btn,.sd-arpeggio-btn{
+  height:32px;padding:0 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;
+}
+.sd-play-btn{border:1px solid var(--accent);background:var(--accent-dim);color:var(--accent)}
+.sd-play-btn:hover{background:var(--accent);color:#000}
+.sd-arpeggio-btn{border:1px solid var(--cyan);background:rgba(34,211,238,.1);color:var(--cyan)}
+.sd-arpeggio-btn:hover{background:var(--cyan);color:#000}
+.sd-degrees{display:flex;gap:6px;flex-wrap:wrap}
+.sd-degree{
+  height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text-dim);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .1s;display:flex;align-items:center;gap:4px;
+}
+.sd-degree:hover{border-color:var(--highlight);color:var(--highlight)}
+.sd-degree .roman{font-weight:800}
+.sd-degree .chord-quality{font-size:10px;color:var(--text-dim)}
+
+/* Scale pattern in info panel */
+.scale-pattern-display{
+  display:flex;flex-direction:column;gap:4px;padding:8px;
+}
+.sp-row{display:flex;align-items:center;gap:6px}
+.sp-note{
+  width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;
+}
+.sp-note.root{background:var(--accent);color:#000}
+.sp-note.normal{background:var(--bg3);color:var(--text-muted);border:1px solid var(--border)}
+.sp-bar{width:1px;height:16px;background:var(--border);margin:0 4px}
 </style>
 </head>
 <body>
@@ -530,6 +626,33 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
         </div>
       </div>
 
+      <!-- ═══ CHORD DIAGRAM — large display below fretboard ═══ -->
+      <div class="chord-display-section" id="chordDisplaySection">
+        <div class="chord-display-left">
+          <div class="cd-big-title" id="cdBigTitle">Select a chord</div>
+          <div class="cd-big-grid" id="cdBigGrid"></div>
+        </div>
+        <div class="chord-display-right">
+          <div class="cd-voices-label">Voicings</div>
+          <div class="cd-voices-list" id="cdVoicesList"></div>
+          <div class="cd-strum-row">
+            <button class="cd-strum-btn" id="cdStrumBtn" onclick="strumCurrentChord()">🎸 Strum</button>
+            <button class="cd-arpeggio-btn" onclick="arpeggiateCurrentChord()">♪ Arpeggio</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SCALE DISPLAY below fretboard ═══ -->
+      <div class="scale-display-section">
+        <div class="sd-header">
+          <span class="sd-title" id="sdTitle">Major (Ionian)</span>
+          <span class="sd-notes" id="sdNotes"></span>
+          <button class="sd-play-btn" onclick="playScale()">▶ Play Scale</button>
+          <button class="sd-arpeggio-btn" onclick="playScaleArpeggio()">♪ Arpeggio</button>
+        </div>
+        <div class="sd-degrees" id="sdDegrees"></div>
+      </div>
+
       <!-- Scale info panel -->
       <div class="info-panel">
         <div class="info-left">
@@ -537,8 +660,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
           <div id="scaleDegrees"></div>
         </div>
         <div class="info-center">
-          <div class="info-title">Chord</div>
-          <div class="chord-diagram" id="chordDiagram"></div>
+          <div class="info-title">Scale Pattern</div>
+          <div class="scale-pattern-display" id="scalePattern"></div>
         </div>
         <div class="info-right">
           <div class="info-title">Diatonic Chords</div>
@@ -1191,6 +1314,172 @@ function renderChordDots() {
 }
 
 // ═══════════════════════════════════════════
+// RENDER: BIG CHORD DIAGRAM below fretboard
+// ═══════════════════════════════════════════
+var _currentChord = null;
+var _currentVoicing = 0;
+
+function renderBigChordDiagram(chord, voicingIdx) {
+  if (!chord) return;
+  _currentChord = chord;
+  _currentVoicing = voicingIdx || 0;
+  var v = chord.voicings[_currentVoicing];
+  if (!v) return;
+  var frets = v.frets || v.f;
+  var fingers = v.fingers || v.g;
+  var barre = v.barre || v.b;
+  var startFret = v.startFret || v.sf || 1;
+
+  document.getElementById('cdBigTitle').textContent = chord.name;
+
+  var grid = document.getElementById('cdBigGrid');
+  grid.innerHTML = '';
+
+  // Nut
+  if (startFret <= 1) {
+    var nut = document.createElement('div'); nut.className = 'cd-nut'; grid.appendChild(nut);
+  }
+
+  // String lines
+  for (var s = 0; s < 6; s++) {
+    var line = document.createElement('div'); line.className = 'cd-string';
+    line.style.left = ((s + 0.5) / 6 * 100) + '%'; grid.appendChild(line);
+  }
+  // Fret lines
+  for (var f = 1; f <= 5; f++) {
+    var fl = document.createElement('div'); fl.className = 'cd-fret-line';
+    fl.style.top = (f / 5 * 100) + '%'; grid.appendChild(fl);
+  }
+  // Fret label
+  if (startFret > 1) {
+    var lbl = document.createElement('div'); lbl.className = 'cd-fret-label';
+    lbl.style.bottom = '-20px'; lbl.style.left = '50%'; lbl.style.transform = 'translateX(-50%)';
+    lbl.textContent = startFret + 'fr'; grid.appendChild(lbl);
+  }
+  // Barre
+  if (barre) {
+    var bf = barre.fr - startFret + 1;
+    var bar = document.createElement('div'); bar.className = 'cd-barre';
+    var by = (bf - 0.5) / 5 * 100;
+    var bx1 = (5 - barre.to) / 6 * 100 + 0.5;
+    var bx2 = (5 - barre.fr0) / 6 * 100 + 0.5;
+    bar.style.left = bx1 + '%'; bar.style.top = by + '%';
+    bar.style.width = (bx2 - bx1) + '%'; grid.appendChild(bar);
+  }
+  // Dots
+  for (var s = 0; s < 6; s++) {
+    var x = (s + 0.5) / 6 * 100;
+    var fret = frets[s];
+    if (fret === -1) {
+      var dot = document.createElement('div'); dot.className = 'cd-dot muted';
+      dot.style.left = (x - 2) + '%'; dot.style.top = '-10%'; dot.textContent = '✕';
+      // Use calc for centering
+      dot.style.left = 'calc(' + x + '% - 13px)'; dot.style.top = '-14px';
+      dot.textContent = '✕'; grid.appendChild(dot);
+    } else if (fret === 0) {
+      var dot = document.createElement('div'); dot.className = 'cd-dot open';
+      dot.style.left = 'calc(' + x + '% - 15px)'; dot.style.top = '-14px';
+      dot.textContent = '○'; grid.appendChild(dot);
+    } else {
+      var fretPos = fret - startFret + 1;
+      if (fretPos < 1 || fretPos > 5) continue;
+      var isRoot = (fret % 12) === chord.root;
+      var dot = document.createElement('div'); dot.className = 'cd-dot ' + (isRoot ? 'root' : 'note');
+      dot.style.left = 'calc(' + x + '% - 13px)';
+      dot.style.top = 'calc(' + ((fretPos - 0.5) / 5 * 100) + '% - 13px)';
+      grid.appendChild(dot);
+      if (fingers[s] > 0 && !barre) {
+        var fn = document.createElement('div'); fn.className = 'cd-finger';
+        fn.textContent = fingers[s]; fn.style.left = 'calc(' + x + '% - 5px)';
+        fn.style.top = 'calc(' + ((fretPos - 0.5) / 5 * 100) + '% - 6px)';
+        grid.appendChild(fn);
+      }
+    }
+  }
+
+  // Render voicings list
+  var vl = document.getElementById('cdVoicesList');
+  vl.innerHTML = '';
+  chord.voicings.forEach(function(vv, i) {
+    var btn = document.createElement('button');
+    btn.className = 'cd-voice-btn' + (i === _currentVoicing ? ' active' : '');
+    var vName = vv.name || vv.n;
+    var vStart = vv.startFret || vv.sf || 1;
+    btn.innerHTML = '<span>' + vName + '</span><span style="color:var(--text-dim)">Fret ' + vStart + '</span>';
+    (function(idx) {
+      btn.addEventListener('click', function() { renderBigChordDiagram(chord, idx); });
+    })(i);
+    vl.appendChild(btn);
+  });
+}
+
+function strumCurrentChord() {
+  if (!_currentChord) return;
+  var v = _currentChord.voicings[_currentVoicing];
+  if (!v) return;
+  var frets = v.frets || v.f;
+  var btn = document.getElementById('cdStrumBtn');
+  if (btn) { btn.classList.add('playing'); setTimeout(function(){btn.classList.remove('playing');}, 600); }
+  for (var s = 0; s < 6; s++) {
+    var fret = frets[s];
+    if (fret <= 0) continue;
+    var stringBase = [40, 45, 50, 55, 59, 64][s];
+    (function(f) { setTimeout(function() { playNote(f, 1.5, false); }, s * 40); })(midiToFreq(stringBase + fret));
+  }
+}
+
+function arpeggiateCurrentChord() {
+  if (!_currentChord) return;
+  var notes = [_currentChord.root, (_currentChord.root + _currentChord.i3) % 12, (_currentChord.root + _currentChord.i5) % 12];
+  notes.forEach(function(pc, i) {
+    setTimeout(function() { playNote(midiToFreq(pc + 60), 1.0, false); }, i * 300);
+  });
+}
+
+function playScaleArpeggio() {
+  var notes = getScaleNotes(S.root, S.scale);
+  notes.forEach(function(pc, i) {
+    setTimeout(function() { playNote(midiToFreq(pc + 60), 0.8, false); }, i * 250);
+  });
+}
+
+// ═══════════════════════════════════════════
+// RENDER: SCALE DISPLAY below fretboard
+// ═══════════════════════════════════════════
+function renderScaleDisplay() {
+  var notes = getScaleNotes(S.root, S.scale);
+  var rootIdx = noteToRootIndex(S.root);
+  var sc = SCALES[S.scale];
+
+  document.getElementById('sdTitle').textContent = sc.name;
+  document.getElementById('sdNotes').textContent = notes.map(function(pc) { return noteNames[pc]; }).join(' - ');
+
+  var sd = document.getElementById('sdDegrees');
+  sd.innerHTML = '';
+  sc.intervals.forEach(function(iv, i) {
+    var d = document.createElement('div'); d.className = 'sd-degree';
+    var nm = ['R', 'm2', 'M2', 'm3', 'M3', 'P4', 'TT', 'P5', 'm6', 'M6', 'm7', 'M7'][iv] || '';
+    var q = getChordQuality(S.scale, i);
+    d.innerHTML = '<span class="roman">' + ROMAN[i] + '</span>' + noteNames[notes[i]] + '<span class="chord-quality">' + q.chord + '</span>';
+    (function(degree) {
+      d.addEventListener('click', function() {
+        var chords = getDiatonicChords(S.root, S.scale);
+        if (chords[degree]) {
+          renderBigChordDiagram(chords[degree], 0);
+        }
+        var rn = notes[degree % notes.length];
+        var third = notes[(degree + 2) % notes.length];
+        var fifth = notes[(degree + 4) % notes.length];
+        [rn, third, fifth].forEach(function(pc, j) {
+          setTimeout(function() { playNote(midiToFreq(pc + 60), 1.2, j === 0); }, j * 60);
+        });
+      });
+    })(i);
+    sd.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════
 // RENDER: INFO PANEL
 // ═══════════════════════════════════════════
 function getChordQuality(scaleType,degree){
@@ -1246,46 +1535,39 @@ function getDiatonicChords(root,type){
 
 function renderChordDiagram(chord){
   if(!chord)return;
-  var el=document.getElementById('chordDiagram');el.innerHTML='';
-  var tuning=TUNINGS[S.tuning];var strings=tuning.midi.filter(function(m){return m>0});var numStrings=strings.length;
-  var title=document.createElement('div');title.className='cd-title';title.textContent=chord.name;el.appendChild(title);
-  var grid=document.createElement('div');grid.className='cd-fret-grid';
-  var nut=document.createElement('div');nut.className='cd-nut';grid.appendChild(nut);
-  // String lines
-  for(var s=0;s<numStrings;s++){var line=document.createElement('div');line.className='cd-string';line.style.left=((s+0.5)/numStrings*100)+'%';grid.appendChild(line);}
-  // Fret lines
-  for(var f=1;f<=5;f++){var fl=document.createElement('div');fl.className='cd-fret-line';fl.style.top=(f/5*100)+'%';grid.appendChild(fl);}
-  // Open/muted indicators above nut
-  for(var s=0;s<numStrings;s++){
-    var fret = (function(){for(var af=0;af<=5;af++){var pc=(strings[s]+af)%12;if([chord.root,(chord.root+chord.i3)%12,(chord.root+chord.i5)%12].indexOf(pc)>=0)return af;}return -1;})();
-    if(fret === -1){
-      var dot=document.createElement('div');dot.className='cd-dot muted';
-      dot.style.left='calc('+((s+0.5)/numStrings*100)+'% - 10px)';dot.style.top='-18px';
-      dot.textContent='✕';grid.appendChild(dot);
-    } else if(fret === 0){
-      var dot=document.createElement('div');dot.className='cd-dot open';
-      dot.style.left='calc('+((s+0.5)/numStrings*100)+'% - 10px)';dot.style.top='-18px';
-      dot.textContent='○';grid.appendChild(dot);
+  // Also render the big chord diagram below fretboard
+  renderBigChordDiagram(chord, 0);
+  // Also render in the info panel (smaller)
+  var el=document.getElementById('chordDiagram');if(el){
+    el.innerHTML='';
+    var tuning=TUNINGS[S.tuning];var strings=tuning.midi.filter(function(m){return m>0});var numStrings=strings.length;
+    var title=document.createElement('div');title.className='cd-title';title.textContent=chord.name;el.appendChild(title);
+    var grid=document.createElement('div');grid.className='cd-fret-grid';
+    var nut=document.createElement('div');nut.className='cd-nut';grid.appendChild(nut);
+    for(var s=0;s<numStrings;s++){var line=document.createElement('div');line.className='cd-string';line.style.left=((s+0.5)/numStrings*100)+'%';grid.appendChild(line);}
+    for(var f=1;f<=5;f++){var fl=document.createElement('div');fl.className='cd-fret-line';fl.style.top=(f/5*100)+'%';grid.appendChild(fl);}
+    for(var s=0;s<numStrings;s++){
+      var fret = (function(){for(var af=0;af<=5;af++){var pc=(strings[s]+af)%12;if([chord.root,(chord.root+chord.i3)%12,(chord.root+chord.i5)%12].indexOf(pc)>=0)return af;}return -1;})();
+      if(fret === -1){var dot=document.createElement('div');dot.className='cd-dot muted';dot.style.left='calc('+((s+0.5)/numStrings*100)+'% - 10px)';dot.style.top='-18px';dot.textContent='✕';grid.appendChild(dot);}
+      else if(fret === 0){var dot=document.createElement('div');dot.className='cd-dot open';dot.style.left='calc('+((s+0.5)/numStrings*100)+'% - 10px)';dot.style.top='-18px';dot.textContent='○';grid.appendChild(dot);}
     }
-  }
-  // Chord note dots on frets
-  var chordNotes=[chord.root,(chord.root+chord.i3)%12,(chord.root+chord.i5)%12];
-  for(var s=0;s<numStrings;s++){
-    var bestFret=-1,bestPC=-1;
-    for(var af=1;af<=5;af++){var pc=(strings[s]+af)%12;if(chordNotes.indexOf(pc)>=0){bestFret=af;bestPC=pc;break;}}
-    if(bestFret>=0){
-      var isRoot=(bestPC===chord.root);
-      var dot=document.createElement('div');dot.className='cd-dot '+(isRoot?'root':'note');
-      // Center dot on string/fret intersection
-      dot.style.left='calc('+((s+0.5)/numStrings*100)+'% - 10px)';
-      dot.style.top='calc('+((bestFret-0.5)/5*100)+'% - 10px)';
-      var idx=chordNotes.indexOf(bestPC);
-      dot.textContent=idx>=0?['R','','','3','','5'][idx]:'';
-      (function(fq){dot.onclick=function(){playNote(fq,1.0);};})(midiToFreq(strings[s]+bestFret));
-      grid.appendChild(dot);
+    var chordNotes=[chord.root,(chord.root+chord.i3)%12,(chord.root+chord.i5)%12];
+    for(var s=0;s<numStrings;s++){
+      var bestFret=-1,bestPC=-1;
+      for(var af=1;af<=5;af++){var pc=(strings[s]+af)%12;if(chordNotes.indexOf(pc)>=0){bestFret=af;bestPC=pc;break;}}
+      if(bestFret>=0){
+        var isRoot=(bestPC===chord.root);
+        var dot=document.createElement('div');dot.className='cd-dot '+(isRoot?'root':'note');
+        dot.style.left='calc('+((s+0.5)/numStrings*100)+'% - 10px)';
+        dot.style.top='calc('+((bestFret-0.5)/5*100)+'% - 10px)';
+        var idx=chordNotes.indexOf(bestPC);
+        dot.textContent=idx>=0?['R','','','3','','5'][idx]:'';
+        (function(fq){dot.onclick=function(){playNote(fq,1.0);};})(midiToFreq(strings[s]+bestFret));
+        grid.appendChild(dot);
+      }
     }
+    el.appendChild(grid);
   }
-  el.appendChild(grid);
 }
 
 function updateInfo(){
@@ -1371,6 +1653,44 @@ function updateInfo(){
     dc.appendChild(d);
   });
   if(chords.length>0)renderChordDiagram(chords[0]);
+  // Render the scale display below fretboard
+  renderScaleDisplay();
+  // Render scale pattern in info panel
+  renderScalePattern();
+}
+
+// ═══════════════════════════════════════════
+// RENDER: SCALE PATTERN in info panel
+// ═══════════════════════════════════════════
+function renderScalePattern() {
+  var el = document.getElementById('scalePattern');
+  if (!el) return;
+  var notes = getScaleNotes(S.root, S.scale);
+  var rootIdx = noteToRootIndex(S.root);
+  el.innerHTML = '';
+  // Show note sequence with degree numbers
+  var row = document.createElement('div'); row.className = 'sp-row';
+  notes.forEach(function(pc, i) {
+    var d = document.createElement('div');
+    d.className = 'sp-note ' + (i === 0 ? 'root' : 'normal');
+    d.textContent = noteNames[pc];
+    d.title = ROMAN[i] + ' — ' + noteNames[pc];
+    (function(notePc) {
+      d.addEventListener('click', function() {
+        var ctx = getAudio(); if (!ctx) return;
+        playNote(midiToFreq(notePc + 60), 0.6, false);
+      });
+    })(pc);
+    row.appendChild(d);
+    if (i < notes.length - 1) {
+      var bar = document.createElement('div'); bar.className = 'sp-bar'; row.appendChild(bar);
+    }
+  });
+  // Add octave
+  var oct = document.createElement('div'); oct.className = 'sp-note root';
+  oct.textContent = noteNames[notes[0]]; oct.title = 'Octave';
+  row.appendChild(oct);
+  el.appendChild(row);
 }
 
 // ═══════════════════════════════════════════
