@@ -1022,7 +1022,14 @@ function renderRoots(){
   var el=document.getElementById('rootButtons');el.innerHTML='';
   noteNames.forEach(function(n){
     var b=document.createElement('button');b.className='root-btn'+(n===S.root?' active':'');b.textContent=n;
-    b.onclick=function(){S.root=n;renderRoots();renderFretboard();updateInfo();updateURL();};el.appendChild(b);
+    b.onclick=function(){
+      S.root=n;renderRoots();renderFretboard();updateInfo();updateURL();
+      // Play the root note
+      var ctx=getAudio();if(!ctx)return;
+      var ri=noteToRootIndex(n);
+      playNote(midiToFreq(ri+12+S.octave*12),0.8,true);
+    };
+    el.appendChild(b);
   });
 }
 
@@ -1104,7 +1111,10 @@ function renderFretboard(){
         var nn=document.createElement('span');nn.className='nn';nn.textContent=noteNames[pc];dot.appendChild(nn);
         var ni=document.createElement('span');ni.className='ni';ni.textContent=INTERVAL_NAMES[ic]||'?';dot.appendChild(ni);
         var tip=document.createElement('div');tip.className='tip';tip.textContent=noteNames[pc]+' — '+['R','m2','M2','m3','M3','P4','TT','P5','m6','M6','m7','M7'][ic];dot.appendChild(tip);
-        (function(fq){dot.addEventListener('click',function(){playNote(fq);});})(midiToFreq(midi));
+        (function(fq){
+          dot.addEventListener('click',function(){playNote(fq);});
+          dot.addEventListener('touchstart',function(e){e.preventDefault();playNote(fq);});
+        })(midiToFreq(midi));
         td.appendChild(dot);
       }
       tr.appendChild(td);
@@ -1281,10 +1291,41 @@ function renderChordDiagram(chord){
 function updateInfo(){
   var notes=getScaleNotes(S.root,S.scale);var rootIndex=noteToRootIndex(S.root);
   var nr=document.getElementById('notesRow');nr.innerHTML='';
-  notes.forEach(function(pc){var ic=intervalClass(pc,rootIndex);var d=document.createElement('div');d.className='note-badge '+(ic===0?'nr':'ns');d.textContent=noteNames[pc];nr.appendChild(d);});
+  notes.forEach(function(pc){
+    var ic=intervalClass(pc,rootIndex);
+    var d=document.createElement('div');
+    d.className='note-badge '+(ic===0?'nr':'ns');
+    d.textContent=noteNames[pc];
+    d.style.cursor='pointer';
+    (function(notePc){
+      d.addEventListener('click',function(){
+        var ctx=getAudio();if(!ctx)return;
+        playNote(midiToFreq(notePc+12+S.octave*12),0.6,false);
+      });
+      d.addEventListener('touchstart',function(e){
+        e.preventDefault();
+        var ctx=getAudio();if(!ctx)return;
+        playNote(midiToFreq(notePc+12+S.octave*12),0.6,false);
+      });
+    })(pc);
+    nr.appendChild(d);
+  });
   // Add octave note badge
   var oc=intervalClass(notes[0],rootIndex);
-  var od=document.createElement('div');od.className='note-badge nh';od.textContent=noteNames[notes[0]]+'8';nr.appendChild(od);
+  var od=document.createElement('div');od.className='note-badge nh';od.textContent=noteNames[notes[0]]+'8';
+  od.style.cursor='pointer';
+  (function(octPc){
+    od.addEventListener('click',function(){
+      var ctx=getAudio();if(!ctx)return;
+      playNote(midiToFreq(octPc+12+(S.octave+1)*12),0.6,false);
+    });
+    od.addEventListener('touchstart',function(e){
+      e.preventDefault();
+      var ctx=getAudio();if(!ctx)return;
+      playNote(midiToFreq(octPc+12+(S.octave+1)*12),0.6,false);
+    });
+  })(notes[0]);
+  nr.appendChild(od);
 
   var il=document.getElementById('intervalsList');il.innerHTML='';
   SCALES[S.scale].intervals.forEach(function(iv,i){var nm=['R','m2','M2','m3','M3','P4','TT','P5','m6','M6','m7','M7'][iv]||'';var d=document.createElement('div');d.className='int-item';d.innerHTML='<span>'+i+':</span> '+nm+' ('+INTERVAL_NAMES[iv]+')';il.appendChild(d);});
@@ -1295,8 +1336,20 @@ function updateInfo(){
     var nm=['R','m2','M2','m3','M3','P4','TT','P5','m6','M6','m7','M7'][iv]||'';
     var q=getChordQuality(S.scale,i);
     var seventh=getChordSeventh(S.scale,i);
-    var d=document.createElement('div');d.style.cssText='font-size:14px;color:var(--text-muted)';
+    var d=document.createElement('div');d.style.cssText='font-size:14px;color:var(--text-muted);cursor:pointer';
     d.textContent=ROMAN[i]+' — '+q.chord+' ('+nm+') ['+seventh+']';
+    (function(degree){
+      d.addEventListener('click',function(){
+        var ch=getDiatonicChords(S.root,S.scale);
+        if(ch[degree])renderChordDiagram(ch[degree]);
+        var ctx=getAudio();if(!ctx)return;
+        var notes=getScaleNotes(S.root,S.scale);
+        var rn=notes[degree%notes.length];
+        var third=notes[(degree+2)%notes.length];
+        var fifth=notes[(degree+4)%notes.length];
+        [rn,third,fifth].forEach(function(pc,j){playNote(midiToFreq(pc+60),1.5,j===0);});
+      });
+    })(i);
     sd.appendChild(d);
   });
   // Add octave degree
@@ -1314,6 +1367,7 @@ function updateInfo(){
     var seventhSpan=document.createElement('span');seventhSpan.className='seventh-name';seventhSpan.textContent=c.seventh;
     d.appendChild(triadSpan);d.appendChild(seventhSpan);
     d.onclick=function(){renderChordDiagram(c);var ctx=getAudio();if(!ctx)return;var t=ctx.currentTime;[c.root,(c.root+c.i3)%12,(c.root+c.i5)%12].forEach(function(pc,j){playNote(midiToFreq(pc+60),2.0,j===0);});};
+    d.addEventListener('touchstart',function(e){e.preventDefault();renderChordDiagram(c);var ctx=getAudio();if(!ctx)return;var t=ctx.currentTime;[c.root,(c.root+c.i3)%12,(c.root+c.i5)%12].forEach(function(pc,j){playNote(midiToFreq(pc+60),2.0,j===0);});});
     dc.appendChild(d);
   });
   if(chords.length>0)renderChordDiagram(chords[0]);
