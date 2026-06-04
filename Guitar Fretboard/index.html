@@ -562,11 +562,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
           <button class="cat-tab" onclick="filterCat('other',this)">Other</button>
         </div>
       </div>
-      <!-- Scale list -->
-      <div class="sidebar-section">
-        <div class="sidebar-title">Scales</div>
-        <div class="scale-list" id="scaleList"></div>
-      </div>
       <!-- Tuning -->
       <div class="sidebar-section">
         <div class="sidebar-title">Tuning</div>
@@ -600,7 +595,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%;max-width:1600px">
         <span class="bar-label">Show:</span>
         <div class="interval-toggles" id="intervalToggles"></div>
-        <span class="bar-label" style="margin-left:auto">Frets:</span>
+        <span class="bar-label" style="margin-left:auto">Scales:</span>
+        <select class="sel" id="scaleSelect" style="width:auto;min-width:180px"></select>
+        <span class="bar-label" style="margin-left:8px">Frets:</span>
         <div class="fret-range" style="margin:0;width:300px">
           <input type="range" id="fretStart" min="0" max="12" value="0" oninput="setFretRange()">
           <span class="fret-range-val" id="fretRangeVal">0 - 12</span>
@@ -1182,10 +1179,12 @@ function renderScaleSelect(){
   if(sel){sel.innerHTML='';Object.keys(SCALES).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=SCALES[k].name;if(k===S.scale)o.selected=true;sel.appendChild(o);});}
 }
 function renderScaleList(){
-  var el=document.getElementById('scaleList');el.innerHTML='';
+  var el=document.getElementById('scaleList');
+  if(!el)return;
+  el.innerHTML='';
   Object.keys(SCALES).forEach(function(k){var sc=SCALES[k];if(S.activeCat!=='all'&&sc.cat!==S.activeCat)return;var d=document.createElement('div');d.className='scale-item'+(k===S.scale?' active':'');d.innerHTML='<span class="s-name">'+sc.name+'</span><span class="s-int">'+sc.intervals.length+' notes</span>';d.onclick=function(){S.scale=k;renderScaleList();renderScaleSelect();renderFretboard();updateInfo();updateURL();};el.appendChild(d);});
 }
-function filterCat(cat,btn){S.activeCat=cat;document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');renderScaleList();}
+function filterCat(cat,btn){S.activeCat=cat;document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');renderScaleList();renderScaleSelect();}
 
 // ═══════════════════════════════════════════
 // RENDER: INTERVAL TOGGLES
@@ -1992,12 +1991,12 @@ function strumChord() {
 // INIT
 // ═══════════════════════════════════════════
 function init(){
-  loadFromURL();renderRoots();renderTuningSelect();renderScaleSelect();renderScaleList();
+  loadFromURL();renderRoots();renderTuningSelect();renderScaleSelect();
   renderIntervalToggles();renderPosSelector();renderFretboard();updateInfo();updateFretRange();
   renderChordCats();renderChordRoots();renderChordDetail();
   var fs=document.getElementById('fretStart');if(fs)fs.value=S.fretStart;
   var fe=document.getElementById('fretEnd');if(fe)fe.value=S.fretEnd;
-  var ss=document.getElementById('scaleSelect');if(ss)ss.addEventListener('change',function(){S.scale=this.value;renderScaleList();renderFretboard();updateInfo();updateURL();});
+  var ss=document.getElementById('scaleSelect');if(ss)ss.addEventListener('change',function(){S.scale=this.value;renderFretboard();updateInfo();updateURL();});
   var rs=document.getElementById('rootSelect');if(rs)rs.addEventListener('change',function(){S.root=this.value;renderRoots();renderFretboard();updateInfo();updateURL();});
 }
 init();
