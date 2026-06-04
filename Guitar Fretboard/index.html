@@ -597,8 +597,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
           <span class="fret-range-val" id="fretRangeVal">0 - 12</span>
           <input type="range" id="fretEnd" min="5" max="24" value="12" oninput="setFretRange()">
         </div>
-        <button class="btn" onclick="cycleOctave(-1)">- Oct</button>
-        <button class="btn" onclick="cycleOctave(1)">+ Oct</button>
       </div>
 
       <!-- Position selector -->
@@ -1200,7 +1198,7 @@ function renderPosSelector(){
 }
 function setFretRange(){S.fretStart=parseInt(document.getElementById('fretStart').value);S.fretEnd=parseInt(document.getElementById('fretEnd').value);if(S.fretStart>=S.fretEnd)S.fretEnd=S.fretStart+5;document.getElementById('fretEnd').value=S.fretEnd;updateFretRange();renderPosSelector();renderFretboard();}
 function updateFretRange(){document.getElementById('fretRangeVal').textContent=S.fretStart+' - '+S.fretEnd;}
-function cycleOctave(dir){S.octave=Math.max(1,Math.min(6,S.octave+dir));renderFretboard();}
+
 
 // ═══════════════════════════════════════════
 // RENDER: FRETBOARD
