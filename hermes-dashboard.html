@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hermes Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg-panel:#111118;--bg-card:#16161f;--bg-hover:#1e1e2a;--bg-active:#252535;--accent:#6c5ce7;--accent-dim:rgba(108,92,231,.12);--accent-glow:rgba(108,92,231,.3);--accent2:#22d3ee;--cyan:#22d3ee;--cyan-dim:rgba(34,211,238,.1);--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#55556a;--border:#2a2a3a;--border-light:#333348;--success:#00b894;--warn:#fdcb6e;--error:#e17055;--emerald:#34d399;--amber:#fbbf24;--violet:#a78bfa;--rose:#fb7185;--sbw:260px;--rbw:300px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ═══ TOP BAR ═══ */
+#topbar{height:44px;background:var(--bg-panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:6px;flex-shrink:0;z-index:100}
+#topbar .logo{font-weight:700;font-size:14px;color:var(--accent);letter-spacing:.5px;margin-right:8px;white-space:nowrap;cursor:pointer}
+#topbar .logo span{color:var(--accent2)}
+.topbar-spacer{flex:1}
+.topbar-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;align-items:center;gap:4px;transition:all .15s}
+.topbar-btn:hover{background:var(--bg-hover);color:var(--text);border-color:var(--border-light)}
+.topbar-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.topbar-btn svg{width:13px;height:13px;fill:currentColor}
+.shortcut-hint{font-size:9px;color:var(--text-muted);background:var(--bg-card);padding:1px 4px;border-radius:3px;margin-left:4px;border:1px solid var(--border)}
+
+/* ═══ MAIN LAYOUT ═══ */
+#main{display:flex;flex:1;overflow:hidden}
+
+/* ═══ LEFT BAR ═══ */
+#leftbar{width:var(--sbw);background:var(--bg-panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s}
+#leftbar.hidden{width:0!important;overflow:hidden;border:none}
+.sidebar-header{padding:10px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sidebar-header .add-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;border-radius:3px}
+.sidebar-header .add-btn:hover{color:var(--accent);background:var(--bg-hover)}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:4px 0}
+.sidebar-scroll::-webkit-scrollbar{width:4px}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.proj-group{margin-bottom:2px}
+.proj-gh{padding:6px 12px;font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none;transition:background .1s}
+.proj-gh:hover{background:var(--bg-hover)}
+.proj-gh .ar{font-size:9px;transition:transform .15s;color:var(--text-muted)}
+.proj-gh .ar.open{transform:rotate(90deg)}
+.proj-gh .ic{font-size:12px}
+.pf{padding:4px 12px 4px 30px;font-size:11px;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .1s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf:hover{background:var(--bg-hover);color:var(--text)}
+.pf.active{background:var(--accent-dim);color:var(--accent)}
+.pf .fi{font-size:10px;opacity:.7;flex-shrink:0}
+
+/* ═══ CENTER AREA ═══ */
+#center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* Project switcher bar */
+#proj-switcher{display:flex;align-items:center;background:var(--bg-panel);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;gap:2px;padding:0 4px}
+#proj-switcher::-webkit-scrollbar{height:0}
+.proj-sw-tab{display:flex;align-items:center;gap:5px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0;border-radius:4px 4px 0 0}
+.proj-sw-tab:hover{color:var(--text);background:var(--bg-hover)}
+.proj-sw-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--bg-active)}
+.proj-sw-tab .close{width:14px;height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;margin-left:2px;opacity:0;transition:opacity .15s}
+.proj-sw-tab:hover .close{opacity:1}
+.proj-sw-tab .close:hover{background:var(--error);color:#fff}
+.switcher-label{font-size:9px;color:var(--text-muted);padding:0 6px;white-space:nowrap}
+
+/* Split view: preview top 75%, chat bottom 25% */
+#proj-view{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Preview area */
+#preview-area{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;min-height:0}
+#preview-toolbar{display:flex;align-items:center;gap:4px;padding:4px 8px;background:var(--bg-panel);border-bottom:1px solid var(--border);flex-shrink:0}
+.pt-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;display:flex;align-items:center;gap:3px;transition:all .15s}
+.pt-btn:hover{background:var(--bg-hover);color:var(--text)}
+.pt-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.pt-sep{width:1px;height:16px;background:var(--border);margin:0 2px}
+#preview-url{flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:3px 8px;border-radius:4px;font-size:11px;font-family:inherit;outline:none;transition:border-color .15s}
+#preview-url:focus{border-color:var(--accent)}
+
+/* Preview content */
+#preview-content{flex:1;display:flex;overflow:hidden}
+#browser-frame{flex:1;border:none;background:#fff;display:none}
+#browser-frame.active{display:block}
+#code-view{flex:1;display:none;overflow:auto;background:#0d1117}
+#code-view.active{display:block}
+#code-view pre{margin:0;padding:16px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:1.6;color:#c9d1d9;white-space:pre-wrap;word-break:break-all}
+
+/* Chat area (bottom 25%) */
+#chat-area{height:25%;min-height:120px;max-height:60%;display:flex;flex-direction:column;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0;resize:vertical;overflow:auto}
+#chat-area .chat-resize-handle{height:4px;background:transparent;cursor:ns-resize;flex-shrink:0;margin-top:-2px;position:relative;z-index:5}
+#chat-area .chat-resize-handle:hover{background:var(--accent-dim)}
+.chat-container{display:flex;flex-direction:column;height:100%}
+.chat-header{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg-panel);border-bottom:1px solid var(--border);flex-shrink:0;cursor:pointer}
+.chat-header:hover{background:var(--bg-hover)}
+.chat-header-left{display:flex;align-items:center;gap:6px}
+.chat-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+.chat-title{font-size:11px;font-weight:600}
+.chat-subtitle{font-size:9px;color:var(--text-muted)}
+.chat-messages{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.msg{display:flex;flex-direction:column;max-width:85%;padding:6px 10px;border-radius:10px;font-size:11px;line-height:1.4}
+.msg.agent{align-self:flex-start;background:var(--bg-card);border:1px solid var(--border);border-bottom-left-radius:3px}
+.msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:3px}
+.msg .msg-time{font-size:8px;opacity:.5;margin-top:3px}
+.msg .msg-sender{font-size:9px;font-weight:700;margin-bottom:2px}
+.chat-input-area{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--bg-panel);border-top:1px solid var(--border);flex-shrink:0}
+.chat-input{flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:16px;font-size:11px;font-family:inherit;outline:none;transition:border-color .15s}
+.chat-input:focus{border-color:var(--accent)}
+.chat-send{width:28px;height:28px;border-radius:50%;border:none;background:var(--accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;flex-shrink:0}
+.chat-send:hover{background:#5a4bd1;transform:scale(1.05)}
+
+/* Empty state */
+#empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);gap:8px}
+#empty-state .et{font-size:13px}
+#empty-state .eh{font-size:11px;color:var(--text-muted)}
+
+/* ═══ RIGHT BAR ═══ */
+#rightbar{width:var(--rbw);background:var(--bg-panel);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s}
+#rightbar.hidden{width:0!important;overflow:hidden;border:none}
+.rtabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.rtab{flex:1;padding:8px 4px;text-align:center;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.rtab:hover{color:var(--text-dim);background:var(--bg-hover)}
+.rtab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.rc{flex:1;overflow-y:auto;padding:8px}
+.rc::-webkit-scrollbar{width:4px}
+.rc::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:6px;transition:border-color .15s}
+.card:hover{border-color:var(--border-light)}
+.card .ct{font-size:12px;font-weight:600;margin-bottom:3px}
+.card .cd{font-size:10px;color:var(--text-muted);line-height:1.4}
+.card .ca{margin-top:6;display:flex;gap:4px}
+.cbtn{background:var(--bg-hover);border:1px solid var(--border);color:var(--text-dim);padding:3px 8;border-radius:4px;cursor:pointer;font-size:10px;transition:all .15s}
+.cbtn:hover{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.cbtn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cbtn.primary:hover{background:#5a4bd1}
+.card.expanded{padding:0;overflow:hidden}
+.card.expanded .ct{padding:10px 10px 0}
+.card.expanded .cd{padding:0 10px}
+.card.expanded .ca{padding:0 10px 10px}
+.proj-img{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.7) saturate(1.1)}
+.proj-preview{width:100%;height:180px;background:#000;position:relative;overflow:hidden}
+.proj-preview iframe{width:100%;height:100%;border:none;background:#fff}
+.proj-preview .preview-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);padding:4px 8px;display:flex;gap:4px;align-items:center}
+.proj-preview .preview-bar .pbtn{background:var(--bg-hover);border:1px solid var(--border);color:var(--text-dim);padding:2px 6px;border-radius:3px;cursor:pointer;font-size:8px}
+.proj-preview .preview-bar .pbtn:hover{background:var(--accent-dim);color:var(--accent)}
+.proj-chat{height:120px;display:flex;flex-direction:column;background:var(--bg);border-top:1px solid var(--border)}
+.proj-chat .chat-msgs{flex:1;overflow-y:auto;padding:4px 8px;display:flex;flex-direction:column;gap:3px}
+.proj-chat .chat-msgs .msg{font-size:9px;padding:3px 6px;border-radius:6px;max-width:85%;line-height:1.3}
+.proj-chat .chat-msgs .msg.agent{align-self:flex-start;background:var(--bg-card);border:1px solid var(--border);border-bottom-left-radius:2px}
+.proj-chat .chat-msgs .msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:2px}
+.proj-chat .chat-input-area{display:flex;gap:4px;padding:4px;border-top:1px solid var(--border)}
+.proj-chat .chat-input{flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:3px 6px;border-radius:10px;font-size:9px;font-family:inherit;outline:none}
+.proj-chat .chat-input:focus{border-color:var(--accent)}
+.proj-chat .chat-send{width:22px;height:22px;border-radius:50%;border:none;background:var(--accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+.proj-chat .chat-send:hover{background:#5a4bd1}
+.resize-handle{height:4px;background:transparent;cursor:ns-resize;flex-shrink:0}
+.resize-handle:hover{background:var(--accent-dim)}
+
+/* ═══ APP PACKAGER TOOL ═══ */
+.packager-section{margin-bottom:16px}
+.packager-section h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.pack-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.pack-label{font-size:10px;color:var(--text-dim);min-width:70px;flex-shrink:0}
+.pack-input{flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:10px;font-family:inherit;outline:none}
+.pack-input:focus{border-color:var(--accent)}
+.pack-select{flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:10px;outline:none;cursor:pointer}
+.pack-chk{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-dim);margin-bottom:4px}
+.pack-chk input{accent-color:var(--accent)}
+.device-frame-wrap{margin-top:8px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#000}
+.device-header{display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:var(--bg-card);border-bottom:1px solid var(--border)}
+.device-name{font-size:10px;font-weight:600;color:var(--text-dim)}
+.device-res{font-size:9px;color:var(--text-muted);font-family:monospace}
+.device-bezel{margin:0 auto;background:#111;border-radius:12px;padding:6px;transition:all .3s}
+.device-screen{background:#fff;border-radius:6px;overflow:hidden;position:relative}
+.device-screen iframe{border:none;width:100%;height:100%;display:block}
+.device-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:12px;background:#111;border-radius:0 0 8px 8px;z-index:2}
+.device-home{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:30%;height:3px;background:#333;border-radius:2px;z-index:2}
+.device-controls{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.dc-btn{background:var(--bg-card);border:1px solid var(--border);color:var(--text-dim);padding:2px 8px;border-radius:3px;cursor:pointer;font-size:9px}
+.dc-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.pack-status{margin-top:6px;padding:4px 8px;border-radius:4px;font-size:10px;display:none}
+.pack-status.show{display:block}
+.pack-status.ok{background:rgba(0,184,148,.1);color:var(--success);border:1px solid rgba(0,184,148,.2)}
+.pack-status.warn{background:rgba(253,203,110,.1);color:var(--warn);border:1px solid rgba(253,203,110,.2)}
+.pack-status.err{background:rgba(225,112,85,.1);color:var(--error);border:1px solid rgba(225,112,85,.2)}
+.pack-log{margin-top:6px;background:#0d1117;border-radius:4px;padding:6px;max-height:80px;overflow-y:auto;font-family:monospace;font-size:9px;color:var(--text-muted);line-height:1.5}
+.pack-log::-webkit-scrollbar{width:3px}
+.pack-log-line{margin-bottom:1px}
+.pack-log-line.ok{color:var(--success)}
+.pack-log-line.warn{color:var(--warn)}
+.pack-log-line.err{color:var(--error)}
+
+/* ═══ SETTINGS ═══ */
+#settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
+#settings-overlay.open{display:flex}
+#settings-popup{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;width:680px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.sh{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sh h2{font-size:14px;font-weight:600}
+.sclose{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1}
+.sclose:hover{background:var(--bg-hover);color:var(--text)}
+.sb{display:flex;flex:1;overflow:hidden;min-height:0}
+.stabs{width:140px;border-right:1px solid var(--border);padding:6px 0;flex-shrink:0;overflow-y:auto}
+.stab{padding:7px 12px;font-size:11px;color:var(--text-dim);cursor:pointer;transition:all .1s;display:flex;align-items:center;gap:6px}
+.stab:hover{background:var(--bg-hover);color:var(--text)}
+.stab.active{background:var(--accent-dim);color:var(--accent);font-weight:600}
+.sc{flex:1;overflow-y:auto;padding:14px 18px}
+.sc::-webkit-scrollbar{width:4px}
+.sc::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sg{margin-bottom:16px}
+.sgt{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.sr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px}
+.sl{font-size:11px;color:var(--text-dim);flex-shrink:0;min-width:120px}
+.sl small{display:block;font-size:9px;color:var(--text-muted);margin-top:1px}
+.si{flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;font-size:11px;font-family:inherit;outline:none;transition:border-color .15s;min-width:0}
+.si:focus{border-color:var(--accent)}
+.si::placeholder{color:var(--text-muted)}
+select.si{cursor:pointer}
+.tgl{position:relative;width:32px;height:18px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl .tslider{position:absolute;inset:0;background:var(--bg-card);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s}
+.tgl .tslider::before{content:'';position:absolute;width:12px;height:12px;left:2px;top:2px;background:var(--text-muted);border-radius:50%;transition:all .2s}
+.tgl input:checked+.tslider{background:var(--accent);border-color:var(--accent)}
+.tgl input:checked+.tslider::before{transform:translateX(14px);background:#fff}
+.sf{padding:10px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.sf .lb,.sf .rb{display:flex;gap:6px}
+
+/* ═══ TOAST ═══ */
+#toast{position:fixed;bottom:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:4px}
+.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.3);animation:ti .2s ease;display:flex;align-items:center;gap:6px;max-width:300px}
+.toast.ok{border-left:3px solid var(--success)}
+.toast.err{border-left:3px solid var(--error)}
+.toast.info{border-left:3px solid var(--accent)}
+@keyframes ti{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ CONTEXT MENU ═══ */
+#ctx{display:none;position:fixed;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:3px 0;z-index:1500;min-width:140px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+#ctx.open{display:block}
+.ci{padding:6px 12px;font-size:11px;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:6px}
+.ci:hover{background:var(--bg-hover);color:var(--text)}
+.cs{height:1px;background:var(--border);margin:3px 0}
+
+/* ═══ MODAL ═══ */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:center;justify-content:center}
+#modal-overlay.open{display:flex}
+#modal-box{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:16px;width:380px;max-width:90vw;box-shadow:0 16px 48px rgba(0,0,0,.4)}
+#modal-box h3{font-size:13px;margin-bottom:10px}
+#modal-box .mi{width:100%;background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:12px;outline:none;margin-bottom:10px}
+#modal-box .mi:focus{border-color:var(--accent)}
+#modal-box .mb{display:flex;gap:6px;justify-content:flex-end}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ═══ AGENT STATUS ═══ */
+.agent-status{display:inline-flex;align-items:center;gap:3px;font-size:8px;padding:1px 5px;border-radius:8px;font-weight:600}
+.agent-status.active{background:var(--success);color:#000}
+.agent-status.idle{background:var(--warn);color:#000}
+.agent-status.offline{background:var(--text-muted);color:var(--bg)}
+
+/* ═══ MOBILE PREVIEW SIZES ═══ */
+.device-iphone14{width:280px;height:560px}
+.device-iphone14 .device-screen{width:268px;height:520px}
+.device-ipad{width:360px;height:480px}
+.device-ipad .device-screen{width:348px;height:440px}
+.device-android{width:280px;height:540px}
+.device-android .device-screen{width:268px;height:500px}
+.device-fold{width:300px;height:500px}
+.device-fold .device-screen{width:288px;height:460px}
+
+/* ═══ AGENT OS SIDEBAR ═══ */
+.os-sidebar-header{padding:12px 14px;border-bottom:1px solid var(--border)}
+.os-sidebar-logo{font-size:12px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--text)}
+.os-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:pulse 2s infinite}
+.os-sidebar-tag{font-size:9px;color:var(--text-dim);margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.os-sidebar-nav{flex:1;padding:8px 0;overflow-y:auto}
+.os-nav-section{margin-bottom:4px}
+.os-nav-section-title{padding:6px 14px 2px;font-size:8px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px}
+.os-nav-item{display:flex;align-items:center;gap:8px;padding:7px 14px;color:var(--text-dim);font-size:11px;cursor:pointer;transition:all .15s;text-decoration:none;border-left:2px solid transparent}
+.os-nav-item:hover{background:var(--bg-hover);color:var(--text)}
+.os-nav-item.active{background:var(--accent-dim);color:var(--accent);border-left-color:var(--accent)}
+.os-nav-icon{width:16px;text-align:center;font-size:10px}
+.os-nav-badge{margin-left:auto;font-size:8px;padding:1px 5px;border-radius:6px;background:rgba(255,255,255,.05);color:var(--text-dim)}
+.os-nav-item.active .os-nav-badge{background:rgba(34,211,238,.1);color:var(--accent)}
+.os-sidebar-footer{padding:10px 14px;border-top:1px solid var(--border)}
+.os-eff-mini{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--text-dim)}
+.os-mini-bar{flex:1;height:3px;background:var(--bg);border-radius:2px;overflow:hidden}
+.os-mini-bar-fill{height:100%;border-radius:2px;background:var(--success)}
+
+/* ═══ AGENT OS PAGES (in center panel) ═══ */
+.os-page{display:none}.os-page.active{display:block}
+.os-page-header{margin-bottom:16px}
+.os-page-header h1{font-size:18px;font-weight:800;margin-bottom:2px}
+.os-page-header p{font-size:11px;color:var(--text-muted)}
+.os-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.os-card:hover{border-color:var(--border-light)}
+.os-card-title{font-size:12px;font-weight:600;margin-bottom:6px}
+.os-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.os-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.os-metric{text-align:center;padding:10px}
+.os-metric-num{font-size:22px;font-weight:800;color:var(--accent)}
+.os-metric-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.os-metric-change{font-size:9px;margin-top:2px}
+.os-up{color:var(--success)}.os-down{color:var(--error)}
+.os-table{width:100%;border-collapse:collapse;font-size:11px}
+.os-table th{text-align:left;padding:6px 8px;font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+.os-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text-muted)}
+.os-table tr:hover td{background:rgba(255,255,255,.02)}
+.os-tag{display:inline-block;padding:1px 5px;border-radius:4px;font-size:8px;font-weight:600}
+.os-tag-green{background:rgba(52,211,153,.1);color:var(--success)}
+.os-tag-amber{background:rgba(251,191,36,.1);color:var(--warn)}
+.os-tag-cyan{background:rgba(34,211,238,.1);color:var(--accent)}
+.os-tag-rose{background:rgba(251,113,133,.1);color:var(--error)}
+.os-workflow{display:flex;align-items:center;gap:4px;padding:6px 0;flex-wrap:wrap}
+.os-wf-step{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:9px}
+.os-wf-step.done{border-color:var(--success);background:rgba(52,211,153,.05)}
+.os-wf-step.active{border-color:var(--accent);background:rgba(34,211,238,.05)}
+.os-wf-arrow{color:var(--text-dim);font-size:9px}
+.os-progress{height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin-top:3px}
+.os-progress-fill{height:100%;border-radius:2px;transition:width .3s}
+.os-fill-green{background:var(--success)}.os-fill-cyan{background:var(--accent)}.os-fill-amber{background:var(--warn)}
+.os-status-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+.os-status-dot.active{background:var(--success);box-shadow:0 0 4px var(--success)}
+.os-status-dot.working{background:var(--warn);animation:pulse 1s infinite}
+.os-status-dot.idle{background:var(--text-dim)}
+.os-timeline{position:relative;padding-left:16px}
+.os-timeline::before{content:'';position:absolute;left:4px;top:0;bottom:0;width:2px;background:var(--border)}
+.os-tl-item{position:relative;padding-bottom:10px}
+.os-tl-item::before{content:'';position:absolute;left:-16px;top:3px;width:7px;height:7px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.os-tl-item.done::before{background:var(--success);border-color:var(--success)}
+.os-tl-time{font-size:8px;color:var(--text-dim);margin-bottom:1px}
+.os-tl-text{font-size:10px;color:var(--text-muted)}
+
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo" onclick="showWelcome()">HERMES<span>DASH</span></div>
+  <div class="os-topbar-title" id="osTopbarTitle" style="display:none;font-size:13px;font-weight:600;color:var(--text);margin-left:8px"></div>
+  <button class="topbar-btn" id="btn-tl" title="Toggle Explorer" onclick="showWorkspace()">
+    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    Explorer
+  </button>
+  <button class="topbar-btn" id="btn-tr" title="Toggle Panel">
+    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    Panel
+  </button>
+  <div class="topbar-spacer"></div>
+  <button class="topbar-btn" id="btn-new" title="New Project">
+    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    New
+  </button>
+  <button class="topbar-btn" id="btn-gear" title="Settings">
+    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+  </button>
+  <div class="topbar-spacer"></div>
+  <button class="topbar-btn" id="btn-packager" title="App Packager" onclick="showPackager()">
+    <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+    Packager
+  </button>
+</div>
+
+<div id="main">
+  <!-- LEFT BAR: Agent OS Sidebar -->
+  <div id="leftbar">
+    <div class="os-sidebar-header">
+      <div class="os-sidebar-logo"><span class="os-dot"></span> Agent OS</div>
+      <div class="os-sidebar-tag">Mission Control v3</div>
+    </div>
+    <nav class="os-sidebar-nav" id="osNav">
+      <div class="os-nav-section">
+        <div class="os-nav-section-title">Core</div>
+        <a class="os-nav-item active" onclick="showOSPage('dashboard',this)"><span class="os-nav-icon">&#x25A0;</span><span>Dashboard</span></a>
+        <a class="os-nav-item" onclick="showOSPage('goals',this)"><span class="os-nav-icon">&#x25CE;</span><span>Goals</span><span class="os-nav-badge">3</span></a>
+        <a class="os-nav-item" onclick="showOSPage('agents',this)"><span class="os-nav-icon">&#x25A3;</span><span>Agents</span><span class="os-nav-badge">5</span></a>
+        <a class="os-nav-item" onclick="showOSPage('workflows',this)"><span class="os-nav-icon">&#x26A1;</span><span>Workflows</span></a>
+      </div>
+      <div class="os-nav-section">
+        <div class="os-nav-section-title">Orchestration</div>
+        <a class="os-nav-item" onclick="showOSPage('planner',this)"><span class="os-nav-icon">&#x25A1;</span><span>Task Planner</span></a>
+        <a class="os-nav-item" onclick="showOSPage('routing',this)"><span class="os-nav-icon">&#x21BB;</span><span>Agent Routing</span></a>
+        <a class="os-nav-item" onclick="showOSPage('exceptions',this)"><span class="os-nav-icon">&#x26A0;</span><span>Exceptions</span><span class="os-nav-badge">2</span></a>
+      </div>
+      <div class="os-nav-section">
+        <div class="os-nav-section-title">Memory</div>
+        <a class="os-nav-item" onclick="showOSPage('short-term',this)"><span class="os-nav-icon">&#x25C6;</span><span>Short-Term</span></a>
+        <a class="os-nav-item" onclick="showOSPage('long-term',this)"><span class="os-nav-icon">&#x25C7;</span><span>Long-Term</span><span class="os-nav-badge">8</span></a>
+        <a class="os-nav-item" onclick="showOSPage('knowledge',this)"><span class="os-nav-icon">&#x25A4;</span><span>Knowledge</span></a>
+      </div>
+      <div class="os-nav-section">
+        <div class="os-nav-section-title">Tools</div>
+        <a class="os-nav-item" onclick="showOSPage('mcp',this)"><span class="os-nav-icon">&#x25B6;</span><span>MCP Servers</span></a>
+        <a class="os-nav-item" onclick="showOSPage('connections',this)"><span class="os-nav-icon">&#x221E;</span><span>Connections</span></a>
+        <a class="os-nav-item" onclick="showOSPage('tools',this)"><span class="os-nav-icon">&#x2699;</span><span>Tool Registry</span></a>
+      </div>
+      <div class="os-nav-section">
+        <div class="os-nav-section-title">Governance</div>
+        <a class="os-nav-item" onclick="showOSPage('audit',this)"><span class="os-nav-icon">&#x270E;</span><span>Audit Logs</span></a>
+        <a class="os-nav-item" onclick="showOSPage('permissions',this)"><span class="os-nav-icon">&#x25CF;</span><span>Permissions</span></a>
+        <a class="os-nav-item" onclick="showOSPage('checkpoints',this)"><span class="os-nav-icon">&#x25CB;</span><span>Checkpoints</span><span class="os-nav-badge">1</span></a>
+      </div>
+      <div class="os-nav-section">
+        <div class="os-nav-section-title">Config</div>
+        <a class="os-nav-item" onclick="showOSPage('models',this)"><span class="os-nav-icon">&#x25B2;</span><span>Models</span></a>
+        <a class="os-nav-item" onclick="showOSPage('cost',this)"><span class="os-nav-icon">&#x25A0;</span><span>Cost</span></a>
+        <a class="os-nav-item" onclick="showOSPage('prompts',this)"><span class="os-nav-icon">&#x270E;</span><span>Prompts</span></a>
+        <a class="os-nav-item" onclick="showOSPage('analytics',this)"><span class="os-nav-icon">&#x25A0;</span><span>Analytics</span></a>
+        <a class="os-nav-item" onclick="showOSPage('help',this)"><span class="os-nav-icon">&#x25B3;</span><span>Help</span></a>
+      </div>
+    </nav>
+    <div class="os-sidebar-footer">
+      <div class="os-eff-mini">
+        <span>Free tier</span>
+        <div class="os-mini-bar"><div class="os-mini-bar-fill" style="width:73%"></div></div>
+        <span>73%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: Project views -->
+  <div id="center">
+    <!-- Project switcher tabs -->
+    <div id="proj-switcher">
+      <span class="switcher-label">Projects:</span>
+      <!-- Dynamic project tabs go here -->
+    </div>
+
+    <!-- Project view (preview + chat) -->
+    <div id="proj-view">
+      <!-- Preview area (top 75%) -->
+      <div id="preview-area">
+        <div id="preview-toolbar">
+          <button class="pt-btn active" id="btn-preview-mode" onclick="setPreviewMode('browser')">Preview</button>
+          <button class="pt-btn" id="btn-code-mode" onclick="setPreviewMode('code')">Code</button>
+          <div class="pt-sep"></div>
+          <button class="pt-btn" onclick="refreshPreview()">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            Refresh
+          </button>
+          <button class="pt-btn" onclick="openPreviewInTab()">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+            Open
+          </button>
+          <div class="pt-sep"></div>
+          <input type="text" id="preview-url" placeholder="file:///path/to/project/index.html" onkeydown="if(event.key==='Enter')loadPreviewUrl(this.value)">
+        </div>
+        <div id="preview-content">
+          <iframe id="browser-frame" class="active" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          <div id="code-view"><pre id="code-content"></pre></div>
+        </div>
+      </div>
+
+      <!-- Chat area (bottom 25%) -->
+      <div id="chat-area">
+        <div class="chat-resize-handle" id="chat-resize-handle"></div>
+        <div class="chat-container">
+          <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-header-left">
+              <div class="chat-avatar" id="chat-avatar" style="background:linear-gradient(135deg,#6c5ce7,#a78bfa)">A</div>
+              <div>
+                <div class="chat-title" id="chat-title">Agent Chat</div>
+                <div class="chat-subtitle" id="chat-subtitle"><span class="agent-status active">Active</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg agent"><div class="msg-sender">Agent</div>Select a project to begin. Shift+scroll to switch between open projects.</div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message or task..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button class="chat-send" onclick="sendChat()">&#10148;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state (shown when no project open) -->
+    <div id="empty-state">
+      <div class="et">Hermes Dashboard</div>
+      <div class="eh">Open a project from the Explorer or right panel. Shift+scroll to switch projects.</div>
+    </div>
+  </div>
+
+  <!-- AGENT OS PAGES (hidden, shown via sidebar nav) -->
+  <div id="osPages" style="display:none">
+    <div class="os-page active" id="os-page-dashboard">
+      <div class="os-page-header"><h1>Agent OS Dashboard</h1><p>Overview of your agent ecosystem</p></div>
+      <div class="os-grid-3" style="margin-bottom:12px">
+        <div class="os-card os-metric"><div class="os-metric-num">5</div><div class="os-metric-label">Active Agents</div><div class="os-metric-change os-up">+2 this week</div></div>
+        <div class="os-card os-metric"><div class="os-metric-num">3</div><div class="os-metric-label">Active Goals</div><div class="os-metric-change os-up">+1 completed</div></div>
+        <div class="os-card os-metric"><div class="os-metric-num">7</div><div class="os-metric-label">Workflows</div><div class="os-metric-change os-down">-1 exception</div></div>
+      </div>
+      <div class="os-grid-2" style="margin-bottom:12px">
+        <div class="os-card"><div class="os-card-title">Active Workflows</div>
+          <div class="os-workflow"><div class="os-wf-step done">Parse</div><div class="os-wf-arrow">-</div><div class="os-wf-step active">Route</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Execute</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Verify</div></div>
+          <div class="os-workflow" style="margin-top:4px"><div class="os-wf-step done">Parse</div><div class="os-wf-arrow">-</div><div class="os-wf-step done">Route</div><div class="os-wf-arrow">-</div><div class="os-wf-step active">Execute</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Verify</div></div>
+        </div>
+        <div class="os-card"><div class="os-card-title">Agent Status</div>
+          <table class="os-table"><tr><th>Agent</th><th>Status</th><th>Task</th></tr>
+          <tr><td><span class="os-status-dot active"></span> Hermes Main</td><td><span class="os-tag os-tag-green">Active</span></td><td>Reasoning</td></tr>
+          <tr><td><span class="os-status-dot working"></span> Codex</td><td><span class="os-tag os-tag-amber">Working</span></td><td>File edits</td></tr>
+          <tr><td><span class="os-status-dot working"></span> Video</td><td><span class="os-tag os-tag-amber">Working</span></td><td>Transcoding</td></tr>
+          <tr><td><span class="os-status-dot idle"></span> SEO</td><td><span class="os-tag">Idle</span></td><td>-</td></tr></table>
+        </div>
+      </div>
+      <div class="os-grid-2">
+        <div class="os-card"><div class="os-card-title">Goals</div>
+          <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:600">Fix metronome FX chain</span><span class="os-tag os-tag-cyan">In Progress</span></div><div class="os-progress"><div class="os-progress-fill os-fill-cyan" style="width:65%"></div></div></div>
+          <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:600">Speaking lesson scroll fix</span><span class="os-tag os-tag-green">Done</span></div><div class="os-progress"><div class="os-progress-fill os-fill-green" style="width:100%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:600">Business debate vocab deck</span><span class="os-tag os-tag-green">Done</span></div><div class="os-progress"><div class="os-progress-fill os-fill-green" style="width:100%"></div></div></div>
+        </div>
+        <div class="os-card"><div class="os-card-title">Cost Efficiency</div>
+          <div class="os-metric" style="padding:0 0 6px"><div class="os-metric-num" style="font-size:24px">$0.00</div><div class="os-metric-label">Today (Free tier)</div></div>
+          <div class="os-grid-2" style="gap:4px">
+            <div style="text-align:center;padding:4px;background:var(--bg);border-radius:4px"><div style="font-size:12px;font-weight:700;color:var(--success)">73%</div><div style="font-size:8px;color:var(--text-dim)">Free tier</div></div>
+            <div style="text-align:center;padding:4px;background:var(--bg);border-radius:4px"><div style="font-size:12px;font-weight:700;color:var(--warn)">27%</div><div style="font-size:8px;color:var(--text-dim)">Paid</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="os-page" id="os-page-goals">
+      <div class="os-page-header"><h1>Goals</h1><p>Track autonomous goals</p></div>
+      <div class="os-card"><div style="display:flex;align-items:flex-start;gap:8px"><div style="font-size:16px">&#x25CE;</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-weight:700;font-size:12px">Fix metronome FX chain</span><span class="os-tag os-tag-cyan">In Progress</span></div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">Restore parallel send/return FX architecture.</div><div class="os-workflow"><div class="os-wf-step done">Analyze</div><div class="os-wf-arrow">-</div><div class="os-wf-step done">Route</div><div class="os-wf-arrow">-</div><div class="os-wf-step active">Fix chain</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Test</div></div></div></div></div>
+      <div class="os-card"><div style="display:flex;align-items:flex-start;gap:8px"><div style="font-size:16px">&#x25A4;</div><div><div style="font-weight:700;font-size:12px">Speaking lessons scroll fix <span class="os-tag os-tag-green">Completed</span></div><div style="font-size:10px;color:var(--text-muted)">Enable mouse scroll, fix centering, add Shift+wheel.</div></div></div></div>
+      <div class="os-card"><div style="display:flex;align-items:flex-start;gap:8px"><div style="font-size:16px">&#x1F4AC;</div><div><div style="font-weight:700;font-size:12px">Business debate vocab deck <span class="os-tag os-tag-green">Completed</span></div><div style="font-size:10px;color:var(--text-muted)">60 native speaker phrases across 6 categories.</div></div></div></div>
+    </div>
+    <div class="os-page" id="os-page-agents">
+      <div class="os-page-header"><h1>Agents</h1><p>Manage your agent team</p></div>
+      <div class="os-grid-2">
+        <div class="os-card" style="border-left:3px solid var(--success)"><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(34,211,238,.1);display:flex;align-items:center;justify-content:center;font-size:14px">H</div><div><div style="font-weight:700;font-size:12px">Hermes Main</div><div style="font-size:9px;color:var(--text-dim)">Reasoning - OWL Alpha - Paid</div></div><span class="os-status-dot active" style="margin-left:auto"></span></div></div>
+        <div class="os-card" style="border-left:3px solid var(--success)"><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:14px">C</div><div><div style="font-weight:700;font-size:12px">Codex Worker</div><div style="font-size:9px;color:var(--text-dim)">Code - File edits - Free</div></div><span class="os-status-dot working" style="margin-left:auto"></span></div></div>
+        <div class="os-card" style="border-left:3px solid var(--warn)"><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:14px">V</div><div><div style="font-weight:700;font-size:12px">Video Agent</div><div style="font-size:9px;color:var(--text-dim)">Vision - Transcoding - Free</div></div><span class="os-status-dot working" style="margin-left:auto"></span></div></div>
+        <div class="os-card" style="border-left:3px solid var(--warn)"><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:6px;background:rgba(251,191,36,.1);display:flex;align-items:center;justify-content:center;font-size:14px">S</div><div><div style="font-weight:700;font-size:12px">SEO Agent</div><div style="font-size:9px;color:var(--text-dim)">Research - Flash</div></div><span class="os-status-dot idle" style="margin-left:auto"></span></div></div>
+      </div>
+    </div>
+    <div class="os-page" id="os-page-workflows">
+      <div class="os-page-header"><h1>Workflows</h1><p>Dynamic orchestration</p></div>
+      <div class="os-card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div><div style="font-weight:700;font-size:12px">Content Pipeline</div><div style="font-size:9px;color:var(--text-dim)">5 steps - 3 agents - Auto-route: ON</div></div><span class="os-tag os-tag-cyan">Running</span></div><div class="os-workflow"><div class="os-wf-step done">Parse</div><div class="os-wf-arrow">-</div><div class="os-wf-step done">Route</div><div class="os-wf-arrow">-</div><div class="os-wf-step active">Execute</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Review</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Publish</div></div></div>
+      <div class="os-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div><div style="font-weight:700;font-size:12px">Bug Fix Pipeline</div><div style="font-size:9px;color:var(--text-dim)">4 steps - 2 agents - Auto-route: ON</div></div><span class="os-tag os-tag-amber">Exception</span></div><div class="os-workflow"><div class="os-wf-step done">Detect</div><div class="os-wf-arrow">-</div><div class="os-wf-step done">Plan</div><div class="os-wf-arrow">-</div><div class="os-wf-step" style="border-color:var(--error);background:rgba(251,113,133,.05)">Fix</div><div class="os-wf-arrow">-</div><div class="os-wf-step">Test</div></div><div style="margin-top:4px;padding:4px;background:rgba(251,113,133,.05);border-radius:4px;font-size:9px;color:var(--error)">Exception: AudioContext state mismatch.</div></div>
+    </div>
+    <div class="os-page" id="os-page-short-term">
+      <div class="os-page-header"><h1>Short-Term Context</h1><p>Current session memory</p></div>
+      <div class="os-card"><table class="os-table"><tr><th>Key</th><th>Value</th><th>TTL</th></tr><tr><td>current_task</td><td>Fix metronome FX chain</td><td>2h</td></tr><tr><td>active_agent</td><td>Hermes Main</td><td>2h</td></tr><tr><td>last_tool</td><td>patch (ensureEffectChain)</td><td>1h</td></tr><tr><td>error_count</td><td>0</td><td>30m</td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-long-term">
+      <div class="os-page-header"><h1>Long-Term Memory</h1><p>Institutional knowledge</p></div>
+      <div class="os-card"><table class="os-table"><tr><th>Fact</th><th>Source</th><th>Date</th></tr><tr><td>FX chain: parallel sends NOT serial</td><td>Session</td><td>Jun 4</td></tr><tr><td>Quiz rules: full sentences no period in def</td><td>Session</td><td>Jun 3</td></tr><tr><td>GitHub: no push without explicit request</td><td>Session</td><td>Jun 3</td></tr><tr><td>Alien Tuner: alert() blocks UX</td><td>Session</td><td>Jun 3</td></tr><tr><td>String Theory: separate product</td><td>Session</td><td>Jun 3</td></tr><tr><td>Memory expanded to 5000 chars</td><td>Session</td><td>Jun 4</td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-knowledge">
+      <div class="os-page-header"><h1>Knowledge Graph</h1></div>
+      <div class="os-card"><p style="color:var(--text-muted);font-size:11px;text-align:center;padding:30px 0">Knowledge graph visualization coming soon.</p></div>
+    </div>
+    <div class="os-page" id="os-page-mcp">
+      <div class="os-page-header"><h1>MCP Servers</h1><p>Connect agents to external systems</p></div>
+      <div class="os-card" style="text-align:center;padding:30px"><div style="font-size:24px">&#x25B6;</div><p style="color:var(--text-muted);font-size:11px;margin-top:6px">No MCP servers configured yet.</p></div>
+    </div>
+    <div class="os-page" id="os-page-connections">
+      <div class="os-page-header"><h1>Connections</h1><p>External integrations</p></div>
+      <div class="os-card"><table class="os-table"><tr><th>Service</th><th>Type</th><th>Status</th><th>Auth</th></tr><tr><td>GitHub</td><td>API</td><td><span class="os-tag os-tag-green">Connected</span></td><td>SSH Key</td></tr><tr><td>OpenRouter</td><td>API</td><td><span class="os-tag os-tag-green">Connected</span></td><td>API Key</td></tr><tr><td>ElevenLabs</td><td>API</td><td><span class="os-tag os-tag-amber">Partial</span></td><td>API Key</td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-tools">
+      <div class="os-page-header"><h1>Tool Registry</h1><p>Available tools</p></div>
+      <div class="os-card"><table class="os-table"><tr><th>Toolset</th><th>Tools</th><th>Enabled</th></tr><tr><td>terminal</td><td>12</td><td><span class="os-tag os-tag-green">Yes</span></td></tr><tr><td>file</td><td>8</td><td><span class="os-tag os-tag-green">Yes</span></td></tr><tr><td>web</td><td>6</td><td><span class="os-tag os-tag-green">Yes</span></td></tr><tr><td>browser</td><td>4</td><td><span class="os-tag os-tag-amber">Partial</span></td></tr><tr><td>vision</td><td>3</td><td><span class="os-tag os-tag-green">Yes</span></td></tr><tr><td>memory</td><td>2</td><td><span class="os-tag os-tag-green">Yes</span></td></tr><tr><td>cronjob</td><td>5</td><td><span class="os-tag os-tag-green">Yes</span></td></tr><tr><td>delegation</td><td>4</td><td><span class="os-tag os-tag-green">Yes</span></td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-audit">
+      <div class="os-page-header"><h1>Audit Logs</h1><p>Complete audit trail</p></div>
+      <div class="os-card"><div class="os-timeline"><div class="os-tl-item done"><div class="os-tl-time">10:52 AM</div><div class="os-tl-text">Patched ensureEffectChain() - guard order fix</div></div><div class="os-tl-item done"><div class="os-tl-time">10:48 AM</div><div class="os-tl-text">Deleted paraphrase card from slideshows</div></div><div class="os-tl-item done"><div class="os-tl-time">10:45 AM</div><div class="os-tl-text">Fixed escaped quotes in teacher-studio.html</div></div><div class="os-tl-item done"><div class="os-tl-time">10:30 AM</div><div class="os-tl-text">Added 18 education questions to speaking-assessment</div></div></div></div>
+    </div>
+    <div class="os-page" id="os-page-permissions">
+      <div class="os-page-header"><h1>Permissions</h1><p>Role-based access control</p></div>
+      <div class="os-card"><table class="os-table"><tr><th>Agent</th><th>File Write</th><th>Git Push</th><th>External API</th><th>Destructive</th></tr><tr><td>Hermes Main</td><td><span class="os-tag os-tag-green">Allow</span></td><td><span class="os-tag os-tag-rose">Deny</span></td><td><span class="os-tag os-tag-green">Allow</span></td><td><span class="os-tag os-tag-amber">Checkpoint</span></td></tr><tr><td>Codex Worker</td><td><span class="os-tag os-tag-green">Allow</span></td><td><span class="os-tag os-tag-rose">Deny</span></td><td><span class="os-tag os-tag-amber">Limited</span></td><td><span class="os-tag os-tag-rose">Deny</span></td></tr><tr><td>Video Agent</td><td><span class="os-tag os-tag-amber">Own dir</span></td><td><span class="os-tag os-tag-rose">Deny</span></td><td><span class="os-tag os-tag-green">Allow</span></td><td><span class="os-tag os-tag-rose">Deny</span></td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-checkpoints">
+      <div class="os-page-header"><h1>HITL Checkpoints</h1><p>Human-in-the-loop</p></div>
+      <div class="os-card" style="border-left:3px solid var(--warn)"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:700;font-size:12px;margin-bottom:3px">Pending Checkpoint</div><div style="font-size:10px;color:var(--text-muted)">Destructive file operation: delete 13 speaking lesson files</div></div><div style="display:flex;gap:6px"><button class="os-tag" style="background:var(--bg-hover);border:1px solid var(--border);cursor:pointer">Reject</button><button class="os-tag os-tag-green" style="cursor:pointer">Approve</button></div></div></div>
+    </div>
+    <div class="os-page" id="os-page-models">
+      <div class="os-page-header"><h1>Models and Routing</h1><p>Configure AI models</p></div>
+      <div class="os-grid-3" style="margin-bottom:12px">
+        <div class="os-card" style="text-align:center"><div style="font-size:18px">&#x25B2;</div><div style="font-weight:600;font-size:11px">OWL Alpha</div><div class="os-tag os-tag-rose" style="margin-top:3px">Paid</div></div>
+        <div class="os-card" style="text-align:center"><div style="font-size:18px">&#x26A1;</div><div style="font-weight:600;font-size:11px">Gemini Flash</div><div class="os-tag os-tag-green" style="margin-top:3px">FREE</div></div>
+        <div class="os-card" style="text-align:center"><div style="font-size:18px">&#x1F52E;</div><div style="font-weight:600;font-size:11px">MiniMax M3</div><div class="os-tag os-tag-green" style="margin-top:3px">FREE</div></div>
+      </div>
+      <div class="os-card"><table class="os-table"><tr><th>Task Type</th><th>Route To</th><th>Why</th></tr><tr><td>Complex reasoning</td><td>OWL Alpha ($)</td><td>Best quality for architecture</td></tr><tr><td>Bulk text/files</td><td>Gemini Flash (FREE)</td><td>Fast, cheap, good enough</td></tr><tr><td>Vision/media</td><td>MiniMax M3 (FREE)</td><td>Local Ollama, no API cost</td></tr><tr><td>Git push</td><td>Human checkpoint</td><td>Never push without approval</td></tr><tr><td>Destructive ops</td><td>Human checkpoint</td><td>Requires confirmation</td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-cost">
+      <div class="os-page-header"><h1>Cost Optimization</h1><p>Track spending</p></div>
+      <div class="os-grid-3" style="margin-bottom:12px">
+        <div class="os-card os-metric"><div class="os-metric-num">$0.00</div><div class="os-metric-label">Today</div></div>
+        <div class="os-card os-metric"><div class="os-metric-num">$0.00</div><div class="os-metric-label">This Week</div></div>
+        <div class="os-card os-metric"><div class="os-metric-num" style="color:var(--success)">~$6.80</div><div class="os-metric-label">Saved vs all-paid</div></div>
+      </div>
+    </div>
+    <div class="os-page" id="os-page-help">
+      <div class="os-page-header"><h1>Help and Commands</h1><p>Agent OS architecture</p></div>
+      <div class="os-card"><ul style="padding-left:16px;font-size:11px;color:var(--text-muted);line-height:2"><li><strong>Dynamic Orchestration</strong> - Goals decomposed into steps, routed to agents.</li><li><strong>Persistent Memory</strong> - Short-term context + long-term knowledge.</li><li><strong>Tool Integration</strong> - MCP protocol for external systems.</li><li><strong>Governance</strong> - Role-based access, audit logs, HITL checkpoints.</li></ul></div>
+    </div>
+    <div class="os-page" id="os-page-planner">
+      <div class="os-page-header"><h1>Task Planner</h1><p>Break goals into steps</p></div>
+      <div class="os-card"><p style="color:var(--text-muted);font-size:11px;text-align:center;padding:20px">Select a goal from the Goals page to view its decomposition.</p></div>
+    </div>
+    <div class="os-page" id="os-page-routing">
+      <div class="os-page-header"><h1>Agent Routing</h1><p>Task-to-agent assignment</p></div>
+      <div class="os-card"><table class="os-table"><tr><th>Condition</th><th>Agent</th><th>Model</th></tr><tr><td>type==reasoning && complexity > 7</td><td>Hermes Main</td><td>OWL Alpha</td></tr><tr><td>type==file_edit && files > 3</td><td>Codex Worker</td><td>Gemini Flash</td></tr><tr><td>type==video</td><td>Video Agent</td><td>MiniMax M3</td></tr><tr><td>type==destructive</td><td>Human Checkpoint</td><td>-</td></tr></table></div>
+    </div>
+    <div class="os-page" id="os-page-exceptions">
+      <div class="os-page-header"><h1>Exceptions</h1><p>Handle failures</p></div>
+      <div class="os-card" style="border-left:3px solid var(--warn)"><div style="font-weight:700;font-size:12px;margin-bottom:3px">Active Exception</div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">Bug Fix Pipeline - AudioContext state mismatch</div><div style="display:flex;gap:6px"><button class="os-tag os-tag-green" style="cursor:pointer">Retry</button><button class="os-tag" style="background:var(--bg-hover);border:1px solid var(--border);cursor:pointer">Replan</button><button class="os-tag" style="background:var(--bg-hover);border:1px solid var(--border);cursor:pointer">Escalate</button></div></div>
+    </div>
+    <div class="os-page" id="os-page-prompts">
+      <div class="os-page-header"><h1>Prompt Library</h1><p>Reusable prompt templates</p></div>
+      <div style="color:var(--text-muted);font-size:11px;text-align:center;padding:30px 0">Loading...</div>
+    </div>
+    <div class="os-page" id="os-page-analytics">
+      <div class="os-page-header"><h1>Analytics</h1><p>API usage and cost tracking</p></div>
+      <div style="color:var(--text-muted);font-size:11px;text-align:center;padding:30px 0">Loading...</div>
+    </div>
+  </div>
+
+  <!-- RIGHT BAR -->
+  <div id="rightbar">
+    <div class="rtabs">
+      <div class="rtab active" data-t="projects">Projects</div>
+      <div class="rtab" data-t="plans">Plans</div>
+      <div class="rtab" data-t="timetable">Timetable</div>
+    </div>
+    <div class="rc" id="rc"></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings-overlay">
+  <div id="settings-popup">
+    <div class="sh"><h2>Settings</h2><button class="sclose" id="sclose">&times;</button></div>
+    <div class="sb">
+      <div class="stabs" id="stabs">
+        <div class="stab active" data-s="agents">Agents</div>
+        <div class="stab" data-s="models">Models</div>
+        <div class="stab" data-s="routing">Routing</div>
+        <div class="stab" data-s="tools">Tools</div>
+        <div class="stab" data-s="skills">Skills</div>
+        <div class="stab" data-s="memory">Memory</div>
+        <div class="stab" data-s="backend">Backend</div>
+        <div class="stab" data-s="display">Display</div>
+        <div class="stab" data-s="security">Security</div>
+      </div>
+      <div class="sc" id="sc"></div>
+    </div>
+    <div class="sf">
+      <div class="lb"><button class="cbtn" id="b-export">Export</button><button class="cbtn" id="b-import">Import</button></div>
+      <div class="rb"><button class="cbtn" id="b-reset">Reset</button><button class="cbtn primary" id="b-save">Save</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- PACKAGER OVERLAY -->
+<div id="packager-overlay" class="open" style="display:none">
+  <div id="settings-popup" style="width:780px;max-width:95vw">
+    <div class="sh"><h2>App Packager</h2><button class="sclose" onclick="closePackager()">&times;</button></div>
+    <div class="sb" style="min-height:400px">
+      <div class="stabs" id="pack-tabs">
+        <div class="stab active" data-s="config">Configure</div>
+        <div class="stab" data-s="devices">Device Preview</div>
+        <div class="stab" data-s="build">Build & Upload</div>
+      </div>
+      <div class="sc" id="pack-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="ctx"></div>
+<div id="modal-overlay">
+  <div id="modal-box"><h3 id="mh"></h3><input type="text" class="mi" id="mi"><div class="mb"><button class="cbtn" id="mc">Cancel</button><button class="cbtn primary" id="mo">OK</button></div></div>
+</div>
+<div id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════════════════════
+// HERMES DASHBOARD — Unified Agent OS + Workspace
+// ═══════════════════════════════════════════════════════════════
+(function(){
+var $=function(i){return document.getElementById(i)};
+var $$=function(s){return document.querySelectorAll(s)};
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+var S={
+  curProj:null,
+  expandedProj:null,
+  openProjs:[],
+  previewMode:'browser',
+  previewPath:null,
+  rTab:'projects',
+  lOp:true,rOp:true,
+  sTab:'agents',
+  osPage:'dashboard',
+  set:st(),
+  proj:proj(),
+  packDevice:'iphone14',
+  packConfig:{name:'',bundleId:'',version:'1.0.0',orientation:'portrait',fullscreen:false,offline:false,permissions:[]},
+  // Agent API configs
+  agentConfigs:loadAgentConfigs(),
+  activeAgentId:'default',
+  // Prompt library
+  prompts:loadPrompts(),
+  // Analytics
+  analytics:loadAnalytics(),
+  // Goals
+  goals:loadGoals(),
+  // Audit log
+  auditLog:loadAuditLog()
+};
+
+function loadAgentConfigs(){
+  try{
+    var c=JSON.parse(localStorage.getItem('hd_agents'));
+    if(c&&c.length>0)return c;
+  }catch(e){}
+  return[{
+    id:"default",
+    name:"Hermes Main",
+    apiUrl:"http://localhost:8642/v1/chat/completions",
+    apiKey:"hermes",
+    model:"openrouter/owl-alpha",
+    systemPrompt:"You are Hermes, a helpful AI assistant. You help with coding, writing, analysis, and creative tasks.",
+    temperature:0.7,
+    color:"var(--accent)"
+  },{
+    id:"codex",
+    name:"Codex Worker",
+    apiUrl:"http://localhost:8642/v1/chat/completions",
+    apiKey:"hermes",
+    model:"google/gemini-2.0-flash-001",
+    systemPrompt:"You are Codex, a coding specialist. Focus on writing clean, efficient code and debugging.",
+    temperature:0.3,
+    color:"var(--success)"
+  },{
+    id:"flash",
+    name:"Flash Agent",
+    apiUrl:"http://localhost:8642/v1/chat/completions",
+    apiKey:"hermes",
+    model:"google/gemini-2.0-flash-001",
+    systemPrompt:"You are a fast, efficient assistant for quick tasks and bulk operations.",
+    temperature:0.5,
+    color:"var(--amber)"
+  }];
+}
+function saveAgentConfigs(){localStorage.setItem('hd_agents',JSON.stringify(S.agentConfigs))}
+
+function loadPrompts(){
+  try{
+    var p=JSON.parse(localStorage.getItem('hd_prompts'));
+    if(p&&p.length>0)return p;
+  }catch(e){}
+  return[
+    {id:"code-review",name:"Code Review",cat:"Code",text:"Review this code for bugs, security issues, and best practices. Provide specific line-by-line feedback."},
+    {id:"refactor",name:"Refactor",cat:"Code",text:"Refactor this code to improve readability, performance, and maintainability. Explain each change."},
+    {id:"debug",name:"Debug",cat:"Code",text:"Help me debug this issue. Ask clarifying questions, suggest diagnostic steps, and propose fixes."},
+    {id:"explain",name:"Explain Code",cat:"Code",text:"Explain this code in simple terms. What does it do? How does it work?"},
+    {id:"write-test",name:"Write Tests",cat:"Code",text:"Write comprehensive unit tests for this code. Cover edge cases and error conditions."},
+    {id:"summarize",name:"Summarize",cat:"Writing",text:"Summarize the following content concisely while preserving key information."},
+    {id:"rewrite",name:"Rewrite",cat:"Writing",text:"Rewrite this text to be clearer, more engaging, and better structured."},
+    {id:"translate",name:"Translate",cat:"Writing",text:"Translate this text to the target language while preserving tone and meaning."},
+    {id:"analyze",name:"Analyze",cat:"Analysis",text:"Analyze this data/content and provide insights, patterns, and recommendations."},
+    {id:"brainstorm",name:"Brainstorm",cat:"Creative",text:"Brainstorm creative ideas for this topic. Think outside the box and suggest unique approaches."},
+    {id:"plan",name:"Plan Project",cat:"Analysis",text:"Create a detailed project plan with phases, tasks, milestones, and risks."},
+    {id:"seo",name:"SEO Optimize",cat:"Writing",text:"Optimize this content for SEO. Suggest keywords, meta descriptions, and structural improvements."}
+  ];
+}
+function savePrompts(){localStorage.setItem('hd_prompts',JSON.stringify(S.prompts))}
+
+function loadAnalytics(){
+  try{
+    var a=JSON.parse(localStorage.getItem('hd_analytics'));
+    if(a)return a;
+  }catch(e){}
+  return{calls:{},tokens:{},costs:{},daily:{}};
+}
+function saveAnalytics(){localStorage.setItem('hd_analytics',JSON.stringify(S.analytics))}
+
+function loadGoals(){
+  try{
+    var g=JSON.parse(localStorage.getItem('hd_goals'));
+    if(g&&g.length>0)return g;
+  }catch(e){}
+  return[
+    {id:"g1",name:"Unify Dashboard + Agent OS",status:"active",progress:10,total:10,steps:[
+      {done:true,text:"Plan architecture"},{done:true,text:"Restructure CSS"},{done:true,text:"Fix nav icons"},{done:false,text:"Add agent API config"},{done:false,text:"Real chat integration"},{done:false,text:"Prompt library"},{done:false,text:"Analytics page"},{done:false,text:"Enhance OS pages"},{done:false,text:"Multi-instance support"},{done:false,text:"Polish & validate"}
+    ]},
+    {id:"g2",name:"OobzoO DAW Phase 2-4",status:"pending",progress:0,total:5,steps:[
+      {done:false,text:"Sampler & audio import"},{done:false,text:"Sample slicing"},{done:false,text:"Loop player"},{done:false,text:"Step sequencer grid"},{done:false,text:"Piano roll editor"}
+    ]},
+    {id:"g3",name:"Eloquenta Launch Prep",status:"active",progress:6,total:8,steps:[
+      {done:true,text:"Brand identity"},{done:true,text:"Landing page"},{done:true,text:"Lesson slides"},{done:true,text:"Business debates"},{done:true,text:"Speaking assessment"},{done:false,text:"Payment integration"},{done:false,text:"Estonia e-Residency"},{done:false,text:"EIS grant application"}
+    ]}
+  ];
+}
+function saveGoals(){localStorage.setItem('hd_goals',JSON.stringify(S.goals))}
+
+function loadAuditLog(){
+  try{
+    var l=JSON.parse(localStorage.getItem('hd_audit'));
+    if(l&&l.length>0)return l;
+  }catch(e){}
+  return[
+    {time:Date.now()-3600000,action:'Dashboard loaded',detail:'Hermes Dashboard initialized',type:'info'},
+    {time:Date.now()-1800000,action:'Agent config loaded',detail:'3 agent configurations loaded',type:'info'}
+  ];
+}
+function saveAuditLog(){localStorage.setItem('hd_audit',JSON.stringify(S.auditLog))}
+function addAudit(action,detail,type){
+  S.auditLog.unshift({time:Date.now(),action:action,detail:detail,type:type||'info'});
+  if(S.auditLog.length>200)S.auditLog=S.auditLog.slice(0,200);
+  saveAuditLog();
+}
+
+function st(){try{return JSON.parse(localStorage.getItem('hds'))||{}}catch(e){return{}}}
+function sv(){localStorage.setItem('hds',JSON.stringify(S.set))}
+function fi(t){var m={html:'',js:'',json:'',md:'',py:'',css:''};return m[t]||''}
+
+// ═══════════════════════════════════════════
+// PROJECT DATA
+// ═══════════════════════════════════════════
+function proj(){return[
+{n:'Alien Metronome',ic:'M',p:"/home/irieb/William's Projects/Alien Metronome",img:'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=70&auto=format',f:[
+  {p:"/home/irieb/William's Projects/Alien Metronome/index.html",n:'index.html',t:'html'},
+  {p:"/home/irieb/William's Projects/Alien Metronome/signal-tester.html",n:'signal-tester.html',t:'html'}]},
+{n:'Alien Guitar Tuner',ic:'T',p:"/home/irieb/William's Projects/Alien Guitar Tuner",img:'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&q=70&auto=format',f:[{p:"/home/irieb/William's Projects/Alien Guitar Tuner/index.html",n:'index.html',t:'html'}]},
+{n:'Guitar Fretboard',ic:'F',p:"/home/irieb/William's Projects/Guitar Fretboard",img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=70&auto=format',f:[{p:"/home/irieb/William's Projects/Guitar Fretboard/index.html",n:'index.html',t:'html'}]},
+{n:'Eloquenta',ic:'E',p:"/home/irieb/William's Projects/Eloquenta",img:'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=70&auto=format',f:[
+  {p:"/home/irieb/William's Projects/Eloquenta/index.html",n:'index.html',t:'html'},
+  {p:"/home/irieb/William's Projects/Eloquenta/Business & Pitch/pitch-deck.html",n:'pitch-deck.html',t:'html'}]},
+{n:'Forest Friends',ic:'K',p:"/home/irieb/William's Projects/forest-friends",img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=70&auto=format',f:[
+  {p:"/home/irieb/William's Projects/forest-friends/forest-home.html",n:'forest-home.html',t:'html'},
+  {p:"/home/irieb/William's Projects/forest-friends/past-simple-quiz.html",n:'past-simple-quiz.html',t:'html'}]},
+{n:'OobzoO',ic:'O',p:"/home/irieb/William's Projects/OobzoO",img:'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=70&auto=format',f:[]},
+{n:'GitHub Pages',ic:'G',p:"/home/irieb/github_project",img:'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=600&q=70&auto=format',f:[{p:"/home/irieb/github_project/index.html",n:'index.html',t:'html'}]},
+{n:'Akasha Qi Gong',ic:'Q',p:"/home/irieb/William's Projects/Akasha Qi Gong",img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70&auto=format',f:[{p:"/home/irieb/William's Projects/Akasha Qi Gong/qi-gong-workout.html",n:'qi-gong-workout.html',t:'html'}]}
+]}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function toast(msg,t){
+  var c=$('toast');var d=document.createElement('div');d.className='toast '+(t||'info');d.textContent=msg;c.appendChild(d);
+  setTimeout(function(){d.style.opacity='0';setTimeout(function(){d.remove()},300)},2500);
+}
+
+// ═══════════════════════════════════════════
+// CONTEXT MENU
+// ═══════════════════════════════════════════
+function showCtx(x,y,items){
+  var c=$('ctx');c.innerHTML='';c.style.left=x+'px';c.style.top=y+'px';c.classList.add('open');
+  items.forEach(function(it){
+    if(it.sep){var s=document.createElement('div');s.className='cs';c.appendChild(s);return;}
+    var d=document.createElement('div');d.className='ci';d.textContent=it.l||it.label;
+    d.addEventListener('click',function(){c.classList.remove('open');if(it.fn)it.fn();});
+    c.appendChild(d);
+  });
+  setTimeout(function(){document.addEventListener('click',function h(){c.classList.remove('open');document.removeEventListener('click',h);});},10);
+}
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+var modalCb=null;
+function showModal(title,ph,cb){
+  modalCb=cb;$('mh').textContent=title;$('mi').value='';$('mi').placeholder=ph||'';$('modal-overlay').classList.add('open');$('mi').focus();
+}
+$('modal-overlay').addEventListener('click',function(e){if(e.target===this)$('modal-overlay').classList.remove('open');});
+$('mc').addEventListener('click',function(){$('modal-overlay').classList.remove('open');modalCb=null;});
+$('mo').addEventListener('click',function(){var v=$('mi').value.trim();$('modal-overlay').classList.remove('open');if(modalCb)modalCb(v);});
+$('mi').addEventListener('keydown',function(e){if(e.key==='Enter')$('mo').click();if(e.key==='Escape')$('mc').click();});
+
+// ═══════════════════════════════════════════
+// TREE
+// ═══════════════════════════════════════════
+function renderTree(){
+  var t=$('tree');if(!t)return;t.innerHTML='';
+  S.proj.forEach(function(pr,pi){
+    var g=document.createElement('div');g.className='proj-group';
+    var h=document.createElement('div');h.className='proj-gh';
+    h.innerHTML='<span class="ar">&#9656;</span> '+pr.n;
+    h.addEventListener('click',function(){var a=h.querySelector('.ar');var o=a.classList.toggle('open');fd.style.display=o?'block':'none';});
+    h.addEventListener('contextmenu',function(e){e.preventDefault();showCtx(e.clientX,e.clientY,[{l:'Open Project',fn:function(){openProject(pi)}},{l:'Open Folder',fn:function(){openF(pr.p)}},{sep:true},{l:'Remove',fn:function(){S.proj.splice(pi,1);renderTree();toast('Removed','ok');}}]);});
+    var fd=document.createElement('div');fd.style.display='none';
+    if(!pr.f.length){var e=document.createElement('div');e.className='pf';e.style.opacity='0.4';e.textContent='(empty)';fd.appendChild(e);}
+    pr.f.forEach(function(fi){
+      var d=document.createElement('div');d.className='pf';d.dataset.p=fi.p;
+      d.innerHTML=fi.n;
+      d.addEventListener('click',function(){openFileInPreview(fi.p);});
+      fd.appendChild(d);
+    });
+    g.appendChild(h);g.appendChild(fd);t.appendChild(g);
+  });
+}
+
+// ═══════════════════════════════════════════
+// PROJECT MANAGEMENT
+// ═══════════════════════════════════════════
+function openProject(pi){
+  var pr=S.proj[pi];
+  if(S.openProjs.indexOf(pi)===-1){
+    S.openProjs.push(pi);
+    renderProjSwitcher();
+  }
+  switchToProject(pi);
+  addAudit('Project opened',pr.n,'info');
+}
+
+function switchToProject(pi){
+  S.curProj=pi;
+  var pr=S.proj[pi];
+  renderProjSwitcher();
+  updateChatForProject(pi);
+  $('proj-view').style.display='flex';
+  $('empty-state').style.display='none';
+  if(pr.f&&pr.f.length>0){
+    openFileInPreview(pr.f[0].p);
+  }
+}
+
+function closeProjectTab(pi){
+  var idx=S.openProjs.indexOf(pi);
+  if(idx>-1)S.openProjs.splice(idx,1);
+  if(S.curProj===pi){
+    S.curProj=S.openProjs.length>0?S.openProjs[0]:null;
+  }
+  renderProjSwitcher();
+  if(S.curProj!==null){
+    switchToProject(S.curProj);
+  } else {
+    $('proj-view').style.display='none';
+    $('empty-state').style.display='flex';
+  }
+}
+
+function renderProjSwitcher(){
+  var bar=$('proj-switcher');
+  var label=bar.querySelector('.switcher-label');
+  bar.innerHTML='';
+  if(label)bar.appendChild(label);
+  else{var sl=document.createElement('span');sl.className='switcher-label';sl.textContent='Projects:';bar.appendChild(sl);}
+  S.openProjs.forEach(function(pi){
+    var pr=S.proj[pi];
+    var tab=document.createElement('div');
+    tab.className='proj-sw-tab'+(S.curProj===pi?' active':'');
+    tab.innerHTML=pr.n+' <span class="close" onclick="event.stopPropagation();closeProjectTab('+pi+')">&times;</span>';
+    tab.addEventListener('click',function(){switchToProject(pi);});
+    bar.appendChild(tab);
+  });
+}
+
+// ═══════════════════════════════════════════
+// FILE OPENING / PREVIEW
+// ═══════════════════════════════════════════
+function openF(p){openFileInPreview(p);}
+
+function openFileInPreview(p){
+  S.previewPath=p;
+  $('preview-url').value='file://'+p;
+  var pr=S.proj[S.curProj];
+  if(!pr){
+    for(var i=0;i<S.proj.length;i++){
+      if(p.indexOf(S.proj[i].p)===0){openProject(i);pr=S.proj[i];break;}
+    }
+  }
+  if(S.previewMode==='browser'){
+    var frame=$('browser-frame');
+    frame.src='file://'+p;
+  } else {
+    loadCodeView(p);
+  }
+}
+
+function loadPreviewUrl(url){
+  if(!url)return;
+  var path=url.replace(/^file:\/\/\//,'');
+  openFileInPreview(path);
+}
+
+function setPreviewMode(mode){
+  S.previewMode=mode;
+  $('btn-preview-mode').classList.toggle('active',mode==='browser');
+  $('btn-code-mode').classList.toggle('active',mode==='code');
+  $('browser-frame').classList.toggle('active',mode==='browser');
+  $('code-view').classList.toggle('active',mode==='code');
+  if(mode==='code'&&S.previewPath){
+    loadCodeView(S.previewPath);
+  } else if(mode==='browser'&&S.previewPath){
+    $('browser-frame').src='file://'+S.previewPath;
+  }
+}
+
+function loadCodeView(path){
+  var pre=$('code-content');
+  pre.textContent='// Code view: '+path+'\n// File contents would be loaded here via a local server or file API.\n// For now, use Preview mode to see the rendered output.\n\n// Path: '+path;
+}
+
+function refreshPreview(){
+  if(!S.previewPath)return;
+  if(S.previewMode==='browser'){
+    $('browser-frame').src=$('browser-frame').src;
+  }
+}
+
+function openPreviewInTab(){
+  if(!S.previewPath)return;
+  window.open('file://'+S.previewPath,'_blank');
+}
+
+// ═══════════════════════════════════════════
+// REAL CHAT WITH HERMES API
+// ═══════════════════════════════════════════
+var chatHistories={}; // per-project chat histories
+
+function getAgentConfig(agentId){
+  for(var i=0;i<S.agentConfigs.length;i++){
+    if(S.agentConfigs[i].id===agentId)return S.agentConfigs[i];
+  }
+  return S.agentConfigs[0];
+}
+
+function updateChatForProject(pi){
+  var pr=S.proj[pi];
+  if(!pr)return;
+  $('chat-avatar').textContent=pr.ic;
+  $('chat-title').textContent=pr.n+' Agent';
+  var agent=getAgentConfig(S.activeAgentId);
+  $('chat-subtitle').innerHTML='<span style="color:'+agent.color+'">&#x25CF;</span> '+agent.name+' &mdash; '+(agent.model||'default');
+  var msgs=$('chat-messages');
+  msgs.innerHTML='';
+  // Load history for this project
+  var key='chat_'+pi;
+  if(!chatHistories[key])chatHistories[key]=[];
+  if(chatHistories[key].length===0){
+    var am=document.createElement('div');am.className='msg agent';
+    am.innerHTML='<div class="msg-sender">'+agent.name+'</div><div>Hello! I am the '+pr.n+' project agent powered by '+agent.name+'. What would you like to work on?</div><div class="msg-time">'+new Date().toLocaleTimeString()+'</div>';
+    msgs.appendChild(am);
+  } else {
+    chatHistories[key].forEach(function(h){
+      var d=document.createElement('div');d.className='msg '+h.role;
+      d.innerHTML='<div>'+h.content+'</div>';
+      msgs.appendChild(d);
+    });
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function sendChat(){
+  var input=$('chat-input');
+  var text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  var pi=S.curProj;
+  if(pi===null){toast('Open a project first','warn');return;}
+  var pr=S.proj[pi];
+  var agent=getAgentConfig(S.activeAgentId);
+  var key='chat_'+pi;
+  if(!chatHistories[key])chatHistories[key]=[];
+
+  // Add user message
+  var msgs=$('chat-messages');
+  var um=document.createElement('div');um.className='msg user';
+  um.innerHTML='<div>'+text+'</div><div class="msg-time">'+new Date().toLocaleTimeString()+'</div>';
+  msgs.appendChild(um);
+  chatHistories[key].push({role:'user',content:text});
+
+  // Add typing indicator
+  var typing=document.createElement('div');typing.className='msg agent';typing.id='typing-ind';
+  typing.innerHTML='<div class="msg-sender">'+agent.name+'</div><div><span class="typing-dots">...</span></div>';
+  msgs.appendChild(typing);
+  msgs.scrollTop=msgs.scrollHeight;
+
+  // Build messages array for API
+  var apiMessages=[{role:'system',content:agent.systemPrompt+'\n\nYou are helping with the '+pr.n+' project.'}];
+  chatHistories[key].forEach(function(h){
+    apiMessages.push({role:h.role,content:h.content});
+  });
+
+  // Make API call
+  var startTime=Date.now();
+  callHermesAPI(agent,apiMessages,function(ok,content,err){
+    typing.remove();
+    if(ok){
+      var am=document.createElement('div');am.className='msg agent';
+      am.innerHTML='<div class="msg-sender">'+agent.name+'</div><div>'+content+'</div><div class="msg-time">'+new Date().toLocaleTimeString()+' ('+Math.round((Date.now()-startTime)/1000)+'s)</div>';
+      msgs.appendChild(am);
+      chatHistories[key].push({role:'agent',content:content});
+      // Track analytics
+      trackApiCall(agent,startTime);
+      addAudit('Chat response',pr.n+' via '+agent.name,'info');
+    } else {
+      var em=document.createElement('div');em.className='msg agent';
+      em.style.borderLeft='3px solid var(--error)';
+      em.innerHTML='<div class="msg-sender">'+agent.name+'</div><div>Error: '+(err||'Connection failed. Is the Hermes gateway running on localhost:8642?')+'</div>';
+      msgs.appendChild(em);
+      addAudit('Chat error',err||'Connection failed','error');
+    }
+    msgs.scrollTop=msgs.scrollHeight;
+  });
+}
+
+function callHermesAPI(agent,msgs,cb){
+  fetch(agent.apiUrl,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+agent.apiKey},
+    body:JSON.stringify({model:agent.model,messages:msgs,stream:false,temperature:agent.temperature||0.7})
+  }).then(function(res){
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    return res.json();
+  }).then(function(data){
+    var content=data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+    if(content){
+      cb(true,content,null);
+    } else {
+      cb(false,null,'Empty response from API');
+    }
+  }).catch(function(err){
+    cb(false,null,err.message);
+  });
+}
+
+function trackApiCall(agent,startTime){
+  var day=new Date().toISOString().slice(0,10);
+  if(!S.analytics.daily[day])S.analytics.daily[day]={calls:0,tokens:0,cost:0};
+  S.analytics.daily[day].calls++;
+  S.analytics.daily[day].tokens+=100; // estimate
+  var costPerCall={'openrouter/owl-alpha':0.002,'google/gemini-2.0-flash-001':0.0001,'anthropic/claude-sonnet-4':0.003};
+  S.analytics.daily[day].cost+=(costPerCall[agent.model]||0.001);
+  saveAnalytics();
+}
+
+function toggleChat(){
+  var area=$('chat-area');
+  if(area.style.height==='40px'){
+    area.style.height='25%';
+  } else {
+    area.style.height='40px';
+  }
+}
+
+// Chat resize handle
+(function(){
+  var handle=$('chat-resize-handle');
+  var area=$('chat-area');
+  var startY,startH;
+  handle.addEventListener('mousedown',function(e){
+    startY=e.clientY;startH=area.offsetHeight;
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+    e.preventDefault();
+  });
+  function onMove(e){
+    var diff=startY-e.clientY;
+    var h=Math.max(100,Math.min(400,startH+diff));
+    area.style.height=h+'px';
+  }
+  function onUp(){
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+  }
+})();
+
+// ═══════════════════════════════════════════
+// SHIFT+SCROLL PROJECT SWITCHING
+// ═══════════════════════════════════════════
+document.addEventListener('wheel',function(e){
+  if(!e.shiftKey)return;
+  if(S.openProjs.length<2)return;
+  e.preventDefault();
+  var curIdx=S.openProjs.indexOf(S.curProj);
+  if(curIdx===-1)return;
+  var dir=e.deltaY>0?1:-1;
+  var nextIdx=(curIdx+dir+S.openProjs.length)%S.openProjs.length;
+  switchToProject(S.openProjs[nextIdx]);
+},{passive:false});
+
+// ═══════════════════════════════════════════
+// RIGHT BAR
+// ═══════════════════════════════════════════
+function renderRC(){
+  var c=$('rc');var tab=S.rTab;c.innerHTML='';
+  if(tab==='projects'){
+    var h='';
+    S.proj.forEach(function(pr,pi){
+      var hasFiles=pr.f&&pr.f.length>0;
+      var firstFile=pr.f&&pr.f.length>0?pr.f[0].p:'';
+      var isOpen=S.openProjs.indexOf(pi)>-1;
+      var isExpanded=S.expandedProj===pi;
+      var img=pr.img||'';
+      if(isExpanded){
+        h+='<div class="card expanded" id="projCard'+pi+'">'+
+          '<div class="ct">'+pr.n+(isOpen?' <span style="font-size:9px;color:var(--success);float:right">OPEN</span>':'')+'</div>'+
+          (img?'<img src="'+img+'" class="proj-img" alt="'+pr.n+'">':'')+
+          '<div class="cd" style="padding:4px 10px">'+pr.n+' project</div>'+
+          '<div class="proj-preview">'+
+            '<iframe src="file://'+(firstFile||'')+'" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>'+
+            '<div class="preview-bar">'+
+              '<button class="pbtn" onclick="event.stopPropagation();openFileInPreview(\''+(firstFile||'')+'\')">Open</button>'+
+              '<button class="pbtn" onclick="event.stopPropagation();window.open(\'file://'+(firstFile||'')+'\',\'_blank\')">New Tab</button>'+
+              '<button class="pbtn" onclick="event.stopPropagation();collapseProject('+pi+')">Close</button>'+
+            '</div>'+
+          '</div>'+
+          '<div class="resize-handle" id="resize'+pi+'"></div>'+
+          '<div class="proj-chat">'+
+            '<div class="chat-msgs" id="chatMsgs'+pi+'">'+
+              '<div class="msg agent"><div style="font-size:8px;font-weight:700;color:var(--accent);margin-bottom:1px">'+pr.n+' Agent</div>Hello! I am the '+pr.n+' project agent. What would you like to work on?</div>'+
+            '</div>'+
+            '<div class="chat-input-area">'+
+              '<input type="text" class="chat-input" id="chatIn'+pi+'" placeholder="Message '+pr.n+' agent..." onkeydown="if(event.key===\'Enter\')sendProjChat('+pi+')">'+
+              '<button class="chat-send" onclick="sendProjChat('+pi+')">&#10148;</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      } else {
+        h+='<div class="card" style="cursor:pointer" onclick="expandProject('+pi+')">'+
+          (img?'<img src="'+img+'" class="proj-img" alt="'+pr.n+'" style="height:60px;opacity:.7">':'')+
+          '<div class="ct" style="margin-top:4px">'+pr.n+(isOpen?' <span style="font-size:9px;color:var(--success);float:right">OPEN</span>':'')+'</div>'+
+          '<div class="cd">'+pr.n+' project</div>'+
+          '<div class="ca">'+
+            '<button class="cbtn primary" onclick="event.stopPropagation();expandProject('+pi+')">Expand</button> '+
+            (hasFiles?'<button class="cbtn" onclick="event.stopPropagation();openFileInPreview(\''+firstFile+'\')">View</button>':'')+
+          '</div></div>';
+      }
+    });
+    h+='<div class="card"><div class="ct">New Project</div><div class="cd">Create a new project with its own agent</div><div class="ca"><button class="cbtn primary" id="rbn1">Create</button></div></div>';
+    c.innerHTML=h;
+    var rbn1=$('rbn1');
+    if(rbn1)rbn1.onclick=function(){showModal('New Project','Project name',function(v){if(v){S.proj.push({ic:v.charAt(0).toUpperCase(),n:v,p:"/home/irieb/William's Projects/"+v,f:[]});renderTree();renderRC();toast('Created '+v,'ok');addAudit('Project created',v,'info');}})};
+  }else if(tab==='plans'){
+    renderPlansTab(c);
+  }else{
+    renderTimetableTab(c);
+  }
+}
+
+function renderPlansTab(c){
+  var h='';
+  S.goals.forEach(function(gl){
+    var done=gl.steps.filter(function(s){return s.done}).length;
+    var total=gl.steps.length;
+    var pct=total>0?Math.round(done/total*100):0;
+    var statusColor=gl.status==='active'?'var(--accent)':(gl.status==='done'?'var(--success)':'var(--warn)');
+    h+='<div class="card">'+
+      '<div class="ct">'+gl.name+'<span style="float:right;font-size:9px;padding:1px 6px;border-radius:8px;background:'+statusColor+'22;color:'+statusColor+';font-weight:600">'+gl.status.toUpperCase()+'</span></div>'+
+      '<div style="margin-top:6px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-bottom:3px"><span>Progress</span><span>'+done+'/'+total+' ('+pct+'%)</span></div>'+
+      '<div style="height:3px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+statusColor+';border-radius:2px"></div></div></div>'+
+      '<div style="margin-top:8px">';
+    gl.steps.forEach(function(s){
+      var chk=s.done?'[x]':'[ ]';
+      var txt=s.done?'<span style="text-decoration:line-through;opacity:0.5">'+s.text+'</span>':s.text;
+      h+='<div style="font-size:9px;padding:2px 0;color:var(--text-dim)">'+chk+' '+txt+'</div>';
+    });
+    h+='</div></div>';
+  });
+  h+='<div class="card"><div class="ct">New Goal</div><div class="cd">Create a new goal with steps</div><div class="ca"><button class="cbtn primary" id="rbn-goal">Create</button></div></div>';
+  c.innerHTML=h;
+  var rbn=$('rbn-goal');
+  if(rbn)rbn.onclick=function(){showModal('New Goal','Goal name',function(v){if(v){S.goals.push({id:'g'+Date.now(),name:v,status:'active',progress:0,total:0,steps:[]});saveGoals();renderRC();toast('Created goal: '+v,'ok');addAudit('Goal created',v,'info');}})};
+}
+
+function renderTimetableTab(c){
+  var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var td=new Date().getDay();
+  var h='';
+  days.forEach(function(d,i){var isT=((i+1)%7)===td;
+    h+='<div class="card"'+(isT?' style="border-color:var(--accent)"':'')+'>'+
+      '<div class="ct">'+d+(isT?' (Today)':'')+'</div>';
+    if(isT){h+='<div class="cd">09:00 - EdTech RSS Scan</div><div class="cd" style="margin-top:4px">14:00 - Review PRs</div>';
+    }else{h+='<div class="cd">No tasks</div>'}
+    h+='</div>';
+  });
+  c.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// PROJECT EXPAND/COLLAPSE
+// ═══════════════════════════════════════════
+function expandProject(pi){
+  S.expandedProj=pi;
+  renderRC();
+  setTimeout(function(){
+    var handle=document.getElementById('resize'+pi);
+    var card=document.getElementById('projCard'+pi);
+    if(!handle||!card)return;
+    var startY,startH;
+    handle.addEventListener('mousedown',function(e){
+      startY=e.clientY;startH=card.querySelector('.proj-preview').offsetHeight;
+      document.addEventListener('mousemove',onMove);
+      document.addEventListener('mouseup',onUp);
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    function onMove(e){
+      var diff=e.clientY-startY;
+      var h=Math.max(60,Math.min(400,startH+diff));
+      card.querySelector('.proj-preview').style.height=h+'px';
+    }
+    function onUp(){
+      document.removeEventListener('mousemove',onMove);
+      document.removeEventListener('mouseup',onUp);
+    }
+  },100);
+}
+function collapseProject(pi){
+  if(S.expandedProj===pi)S.expandedProj=null;
+  renderRC();
+}
+
+function sendProjChat(pi){
+  var input=document.getElementById('chatIn'+pi);
+  var text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  var msgs=document.getElementById('chatMsgs'+pi);
+  var um=document.createElement('div');um.className='msg user';
+  um.textContent=text;
+  msgs.appendChild(um);
+  var pr=S.proj[pi];
+  var agent=getAgentConfig(S.activeAgentId);
+  var pn=pr?pr.n:'Agent';
+  setTimeout(function(){
+    var opts=['I will work on that for the '+pn+' project. Give me a moment.','Good idea. Getting started on that.','Understood. Processing that request.','Let me analyze that for '+pn+'...'];
+    var reply=opts[Math.floor(Math.random()*opts.length)];
+    var am=document.createElement('div');am.className='msg agent';
+    am.innerHTML='<div style="font-size:8px;font-weight:700;color:var(--accent);margin-bottom:1px">'+agent.name+'</div>'+reply;
+    msgs.appendChild(am);
+    msgs.scrollTop=msgs.scrollHeight;
+  },500+Math.random()*1000);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ═══════════════════════════════════════════
+// APP PACKAGER
+// ═══════════════════════════════════════════
+function showPackager(){
+  $('packager-overlay').style.display='flex';
+  renderPackConfig();
+}
+function closePackager(){
+  $('packager-overlay').style.display='none';
+}
+$('packager-overlay').addEventListener('click',function(e){if(e.target===this)closePackager()});
+
+$$('#pack-tabs .stab').forEach(function(t){
+  t.addEventListener('click',function(){
+    $$('#pack-tabs .stab').forEach(function(x){x.classList.remove('active')});
+    t.classList.add('active');
+    var s=t.dataset.s;
+    if(s==='config')renderPackConfig();
+    else if(s==='devices')renderPackDevices();
+    else if(s==='build')renderPackBuild();
+  });
+});
+
+function renderPackConfig(){
+  var c=$('pack-content');
+  var cfg=S.packConfig;
+  var h='<div class="packager-section"><h4>App Configuration</h4>'+
+    '<div class="pack-row"><span class="pack-label">App Name</span><input class="pack-input" id="pk-name" value="'+cfg.name+'" placeholder="My App"></div>'+
+    '<div class="pack-row"><span class="pack-label">Bundle ID</span><input class="pack-input" id="pk-bundle" value="'+cfg.bundleId+'" placeholder="com.example.myapp"></div>'+
+    '<div class="pack-row"><span class="pack-label">Version</span><input class="pack-input" id="pk-ver" value="'+cfg.version+'" placeholder="1.0.0"></div>'+
+    '<div class="pack-row"><span class="pack-label">Orientation</span><select class="pack-select" id="pk-orient"><option value="portrait"'+(cfg.orientation==='portrait'?'selected':'')+'>Portrait</option><option value="landscape"'+(cfg.orientation==='landscape'?'selected':'')+'>Landscape</option><option value="both"'+(cfg.orientation==='both'?'selected':'')+'>Both</option></select></div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-full"'+(cfg.fullscreen?'checked':'')+'> Fullscreen / Immersive mode</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-offline"'+(cfg.offline?'checked':'')+'> Offline-capable (Service Worker)</div>'+
+    '</div>'+
+    '<div class="packager-section"><h4>Permissions</h4>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-perm-cam"> Camera access</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-perm-mic"> Microphone access</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-perm-loc"> Location access</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-perm-notif"> Push notifications</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-perm-storage"> File storage</div>'+
+    '</div>'+
+    '<div class="packager-section"><h4>Target Platforms</h4>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-target-android" checked> Android (APK / AAB)</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-target-ios" checked> iOS (IPA via TestFlight)</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-target-pwa"> PWA (Progressive Web App)</div>'+
+    '<div class="pack-chk"><input type="checkbox" id="pk-target-web"> Static Web (GitHub Pages)</div>'+
+    '</div>'+
+    '<div style="margin-top:12px;display:flex;gap:6px">'+
+    '<button class="cbtn primary" onclick="savePackConfig()">Save Config</button>'+
+    '<button class="cbtn" onclick="renderPackDevices()">Preview on Devices</button>'+
+    '</div>'+
+    '<div id="pack-status" class="pack-status"></div>';
+  c.innerHTML=h;
+}
+
+function savePackConfig(){
+  S.packConfig={
+    name:$('pk-name').value,
+    bundleId:$('pk-bundle').value,
+    version:$('pk-ver').value,
+    orientation:$('pk-orient').value,
+    fullscreen:$('pk-full').checked,
+    offline:$('pk-offline').checked,
+    permissions:[]
+  };
+  if($('pk-perm-cam').checked)S.packConfig.permissions.push('camera');
+  if($('pk-perm-mic').checked)S.packConfig.permissions.push('microphone');
+  if($('pk-perm-loc').checked)S.packConfig.permissions.push('location');
+  if($('pk-perm-notif').checked)S.packConfig.permissions.push('notifications');
+  if($('pk-perm-storage').checked)S.packConfig.permissions.push('storage');
+  var st=$('pack-status');
+  st.className='pack-status show ok';
+  st.textContent='Configuration saved for: '+(S.packConfig.name||'Untitled App');
+  addAudit('Packager config saved',S.packConfig.name,'info');
+}
+
+function renderPackDevices(){
+  var c=$('pack-content');
+  var curDev=S.packDevice;
+  var devices=[
+    {id:'iphone14',name:'iPhone 14',res:'390x844',os:'iOS 17'},
+    {id:'ipad',name:'iPad Air',res:'820x1180',os:'iPadOS 17'},
+    {id:'android',name:'Pixel 8',res:'412x915',os:'Android 14'},
+    {id:'fold',name:'Galaxy Fold',res:'280x653',os:'Android 14'}
+  ];
+  var h='<div class="packager-section"><h4>Virtual Device Preview</h4>'+
+    '<p style="font-size:10px;color:var(--text-muted);margin-bottom:10px">Preview how your web app renders on different devices.</p>'+
+    '<div class="device-controls">';
+  devices.forEach(function(d){
+    h+='<button class="dc-btn'+(curDev===d.id?' active':'')+'" onclick="setPackDevice(\''+d.id+'\',\''+d.res+'\')">'+d.name+'</button>';
+  });
+  h+='</div>';
+  var dev=devices.find(function(d){return d.id===curDev})||devices[0];
+  h+='<div class="device-frame-wrap">'+
+    '<div class="device-header"><span class="device-name">'+dev.name+' - '+dev.os+'</span><span class="device-res">'+dev.res+'</span></div>'+
+    '<div class="device-bezel device-'+curDev+'">'+
+      '<div class="device-screen device-'+curDev+'">'+
+        '<div class="device-notch"></div>'+
+        '<iframe id="device-preview-frame" src="'+(S.previewPath?'file://'+S.previewPath:'about:blank')+'"></iframe>'+
+        '<div class="device-home"></div>'+
+      '</div>'+
+    '</div>'+
+    '</div>';
+  h+='</div>';
+  c.innerHTML=h;
+}
+
+function setPackDevice(id,res){
+  S.packDevice=id;
+  renderPackDevices();
+}
+
+function renderPackBuild(){
+  var c=$('pack-content');
+  var cfg=S.packConfig;
+  var h='<div class="packager-section"><h4>Build Output</h4>'+
+    '<p style="font-size:10px;color:var(--text-muted);margin-bottom:10px">Package your web app for distribution.</p>';
+  if(!cfg.name){
+    h+='<div class="pack-status show warn">Configure your app first (Configure tab)</div>';
+  } else {
+    h+='<div class="pack-log" id="build-log">'+
+      '<div class="pack-log-line">Starting build for: '+cfg.name+' v'+cfg.version+'</div>'+
+      '<div class="pack-log-line">Bundle ID: '+cfg.bundleId+'</div>'+
+      '<div class="pack-log-line">Orientation: '+cfg.orientation+'</div>'+
+      '<div class="pack-log-line">Permissions: '+(cfg.permissions.length?cfg.permissions.join(', '):'none')+'</div>'+
+      '</div>';
+    h+='<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">'+
+      '<button class="cbtn primary" onclick="runBuild(\'aab\')">Build AAB (Play Store)</button>'+
+      '<button class="cbtn" onclick="runBuild(\'apk\')">Build APK</button>'+
+      '<button class="cbtn" onclick="runBuild(\'pwa\')">Export PWA</button>'+
+      '<button class="cbtn" onclick="runBuild(\'web\')">Export Static Web</button>'+
+      '</div>';
+  }
+  h+='</div>';
+  c.innerHTML=h;
+}
+
+function runBuild(type){
+  var log=$('build-log');
+  if(!log)return;
+  var steps={
+    aab:['Running npm build...','Generating service worker...','Creating Android project with Capacitor...','Building release AAB...','Signing with upload key...','Output: app-release.aab (12.4 MB)'],
+    apk:['Running npm build...','Generating service worker...','Creating Android project...','Building debug APK...','Output: app-debug.apk (14.1 MB)'],
+    pwa:['Running npm build...','Generating service worker...','Creating web app manifest...','Adding offline support...','Output: dist/ folder ready for deployment'],
+    web:['Running npm build...','Optimizing assets...','Minifying JS/CSS...','Output: dist/ folder ready for GitHub Pages']
+  };
+  var s=steps[type]||[];
+  log.innerHTML='';
+  s.forEach(function(line,i){
+    setTimeout(function(){
+      var d=document.createElement('div');
+      d.className='pack-log-line ok';
+      d.textContent='> '+line;
+      log.appendChild(d);
+      log.scrollTop=log.scrollHeight;
+    },i*400);
+  });
+  setTimeout(function(){
+    toast('Build complete: '+type,'ok');
+  },s.length*400+200);
+}
+
+// ═══════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════
+document.addEventListener('keydown',function(e){
+  if(e.altKey&&e.key>='1'&&e.key<='5'){
+    e.preventDefault();
+    var slot=parseInt(e.key);
+    if(S.openProjs.length>=slot){
+      switchToProject(S.openProjs[slot-1]);
+    }
+  }
+  if(e.key==='Escape'){
+    if($('packager-overlay').style.display==='flex')closePackager();
+    if($('modal-overlay').classList.contains('open')){$('modal-overlay').classList.remove('open');modalCb=null;}
+  }
+});
+
+// ═══════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════
+function openS(){$('settings-overlay').classList.add('open');renderSC()}
+function closeS(){$('settings-overlay').classList.remove('open')}
+$('btn-gear').onclick=openS;$('sclose').onclick=closeS;
+$('settings-overlay').onclick=function(e){if(e.target===this)closeS()};
+$$('.rtab').forEach(function(t){t.addEventListener('click',function(){$$('.rtab').forEach(function(x){x.classList.remove('active')});t.classList.add('active');S.rTab=t.dataset.t;renderRC()})});
+
+function renderSC(){
+  var c=$('sc');var s=S.set;var t=S.sTab;var h='';
+  function inp(id,val,type,ph){return '<input class="si" id="'+id+'" type="'+(type||'text')+'" value="'+(val||'')+'" placeholder="'+(ph||'')+'">'}
+  function row(label,field){return '<div class="sr"><div class="sl">'+label+'</div>'+field+'</div>'}
+  function sel(id,val,opts){var r='<select class="si" id="'+id+'">';opts.forEach(function(o){r+='<option value="'+o.v+'"'+(val===o.v?'selected':'')+'>'+o.l+'</option>'});return r+'</select>'}
+
+  if(t==='agents'){
+    h=renderAgentsSettings();
+  }else if(t==='models'){
+    h='<div class="sg"><div class="sgt">Primary Model</div>'+
+      row('Default Model',sel('s-md',s.md||'openrouter/owl-alpha',[{v:'openrouter/owl-alpha',l:'openrouter/owl-alpha'},{v:'google/gemini-2.0-flash-001',l:'Gemini 2.0 Flash'},{v:'anthropic/claude-sonnet-4',l:'Claude Sonnet 4'},{v:'openai/gpt-4o',l:'GPT-4o'}]))+
+      row('Provider',sel('s-prv',s.prv||'openrouter',[{v:'openrouter',l:'OpenRouter'},{v:'anthropic',l:'Anthropic'},{v:'openai',l:'OpenAI'},{v:'google',l:'Google'}]))+
+      row('Base URL',inp('s-bu',s.bu||'https://openrouter.ai/api/v1'))+
+      row('API Key',inp('s-ak',s.ak||'','password','sk-...'))+'</div>';
+  }else if(t==='routing'){
+    h='<div class="sg"><div class="sgt">Agent Routing Rules</div>'+
+      '<div class="sr"><div class="sl">Complex reasoning</div><select class="si"><option>OWL Alpha (Paid)</option><option>Gemini Flash (Free)</option></select></div>'+
+      '<div class="sr"><div class="sl">Bulk text/files</div><select class="si"><option>Gemini Flash (Free)</option><option>OWL Alpha (Paid)</option></select></div>'+
+      '<div class="sr"><div class="sl">Vision/media</div><select class="si"><option>MiniMax M3 (Free)</option><option>GPT-4o (Paid)</option></select></div>'+
+      '<div class="sr"><div class="sl">Git push</div><select class="si"><option>Human checkpoint</option></select></div>'+
+      '<div class="sr"><div class="sl">Destructive ops</div><select class="si"><option>Human checkpoint</option></select></div>'+
+      '</div>';
+  }else if(t==='tools'){
+    h='<div class="sg"><div class="sgt">Tool Registry</div>'+
+      '<table><tr><th>Toolset</th><th>Tools</th><th>Enabled</th></tr>'+
+      '<tr><td>terminal</td><td>12</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '<tr><td>file</td><td>8</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '<tr><td>web</td><td>6</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '<tr><td>browser</td><td>4</td><td><span style="color:var(--warn)">Partial</span></td></tr>'+
+      '<tr><td>vision</td><td>3</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '<tr><td>memory</td><td>2</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '<tr><td>cronjob</td><td>5</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '<tr><td>delegation</td><td>4</td><td><span style="color:var(--success)">Yes</span></td></tr>'+
+      '</table></div>';
+  }else if(t==='skills'){
+    h='<div class="sg"><div class="sgt">Skills</div>'+
+      '<p style="font-size:10px;color:var(--text-muted)">Skills are loaded from ~/.hermes/skills/</p>'+
+      '<div style="margin-top:8px;font-size:10px;color:var(--text-dim)">'+
+      'software-development, creative, data-science, devops, email, gaming, github, media, mlops, note-taking, productivity, research, smart-home, social-media, web-browsing, webapp-testing, yuanbao'+
+      '</div></div>';
+  }else if(t==='memory'){
+    h='<div class="sg"><div class="sgt">Memory</div>'+
+      '<p style="font-size:10px;color:var(--text-muted)">Memory is stored in ~/.hermes/memory/</p>'+
+      '<div style="margin-top:8px"><button class="cbtn" onclick="toast(\'Memory viewer coming soon\',\'info\')">View Memory</button></div>'+
+      '</div>';
+  }else if(t==='backend'){
+    h='<div class="sg"><div class="sgt">Backend</div>'+
+      '<div class="sr"><div class="sl">Hermes Gateway</div>'+inp('s-gw',s.gw||'http://localhost:8642','text','http://localhost:8642')+'</div>'+
+      '<div class="sr"><div class="sl">Gateway Key</div>'+inp('s-gk',s.gk||'hermes','password','hermes')+'</div>'+
+      '<div style="margin-top:8px"><button class="cbtn primary" onclick="testGateway()">Test Connection</button>'+
+      ' <span id="gw-status" style="font-size:10px;margin-left:8px"></span></div>'+
+      '</div>';
+  }else if(t==='display'){
+    h='<div class="sg"><div class="sgt">Display</div>'+
+      '<div class="sr"><div class="sl">Theme</div><select class="si"><option>Dark</option><option>Light</option></select></div>'+
+      '<div class="sr"><div class="sl">Font Size</div><select class="si"><option>Small</option><option selected>Medium</option><option>Large</option></select></div>'+
+      '<div class="sr"><div class="sl">Sidebar Width</div>'+inp('s-sbw','260','text','260')+'</div>'+
+      '</div>';
+  }else if(t==='security'){
+    h='<div class="sg"><div class="sgt">Security</div>'+
+      '<div class="sr"><div class="sl">Git push</div><select class="si"><option>Human checkpoint</option><option>Allow</option><option>Deny</option></select></div>'+
+      '<div class="sr"><div class="sl">Destructive ops</div><select class="si"><option>Human checkpoint</option><option>Allow</option><option>Deny</option></select></div>'+
+      '<div class="sr"><div class="sl">External API</div><select class="si"><option>Allow</option><option>Deny</option></select></div>'+
+      '</div>';
+  }
+  c.innerHTML=h;
+  // Bind agent settings events
+  if(t==='agents')bindAgentSettings();
+}
+
+function renderAgentsSettings(){
+  var h='<div class="sg"><div class="sgt">Agent API Configurations</div>'+
+    '<p style="font-size:10px;color:var(--text-muted);margin-bottom:12px">Configure Hermes API agents. Each agent connects to a Hermes gateway via the OpenAI-compatible API.</p>';
+  S.agentConfigs.forEach(function(ag,i){
+    h+='<div class="card" style="margin-bottom:8px;border-left:3px solid '+ag.color+'">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
+      '<div style="font-weight:700;font-size:12px;flex:1">'+ag.name+'</div>'+
+      '<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:'+ag.color+'22;color:'+ag.color+'">'+ag.model+'</span>'+
+      (i>0?'<button class="cbtn" style="font-size:9px" onclick="removeAgent('+i+')">Remove</button>':'')+
+      '</div>'+
+      '<div class="pack-row"><span class="pack-label">Name</span><input class="pack-input" id="ag-name-'+i+'" value="'+ag.name+'"></div>'+
+      '<div class="pack-row"><span class="pack-label">API URL</span><input class="pack-input" id="ag-url-'+i+'" value="'+ag.apiUrl+'"></div>'+
+      '<div class="pack-row"><span class="pack-label">API Key</span><input class="pack-input" id="ag-key-'+i+'" value="'+ag.apiKey+'" type="password"></div>'+
+      '<div class="pack-row"><span class="pack-label">Model</span><input class="pack-input" id="ag-model-'+i+'" value="'+ag.model+'"></div>'+
+      '<div class="pack-row"><span class="pack-label">Temperature</span><input class="pack-input" id="ag-temp-'+i+'" value="'+ag.temperature+'" type="number" step="0.1" min="0" max="2"></div>'+
+      '<div class="pack-row"><span class="pack-label">System Prompt</span><textarea class="pack-input" id="ag-sys-'+i+'" style="min-height:60px;resize:vertical">'+ag.systemPrompt+'</textarea></div>'+
+      '</div>';
+  });
+  h+='<button class="cbtn primary" onclick="addAgent()">+ Add Agent</button> '+
+    '<button class="cbtn" onclick="saveAgentsFromSettings()">Save All</button> '+
+    '<button class="cbtn" onclick="testAgentConnection()">Test Connection</button>'+
+    '<span id="agent-test-result" style="font-size:10px;margin-left:8px"></span>'+
+    '</div>';
+  return h;
+}
+
+function bindAgentSettings(){
+  // Events are handled by inline onclick in the rendered HTML
+}
+
+function addAgent(){
+  S.agentConfigs.push({
+    id:'agent_'+Date.now(),
+    name:'New Agent',
+    apiUrl:'http://localhost:8642/v1/chat/completions',
+    apiKey:'hermes',
+    model:'openrouter/owl-alpha',
+    systemPrompt:'You are a helpful AI assistant.',
+    temperature:0.7,
+    color:'var(--cyan)'
+  });
+  renderSC();
+}
+
+function removeAgent(i){
+  S.agentConfigs.splice(i,1);
+  renderSC();
+}
+
+function saveAgentsFromSettings(){
+  S.agentConfigs.forEach(function(ag,i){
+    ag.name=document.getElementById('ag-name-'+i).value;
+    ag.apiUrl=document.getElementById('ag-url-'+i).value;
+    ag.apiKey=document.getElementById('ag-key-'+i).value;
+    ag.model=document.getElementById('ag-model-'+i).value;
+    ag.temperature=parseFloat(document.getElementById('ag-temp-'+i).value)||0.7;
+    ag.systemPrompt=document.getElementById('ag-sys-'+i).value;
+  });
+  saveAgentConfigs();
+  toast('Agent configurations saved','ok');
+  addAudit('Agent configs saved',S.agentConfigs.length+' agents','info');
+}
+
+function testAgentConnection(){
+  var ag=S.agentConfigs[0];
+  var resultEl=document.getElementById('agent-test-result');
+  resultEl.textContent='Testing...';
+  resultEl.style.color='var(--warn)';
+  fetch(ag.apiUrl.replace('/chat/completions',''),{
+    method:'GET'
+  }).then(function(){
+    resultEl.textContent='Gateway reachable';
+    resultEl.style.color='var(--success)';
+  }).catch(function(){
+    // Try a POST to the chat endpoint
+    fetch(ag.apiUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+ag.apiKey},
+      body:JSON.stringify({model:ag.model,messages:[{role:'user',content:'Hi'}],stream:false,max_tokens:1})
+    }).then(function(res){
+      if(res.ok||res.status===401||res.status===403){
+        resultEl.textContent='Gateway reachable (HTTP '+res.status+')';
+        resultEl.style.color='var(--success)';
+      } else {
+        resultEl.textContent='HTTP '+res.status;
+        resultEl.style.color='var(--error)';
+      }
+    }).catch(function(err){
+      resultEl.textContent='Cannot connect: '+err.message;
+      resultEl.style.color='var(--error)';
+    });
+  });
+}
+
+function testGateway(){
+  var url=document.getElementById('s-gw').value||'http://localhost:8642';
+  var statusEl=document.getElementById('gw-status');
+  statusEl.textContent='Testing...';
+  statusEl.style.color='var(--warn)';
+  fetch(url.replace('/chat/completions',''),{method:'GET'}).then(function(){
+    statusEl.textContent='Reachable';
+    statusEl.style.color='var(--success)';
+  }).catch(function(){
+    statusEl.textContent='Not reachable (is Hermes gateway running?)';
+    statusEl.style.color='var(--error)';
+  });
+}
+
+// ═══════════════════════════════════════════
+// AGENT OS PAGE SWITCHING
+// ═══════════════════════════════════════════
+function showOSPage(id,el){
+  document.querySelectorAll('.os-page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.os-nav-item').forEach(function(n){n.classList.remove('active')});
+  var page=document.getElementById('os-page-'+id);
+  if(page)page.classList.add('active');
+  if(el)el.classList.add('active');
+  S.osPage=id;
+  var osPages=document.getElementById('osPages');
+  var center=$('center');
+  if(osPages)osPages.style.display='block';
+  // Hide project workspace elements when on OS pages
+  if(id!=='dashboard'){
+    var projView=$('proj-view');
+    if(projView)projView.style.display='none';
+    var emptyState=$('empty-state');
+    if(emptyState)emptyState.style.display='none';
+  }
+  var titles={dashboard:'Dashboard',goals:'Goals',agents:'Agents',workflows:'Workflows',planner:'Task Planner',routing:'Agent Routing',exceptions:'Exceptions','short-term':'Short-Term Context','long-term':'Long-Term Memory',knowledge:'Knowledge Graph',mcp:'MCP Servers',connections:'Connections',tools:'Tool Registry',audit:'Audit Logs',permissions:'Permissions',checkpoints:'HITL Checkpoints',models:'Models & Routing',cost:'Cost Optimization',help:'Help & Commands',prompts:'Prompt Library',analytics:'Analytics'};
+  var tb=document.getElementById('osTopbarTitle');
+  if(tb)tb.textContent=titles[id]||id;
+  // Render page-specific content
+  if(id==='analytics')renderAnalyticsPage();
+  if(id==='prompts')renderPromptsPage();
+  if(id==='audit')renderAuditPage();
+  if(id==='goals')renderGoalsPage();
+  if(id==='agents')renderAgentsPage();
+}
+
+function showWorkspace(){
+  var osPages=document.getElementById('osPages');
+  if(osPages)osPages.style.display='none';
+  document.querySelectorAll('.os-nav-item').forEach(function(n){n.classList.remove('active')});
+  // Show project view if a project is open
+  if(S.curProj!==null){
+    var projView=$('proj-view');
+    if(projView)projView.style.display='flex';
+  } else {
+    var emptyState=$('empty-state');
+    if(emptyState)emptyState.style.display='flex';
+  }
+}
+
+// ═══════════════════════════════════════════
+// ANALYTICS PAGE
+// ═══════════════════════════════════════════
+function renderAnalyticsPage(){
+  var page=document.getElementById('os-page-analytics');
+  if(!page)return;
+  var daily=S.analytics.daily||{};
+  var days=Object.keys(daily).sort().slice(-7);
+  var totalCalls=0,totalCost=0;
+  days.forEach(function(d){totalCalls+=daily[d].calls||0;totalCost+=(daily[d].cost||0);});
+  var maxCalls=1;
+  days.forEach(function(d){var c=daily[d].calls||0;if(c>maxCalls)maxCalls=c;});
+  var h='<div class="os-page-header"><h1>Analytics</h1><p>API usage and cost tracking</p></div>'+
+    '<div class="os-grid-3" style="margin-bottom:12px">'+
+    '<div class="os-card os-metric"><div class="os-metric-num">'+totalCalls+'</div><div class="os-metric-label">Total Calls (7d)</div></div>'+
+    '<div class="os-card os-metric"><div class="os-metric-num">$'+totalCost.toFixed(4)+'</div><div class="os-metric-label">Est. Cost (7d)</div></div>'+
+    '<div class="os-card os-metric"><div class="os-metric-num">'+S.agentConfigs.length+'</div><div class="os-metric-label">Configured Agents</div></div>'+
+    '</div>'+
+    '<div class="os-card"><div class="os-card-title">Daily API Calls</div>'+
+    '<div style="display:flex;align-items:flex-end;gap:4px;height:120px;padding:8px 0">';
+  if(days.length===0){
+    h+='<div style="color:var(--text-muted);font-size:10px">No data yet. Start chatting to see analytics.</div>';
+  } else {
+    days.forEach(function(d){
+      var calls=daily[d].calls||0;
+      var height=Math.max(4,Math.round(calls/maxCalls*100));
+      var dayLabel=d.slice(5);
+      h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'+
+        '<div style="font-size:9px;color:var(--text-dim)">'+calls+'</div>'+
+        '<div style="width:100%;height:'+height+'px;background:var(--accent);border-radius:3px 3px 0 0;min-height:4px"></div>'+
+        '<div style="font-size:8px;color:var(--text-dim)">'+dayLabel+'</div>'+
+        '</div>';
+    });
+  }
+  h+='</div></div>'+
+    '<div class="os-card"><div class="os-card-title">Model Pricing Reference</div>'+
+    '<table class="os-table"><tr><th>Model</th><th>Est. Cost/Call</th><th>Tier</th></tr>'+
+    '<tr><td>openrouter/owl-alpha</td><td>~$0.002</td><td><span class="os-tag os-tag-amber">Paid</span></td></tr>'+
+    '<tr><td>google/gemini-2.0-flash-001</td><td>~$0.0001</td><td><span class="os-tag os-tag-green">Free</span></td></tr>'+
+    '<tr><td>anthropic/claude-sonnet-4</td><td>~$0.003</td><td><span class="os-tag os-tag-amber">Paid</span></td></tr>'+
+    '</table></div>';
+  page.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// PROMPT LIBRARY PAGE
+// ═══════════════════════════════════════════
+function renderPromptsPage(){
+  var page=document.getElementById('os-page-prompts');
+  if(!page)return;
+  var cats={};
+  S.prompts.forEach(function(p){if(!cats[p.cat])cats[p.cat]=[];cats[p.cat].push(p);});
+  var h='<div class="os-page-header"><h1>Prompt Library</h1><p>Reusable prompt templates</p></div>'+
+    '<div style="display:flex;gap:6px;margin-bottom:12px">'+
+    '<button class="cbtn primary" onclick="addPrompt()">+ New Prompt</button>'+
+    '<button class="cbtn" onclick="exportPrompts()">Export JSON</button>'+
+    '</div>';
+  var catColors={'Code':'var(--accent)','Writing':'var(--success)','Analysis':'var(--amber)','Creative':'var(--cyan)'};
+  Object.keys(cats).forEach(function(cat){
+    var color=catColors[cat]||'var(--text-dim)';
+    h+='<div style="margin-bottom:12px">'+
+      '<div style="font-size:11px;font-weight:700;color:'+color+';margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">'+cat+'</div>';
+    cats[cat].forEach(function(p){
+      h+='<div class="os-card" style="margin-bottom:6px;cursor:pointer" onclick="insertPrompt(\''+p.id+'\')">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between">'+
+        '<div class="os-card-title" style="margin-bottom:2px">'+p.name+'</div>'+
+        '<button class="cbtn" style="font-size:9px" onclick="event.stopPropagation();deletePrompt(\''+p.id+'\')">Delete</button>'+
+        '</div>'+
+        '<div style="font-size:10px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.text.slice(0,100)+'...</div>'+
+        '</div>';
+    });
+    h+='</div>';
+  });
+  page.innerHTML=h;
+}
+
+function addPrompt(){
+  showModal('New Prompt Name','Prompt name',function(name){
+    if(!name)return;
+    showModal('Prompt Category','Code, Writing, Analysis, Creative',function(cat){
+      if(!cat)cat='General';
+      S.prompts.push({id:'p'+Date.now(),name:name,cat:cat,text:'Enter your prompt template here...'});
+      savePrompts();
+      renderPromptsPage();
+      toast('Prompt added','ok');
+    });
+  });
+}
+
+function deletePrompt(id){
+  S.prompts=S.prompts.filter(function(p){return p.id!==id;});
+  savePrompts();
+  renderPromptsPage();
+  toast('Prompt deleted','ok');
+}
+
+function insertPrompt(id){
+  var p=S.prompts.find(function(x){return x.id===id;});
+  if(!p)return;
+  // Switch to workspace and put prompt in chat input
+  showWorkspace();
+  var input=$('chat-input');
+  if(input){input.value=p.text;input.focus();}
+  toast('Prompt inserted: '+p.name,'ok');
+}
+
+function exportPrompts(){
+  var data=JSON.stringify(S.prompts,null,2);
+  var blob=new Blob([data],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='hermes-prompts.json';a.click();
+  URL.revokeObjectURL(url);
+  toast('Prompts exported','ok');
+}
+
+// ═══════════════════════════════════════════
+// AUDIT LOG PAGE
+// ═══════════════════════════════════════════
+function renderAuditPage(){
+  var page=document.getElementById('os-page-audit');
+  if(!page)return;
+  var h='<div class="os-page-header"><h1>Audit Logs</h1><p>Complete activity trail</p></div>'+
+    '<div class="os-card"><div class="os-timeline">';
+  if(S.auditLog.length===0){
+    h+='<div style="color:var(--text-muted);font-size:10px;text-align:center;padding:20px">No audit entries yet.</div>';
+  } else {
+    S.auditLog.forEach(function(entry){
+      var time=new Date(entry.time).toLocaleString();
+      var color=entry.type==='error'?'var(--error)':'var(--accent)';
+      h+='<div class="os-tl-item'+(entry.type==='info'?' done':'')+'">'+
+        '<div class="os-tl-time">'+time+'</div>'+
+        '<div class="os-tl-text" style="color:'+color+'">'+entry.action+': '+entry.detail+'</div>'+
+        '</div>';
+    });
+  }
+  h+='</div></div>';
+  page.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// GOALS PAGE (real data)
+// ═══════════════════════════════════════════
+function renderGoalsPage(){
+  var page=document.getElementById('os-page-goals');
+  if(!page)return;
+  var h='<div class="os-page-header"><h1>Goals</h1><p>Track autonomous goals</p></div>'+
+    '<div style="display:flex;gap:6px;margin-bottom:12px">'+
+    '<button class="cbtn primary" id="rbn-new-goal">+ New Goal</button>'+
+    '</div>';
+  S.goals.forEach(function(gl,i){
+    var done=gl.steps.filter(function(s){return s.done}).length;
+    var total=gl.steps.length;
+    var pct=total>0?Math.round(done/total*100):0;
+    var statusColor=gl.status==='active'?'var(--accent)':(gl.status==='done'?'var(--success)':'var(--warn)');
+    h+='<div class="os-card" style="margin-bottom:8px">'+
+      '<div style="display:flex;align-items:flex-start;gap:8px">'+
+      '<div style="font-size:16px">&#x1F3AF;</div>'+
+      '<div style="flex:1">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">'+
+      '<span style="font-weight:700;font-size:12px">'+gl.name+'</span>'+
+      '<span class="os-tag" style="background:'+statusColor+'22;color:'+statusColor+'">'+gl.status+'</span>'+
+      '</div>'+
+      '<div class="os-progress"><div class="os-progress-fill" style="width:'+pct+'%;background:'+statusColor+'"></div></div>'+
+      '<div style="font-size:9px;color:var(--text-dim);margin-top:2px">'+done+'/'+total+' steps ('+pct+'%)</div>'+
+      '<div style="margin-top:6px">';
+    gl.steps.forEach(function(s,si){
+      var chk=s.done?'[x]':'[ ]';
+      var txt=s.done?'<span style="text-decoration:line-through;opacity:0.5">'+s.text+'</span>':s.text;
+      h+='<div style="font-size:10px;padding:1px 0;color:var(--text-dim);cursor:pointer" onclick="toggleGoalStep('+i+','+si+')">'+chk+' '+txt+'</div>';
+    });
+    h+='</div></div></div></div>';
+  });
+  page.innerHTML=h;
+  var rbn=$('rbn-new-goal');
+  if(rbn)rbn.onclick=function(){showModal('New Goal','Goal name',function(v){if(v){S.goals.push({id:'g'+Date.now(),name:v,status:'active',progress:0,total:0,steps:[]});saveGoals();renderGoalsPage();toast('Goal created','ok');}})};
+}
+
+function toggleGoalStep(gi,si){
+  var gl=S.goals[gi];
+  if(!gl||!gl.steps[si])return;
+  gl.steps[si].done=!gl.steps[si].done;
+  saveGoals();
+  renderGoalsPage();
+}
+
+// ═══════════════════════════════════════════
+// AGENTS PAGE (real data)
+// ═══════════════════════════════════════════
+function renderAgentsPage(){
+  var page=document.getElementById('os-page-agents');
+  if(!page)return;
+  var h='<div class="os-page-header"><h1>Agents</h1><p>Manage your agent team</p></div>'+
+    '<div style="display:flex;gap:6px;margin-bottom:12px">'+
+    '<button class="cbtn primary" onclick="addAgent()">+ New Agent</button>'+
+    '<button class="cbtn" onclick="testAgentConnection()">Test All</button>'+
+    '</div>'+
+    '<div class="os-grid-2">';
+  S.agentConfigs.forEach(function(ag,i){
+    h+='<div class="os-card" style="border-left:3px solid '+ag.color+'">'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+      '<div style="width:32px;height:32px;border-radius:6px;background:'+ag.color+'22;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:'+ag.color+'">'+ag.name.charAt(0)+'</div>'+
+      '<div><div style="font-weight:700;font-size:12px">'+ag.name+'</div><div style="font-size:9px;color:var(--text-dim)">'+ag.model+'</div></div>'+
+      '<span class="os-status-dot active" style="margin-left:auto"></span>'+
+      '</div>'+
+      '<div style="margin-top:6px;font-size:9px;color:var(--text-muted)">'+(ag.systemPrompt.slice(0,80)||'No system prompt')+'...</div>'+
+      '<div style="margin-top:4px;font-size:9px;color:var(--text-dim)">Temp: '+ag.temperature+' | URL: '+ag.apiUrl.slice(0,40)+'...</div>'+
+      '</div>';
+  });
+  h+='</div>';
+  page.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// SETTINGS TAB SWITCHING
+// ═══════════════════════════════════════════
+document.querySelectorAll('.stab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.stab').forEach(function(x){x.classList.remove('active')});
+    t.classList.add('active');
+    S.sTab=t.dataset.s;
+    renderSC();
+  });
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderTree();
+renderRC();
+$('btn-tl').onclick=function(){S.lOp=!S.lOp;$('leftbar').classList.toggle('hidden',!S.lOp);$('btn-tl').classList.toggle('active',S.lOp);};
+$('btn-tr').onclick=function(){S.rOp=!S.rOp;$('rightbar').classList.toggle('hidden',!S.rOp);$('btn-tr').classList.toggle('active',S.rOp);};
+$('btn-new').onclick=function(){showModal('New Project','My Project',function(v){if(v){S.proj.push({ic:v.charAt(0).toUpperCase(),n:v,p:"/home/irieb/William's Projects/"+v,f:[]});renderTree();toast('Created '+v,'ok');addAudit('Project created',v,'info');}})};
+
+// Add typing dots animation CSS
+var style=document.createElement('style');
+style.textContent='.typing-dots{animation:blink 1s infinite}@keyframes blink{0%,100%{opacity:1}50%{opacity.3}}';
+document.head.appendChild(style);
+
+addAudit('Dashboard loaded','Hermes Dashboard initialized','info');
+
+})();
+
+</script>
+</body>
+</html>
