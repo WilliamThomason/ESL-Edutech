@@ -523,10 +523,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <button class="theme-btn theme-blue" onclick="setTheme('blue',this)" title="Blue Theme"></button>
       <button class="theme-btn theme-green" onclick="setTheme('green',this)" title="Green Theme"></button>
     </div>
-    <div class="reverb-control" style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px">
-      <input type="range" class="reverb-slider" id="reverbSlider" min="0" max="100" value="0" oninput="setReverb(this.value)" style="width:80px;-webkit-appearance:none;appearance:none;height:4px;background:var(--bg-card2);border-radius:2px;outline:none;cursor:pointer">
-      <span class="reverb-val" id="reverbVal" style="font-size:11px;color:var(--violet);font-weight:700;min-width:30px;text-align:right">0%</span>
-    </div>
+
     <div class="octave-control" style="display:flex;align-items:center;gap:4px;padding:4px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px">
       <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);white-space:nowrap">Octaves</label>
       <button class="oct-btn" onclick="setNumOctaves(1)" id="oct1" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--accent-dim);color:var(--accent);font-size:13px;font-weight:700;cursor:pointer">1</button>
@@ -551,10 +548,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 </div>
       <option value="green">🟢 Dark Green</option>
     </select>
-    <div class="reverb-control" style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px">
-      <input type="range" class="reverb-slider" id="reverbSlider" min="0" max="100" value="0" oninput="setReverb(this.value)" style="width:80px;-webkit-appearance:none;appearance:none;height:4px;background:var(--bg-card2);border-radius:2px;outline:none;cursor:pointer">
-      <span class="reverb-val" id="reverbVal" style="font-size:11px;color:var(--violet);font-weight:700;min-width:30px;text-align:right">0%</span>
-    </div>
+
     <div class="octave-control" style="display:flex;align-items:center;gap:4px;padding:4px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px">
       <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);white-space:nowrap">Octaves</label>
       <button class="oct-btn" onclick="setNumOctaves(1)" id="oct1" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--accent-dim);color:var(--accent);font-size:13px;font-weight:700;cursor:pointer">1</button>
