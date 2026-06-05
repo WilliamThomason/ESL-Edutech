@@ -83,8 +83,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 /* Top bar */
 .top-bar{display:flex;align-items:center;gap:10px;padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap}
-.top-bar .bar-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
-.note-badge{min-width:36px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.top-bar .bar-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
+.note-badge{min-width:40px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace}
 /* Note badge colors — color wheel per note name */
 .note-badge.nr{background:var(--accent);color:#000}
 .note-badge.ns{background:var(--highlight-dim);color:var(--highlight);border:1px solid var(--highlight)}
@@ -103,6 +103,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .note-badge.note-As{background:#e91e63;color:#fff}
 .note-badge.note-B{background:#fd79a8;color:#000}
 
+/* Interval list */
+.interval-list{display:flex;flex-wrap:wrap;gap:8px}
+.int-item{font-size:15px;color:var(--text-muted)}
+.int-item span{color:var(--text);font-weight:600}
+
+/* Chord chips */
+.chords-row{display:flex;gap:6px;flex-wrap:wrap}
+.chord-chip{padding:8px 14px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--text-muted)}
+
 /* ═══ FRETBOARD ═══ */
 .fretboard-area{overflow:visible;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px}
 .fretboard-wrap{position:relative;width:100%;max-width:1100px}
@@ -111,7 +120,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 /* Fretboard table */
 .fret-table{border-collapse:collapse;width:100%}
-.fret-row{display:fretboard-row}
 .fret-cell{position:relative;min-width:56px;height:40px;border-right:1px solid var(--fret-wire);border-bottom:none}
 .fret-cell:first-child{border-right:3px solid rgba(200,180,160,.55);min-width:36px}
 .fret-cell.nut{border-right:4px solid rgba(220,200,170,.7)}
