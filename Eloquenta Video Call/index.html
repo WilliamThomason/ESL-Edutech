@@ -286,6 +286,7 @@ button{font-family:inherit}
   </div>
 </div>
 
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="../../ChromaSkin/chromaskin.js"></script>
 <script>
 // ═══ STARS ═══
@@ -300,11 +301,11 @@ function initStars(){
 initStars();
 
 // ═══ STATE ═══
-var localStream=null,remoteStream=null,peerConnection=null;
-var roomCode='',isHost=false;
+var localStream=null,remoteStream=null;
+var roomCode='';
 var camOn=true,micOn=true;
 var callStartTime=null,timerInterval=null;
-var ws=null; // WebSocket for signaling
+var isHost=false;
 
 // ═══ SETUP ═══
 async function getMedia(){
@@ -373,92 +374,87 @@ function copyInvite(){
   navigator.clipboard.writeText(url);
 }
 
-// ═══ WEBRTC ═══
-var ICE_SERVERS={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+// ═══ PEERJS SIGNALING ═══
+var peer=null;
+var peerCall=null;
+var peerDataConn=null;
+var peerConnected=false;
 
-async function startCall(){
-  peerConnection=new RTCPeerConnection(ICE_SERVERS);
-  localStream.getTracks().forEach(function(t){peerConnection.addTrack(t,localStream)});
-  peerConnection.ontrack=function(e){
-    remoteStream=e.streams[0];
-    document.getElementById('remoteVideo').srcObject=remoteStream;
-    document.getElementById('remoteVideo').style.display='block';
-    document.getElementById('remotePlaceholder').style.display='none';
-    document.getElementById('remoteLabel').style.display='block';
-    document.getElementById('remoteStatusDot').classList.add('active');
-    document.getElementById('remoteStatusDot').classList.remove('inactive');
-    document.getElementById('remoteBox').classList.add('connected');
-    startTimer();
-    addSystemMessage('Peer connected');
-  };
-  peerConnection.oniceconnectionstatechange=function(){
-    if(peerConnection.iceConnectionState==='disconnected'){
-      addSystemMessage('Peer disconnected');
-      document.getElementById('remoteBox').classList.remove('connected');
-      stopTimer();
-    }
-  };
-
-  // Simple signaling via URL hash (for demo — in production use a signaling server)
-  // For now, use BroadcastChannel for same-browser testing
-  setupSignaling();
+function startCall(){
+  addSystemMessage('Connecting to PeerJS...');
+  var roomPeerId='eloquent-'+roomCode;
+  peer=new Peer(roomPeerId,{debug:2,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
+  peer.on('open',function(id){addSystemMessage('Connected as room host — waiting for peer...');isHost=true;});
+  peer.on('call',function(call){addSystemMessage('Incoming call...');peerCall=call;call.answer(localStream);call.on('stream',function(rs){handleRemoteStream(rs);});call.on('close',function(){addSystemMessage('Peer disconnected');resetRemoteVideo();});});
+  peer.on('connection',function(conn){addSystemMessage('Data channel connected');peerDataConn=conn;conn.on('data',function(d){if(d.type==='chat')addChatMessage('Peer',d.msg,false);});conn.on('close',function(){peerDataConn=null});});
+  peer.on('error',function(err){console.error('Peer error:',err);if(err.type==='unavailable-id'){connectAsSecondPeer();}else{addSystemMessage('Error: '+err.type);}});
 }
 
-function setupSignaling(){
-  // Use BroadcastChannel for same-origin peer discovery
-  try{
-    var bc=new BroadcastChannel('eloquent-call-'+roomCode);
-    bc.onmessage=function(e){handleSignal(e.data)};
+function connectAsSecondPeer(){
+    isHost=false;
+    addSystemMessage('Room found — connecting as peer...');
 
-    // Check if peer is already there
-    bc.postMessage({type:'ping',room:roomCode});
+    // Create our own peer with a different ID
+    var myPeerId='eloquent-'+roomCode+'-peer-'+Math.random().toString(36).substring(2,8);
+    var myPeer=new Peer(myPeerId,{debug:2});
 
-    // Store for sending
-    window._callBC=bc;
-    window._callIsHost=false;
+    myPeer.on('open',function(){
+      addSystemMessage('Connected — calling room host...');
 
-    // If no response within 2s, become host
-    setTimeout(function(){
-      if(!remoteStream){
-        window._callIsHost=true;
-        addSystemMessage('Waiting for peer to join...');
-      }
-    },2000);
-  }catch(e){
-    console.error('Signaling error:',e);
-    addSystemMessage('Signaling not supported in this browser');
+      // Call the host
+      var call=myPeer.call('eloquent-'+roomCode,localStream);
+      call.on('stream',function(remoteStream){
+        handleRemoteStream(remoteStream);
+      });
+      call.on('close',function(){
+        addSystemMessage('Peer disconnected');
+        resetRemoteVideo();
+      });
+      peerCall=call;
+
+      // Also open data connection
+      var conn=myPeer.connect('eloquent-'+roomCode,{reliable:true});
+      conn.on('open',function(){
+        addSystemMessage('Data channel connected');
+        peerDataConn=conn;
+        conn.on('data',function(data){
+          if(data.type==='chat'){
+            addChatMessage('Peer',data.msg,false);
+          }
+        });
+        conn.on('close',function(){peerDataConn=null});
+      });
+    });
+
+    myPeer.on('error',function(err){
+      console.error('Peer error:',err);
+      addSystemMessage('Connection error: '+err.type);
+    });
   }
+
+function handleRemoteStream(stream){
+  remoteStream=stream;
+  document.getElementById('remoteVideo').srcObject=remoteStream;
+  document.getElementById('remoteVideo').style.display='block';
+  document.getElementById('remotePlaceholder').style.display='none';
+  document.getElementById('remoteLabel').style.display='block';
+  document.getElementById('remoteStatusDot').classList.add('active');
+  document.getElementById('remoteStatusDot').classList.remove('inactive');
+  document.getElementById('remoteBox').classList.add('connected');
+  peerConnected=true;
+  startTimer();
+  addSystemMessage('Peer connected!');
 }
 
-async function handleSignal(data){
-  if(!peerConnection) return;
-  try{
-    if(data.type==='ping'){
-      // Someone new joined — if we're host, send offer
-      if(window._callIsHost||(!remoteStream&&peerConnection.connectionState!=='connected')){
-        window._callIsHost=true;
-        var offer=await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
-        window._callBC.postMessage({type:'offer',sdp:offer,room:roomCode});
-      }
-    }else if(data.type==='offer'&&!window._callIsHost){
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
-      var answer=await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      window._callBC.postMessage({type:'answer',sdp:answer,room:roomCode});
-    }else if(data.type==='answer'&&window._callIsHost){
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
-    }else if(data.type==='ice'){
-      await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-    }
-  }catch(e){console.error('Signal error:',e)}
+function resetRemoteVideo(){
+  document.getElementById('remoteVideo').srcObject=null;
+  document.getElementById('remoteVideo').style.display='none';
+  document.getElementById('remotePlaceholder').style.display='flex';
+  document.getElementById('remoteLabel').style.display='none';
+  document.getElementById('remoteBox').classList.remove('connected');
+  peerConnected=false;
+  stopTimer();
 }
-
-peerConnection.onicecandidate=function(e){
-  if(e.candidate&&window._callBC){
-    window._callBC.postMessage({type:'ice',candidate:e.candidate,room:roomCode});
-  }
-};
 
 // ═══ CALL CONTROLS ═══
 function callToggleMic(){
@@ -492,9 +488,11 @@ async function toggleScreenShare(){
 }
 
 function leaveCall(){
-  if(peerConnection) peerConnection.close();
+  if(peerCall) peerCall.close();
+  if(peer) peer.destroy();
   if(localStream) localStream.getTracks().forEach(function(t){t.stop()});
-  if(window._callBC) window._callBC.close();
+  peerConnected=false;
+  isHost=false;
   stopTimer();
   document.getElementById('setupScreen').classList.remove('hidden');
   document.getElementById('callLayout').style.display='none';
@@ -531,8 +529,9 @@ function sendChat(){
   if(!msg) return;
   addChatMessage('You',msg,true);
   input.value='';
-  // In a real app, send via data channel or signaling
-  if(window._callBC) window._callBC.postMessage({type:'chat',msg:msg,room:roomCode});
+  if(peerDataConn&&peerDataConn.open){
+    peerDataConn.send({type:'chat',msg:msg});
+  }
 }
 function addChatMessage(sender,msg,self){
   var div=document.createElement('div');
@@ -617,7 +616,6 @@ function csReset(){ChromaSkin.reset();updateWidgetFromState()}
   var room=params.get('room');
   if(room){
     document.getElementById('roomInput').value=room;
-    // Auto-join after media ready
     var checkMedia=setInterval(function(){
       if(localStream){clearInterval(checkMedia);joinCall()}
     },500);
