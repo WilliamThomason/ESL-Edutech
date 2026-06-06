@@ -115,11 +115,11 @@ button{font-family:inherit}
 .copy-btn:hover{border-color:var(--cyan);color:var(--cyan)}
 .copy-btn.copied{border-color:var(--green);color:var(--green)}
 
-/* ═══ CHROMASKIN WIDGET ═══ */
-.cs-widget-wrap{position:fixed;bottom:20px;right:20px;z-index:100}
-.cs-widget-dot{width:44px;height:44px;border-radius:50%;background:var(--cs-accent);color:var(--cs-bg);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 4px 16px var(--cs-accent-glow);transition:all .2s;border:2px solid var(--cs-bg)}
-.cs-widget-dot:hover{transform:scale(1.1)}
-.cs-widget-panel{width:300px;max-width:90vw;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.4);overflow:hidden;animation:csSlideUp .25s ease}
+/* ═══ CHROMASKIN WIDGET (in topbar) ═══ */
+.cs-widget-wrap{position:relative;display:inline-block}
+.cs-widget-dot{width:32px;height:32px;border-radius:50%;background:var(--cs-accent);color:var(--cs-bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 8px var(--cs-accent-glow);transition:all .2s;border:2px solid var(--cs-bg)}
+.cs-widget-dot:hover{transform:scale(1.1);box-shadow:0 4px 16px var(--cs-accent-glow)}
+.cs-widget-panel{position:absolute;top:calc(100% + 8px);right:0;width:300px;max-width:90vw;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);overflow:hidden;animation:csSlideUp .25s ease;z-index:1000}
 @keyframes csSlideUp{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .cs-widget-header{padding:10px 14px;background:var(--cs-bg3);border-bottom:1px solid var(--cs-border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
 .cs-widget-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px}
@@ -212,6 +212,31 @@ button{font-family:inherit}
       Room: <span class="room-code" id="displayRoomCode">---</span>
     </div>
     <button class="topbar-btn" onclick="copyInvite()">📋 Invite</button>
+    <div class="cs-widget-wrap" id="csWidgetWrap">
+      <div class="cs-widget-dot" onclick="csToggleWidget()" title="Theme">🎨</div>
+      <div class="cs-widget-panel" id="csWidgetPanel" style="display:none">
+        <div class="cs-widget-header" onclick="csToggleWidget()">
+          <div class="cs-widget-title">🎨 ChromaSkin</div>
+          <button class="cs-widget-close" onclick="event.stopPropagation();csToggleWidget()">✕</button>
+        </div>
+        <div class="cs-widget-body">
+          <div class="cs-section-label">Presets</div>
+          <div class="cs-preset-grid" id="csPresetGrid"></div>
+          <div class="cs-section-label">Custom Hue</div>
+          <input type="range" class="cs-hue-slider" id="csHueSlider" min="0" max="360" value="45" oninput="csSetHue(this.value)">
+          <div class="cs-slider-row"><span class="cs-slider-label">Sat</span><input type="range" class="cs-slider" id="csSatSlider" min="0" max="100" value="60" oninput="csSetSat(this.value)"><span class="cs-slider-val" id="csSatVal">60%</span></div>
+          <div class="cs-slider-row"><span class="cs-slider-label">Lit</span><input type="range" class="cs-slider" id="csLitSlider" min="5" max="95" value="12" oninput="csSetLit(this.value)"><span class="cs-slider-val" id="csLitVal">12%</span></div>
+          <div class="cs-toggle-row"><span class="cs-toggle-label">Dark Mode</span><div class="cs-toggle on" id="csModeToggle" onclick="csToggleMode()"></div></div>
+          <div class="cs-actions">
+            <button class="cs-action-btn primary" onclick="csSave()">💾 Save</button>
+            <button class="cs-action-btn" onclick="csCopyCSS()">📋 CSS</button>
+            <button class="cs-action-btn danger" onclick="csReset()">↺ Reset</button>
+          </div>
+          <div class="cs-section-label" style="margin-top:10px">Saved Themes (10 slots)</div>
+          <div class="saved-themes" id="savedThemes"></div>
+        </div>
+      </div>
+    </div>
     <button class="topbar-btn danger" onclick="leaveCall()">✕ Leave</button>
   </div>
 
@@ -257,33 +282,6 @@ button{font-family:inherit}
         <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChat()">
         <button class="chat-send" onclick="sendChat()">Send</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ChromaSkin Widget -->
-<div class="cs-widget-wrap" id="csWidgetWrap">
-  <div class="cs-widget-dot" onclick="csToggleWidget()" title="Theme">🎨</div>
-  <div class="cs-widget-panel" id="csWidgetPanel" style="display:none">
-    <div class="cs-widget-header" onclick="csToggleWidget()">
-      <div class="cs-widget-title">🎨 ChromaSkin</div>
-      <button class="cs-widget-close" onclick="event.stopPropagation();csToggleWidget()">✕</button>
-    </div>
-    <div class="cs-widget-body">
-      <div class="cs-section-label">Presets</div>
-      <div class="cs-preset-grid" id="csPresetGrid"></div>
-      <div class="cs-section-label">Custom Hue</div>
-      <input type="range" class="cs-hue-slider" id="csHueSlider" min="0" max="360" value="45" oninput="csSetHue(this.value)">
-      <div class="cs-slider-row"><span class="cs-slider-label">Sat</span><input type="range" class="cs-slider" id="csSatSlider" min="0" max="100" value="60" oninput="csSetSat(this.value)"><span class="cs-slider-val" id="csSatVal">60%</span></div>
-      <div class="cs-slider-row"><span class="cs-slider-label">Lit</span><input type="range" class="cs-slider" id="csLitSlider" min="5" max="95" value="12" oninput="csSetLit(this.value)"><span class="cs-slider-val" id="csLitVal">12%</span></div>
-      <div class="cs-toggle-row"><span class="cs-toggle-label">Dark Mode</span><div class="cs-toggle on" id="csModeToggle" onclick="csToggleMode()"></div></div>
-      <div class="cs-actions">
-        <button class="cs-action-btn primary" onclick="csSave()">💾 Save</button>
-        <button class="cs-action-btn" onclick="csCopyCSS()">📋 CSS</button>
-        <button class="cs-action-btn danger" onclick="csReset()">↺ Reset</button>
-      </div>
-      <div class="cs-section-label" style="margin-top:10px">Saved Themes (10 slots)</div>
-      <div class="saved-themes" id="savedThemes"></div>
     </div>
   </div>
 </div>
