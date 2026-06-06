@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Classroom — Teacher & Student Hub</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--violet:#a78bfa;--rose:#fb7185}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;min-height:100vh}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.logo{font-weight:800;font-size:18px;color:var(--cyan);letter-spacing:-.5px}
+.nav{display:flex;gap:2px;margin-left:8px}
+.nav-btn{height:32px;padding:0 12px;border-radius:6px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s}
+.nav-btn:hover{color:var(--text);background:var(--bg3)}
+.nav-btn.active{color:var(--cyan);background:rgba(34,211,238,.1)}
+.user-chip{margin-left:auto;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:var(--bg3);cursor:pointer}
+.user-chip .avatar{width:28px;height:28px;border-radius:50%;background:rgba(34,211,238,.15);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.user-chip .name{font-size:12px;font-weight:600}
+.container{max-width:1100px;margin:0 auto;padding:30px 20px}
+.hero{text-align:center;padding:40px 0 50px}
+.hero h1{font-size:2.4rem;font-weight:900;margin-bottom:8px;letter-spacing:-1px}
+.hero h1 span{color:var(--cyan)}
+.hero p{color:var(--text-dim);font-size:1.1rem;max-width:560px;margin:0 auto}
+.role-switch{display:flex;gap:8px;justify:center;margin:24px 0}
+.role-btn{height:40px;padding:0 20px;border-radius:8px;border:2px solid var(--border);background:transparent;color:var(--text-dim);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.role-btn:hover{border-color:var(--text-dim)}
+.role-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.1)}
+.role-btn.student.active{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.1)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:20px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .2s;cursor:pointer;text-decoration:none;color:var(--text);display:flex;flex-direction:column}
+.card:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.3)}
+.card-icon{font-size:2.5rem;margin-bottom:12px}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+.card p{font-size:13px;color:var(--text-dim);line-height:1.5;flex:1}
+.card .tag{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter:.5px}
+.tag.live{background:rgba(251,113,133,.15);color:var(--rose)}
+.tag.game{background:rgba(167,139,250,.15);color:var(--violet)}
+.tag.tool{background:rgba(34,211,238,.15);color:var(--cyan)}
+.tag.audio{background:rgba(52,211,153,.15);color:var(--green)}
+.section-title{font-size:1.3rem;font-weight:800;margin:40px 0 16px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">Classroom</div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchRole('teacher',this)">👨‍🏫 Teacher</button>
+    <button class="nav-btn student" onclick="switchRole('student',this)">🎓 Student</button>
+  </div>
+  <div class="user-chip" onclick="alert('User settings coming soon')">
+    <div class="avatar">T</div>
+    <div class="name">Teacher</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <h1><span>Classroom</span> Hub</h1>
+    <p>Everything you need for online teaching and learning. Video calls, interactive games, spelling practice, and real-time collaboration — all in one place.</p>
+    <div class="role-switch">
+      <button class="role-btn active" onclick="switchRole('teacher',this)">👨‍🏫 I'm a Teacher</button>
+      <button class="role-btn student" onclick="switchRole('student',this)">🎓 I'm a Student</button>
+    </div>
+  </div>
+
+  <div class="section-title">Live Session</div>
+  <div class="grid">
+    <a href="video-classroom.html" class="card">
+      <div class="card-icon">📹</div>
+      <h3>Video Classroom</h3>
+      <p>HD video calling with screen sharing, whiteboard, and real-time chat. Built for one-on-one lessons.</p>
+      <span class="tag live">Live</span>
+    </a>
+    <a href="screen-share.html" class="card">
+      <div class="card-icon">🖥️</div>
+      <h3>Screen Share</h3>
+      <p>Share your screen with annotation tools. Perfect for demonstrations, document review, and guided practice.</p>
+      <span class="tag tool">Tool</span>
+    </a>
+    <a href="whiteboard.html" class="card">
+      <div class="card-icon">✏️</div>
+      <h3>Whiteboard</h3>
+      <p>Collaborative drawing space. Write, draw, and explain concepts in real-time with your student.</p>
+      <span class="tag live">Live</span>
+    </a>
+  </div>
+
+  <div class="section-title">Learning Games</div>
+  <div class="grid">
+    <a href="spell-boss.html" class="card">
+      <div class="card-icon">🏀</div>
+      <h3>Spell Boss</h3>
+      <p>Spelling practice through an interactive basketball game. Students type the correct spelling to score points. Works for any language.</p>
+      <span class="tag game">Game</span>
+    </a>
+    <a href="typing-race.html" class="card">
+      <div class="card-icon">⌨️</div>
+      <h3>Typing Race</h3>
+      <p>Competitive typing practice. Students race against the clock or each other to type words correctly. Tracks WPM and accuracy.</p>
+      <span class="tag game">Coming Soon</span>
+    </a>
+    <a href="speaking-practice.html" class="card">
+      <div class="card-icon">💬</div>
+      <h3>Speaking Practice</h3>
+      <p>Conversation slide decks across 106 topics. Randomised questions, paraphrased for fresh discussions.</p>
+      <span class="tag game">Ready</span>
+    </a>
+  </div>
+
+  <div class="section-title">Practice & Assessment</div>
+  <div class="grid">
+    <a href="reading-practice.html" class="card">
+      <div class="card-icon">📖</div>
+      <h3>Reading Practice</h3>
+      <p>Guided reading with Alice in Wonderland. Realistic TTS, vocabulary support, and comprehension questions.</p>
+      <span class="tag tool">Ready</span>
+    </a>
+    <a href="listening-exercise.html" class="card">
+      <div class="card-icon">🎧</div>
+      <h3>Listening Exercises</h3>
+      <p>Audio-based comprehension activities. Upload recordings or use text-to-speech. Students answer questions.</p>
+      <span class="tag audio">Coming Soon</span>
+    </a>
+    <a href="progress-tracker.html" class="card">
+      <div class="card-icon">📊</div>
+      <h3>Progress Tracker</h3>
+      <p>Track student progress across all activities. View scores, completion rates, and areas needing improvement.</p>
+      <span class="tag tool">Coming Soon</span>
+    </a>
+  </div>
+</div>
+
+<script>
+function switchRole(role, btn) {
+  document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelector('.user-chip .name').textContent = role === 'teacher' ? 'Teacher' : 'Student';
+  document.querySelector('.user-chip .avatar').textContent = role === 'teacher' ? 'T' : 'S';
+  
+  // Show/hide teacher-only items
+  document.querySelectorAll('.card').forEach(function(card) {
+    var tag = card.querySelector('.tag');
+    if (tag && tag.textContent.trim() === 'Teacher Only') {
+      card.style.display = role === 'teacher' ? '' : 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
