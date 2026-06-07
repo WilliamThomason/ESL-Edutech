@@ -81,13 +81,29 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .price-btn.amber{background:var(--amber);color:#fff}
 .price-btn.amber:hover{filter:brightness(1.1)}
 .price-note{font-size:.7rem;color:var(--text-dim);margin-top:12px;line-height:1.5}
+/* Competitive comparison */
+.comp-bar{background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:24px}
+.comp-label{font-size:.7rem;font-weight:700;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.comp-table{display:flex;flex-direction:column;gap:2px}
+.comp-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:8px;padding:8px 12px;border-radius:6px;font-size:.75rem;align-items:center}
+.comp-row.head{color:var(--text-dim);font-weight:700;font-size:.65rem;text-transform:uppercase;letter-spacing:1px}
+.comp-row:not(.head){background:var(--bg-card)}
+.comp-row.highlight{background:var(--accent-dim);border:1px solid var(--accent)}
+.comp-yes{color:var(--green);font-weight:700}
+.comp-no{color:var(--text-dim)}
 .corporate-box{background:linear-gradient(135deg,var(--bg-card),var(--bg-card2));border:1px solid var(--border);border-radius:16px;padding:36px;margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
 .corporate-info h3{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:8px}
 .corporate-info p{font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:16px}
-.corporate-stats{display:flex;gap:24px}
+.corporate-stats{display:flex;gap:24px;margin-bottom:16px}
 .corporate-stat{text-align:center}
 .corporate-stat .num{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:900;color:var(--accent)}
 .corporate-stat .label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.corporate-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.corp-tier{background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.corp-tier-name{font-size:.65rem;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.corp-tier-price{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:900;color:var(--text)}
+.corp-tier-price span{font-size:.7rem;font-weight:600;color:var(--text-dim)}
+.corp-tier-desc{font-size:.65rem;color:var(--text-dim);margin-top:4px}
 .corporate-form{display:flex;flex-direction:column;gap:10px}
 .corporate-form input,.corporate-form textarea{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;outline:none;font-family:inherit;resize:none}
 .corporate-form input:focus,.corporate-form textarea:focus{border-color:var(--accent)}
@@ -270,87 +286,118 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 <div class="section" id="pricing">
   <div class="section-header">
     <div class="section-num">03</div>
-    <h2>Transparent, Competitive Pricing</h2>
-    <p>From individual learners to enterprise teams. No hidden fees, no long-term lock-ins. Cancel anytime.</p>
+    <h2>Pricing That Respects Your Ambition</h2>
+    <p>Whether you are an individual learner or a Fortune 500 L&amp;D department, we have a structure that delivers measurable ROI. No per-lesson math. No hidden fees. No long-term lock-ins.</p>
   </div>
+
+  <!-- Competitive positioning -->
+  <div class="comp-bar">
+    <div class="comp-label">How we compare to corporate ESL providers:</div>
+    <div class="comp-table">
+      <div class="comp-row head"><span>Provider</span><span>Per User/Month</span><span>AI Translation</span><span>Multi-Lingual Teachers</span><span>Lesson Replay</span></div>
+      <div class="comp-row"><span>EF Corporate</span><span>$300–500</span><span class="comp-no">—</span><span class="comp-no">—</span><span class="comp-yes">✓</span></div>
+      <div class="comp-row"><span>Berlitz Corporate</span><span>$400–800</span><span class="comp-no">—</span><span class="comp-no">—</span><span class="comp-no">—</span></div>
+      <div class="comp-row"><span>Wall Street English B2B</span><span>$500+</span><span class="comp-no">—</span><span class="comp-no">—</span><span class="comp-no">—</span></div>
+      <div class="comp-row highlight"><span><strong>Eloquenta Professional</strong></span><span><strong>$279</strong></span><span class="comp-yes">✓</span><span class="comp-yes">✓</span><span class="comp-yes">✓</span></div>
+    </div>
+  </div>
+
   <div class="pricing-wrap">
     <div class="pricing-grid">
       <div class="price-card">
-        <div class="price-label">Casual</div>
-        <div class="price-amount"><span class="currency">$</span>79</div>
+        <div class="price-label">Starter</div>
+        <div class="price-amount"><span class="currency">$</span>149</div>
         <div class="price-period">per month &middot; 4 lessons</div>
         <ul class="price-features">
-          <li>4 x 60-min lessons per month</li>
-          <li>1-on-1 with dedicated teacher</li>
+          <li>4 x 60-min 1-on-1 lessons</li>
+          <li>Dedicated teacher</li>
           <li>FL placement assessment</li>
           <li>AI translation support</li>
           <li>Progress dashboard</li>
           <li>Mobile-friendly platform</li>
         </ul>
-        <a href="#cta" class="price-btn secondary">Get Started</a>
-        <div class="price-note">Perfect for casual learners &middot; $19.75/lesson</div>
+        <a href="#cta" class="price-btn secondary">Start Free Trial</a>
+        <div class="price-note">For professionals starting their journey</div>
       </div>
       <div class="price-card featured">
         <div class="price-label">Professional</div>
-        <div class="price-amount"><span class="currency">$</span>149</div>
+        <div class="price-amount"><span class="currency">$</span>279</div>
         <div class="price-period">per month &middot; 8 lessons</div>
         <ul class="price-features">
-          <li>8 x 60-min lessons per month</li>
-          <li>1-on-1 with dedicated teacher</li>
-          <li>FL placement + strategy session</li>
+          <li>8 x 60-min 1-on-1 lessons</li>
+          <li>Dedicated teacher + strategy session</li>
           <li>AI translation + word revision log</li>
           <li>Full progress dashboard</li>
           <li>Exam prep materials included</li>
           <li>Priority scheduling</li>
           <li>Monthly progress report</li>
+          <li>Lesson recording + replay</li>
         </ul>
-        <a href="#cta" class="price-btn primary">Get Started</a>
-        <div class="price-note">Most popular &middot; $18.63/lesson &middot; Save 23%</div>
+        <a href="#cta" class="price-btn primary">Start Free Trial</a>
+        <div class="price-note">The sweet spot for serious professionals</div>
       </div>
       <div class="price-card">
         <div class="price-label">Intensive</div>
-        <div class="price-amount"><span class="currency">$</span>259</div>
+        <div class="price-amount"><span class="currency">$</span>499</div>
         <div class="price-period">per month &middot; 16 lessons</div>
         <ul class="price-features">
-          <li>16 x 60-min lessons per month</li>
-          <li>1-on-1 with dedicated teacher</li>
+          <li>16 x 60-min 1-on-1 lessons</li>
           <li>Custom learning roadmap</li>
-          <li>AI tools + full translation suite</li>
+          <li>Full AI translation suite</li>
           <li>All exam prep materials</li>
           <li>Dedicated account manager</li>
           <li>Weekly progress reports</li>
-          <li>Recording + replay of lessons</li>
+          <li>Lesson recording + replay</li>
+          <li>Corporate invoice billing</li>
         </ul>
-        <a href="#cta" class="price-btn secondary">Get Started</a>
-        <div class="price-note">For rapid fluency &middot; $16.19/lesson &middot; Save 35%</div>
+        <a href="#cta" class="price-btn secondary">Start Free Trial</a>
+        <div class="price-note">For rapid fluency or exam deadlines</div>
       </div>
     </div>
+
     <div class="price-card beta-card" id="beta">
-      <div class="price-label">Beta Pioneer</div>
-      <div class="price-amount"><span class="currency">$</span>59</div>
+      <div class="price-label">Beta Pioneer — First 200 Only</div>
+      <div class="price-amount"><span class="currency">$</span>99</div>
       <div class="price-period">per month &middot; 8 lessons &middot; 1 year locked</div>
       <ul class="price-features">
         <li>Everything in Professional plan</li>
-        <li><strong>Locked rate for 12 months</strong></li>
-        <li>Early access to all new features</li>
-        <li>Direct input on platform development</li>
-        <li>Exclusive beta community access</li>
-        <li>First 200 students only</li>
-        <li><strong>Save $1,080 vs standard pricing</strong></li>
+        <li><strong>Rate locked for 12 months — never increases</strong></li>
+        <li>Early access to every new feature</li>
+        <li>Direct input on platform roadmap</li>
+        <li>Exclusive beta community</li>
+        <li>Founding member badge on profile</li>
+        <li><strong>Save $2,160 vs standard Professional</strong></li>
       </ul>
       <a href="#cta" class="price-btn amber">Claim Beta Spot</a>
-      <div class="price-note">47 of 200 spots remaining &middot; $7.38/lesson &middot; 60% off</div>
+      <div class="price-note">47 of 200 spots remaining &middot; $1,299/yr vs $3,348 standard</div>
     </div>
+
     <div class="corporate-box">
       <div class="corporate-info">
-        <h3>Corporate &amp; Enterprise Training</h3>
-        <p>We work with Fortune 500 companies, mid-market teams, and fast-growing startups. Custom contracts, dedicated account managers, and bulk pricing that scales.</p>
+        <h3>Corporate &amp; Enterprise</h3>
+        <p>We design language training programmes for teams of 10 to 10,000. Custom content, dedicated L&amp;D liaison, bulk pricing, and integration with your existing HR systems.</p>
         <div class="corporate-stats">
           <div class="corporate-stat"><div class="num">50+</div><div class="label">Corporate Partners</div></div>
           <div class="corporate-stat"><div class="num">12k</div><div class="label">Hrs Delivered</div></div>
           <div class="corporate-stat"><div class="num">4.9</div><div class="label">Avg Rating</div></div>
         </div>
-        <p style="margin-top:16px;font-size:.8rem;color:var(--text-dim)">Premium contracts from $2,500/mo. Volume discounts available.</p>
+        <div class="corporate-tiers">
+          <div class="corp-tier">
+            <div class="corp-tier-name">Team</div>
+            <div class="corp-tier-price">$2,500<span>/mo</span></div>
+            <div class="corp-tier-desc">Up to 10 seats &middot; shared content</div>
+          </div>
+          <div class="corp-tier">
+            <div class="corp-tier-name">Business</div>
+            <div class="corp-tier-price">$8,500<span>/mo</span></div>
+            <div class="corp-tier-desc">Up to 50 seats &middot; custom content</div>
+          </div>
+          <div class="corp-tier">
+            <div class="corp-tier-name">Enterprise</div>
+            <div class="corp-tier-price">Custom</div>
+            <div class="corp-tier-desc">50+ seats &middot; API &amp; SSO</div>
+          </div>
+        </div>
       </div>
       <form class="corporate-form" onsubmit="event.preventDefault();this.querySelector('button').textContent='Sent!';this.querySelector('button').style.background='var(--green)';">
         <input type="text" placeholder="Company name" required>
