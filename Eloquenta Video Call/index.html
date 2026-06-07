@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Eloquenta Video Call</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../ChromaSkin/chromaskin.css">
 <style>
 :root{
   --bg:#0a0e1a;--bg2:#0d1117;--bg3:#111827;--bg4:#162032;
@@ -32,8 +31,9 @@ button{font-family:inherit}
 .logo span{color:var(--text)}
 .room-info{flex:1;text-align:center;font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .room-info .room-code{color:var(--amber);font-weight:700}
-.topbar-btn{height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Orbitron',sans-serif}
+.topbar-btn{height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Orbitron',sans-serif;display:flex;align-items:center;gap:6px}
 .topbar-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.topbar-icon{width:14px;height:14px;flex-shrink:0}
 
 /* ═══ MAIN AREA ═══ */
 .main-area{flex:1;display:flex;overflow:hidden}
@@ -49,21 +49,30 @@ button{font-family:inherit}
 .video-label .status-dot.active{background:var(--green);box-shadow:0 0 6px var(--green)}
 .video-label .status-dot.inactive{background:var(--text-dim)}
 .video-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-dim)}
-.video-placeholder .icon{font-size:32px;opacity:.3}
+.placeholder-icon{width:48px;height:48px;opacity:.3}
+.video-placeholder .text{font-size:11px}mn;align-items:center;gap:8px;color:var(--text-dim)}
+.placeholder-icon{width:48px;height:48px;opacity:.3}
 .video-placeholder .text{font-size:11px}
 .video-box.connecting{border-color:var(--amber)}
 .video-box.connected{border-color:var(--green);box-shadow:0 0 20px rgba(52,211,153,.1)}
 
 /* ═══ CONTROLS BAR ═══ */
-.controls-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;flex-shrink:0}
-.ctrl-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-size:18px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
-.ctrl-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.15)}
-.ctrl-btn.active{background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan)}
+.controls-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;flex-shrink:0}
+.ctrl-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 18px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);cursor:pointer;transition:all .2s;min-width:68px}
+.ctrl-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 16px rgba(34,211,238,.15);transform:translateY(-1px)}
+.ctrl-btn.active{background:rgba(34,211,238,.08);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.1)}
+.ctrl-btn.active .ctrl-icon{stroke:var(--cyan)}
 .ctrl-btn.danger{border-color:var(--rose);color:var(--rose)}
-.ctrl-btn.danger:hover{background:rgba(251,113,133,.1);box-shadow:0 0 12px rgba(251,113,133,.2)}
-.ctrl-btn.large{width:56px;height:56px;font-size:22px}
-.call-timer{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--text-dim);min-width:60px;text-align:center}
+.ctrl-btn.danger:hover{background:rgba(251,113,133,.12);box-shadow:0 0 16px rgba(251,113,133,.25);transform:translateY(-1px)}
+.ctrl-btn.danger .ctrl-icon{stroke:var(--rose)}
+.ctrl-btn.large{padding:14px 22px;min-width:76px}
+.ctrl-icon{width:22px;height:22px;flex-shrink:0}
+.ctrl-label{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.call-timer{font-family:'Orbitron',sans-serif;font-size:36px;font-weight:700;color:var(--text-dim);min-width:120px;text-align:center;letter-spacing:2px;line-height:1}
 .call-timer.active{color:var(--green)}
+.call-timer.warning{color:var(--amber);text-shadow:0 0 12px rgba(251,191,36,.4)}
+.call-timer.danger{color:var(--rose);text-shadow:0 0 20px rgba(251,113,133,.6);animation:timerThrob 1s ease-in-out infinite}
+@keyframes timerThrob{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.08)}}
 
 /* ═══ SIDEBAR (CHAT) ═══ */
 .sidebar{width:280px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column}
@@ -96,7 +105,8 @@ button{font-family:inherit}
 .setup-preview video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 .setup-preview .no-video{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px}
 .setup-controls{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.setup-btn{height:36px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Orbitron',sans-serif;transition:all .15s}
+.setup-btn{display:flex;align-items:center;gap:8px;height:40px;padding:0 20px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Orbitron',sans-serif;transition:all .15s}
+.setup-icon{width:18px;height:18px;flex-shrink:0}
 .setup-btn:hover{border-color:var(--cyan);color:var(--cyan)}
 .setup-btn.active{background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan)}
 .setup-btn.danger{border-color:var(--rose);color:var(--rose)}
@@ -115,46 +125,7 @@ button{font-family:inherit}
 .copy-btn:hover{border-color:var(--cyan);color:var(--cyan)}
 .copy-btn.copied{border-color:var(--green);color:var(--green)}
 
-/* ═══ CHROMASKIN WIDGET (in topbar) ═══ */
-.cs-widget-wrap{position:relative;display:inline-block}
-.cs-widget-dot{width:32px;height:32px;border-radius:50%;background:var(--cs-accent);color:var(--cs-bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 8px var(--cs-accent-glow);transition:all .2s;border:2px solid var(--cs-bg)}
-.cs-widget-dot:hover{transform:scale(1.1);box-shadow:0 4px 16px var(--cs-accent-glow)}
-.cs-widget-panel{position:absolute;top:calc(100% + 8px);right:0;width:300px;max-width:90vw;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);overflow:hidden;animation:csSlideUp .25s ease;z-index:1000}
-@keyframes csSlideUp{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-.cs-widget-header{padding:10px 14px;background:var(--cs-bg3);border-bottom:1px solid var(--cs-border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.cs-widget-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px}
-.cs-widget-close{width:22px;height:22px;border-radius:6px;border:1px solid var(--cs-border);background:var(--cs-bg);color:var(--cs-text-muted);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.cs-widget-body{padding:14px;max-height:55vh;overflow-y:auto}
-.cs-section-label{font-size:8px;color:var(--cs-text-dim);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
-.cs-preset-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px}
-.cs-preset-swatch{aspect-ratio:1;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
-.cs-preset-swatch:hover{transform:scale(1.15)}
-.cs-preset-swatch.active{border-color:#fff}
-.cs-preset-swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
-.cs-hue-slider{width:100%;height:10px;border-radius:5px;appearance:none;cursor:pointer;border:none;outline:none;background:linear-gradient(to right,hsl(0,80%,50%),hsl(60,80%,50%),hsl(120,80%,50%),hsl(180,80%,50%),hsl(240,80%,50%),hsl(300,80%,50%),hsl(360,80%,50%));margin-bottom:8px}
-.cs-hue-slider::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--cs-bg);box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:pointer}
-.cs-slider-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.cs-slider-label{font-size:8px;color:var(--cs-text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px;width:20px}
-.cs-slider{flex:1;height:6px;border-radius:3px;appearance:none;cursor:pointer;border:none;outline:none}
-.cs-slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--cs-bg);box-shadow:0 2px 4px rgba(0,0,0,.3);cursor:pointer}
-.cs-slider-val{font-size:9px;color:var(--cs-accent);font-weight:600;min-width:24px;text-align:right}
-.cs-toggle-row{display:flex;align-items:center;justify-content:space-between;margin:8px 0 5px}
-.cs-toggle-label{font-size:8px;color:var(--cs-text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.cs-toggle{width:32px;height:16px;border-radius:8px;border:1px solid var(--cs-border);background:var(--cs-bg3);cursor:pointer;position:relative;transition:all .2s}
-.cs-toggle.on{background:var(--cs-accent);border-color:var(--cs-accent)}
-.cs-toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:1px;left:1px;transition:left .2s}
-.cs-toggle.on::after{left:17px}
-.cs-actions{display:flex;gap:5px;margin-top:8px}
-.cs-action-btn{flex:1;padding:6px 3px;border-radius:6px;border:1px solid var(--cs-border);background:var(--cs-bg3);color:var(--cs-text-muted);font-size:8px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
-.cs-action-btn:hover{border-color:var(--cs-accent);color:var(--cs-accent)}
-.cs-action-btn.primary{background:var(--cs-accent);color:var(--cs-bg);border-color:var(--cs-accent)}
-.cs-action-btn.danger{border-color:var(--cs-rose);color:var(--cs-rose)}
-.saved-themes{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px}
-.saved-slot{aspect-ratio:1;border-radius:6px;border:2px solid var(--cs-border);cursor:pointer;position:relative;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--cs-text-dim)}
-.saved-slot:hover{border-color:var(--cs-accent)}
-.saved-slot .slot-num{position:absolute;top:1px;left:3px;font-size:7px;font-weight:700;color:var(--cs-text-dim)}
-.saved-slot .delete-btn{position:absolute;top:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:var(--cs-rose);color:#fff;font-size:9px;display:none;align-items:center;justify-content:center;cursor:pointer;border:none}
-.saved-slot:hover .delete-btn{display:flex}
+
 
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:700px){
@@ -180,14 +151,20 @@ button{font-family:inherit}
     <div class="setup-preview" id="setupPreview">
       <video id="previewVideo" autoplay muted playsinline></video>
       <div class="no-video" id="noVideoMsg">
-        <div>📷</div>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-dim);opacity:.4"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         <div>Camera off</div>
       </div>
     </div>
 
     <div class="setup-controls">
-      <button class="setup-btn active" id="camBtn" onclick="toggleCamera()">📷 Cam</button>
-      <button class="setup-btn active" id="micBtn" onclick="toggleMic()">🎤 Mic</button>
+      <button class="setup-btn active" id="camBtn" onclick="toggleCamera()">
+        <svg class="setup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Camera
+      </button>
+      <button class="setup-btn active" id="micBtn" onclick="toggleMic()">
+        <svg class="setup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        Microphone
+      </button>
     </div>
 
     <input type="text" class="room-input" id="roomInput" placeholder="Enter room code..." maxlength="20" autocomplete="off">
@@ -195,7 +172,10 @@ button{font-family:inherit}
 
     <div class="divider">or</div>
 
-    <button class="setup-btn" onclick="generateRoom()">🎲 Generate Room</button>
+    <button class="setup-btn" onclick="generateRoom()">
+        <svg class="setup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg>
+        Generate Room
+      </button>
 
     <div class="link-copy" id="linkCopy" style="display:none">
       <input type="text" class="link-input" id="linkInput" readonly>
@@ -211,33 +191,14 @@ button{font-family:inherit}
     <div class="room-info">
       Room: <span class="room-code" id="displayRoomCode">---</span>
     </div>
-    <button class="topbar-btn" onclick="copyInvite()">📋 Invite</button>
-    <div class="cs-widget-wrap" id="csWidgetWrap">
-      <div class="cs-widget-dot" onclick="csToggleWidget()" title="Theme">🎨</div>
-      <div class="cs-widget-panel" id="csWidgetPanel" style="display:none">
-        <div class="cs-widget-header" onclick="csToggleWidget()">
-          <div class="cs-widget-title">🎨 ChromaSkin</div>
-          <button class="cs-widget-close" onclick="event.stopPropagation();csToggleWidget()">✕</button>
-        </div>
-        <div class="cs-widget-body">
-          <div class="cs-section-label">Presets</div>
-          <div class="cs-preset-grid" id="csPresetGrid"></div>
-          <div class="cs-section-label">Custom Hue</div>
-          <input type="range" class="cs-hue-slider" id="csHueSlider" min="0" max="360" value="45" oninput="csSetHue(this.value)">
-          <div class="cs-slider-row"><span class="cs-slider-label">Sat</span><input type="range" class="cs-slider" id="csSatSlider" min="0" max="100" value="60" oninput="csSetSat(this.value)"><span class="cs-slider-val" id="csSatVal">60%</span></div>
-          <div class="cs-slider-row"><span class="cs-slider-label">Lit</span><input type="range" class="cs-slider" id="csLitSlider" min="5" max="95" value="12" oninput="csSetLit(this.value)"><span class="cs-slider-val" id="csLitVal">12%</span></div>
-          <div class="cs-toggle-row"><span class="cs-toggle-label">Dark Mode</span><div class="cs-toggle on" id="csModeToggle" onclick="csToggleMode()"></div></div>
-          <div class="cs-actions">
-            <button class="cs-action-btn primary" onclick="csSave()">💾 Save</button>
-            <button class="cs-action-btn" onclick="csCopyCSS()">📋 CSS</button>
-            <button class="cs-action-btn danger" onclick="csReset()">↺ Reset</button>
-          </div>
-          <div class="cs-section-label" style="margin-top:10px">Saved Themes (10 slots)</div>
-          <div class="saved-themes" id="savedThemes"></div>
-        </div>
-      </div>
-    </div>
-    <button class="topbar-btn danger" onclick="leaveCall()">✕ Leave</button>
+    <button class="topbar-btn" onclick="copyInvite()">
+      <svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Invite
+    </button>
+    <button class="topbar-btn danger" onclick="leaveCall()">
+      <svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Leave
+    </button>
   </div>
 
   <div class="main-area">
@@ -252,7 +213,7 @@ button{font-family:inherit}
         </div>
         <div class="video-box" id="remoteBox">
           <div class="video-placeholder" id="remotePlaceholder">
-            <div class="icon">👤</div>
+            <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <div class="text">Waiting for peer...</div>
           </div>
           <video id="remoteVideo" autoplay playsinline style="display:none"></video>
@@ -264,11 +225,23 @@ button{font-family:inherit}
       </div>
 
       <div class="controls-bar">
-        <button class="ctrl-btn active" id="callMicBtn" onclick="callToggleMic()" title="Toggle Mic">🎤</button>
-        <button class="ctrl-btn active" id="callCamBtn" onclick="callToggleCam()" title="Toggle Camera">📷</button>
-        <button class="ctrl-btn" id="screenShareBtn" onclick="toggleScreenShare()" title="Screen Share">🖥️</button>
+        <button class="ctrl-btn active" id="callMicBtn" onclick="callToggleMic()" title="Toggle Microphone">
+          <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <span class="ctrl-label">MIC</span>
+        </button>
+        <button class="ctrl-btn active" id="callCamBtn" onclick="callToggleCam()" title="Toggle Camera">
+          <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span class="ctrl-label">CAM</span>
+        </button>
+        <button class="ctrl-btn" id="screenShareBtn" onclick="toggleScreenShare()" title="Screen Share">
+          <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span class="ctrl-label">SCREEN</span>
+        </button>
         <div class="call-timer" id="callTimer">00:00</div>
-        <button class="ctrl-btn danger large" onclick="leaveCall()" title="Leave Call">📞</button>
+        <button class="ctrl-btn danger large" onclick="leaveCall()" title="Leave Call">
+          <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/></svg>
+          <span class="ctrl-label">END</span>
+        </button>
       </div>
     </div>
 
@@ -287,7 +260,6 @@ button{font-family:inherit}
 </div>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-<script src="../../ChromaSkin/chromaskin.js"></script>
 <script>
 // ═══ STARS ═══
 function initStars(){
@@ -507,19 +479,38 @@ function leaveCall(){
 }
 
 // ═══ TIMER ═══
+var SESSION_DURATION=30*60; // 30 minutes in seconds
+var sessionEndTime=null;
+
 function startTimer(){
   callStartTime=Date.now();
+  sessionEndTime=callStartTime+SESSION_DURATION*1000;
   document.getElementById('callTimer').classList.add('active');
-  timerInterval=setInterval(function(){
-    var elapsed=Math.floor((Date.now()-callStartTime)/1000);
-    var m=Math.floor(elapsed/60);var s=elapsed%60;
-    document.getElementById('callTimer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  },1000);
+  document.getElementById('callTimer').classList.remove('warning','danger');
+  timerInterval=setInterval(updateTimer,1000);
+  updateTimer();
+}
+function updateTimer(){
+  var now=Date.now();
+  var remaining=Math.max(0,Math.floor((sessionEndTime-now)/1000));
+  var m=Math.floor(remaining/60);var s=remaining%60;
+  var timerEl=document.getElementById('callTimer');
+  timerEl.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  timerEl.classList.remove('warning','danger');
+  if(remaining<=120&&remaining>0){
+    timerEl.classList.add('danger');
+  }else if(remaining<=300&&remaining>0){
+    timerEl.classList.add('warning');
+  }
+  if(remaining<=0){
+    clearInterval(timerInterval);
+    timerEl.textContent='00:00';
+  }
 }
 function stopTimer(){
   clearInterval(timerInterval);
   document.getElementById('callTimer').textContent='00:00';
-  document.getElementById('callTimer').classList.remove('active');
+  document.getElementById('callTimer').classList.remove('active','warning','danger');
 }
 
 // ═══ CHAT ═══
@@ -557,58 +548,6 @@ function toggleSidebar(){
 var _origHandleSignal=handleSignal;
 // Chat messages come through BroadcastChannel
 
-// ═══ CHROMASKIN WIDGET ═══
-var widgetOpen=false;
-var savedThemes=JSON.parse(localStorage.getItem('cs_saved_themes')||'[]');
-while(savedThemes.length<10) savedThemes.push(null);
-
-function csToggleWidget(){
-  widgetOpen=!widgetOpen;
-  document.getElementById('csWidgetPanel').style.display=widgetOpen?'block':'none';
-  document.getElementById('csWidgetDot').style.display=widgetOpen?'none':'flex';
-  if(widgetOpen) updateWidgetFromState();
-}
-function updateWidgetFromState(){
-  var s=ChromaSkin.getState();
-  document.getElementById('csHueSlider').value=s.h;
-  document.getElementById('csSatSlider').value=s.s;
-  document.getElementById('csSatVal').textContent=s.s+'%';
-  document.getElementById('csLitSlider').value=s.l;
-  document.getElementById('csLitVal').textContent=s.l+'%';
-  document.getElementById('csModeToggle').className='cs-toggle'+(s.mode==='dark'?' on':'');
-  renderPresets();renderSavedThemes();
-}
-function csSetHue(v){ChromaSkin.setHue(parseInt(v));renderPresets()}
-function csSetSat(v){ChromaSkin.setSat(parseInt(v));document.getElementById('csSatVal').textContent=v+'%';renderPresets()}
-function csSetLit(v){ChromaSkin.setLit(parseInt(v));document.getElementById('csLitVal').textContent=v+'%';renderPresets()}
-function csToggleMode(){ChromaSkin.toggleMode();updateWidgetFromState()}
-var PRESETS=[{n:'midnight',h:220,s:15,l:8,c:'hsl(220,60%,40%)'},{n:'mustard',h:45,s:60,l:12,c:'hsl(45,80%,45%)'},{n:'burgundy',h:350,s:45,l:10,c:'hsl(350,65%,40%)'},{n:'forest',h:140,s:35,l:10,c:'hsl(145,50%,35%)'},{n:'ocean',h:200,s:50,l:12,c:'hsl(200,65%,40%)'},{n:'violet',h:270,s:40,l:10,c:'hsl(270,55%,45%)'},{n:'charcoal',h:220,s:5,l:8,c:'hsl(220,15%,30%)'},{n:'classic',h:220,s:5,l:95,c:'hsl(220,10%,85%)'}];
-function renderPresets(){
-  var g=document.getElementById('csPresetGrid');var s=ChromaSkin.getState();g.innerHTML='';
-  PRESETS.forEach(function(p){
-    var d=document.createElement('div');d.className='cs-preset-swatch';d.style.background=p.c;
-    if(Math.abs(p.h-s.h)<10&&Math.abs(p.s-s.s)<10)d.classList.add('active');
-    d.onclick=function(){ChromaSkin.setPreset(p.n);updateWidgetFromState()};d.title=p.n;g.appendChild(d);
-  });
-}
-function csSave(){
-  var idx=savedThemes.indexOf(null);if(idx===-1)idx=0;
-  var s=ChromaSkin.getState();savedThemes[idx]={h:s.h,s:s.s,l:s.l,mode:s.mode};
-  localStorage.setItem('cs_saved_themes',JSON.stringify(savedThemes));renderSavedThemes();
-}
-function csDeleteSlot(idx){savedThemes[idx]=null;localStorage.setItem('cs_saved_themes',JSON.stringify(savedThemes));renderSavedThemes()}
-function renderSavedThemes(){
-  var el=document.getElementById('savedThemes');el.innerHTML='';
-  savedThemes.forEach(function(t,i){
-    var d=document.createElement('div');d.className='saved-slot'+(t?' filled':'');
-    if(t){d.style.background='hsl('+t.h+','+t.s+'%,'+t.l+'%)';d.onclick=function(){ChromaSkin.setHue(t.h);ChromaSkin.setSat(t.s);ChromaSkin.setLit(t.l);ChromaSkin.setMode(t.mode);updateWidgetFromState()}}else{d.textContent='Empty'}
-    var n=document.createElement('span');n.className='slot-num';n.textContent=i+1;d.appendChild(n);
-    if(t){var del=document.createElement('button');del.className='delete-btn';del.textContent='×';del.onclick=function(e){e.stopPropagation();csDeleteSlot(i)};d.appendChild(del)}
-    el.appendChild(d);
-  });
-}
-function csCopyCSS(){var css=ChromaSkin.exportCSS();if(navigator.clipboard)navigator.clipboard.writeText(css)}
-function csReset(){ChromaSkin.reset();updateWidgetFromState()}
 
 // ═══ AUTO-JOIN FROM URL ═══
 (function(){
