@@ -1,0 +1,247 @@
+/* ═══════════════════════════════════════════════════
+   ChromaSkin — Standalone CSS Theme Engine
+   Drop-in: <link rel="stylesheet" href="chromaskin.css">
+   Then include chromaskin.js for the controller.
+   
+   Usage:
+     <body class="cs-mustard" data-cs-mode="dark">
+     <body class="cs-burgundy" data-cs-mode="light">
+     <body class="cs-midnight">  (default dark)
+   
+   Or set custom hue:
+     <body style="--cs-hue: 45" data-cs-mode="dark">
+   ═══════════════════════════════════════════════════ */
+
+/* ═══ BASE VARIABLES (applied to :root) ═══ */
+:root {
+  /* Core HSL — these drive everything */
+  --cs-hue: 220;
+  --cs-sat: 15%;
+  --cs-lit: 8%;
+
+  /* Mode: dark (default) or light */
+  --cs-mode: dark;
+
+  /* ═══ DERIVED PALETTE ═══ */
+  /* Backgrounds */
+  --cs-bg:        hsl(var(--cs-hue), calc(var(--cs-sat) * 0.3), var(--cs-lit));
+  --cs-bg2:       hsl(var(--cs-hue), calc(var(--cs-sat) * 0.25), calc(var(--cs-lit) * 0.7));
+  --cs-bg3:       hsl(var(--cs-hue), calc(var(--cs-sat) * 0.2), calc(var(--cs-lit) * 0.5));
+  --cs-bg-card:   hsl(var(--cs-hue), calc(var(--cs-sat) * 0.28), calc(var(--cs-lit) * 1.2));
+
+  /* Text */
+  --cs-text:      hsl(var(--cs-hue), calc(var(--cs-sat) * 0.1), 92%);
+  --cs-text-muted:hsl(var(--cs-hue), calc(var(--cs-sat) * 0.08), 62%);
+  --cs-text-dim:  hsl(var(--cs-hue), calc(var(--cs-sat) * 0.05), 42%);
+
+  /* Accent */
+  --cs-accent:    hsl(var(--cs-hue), var(--cs-sat), 55%);
+  --cs-accent2:   hsl(calc(var(--cs-hue) + 30), var(--cs-sat), 50%);
+  --cs-accent-dim:hsla(var(--cs-hue), var(--cs-sat), 55%, 0.12);
+  --cs-accent-glow:hsla(var(--cs-hue), var(--cs-sat), 55%, 0.35);
+
+  /* Borders */
+  --cs-border:    hsl(var(--cs-hue), calc(var(--cs-sat) * 0.15), 18%);
+  --cs-border-light: hsl(var(--cs-hue), calc(var(--cs-sat) * 0.12), 28%);
+
+  /* Semantic */
+  --cs-green:     hsl(145, 50%, 50%);
+  --cs-amber:     hsl(45, 90%, 55%);
+  --cs-rose:      hsl(350, 60%, 55%);
+  --cs-violet:    hsl(270, 50%, 60%);
+
+  /* ═══ LIGHT MODE OVERRIDES ═══ */
+  --cs-lit-bg:        hsl(var(--cs-hue), calc(var(--cs-sat) * 0.1), 96%);
+  --cs-lit-bg2:       hsl(var(--cs-hue), calc(var(--cs-sat) * 0.08), 92%);
+  --cs-lit-bg3:       hsl(var(--cs-hue), calc(var(--cs-sat) * 0.06), 88%);
+  --cs-lit-bg-card:   hsl(var(--cs-hue), calc(var(--cs-sat) * 0.05), 98%);
+  --cs-lit-text:      hsl(var(--cs-hue), calc(var(--cs-sat) * 0.15), 12%);
+  --cs-lit-text-muted:hsl(var(--cs-hue), calc(var(--cs-sat) * 0.1), 38%);
+  --cs-lit-text-dim:  hsl(var(--cs-hue), calc(var(--cs-sat) * 0.05), 55%);
+  --cs-lit-border:    hsl(var(--cs-hue), calc(var(--cs-sat) * 0.08), 82%);
+  --cs-lit-border-light: hsl(var(--cs-hue), calc(var(--cs-sat) * 0.06), 72%);
+}
+
+/* ═══ LIGHT MODE ═══ */
+[data-cs-mode="light"] {
+  --cs-bg:        var(--cs-lit-bg);
+  --cs-bg2:       var(--cs-lit-bg2);
+  --cs-bg3:       var(--cs-lit-bg3);
+  --cs-bg-card:   var(--cs-lit-bg-card);
+  --cs-text:      var(--cs-lit-text);
+  --cs-text-muted:var(--cs-lit-text-muted);
+  --cs-text-dim:  var(--cs-lit-text-dim);
+  --cs-border:    var(--cs-lit-border);
+  --cs-border-light: var(--cs-lit-border-light);
+  --cs-accent-dim:hsla(var(--cs-hue), var(--cs-sat), 40%, 0.1);
+  --cs-accent-glow:hsla(var(--cs-hue), var(--cs-sat), 40%, 0.25);
+}
+
+/* ═══ PRESET: MIDNIGHT (default dark blue-grey) ═══ */
+.cs-midnight {
+  --cs-hue: 220;
+  --cs-sat: 15%;
+  --cs-lit: 8%;
+}
+
+/* ═══ PRESET: MUSTARD (dark with mustard accent) ═══ */
+.cs-mustard {
+  --cs-hue: 45;
+  --cs-sat: 60%;
+  --cs-lit: 12%;
+}
+
+/* ═══ PRESET: BURGUNDY (dark with burgundy accent) ═══ */
+.cs-burgundy {
+  --cs-hue: 350;
+  --cs-sat: 45%;
+  --cs-lit: 10%;
+}
+
+/* ═══ PRESET: FOREST (dark green) ═══ */
+.cs-forest {
+  --cs-hue: 140;
+  --cs-sat: 35%;
+  --cs-lit: 10%;
+}
+
+/* ═══ PRESET: OCEAN (dark teal) ═══ */
+.cs-ocean {
+  --cs-hue: 200;
+  --cs-sat: 50%;
+  --cs-lit: 12%;
+}
+
+/* ═══ PRESET: CLASSIC WHITE (light mode) ═══ */
+.cs-classic-white {
+  --cs-hue: 220;
+  --cs-sat: 5%;
+  --cs-lit: 95%;
+}
+.cs-classic-white,
+.cs-classic-white[data-cs-mode="dark"] {
+  --cs-bg:        hsl(var(--cs-hue), calc(var(--cs-sat) * 0.1), 96%);
+  --cs-bg2:       hsl(var(--cs-hue), calc(var(--cs-sat) * 0.08), 92%);
+  --cs-bg3:       hsl(var(--cs-hue), calc(var(--cs-sat) * 0.06), 88%);
+  --cs-bg-card:   hsl(var(--cs-hue), calc(var(--cs-sat) * 0.05), 98%);
+  --cs-text:      hsl(var(--cs-hue), calc(var(--cs-sat) * 0.15), 12%);
+  --cs-text-muted:hsl(var(--cs-hue), calc(var(--cs-sat) * 0.1), 38%);
+  --cs-text-dim:  hsl(var(--cs-hue), calc(var(--cs-sat) * 0.05), 55%);
+  --cs-border:    hsl(var(--cs-hue), calc(var(--cs-sat) * 0.08), 82%);
+  --cs-border-light: hsl(var(--cs-hue), calc(var(--cs-sat) * 0.06), 72%);
+  --cs-accent:    hsl(var(--cs-hue), 60%, 45%);
+  --cs-accent2:   hsl(calc(var(--cs-hue) + 30), 60%, 40%);
+  --cs-accent-dim:hsla(var(--cs-hue), 60%, 45%, 0.1);
+  --cs-accent-glow:hsla(var(--cs-hue), 60%, 45%, 0.2);
+}
+
+/* ═══ PRESET: VIOLET (dark purple) ═══ */
+.cs-violet {
+  --cs-hue: 270;
+  --cs-sat: 40%;
+  --cs-lit: 10%;
+}
+
+/* ═══ PRESET: CHARCOAL (neutral dark) ═══ */
+.cs-charcoal {
+  --cs-hue: 220;
+  --cs-sat: 5%;
+  --cs-lit: 8%;
+}
+
+/* ═══ SMOOTH TRANSITIONS ═══ */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+body * {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease, box-shadow 0.3s ease;
+}
+
+/* ═══ UTILITY CLASSES ═══ */
+.cs-bg      { background: var(--cs-bg); }
+.cs-bg2     { background: var(--cs-bg2); }
+.cs-bg3     { background: var(--cs-bg3); }
+.cs-bg-card { background: var(--cs-bg-card); border: 1px solid var(--cs-border); }
+.cs-text    { color: var(--cs-text); }
+.cs-text-muted { color: var(--cs-text-muted); }
+.cs-text-dim   { color: var(--cs-text-dim); }
+.cs-accent  { color: var(--cs-accent); }
+.cs-accent2 { color: var(--cs-accent2); }
+.cs-border  { border-color: var(--cs-border); }
+.cs-glow    { box-shadow: 0 0 12px var(--cs-accent-glow); }
+
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--cs-accent);
+  background: var(--cs-accent);
+  color: var(--cs-bg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  font-family: inherit;
+}
+.cs-btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 16px var(--cs-accent-glow);
+}
+.cs-btn.secondary {
+  background: transparent;
+  color: var(--cs-accent);
+}
+.cs-btn.secondary:hover {
+  background: var(--cs-accent-dim);
+}
+
+.cs-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--cs-border);
+  background: var(--cs-bg3);
+  color: var(--cs-text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.cs-input:focus {
+  border-color: var(--cs-accent);
+  box-shadow: 0 0 0 3px var(--cs-accent-dim);
+}
+
+.cs-card {
+  background: var(--cs-bg-card);
+  border: 1px solid var(--cs-border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+.cs-card:hover {
+  border-color: var(--cs-border-light);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.cs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(var(--cs-bg), 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--cs-border);
+  padding: 0 40px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cs-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cs-border-light); }
