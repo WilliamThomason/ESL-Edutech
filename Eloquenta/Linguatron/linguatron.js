@@ -1,6 +1,5 @@
 // Linguatron Translation Tool — Main JavaScript
 // Uses MyMemory Translation API (free, no API key required)
-// Docs: https://mymemory.translated.net/doc/spec.php
 
 (function() {
   'use strict';
@@ -31,7 +30,6 @@
     output.innerHTML = '<div class="loading"><div class="loading-spinner"></div> Translating...</div>';
     hideQualityIndicator();
 
-    // Step 1: Translate source -> target
     var url = API_BASE + '?q=' + encodeURIComponent(text) + '&langpair=' + source + '|' + target;
 
     fetch(url)
@@ -43,8 +41,8 @@
       if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
         var translated = data.responseData.translatedText;
         var matchScore = data.responseData.match || 0;
+        var matches = data.matches || [];
 
-        // Step 2: Back-translate target -> source to verify quality
         var backUrl = API_BASE + '?q=' + encodeURIComponent(translated) + '&langpair=' + target + '|' + source;
 
         return fetch(backUrl)
@@ -55,14 +53,11 @@
             backTranslated = backData.responseData.translatedText;
           }
 
-          // Step 3: Calculate quality score
-          var quality = calculateQuality(text, translated, backTranslated, matchScore);
+          var quality = calculateQuality(text, translated, backTranslated, matchScore, matches);
 
-          // Display result
           output.innerHTML = '<span class="translated-text">' + escapeHtml(translated) + '</span>';
           document.getElementById('targetCharCount').textContent = translated.length + ' chars';
 
-          // Show quality indicator
           showQualityIndicator(quality, text, translated, backTranslated);
         });
       } else if (data.responseStatus === 429) {
@@ -84,26 +79,11 @@
   };
 
   // ═══ QUALITY CALCULATION ═══
-  function calculateQuality(original, translated, backTranslated, matchScore) {
+  function calculateQuality(original, translated, backTranslated, matchScore, matches) {
     var score = 0;
     var checks = [];
 
-    // Check 1: MyMemory match score (0-1) — is this a known phrase?
-    if (matchScore >= 0.9) {
-      score += 40;
-      checks.push({label: 'Known phrase match', status: 'pass', detail: 'This is a well-established translation in the database.'});
-    } else if (matchScore >= 0.7) {
-      score += 25;
-      checks.push({label: 'Partial phrase match', status: 'warn', detail: 'Parts of this translation are verified.'});
-    } else if (matchScore >= 0.4) {
-      score += 10;
-      checks.push({label: 'Low phrase match', status: 'warn', detail: 'This translation may be literal rather than idiomatic.'});
-    } else {
-      score += 0;
-      checks.push({label: 'No known match', status: 'fail', detail: 'This is not a commonly used phrase in the target language.'});
-    }
-
-    // Check 2: Back-translation similarity — does it round-trip?
+    // Check 1: Back-translation similarity
     if (backTranslated) {
       var similarity = stringSimilarity(original.toLowerCase(), backTranslated.toLowerCase());
       if (similarity >= 0.7) {
@@ -118,7 +98,7 @@
       }
     }
 
-    // Check 3: Length ratio — is the translation a reasonable length?
+    // Check 2: Length ratio
     var lenRatio = translated.length / Math.max(original.length, 1);
     if (lenRatio >= 0.5 && lenRatio <= 2.0) {
       score += 15;
@@ -131,13 +111,65 @@
       checks.push({label: 'Length check', status: 'fail', detail: 'Translation length is very different from source — possible error.'});
     }
 
-    // Check 4: Not identical to source (unless same language family)
+    // Check 3: Not identical to source
     if (translated.toLowerCase().trim() === original.toLowerCase().trim()) {
       score += 0;
       checks.push({label: 'Identity check', status: 'warn', detail: 'Translation is identical to source — may not have been translated.'});
     } else {
       score += 10;
       checks.push({label: 'Identity check', status: 'pass', detail: 'Translation differs from source text.'});
+    }
+
+    // Check 4: Known phrase match (LAST — with examples)
+    var exampleHtml = '';
+    if (matches && matches.length > 0) {
+      var goodMatches = matches.filter(function(m) { return m.quality >= 70; }).slice(0, 5);
+      if (goodMatches.length > 0) {
+        exampleHtml = '<div class="quality-examples">';
+        goodMatches.forEach(function(m) {
+          var seg = m.segment || '';
+          var trans = m.translation || '';
+          exampleHtml += '<div class="quality-example">' +
+            '<div class="quality-example-source">' + highlightPhrase(escapeHtml(seg), escapeHtml(trans)) + '</div>' +
+            '<div class="quality-example-target">' + highlightPhrase(escapeHtml(trans), escapeHtml(trans)) + '</div>' +
+            '</div>';
+        });
+        exampleHtml += '</div>';
+      }
+    }
+
+    if (matchScore >= 0.9) {
+      score += 40;
+      checks.push({
+        label: 'Known phrase match',
+        status: 'pass',
+        detail: 'This is a well-established translation in the database.' + (exampleHtml ? ' Here are ' + Math.min(5, matches.filter(function(m){return m.quality>=70;}).length) + ' example sentences:' : ''),
+        examples: exampleHtml
+      });
+    } else if (matchScore >= 0.7) {
+      score += 25;
+      checks.push({
+        label: 'Partial phrase match',
+        status: 'warn',
+        detail: 'Parts of this translation are verified.' + (exampleHtml ? ' Example sentences:' : ''),
+        examples: exampleHtml
+      });
+    } else if (matchScore >= 0.4) {
+      score += 10;
+      checks.push({
+        label: 'Low phrase match',
+        status: 'warn',
+        detail: 'This translation may be literal rather than idiomatic.' + (exampleUrl ? ' Example sentences:' : ''),
+        examples: exampleHtml
+      });
+    } else {
+      score += 0;
+      checks.push({
+        label: 'No known match',
+        status: 'fail',
+        detail: 'This is not a commonly used phrase in the target language.',
+        examples: ''
+      });
     }
 
     return {
@@ -147,17 +179,36 @@
     };
   }
 
-  // ═══ STRING SIMILARITY (Levenshtein-based) ═══
+  // Highlight the translated phrase within a sentence
+  function highlightPhrase(text, phrase) {
+    if (!phrase || !text) return text;
+    var idx = text.toLowerCase().indexOf(phrase.toLowerCase());
+    if (idx >= 0) {
+      return text.substring(0, idx) +
+        '<span class="quality-highlight">' + text.substring(idx, idx + phrase.length) + '</span>' +
+        text.substring(idx + phrase.length);
+    }
+    // Try to highlight individual words from the phrase
+    var words = phrase.split(/\s+/).filter(function(w) { return w.length > 3; });
+    var result = text;
+    words.forEach(function(w) {
+      var widx = result.toLowerCase().indexOf(w.toLowerCase());
+      if (widx >= 0) {
+        result = result.substring(0, widx) +
+          '<span class="quality-highlight">' + result.substring(widx, widx + w.length) + '</span>' +
+          result.substring(widx + w.length);
+      }
+    });
+    return result;
+  }
+
+  // ═══ STRING SIMILARITY ═══
   function stringSimilarity(a, b) {
     if (a === b) return 1;
     if (a.length === 0 || b.length === 0) return 0;
-
-    // Word-level similarity for better accuracy
     var wordsA = a.split(/\s+/).filter(function(w) { return w.length > 2; });
     var wordsB = b.split(/\s+/).filter(function(w) { return w.length > 2; });
-
     if (wordsA.length === 0 || wordsB.length === 0) return 0;
-
     var matches = 0;
     wordsA.forEach(function(wa) {
       wordsB.forEach(function(wb) {
@@ -166,7 +217,6 @@
         }
       });
     });
-
     return (2 * matches) / (wordsA.length + wordsB.length);
   }
 
@@ -195,6 +245,7 @@
         '<div class="quality-check-text">' +
         '<div class="quality-check-label">' + check.label + '</div>' +
         '<div class="quality-check-detail">' + check.detail + '</div>' +
+        (check.examples || '') +
         '</div></div>';
     });
 
@@ -210,7 +261,6 @@
       '</div>' +
       '<div class="quality-details">' + checksHtml + '</div>';
 
-    // Insert after the panels
     var panels = document.querySelector('.panels');
     panels.parentNode.insertBefore(div, panels.nextSibling);
   }
