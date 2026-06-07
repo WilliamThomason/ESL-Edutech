@@ -1,12 +1,13 @@
 // Linguatron Translation Tool — Main JavaScript
-// Uses LibreTranslate API (free, open-source, no API key required)
+// Uses MyMemory Translation API (free, no API key required)
+// Docs: https://mymemory.translated.net/doc/spec.php
 
 (function() {
   'use strict';
 
   var translateTimeout = null;
   var isTranslating = false;
-  var API_BASE = 'https://libretranslate.com/translate';
+  var API_BASE = 'https://api.mymemory.translated.net/get';
 
   // ═══ TRANSLATION ═══
   window.translateText = function() {
@@ -29,19 +30,21 @@
     var output = document.getElementById('targetOutput');
     output.innerHTML = '<div class="loading"><div class="loading-spinner"></div> Translating...</div>';
 
-    fetch(API_BASE, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ q: text, source: source, target: target, format: 'text' })
-    })
+    // MyMemory API: GET request with query parameters
+    var url = API_BASE + '?q=' + encodeURIComponent(text) + '&langpair=' + source + '|' + target;
+
+    fetch(url)
     .then(function(response) {
       if (!response.ok) throw new Error('Service unavailable');
       return response.json();
     })
     .then(function(data) {
-      if (data.translatedText) {
-        output.innerHTML = '<span class="translated-text">' + escapeHtml(data.translatedText) + '</span>';
-        document.getElementById('targetCharCount').textContent = data.translatedText.length + ' chars';
+      if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+        var translated = data.responseData.translatedText;
+        output.innerHTML = '<span class="translated-text">' + escapeHtml(translated) + '</span>';
+        document.getElementById('targetCharCount').textContent = translated.length + ' chars';
+      } else if (data.responseStatus === 429) {
+        throw new Error('Rate limit exceeded. Please wait a moment and try again.');
       } else {
         throw new Error('No translation returned');
       }
@@ -49,7 +52,7 @@
     .catch(function(e) {
       console.error('Translation error:', e);
       output.innerHTML = '<span class="placeholder">Translation failed. Please try again.</span>';
-      showError('Translation failed. The service may be temporarily unavailable.');
+      showError(e.message || 'Translation failed. Please try again.');
     })
     .finally(function() {
       isTranslating = false;
