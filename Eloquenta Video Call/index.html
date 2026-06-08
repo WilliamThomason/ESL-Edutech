@@ -50,8 +50,6 @@ button{font-family:inherit}
 .video-label .status-dot.inactive{background:var(--text-dim)}
 .video-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-dim)}
 .placeholder-icon{width:48px;height:48px;opacity:.3}
-.video-placeholder .text{font-size:11px}mn;align-items:center;gap:8px;color:var(--text-dim)}
-.placeholder-icon{width:48px;height:48px;opacity:.3}
 .video-placeholder .text{font-size:11px}
 .video-box.connecting{border-color:var(--amber)}
 .video-box.connected{border-color:var(--green);box-shadow:0 0 20px rgba(52,211,153,.1)}
@@ -117,7 +115,7 @@ button{font-family:inherit}
 .join-btn{width:100%;height:44px;border-radius:10px;border:1px solid var(--green);background:var(--green);color:var(--bg);font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
 .join-btn:hover{filter:brightness(1.1);box-shadow:0 0 20px rgba(52,211,153,.3)}
 .join-btn:disabled{opacity:.4;cursor:not-allowed}
-.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:(--text-dim);font-size:11px}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--text-dim);font-size:11px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .link-copy{display:flex;gap:8px;margin-top:16px}
 .link-input{flex:1;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text-muted);font-size:11px;outline:none}
@@ -127,11 +125,23 @@ button{font-family:inherit}
 
 
 
+/* ═══ MEETING LINK ═══ */
+.meeting-link-section{margin-top:16px;text-align:left}
+.meeting-link-label{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.meeting-link-help{font-size:10px;color:var(--text-dim);margin-top:6px}
+.custom-link-row{margin-top:8px}
+.custom-slug-input{font-size:12px;letter-spacing:0;margin-bottom:8px}
+.custom-link-preview{display:flex;gap:8px;align-items:center}
+.custom-link-url{flex:1;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--cyan);font-size:11px;display:flex;align-items:center;overflow:hidden;white-space:nowrap}
+.generate-btn{margin-bottom:4px}
+
 /* ═══ RESPONSIVE ═══ */
+.chat-toggle-btn{display:none}
 @media(max-width:700px){
   .sidebar{position:fixed;right:0;top:0;bottom:0;z-index:40;transform:translateX(100%);transition:transform .3s}
   .sidebar.open{transform:translateX(0)}
   .sidebar-toggle{display:block}
+  .chat-toggle-btn{display:flex}
   .video-grid{grid-template-columns:1fr}
   .video-box.local{position:absolute;bottom:80px;right:16px;width:120px;height:90px;z-index:10;border-radius:8px}
 }
@@ -167,18 +177,26 @@ button{font-family:inherit}
       </button>
     </div>
 
+    <input type="text" class="room-input custom-slug-input" id="customSlugInput" placeholder="Your name (e.g. William)" maxlength="30" autocomplete="off" oninput="updateCustomLink()">
+    <div class="meeting-link-help" style="margin-top:4px">This creates your permanent room link. Share it with students.</div>
+    
+    <div class="custom-link-preview" id="customLinkPreview" style="display:none;margin-top:12px">
+      <div class="custom-link-url" id="customLinkUrl"></div>
+      <button class="copy-btn" onclick="copyCustomLink()">Copy Link</button>
+    </div>
+
+    <div class="divider">or join with code</div>
+
     <input type="text" class="room-input" id="roomInput" placeholder="Enter room code..." maxlength="20" autocomplete="off">
     <button class="join-btn" id="joinBtn" onclick="joinCall()">Join Call</button>
 
-    <div class="divider">or</div>
-
-    <button class="setup-btn" onclick="generateRoom()">
+    <button class="setup-btn generate-btn" style="margin-top:8px" onclick="generateRoom()">
         <svg class="setup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg>
-        Generate Room
+        Generate Random Code
       </button>
 
     <div class="link-copy" id="linkCopy" style="display:none">
-      <input type="text" class="link-input" id="linkInput" readonly>
+      <input type="text" class="link-input" id="linkInput" readonly title="Share this link with students">
       <button class="copy-btn" id="copyBtn" onclick="copyLink()">Copy</button>
     </div>
   </div>
@@ -237,6 +255,10 @@ button{font-family:inherit}
           <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           <span class="ctrl-label">SCREEN</span>
         </button>
+        <button class="ctrl-btn chat-toggle-btn" id="chatToggleBtn" onclick="toggleSidebar()" title="Chat">
+          <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="ctrl-label">CHAT</span>
+        </button>
         <div class="call-timer" id="callTimer">00:00</div>
         <button class="ctrl-btn danger large" onclick="leaveCall()" title="Leave Call">
           <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/></svg>
@@ -288,7 +310,7 @@ async function getMedia(){
     return true;
   }catch(e){
     console.error('Media error:',e);
-    document.getElementById('noVideoMsg').querySelector('.textContent')&&(document.getElementById('noVideoMsg').querySelector('.textContent')='Camera/Mic access denied');
+    document.getElementById('noVideoMsg').innerHTML='<div>Camera/Mic access denied</div>';
     return false;
   }
 }
@@ -314,6 +336,16 @@ function generateRoom(){
   var code='';
   for(var i=0;i<8;i++) code+=chars[Math.floor(Math.random()*chars.length)];
   document.getElementById('roomInput').value=code;
+  // Auto-show the meeting link preview
+  roomCode=code;
+  updateLink();
+  // Visual feedback
+  var btn=document.querySelector('.setup-btn[onclick="generateRoom()"]');
+  if(btn){
+    btn.style.borderColor='var(--green)';
+    btn.style.color='var(--green)';
+    setTimeout(function(){btn.style.borderColor='';btn.style.color='';},1000);
+  }
 }
 
 function joinCall(){
@@ -328,8 +360,12 @@ function joinCall(){
 }
 
 function updateLink(){
-  var url=window.location.href.split('?')[0]+'?room='+roomCode;
-  document.getElementById('linkInput').value=url;
+  var origin=window.location.origin;
+  var path=window.location.pathname;
+  var basePath=path.split('?')[0];
+  if(!basePath.endsWith('/')) basePath=basePath.substring(0,basePath.lastIndexOf('/')+1);
+  var cleanLink=origin+basePath+'?room='+encodeURIComponent(roomCode);
+  document.getElementById('linkInput').value=cleanLink;
   document.getElementById('linkCopy').style.display='flex';
 }
 function copyLink(){
@@ -342,8 +378,27 @@ function copyLink(){
   setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000);
 }
 function copyInvite(){
-  var url=window.location.href.split('?')[0]+'?room='+roomCode;
-  navigator.clipboard.writeText(url);
+  // Prefer custom slug link if available, otherwise use room code link
+  var customSlug=localStorage.getItem('eloquent_custom_slug');
+  var origin=window.location.origin;
+  var path=window.location.pathname;
+  var basePath=path.split('?')[0];
+  if(!basePath.endsWith('/')) basePath=basePath.substring(0,basePath.lastIndexOf('/')+1);
+  var inviteLink;
+  if(customSlug&&customSlug.trim().length>=3){
+    inviteLink=origin+basePath+'?room='+encodeURIComponent(customSlug.trim().toUpperCase());
+  }else{
+    inviteLink=origin+basePath+'?room='+encodeURIComponent(roomCode);
+  }
+  navigator.clipboard.writeText(inviteLink);
+  var btn=document.querySelector('.topbar-btn[onclick="copyInvite()"]');
+  if(btn){
+    var original=btn.innerHTML;
+    btn.innerHTML='<svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    btn.style.borderColor='var(--green)';
+    btn.style.color='var(--green)';
+    setTimeout(function(){btn.innerHTML=original;btn.style.borderColor='';btn.style.color='';},2000);
+  }
 }
 
 // ═══ PEERJS SIGNALING ═══
@@ -446,14 +501,22 @@ async function toggleScreenShare(){
   try{
     var screenStream=await navigator.mediaDevices.getDisplayMedia({video:true});
     var screenTrack=screenStream.getVideoTracks()[0];
-    var sender=peerConnection.getSenders().find(function(s){return s.track&&s.track.kind==='video'});
-    if(sender) sender.replaceTrack(screenTrack);
+    // Replace track in the peer call if active
+    if(peerCall&&peerCall.peerConnection){
+      var sender=peerCall.peerConnection.getSenders().find(function(s){return s.track&&s.track.kind==='video'});
+      if(sender) sender.replaceTrack(screenTrack);
+    }
     document.getElementById('localVideo').srcObject=screenStream;
+    document.getElementById('screenShareBtn').classList.add('active');
     screenTrack.onended=function(){
       if(localStream){
-        var camTrack=localStream.getVideoTracks()[0];
-        if(sender) sender.replaceTrack(camTrack);
+        if(peerCall&&peerCall.peerConnection){
+          var camTrack=localStream.getVideoTracks()[0];
+          var sender2=peerCall.peerConnection.getSenders().find(function(s){return s.track&&s.track.kind==='video'});
+          if(sender2) sender2.replaceTrack(camTrack);
+        }
         document.getElementById('localVideo').srcObject=localStream;
+        document.getElementById('screenShareBtn').classList.remove('active');
       }
     };
   }catch(e){console.error('Screen share error:',e)}
@@ -465,6 +528,9 @@ function leaveCall(){
   if(localStream) localStream.getTracks().forEach(function(t){t.stop()});
   peerConnected=false;
   isHost=false;
+  peerCall=null;
+  peer=null;
+  peerDataConn=null;
   stopTimer();
   document.getElementById('setupScreen').classList.remove('hidden');
   document.getElementById('callLayout').style.display='none';
@@ -474,7 +540,10 @@ function leaveCall(){
   document.getElementById('remoteLabel').style.display='none';
   document.getElementById('remoteBox').classList.remove('connected');
   document.getElementById('chatMessages').innerHTML='';
-  peerConnection=null;localStream=null;remoteStream=null;
+  localStream=null;
+  remoteStream=null;
+  // Reset link section
+  document.getElementById('linkCopy').style.display='none';
   getMedia();
 }
 
@@ -527,7 +596,19 @@ function sendChat(){
 function addChatMessage(sender,msg,self){
   var div=document.createElement('div');
   div.className='chat-msg '+(self?'self':'other');
-  div.innerHTML='<div class="sender">'+sender+'</div><div class="text">'+msg+'</div><div class="time">'+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>';
+  // XSS-safe text insertion
+  var senderDiv=document.createElement('div');
+  senderDiv.className='sender';
+  senderDiv.textContent=sender;
+  var textDiv=document.createElement('div');
+  textDiv.className='text';
+  textDiv.textContent=msg;
+  var timeDiv=document.createElement('div');
+  timeDiv.className='time';
+  timeDiv.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  div.appendChild(senderDiv);
+  div.appendChild(textDiv);
+  div.appendChild(timeDiv);
   var msgs=document.getElementById('chatMessages');
   msgs.appendChild(div);
   msgs.scrollTop=msgs.scrollHeight;
@@ -549,16 +630,71 @@ var _origHandleSignal=handleSignal;
 // Chat messages come through BroadcastChannel
 
 
+// ═══ CUSTOM LINK ═══
+function updateCustomLink(){
+  var slug=document.getElementById('customSlugInput').value.trim();
+  var preview=document.getElementById('customLinkPreview');
+  var urlEl=document.getElementById('customLinkUrl');
+  if(slug.length>=3){
+    var origin=window.location.origin;
+    var path=window.location.pathname;
+    var basePath=path.split('?')[0];
+    if(!basePath.endsWith('/')) basePath=basePath.substring(0,basePath.lastIndexOf('/')+1);
+    // Store the slug in localStorage so it persists
+    localStorage.setItem('eloquent_custom_slug',slug);
+    var link=origin+basePath+'?room='+encodeURIComponent(slug.toUpperCase());
+    urlEl.textContent=link;
+    preview.style.display='flex';
+  }else{
+    preview.style.display='none';
+  }
+}
+function copyCustomLink(){
+  var url=document.getElementById('customLinkUrl').textContent;
+  navigator.clipboard.writeText(url);
+  var btn=document.querySelector('.custom-link-preview .copy-btn');
+  btn.textContent='Copied!';
+  btn.classList.add('copied');
+  setTimeout(function(){btn.textContent='Copy Link';btn.classList.remove('copied')},2000);
+}
+
 // ═══ AUTO-JOIN FROM URL ═══
 (function(){
+  // Restore custom slug from localStorage
+  var savedSlug=localStorage.getItem('eloquent_custom_slug');
+  if(savedSlug){
+    var slugInput=document.getElementById('customSlugInput');
+    if(slugInput){slugInput.value=savedSlug;updateCustomLink();}
+  }
+  // Support both ?room=CODE and /slug format
+  var room='';
   var params=new URLSearchParams(window.location.search);
-  var room=params.get('room');
+  room=params.get('room');
+  // Also check path-based room: domain/ROOMCODE
+  if(!room){
+    var path=window.location.pathname.replace(/^\/+/,'');
+    if(path&&path!=='index.html'&&path.length>=4){
+      room=path.toUpperCase();
+    }
+  }
   if(room){
+    room=room.toUpperCase().replace(/[^A-Z0-9]/g,'');
     document.getElementById('roomInput').value=room;
+    // Auto-join: wait for camera/mic then connect
     var checkMedia=setInterval(function(){
-      if(localStream){clearInterval(checkMedia);joinCall()}
+      if(localStream){
+        clearInterval(checkMedia);
+        // Small delay to let the peer initialize
+        setTimeout(function(){joinCall()},300);
+      }
     },500);
-    setTimeout(function(){clearInterval(checkMedia)},10000);
+    // Timeout after 15s — show manual join
+    setTimeout(function(){
+      clearInterval(checkMedia);
+      if(document.getElementById('setupScreen').className.indexOf('hidden')===-1){
+        // Still on setup screen — auto-join didn't work, let user do it manually
+      }
+    },15000);
   }
 })();
 </script>
