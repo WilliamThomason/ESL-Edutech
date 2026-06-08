@@ -212,9 +212,11 @@ input{font-family:inherit}
     <h1>WTE <span>VIDEO</span></h1>
     <p class="subtitle">William Thomason English — Video Classroom</p>
     <div id="entry-step-1">
-      <input type="text" class="login-room-input" id="loginRoomInput" placeholder="Room code (from your calendar invite)" maxlength="20" autocomplete="off">
-      <input type="text" class="login-field" id="entryNameInput" placeholder="Your name" autocomplete="off" style="margin-bottom:10px">
-      <button class="login-btn" onclick="entryJoin()">Join Lesson</button>
+      <form onsubmit="event.preventDefault();entryJoin();" style="margin:0">
+        <input type="text" class="login-room-input" id="loginRoomInput" placeholder="Room code (from your calendar invite)" maxlength="20" autocomplete="off">
+        <input type="text" class="login-field" id="entryNameInput" placeholder="Your name" autocomplete="off" style="margin-bottom:10px">
+        <button type="submit" class="login-btn">Join Lesson</button>
+      </form>
       <div class="login-hint" style="margin-top:12px">
         <strong>No login required.</strong> Just enter your name and the room code from your calendar invite.
         <div style="margin-top:6px;font-size:10px;color:var(--text-dim)">Camera and microphone access will be requested when you join.</div>
@@ -635,9 +637,8 @@ var peer=null,peerCall=null,peerDataConn=null,peerConnected=false;
 var SESSION_DURATION=30*60,sessionEndTime=null;
 
 async function getMedia(){
-  try{var c={video:selectedCam?{deviceId:{exact:selectedCam}}:true,audio:selectedMic?{deviceId:{exact:selectedMic}}:true};localStream=await navigator.mediaDevices.getUserMedia(c);document.getElementById('localVideo').srcObject=localStream;startMicMeter();return true;}catch(e){showToast('Camera/Mic access denied');return false;}
-}
-getMedia();
+  try{var c={video:selectedCam?{deviceId:{exact:selectedCam}}:true,audio:selectedMic?{deviceId:{exact:selectedMic}}:true};localStream=await navigator.mediaDevices.getUserMedia(c);document.getElementById('localVideo').srcObject=localStream;startMicMeter();return true;}catch(e){showToast('Camera/Mic access denied');return false;}}
+// Media requested on join, not on page load
 
 function callToggleCam(){camOn=!camOn;if(localStream)localStream.getVideoTracks().forEach(function(t){t.enabled=camOn;});document.getElementById('callCamBtn').classList.toggle('active',camOn);}
 function callToggleMic(){micOn=!micOn;if(localStream)localStream.getAudioTracks().forEach(function(t){t.enabled=micOn;});document.getElementById('callMicBtn').classList.toggle('active',micOn);}
