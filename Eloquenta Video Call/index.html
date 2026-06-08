@@ -212,7 +212,7 @@ input{font-family:inherit}
     <h1>WTE <span>VIDEO</span></h1>
     <p class="subtitle">William Thomason English — Video Classroom</p>
     <div id="entry-step-1">
-      <form onsubmit="event.preventDefault();entryJoin();" style="margin:0">
+      <form onsubmit="event.preventDefault();entryJoin();return false;" action="javascript:void(0)" style="margin:0">
         <input type="text" class="login-room-input" id="loginRoomInput" placeholder="Room code (from your calendar invite)" maxlength="20" autocomplete="off">
         <input type="text" class="login-field" id="entryNameInput" placeholder="Your name" autocomplete="off" style="margin-bottom:10px">
         <button type="submit" class="login-btn">Join Lesson</button>
