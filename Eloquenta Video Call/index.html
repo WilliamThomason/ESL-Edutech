@@ -206,29 +206,28 @@ input{font-family:inherit}
 <div class="stars" id="stars"></div>
 <div class="lw-toast" id="lwToast"></div>
 
-<!-- ═══ LOGIN SCREEN ═══ -->
+<!-- ═══ ENTRY SCREEN ═══ -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <h1>WTE <span>VIDEO</span></h1>
     <p class="subtitle">William Thomason English — Video Classroom</p>
-    <input type="text" class="login-room-input" id="loginRoomInput" placeholder="Room code (optional)" maxlength="20" autocomplete="off">
-    <div class="login-tabs">
-      <button class="login-tab active" id="tabTeacher" onclick="switchLoginTab('teacher')">Teacher</button>
-      <button class="login-tab" id="tabStudent" onclick="switchLoginTab('student')">Student</button>
+    <div id="entry-step-1">
+      <input type="text" class="login-room-input" id="loginRoomInput" placeholder="Room code (from your calendar invite)" maxlength="20" autocomplete="off">
+      <input type="text" class="login-field" id="entryNameInput" placeholder="Your name" autocomplete="off" style="margin-bottom:10px">
+      <button class="login-btn" onclick="entryJoin()">Join Lesson</button>
+      <div class="login-hint" style="margin-top:12px">
+        <strong>No login required.</strong> Just enter your name and the room code from your calendar invite.
+        <div style="margin-top:6px;font-size:10px;color:var(--text-dim)">Camera and microphone access will be requested when you join.</div>
+      </div>
     </div>
-    <form class="login-form active" id="formTeacher" onsubmit="doLogin(event,'teacher')">
-      <input type="text" class="login-field" id="teacherUser" placeholder="Username" autocomplete="off">
-      <input type="password" class="login-field" id="teacherPass" placeholder="Password" autocomplete="off">
-      <button type="submit" class="login-btn">Enter as Teacher</button>
-    </form>
-    <form class="login-form" id="formStudent" onsubmit="doLogin(event,'student')">
-      <input type="text" class="login-field" id="studentUser" placeholder="Username" autocomplete="off">
-      <input type="password" class="login-field" id="studentPass" placeholder="Password" autocomplete="off">
-      <button type="submit" class="login-btn">Enter as Student</button>
-    </form>
-    <div class="login-error" id="loginError"></div>
-    <div class="login-hint"><strong>Test credentials:</strong>
-      <div class="login-cred"><span>teacher / teach123</span><span>student / learn123</span></div>
+    <div id="entry-step-2" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:2rem;margin-bottom:12px">🎥</div>
+      <div style="font-family:'Fira Code',monospace;font-size:13px;color:var(--accent);margin-bottom:8px" id="perm-status">Requesting camera access...</div>
+      <div style="font-size:11px;color:var(--text-dim)">Please allow camera and microphone access to join the lesson.</div>
+    </div>
+    <div id="entry-error" class="login-error"></div>
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+      <a href="#" id="entry-login-link" style="font-size:11px;color:var(--text-dim);text-decoration:none" onclick="showDashboardLogin();return false">Login to dashboard (homework, feedback)</a>
     </div>
   </div>
 </div>
@@ -237,8 +236,12 @@ input{font-family:inherit}
 <div class="call-layout hidden" id="callLayout">
   <div class="topbar">
     <div class="logo">WTE <span>VIDEO</span></div>
-    <div class="user-badge" id="userBadge"><span class="dot"></span><span id="userBadgeText">Teacher</span></div>
+    <div class="user-badge" id="userBadge" style="background:var(--accent-dim);color:var(--accent);border:1px solid rgba(163,230,53,.25)"><span class="dot" style="background:var(--accent)"></span><span id="userBadgeText">Guest</span></div>
     <div class="room-info">Room: <span class="room-code" id="displayRoomCode">---</span></div>
+    <button class="topbar-btn" onclick="showDashboardLogin()" title="Login for homework/feedback" style="font-size:9px">
+      <svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Login
+    </button>
     <button class="topbar-btn" onclick="toggleSettings()" title="Settings">
       <svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
@@ -397,43 +400,60 @@ function showToast(msg){var t=document.getElementById('lwToast');t.textContent=m
 // ═══ ESCAPE ═══
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-// ═══ LOGIN ═══
+// ═══ ENTRY FLOW ═══
 var currentUser=null,currentRole=null,roomCode='';
-var TEST_CREDENTIALS={teacher:{username:'teacher',password:'teach123'},student:{username:'student',password:'learn123'}};
 
-function switchLoginTab(role){
-  document.getElementById('tabTeacher').classList.toggle('active',role==='teacher');
-  document.getElementById('tabStudent').classList.toggle('active',role==='student');
-  document.getElementById('formTeacher').classList.toggle('active',role==='teacher');
-  document.getElementById('formStudent').classList.toggle('active',role==='student');
-  document.getElementById('loginError').textContent='';
+function entryJoin(){
+  var name=document.getElementById('entryNameInput').value.trim();
+  var room=document.getElementById('loginRoomInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!name){document.getElementById('entry-error').textContent='Please enter your name';return;}
+  if(!room){document.getElementById('entry-error').textContent='Please enter the room code from your calendar invite';return;}
+  currentUser=name;roomCode=room;
+  document.getElementById('entry-step-1').style.display='none';
+  document.getElementById('entry-step-2').style.display='block';
+  document.getElementById('perm-status').textContent='Requesting camera access...';
+  initMedia();
 }
 
-function doLogin(e,role){
-  e.preventDefault();
-  var u=document.getElementById(role+'User').value.trim();
-  var p=document.getElementById(role+'Pass').value;
-  var cred=TEST_CREDENTIALS[role];
-  if(u===cred.username&&p===cred.password){
-    currentUser=u;currentRole=role;
-    localStorage.setItem('wte_video_user',JSON.stringify({username:u,role:role}));
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('callLayout').classList.remove('hidden');
-    document.getElementById('callLayout').style.display='flex';
-    var badge=document.getElementById('userBadge');
-    badge.className='user-badge '+role;
-    document.getElementById('userBadgeText').textContent=role==='teacher'?'Teacher':'Student';
-    document.getElementById('localRoleLabel').textContent=role==='teacher'?'Teacher':'Student';
-    var rc=document.getElementById('loginRoomInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
-    if(!rc){rc=roomCode;}
-    if(rc){roomCode=rc;document.getElementById('displayRoomCode').textContent=rc;}
-    checkUrlRoom();
-  }else{document.getElementById('loginError').textContent='Invalid credentials.';}
+async function initMedia(){
+  try{
+    localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    document.getElementById('perm-status').textContent='Camera ready! Joining room...';
+    setTimeout(function(){completeJoin()},500);
+  }catch(e){
+    document.getElementById('perm-status').textContent='Camera/mic access denied. Please allow access and try again.';
+    document.getElementById('entry-error').textContent='Camera and microphone access is required for video calls.';
+  }
 }
 
-(function(){try{var saved=localStorage.getItem('wte_video_user');if(saved){var u=JSON.parse(saved);if(u.username&&u.role){currentUser=u.username;currentRole=u.role;document.getElementById('loginScreen').classList.add('hidden');document.getElementById('callLayout').classList.remove('hidden');document.getElementById('callLayout').style.display='flex';var badge=document.getElementById('user-badge');if(badge){badge.className='user-badge '+u.role;}var badgeText=document.getElementById('userBadgeText');if(badgeText){badgeText.textContent=u.role==='teacher'?'Teacher':'Student';}var roleLabel=document.getElementById('localRoleLabel');if(roleLabel){roleLabel.textContent=u.role==='teacher'?'Teacher':'Student';}}}checkUrlRoom();}catch(e){}})();
-// Always check URL room on page load (pre-fills login field)
-checkUrlRoom();
+function completeJoin(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('callLayout').classList.remove('hidden');
+  document.getElementById('callLayout').style.display='flex';
+  document.getElementById('userBadgeText').textContent=currentUser;
+  document.getElementById('displayRoomCode').textContent=roomCode;
+  document.getElementById('localRoleLabel').textContent=currentUser;
+  if(localStream)document.getElementById('localVideo').srcObject=localStream;
+  startCall();
+  checkUrlRoom();
+}
+
+function showDashboardLogin(){
+  var pwd=prompt('Enter dashboard password:');
+  if(pwd==='william2026'){window.open('#dashboard','_blank');}
+  else if(pwd!==null){alert('Wrong password.');}
+}
+
+// Check URL for room code on load
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var room=params.get('room');
+  if(room){
+    room=room.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    roomCode=room;
+    document.getElementById('loginRoomInput').value=room;
+  }
+})();
 
 // ═══ DEVICES ═══
 var audioDevices=[],videoDevices=[],speakerDevices=[];
@@ -662,13 +682,12 @@ function addSystemMessage(msg){var div=document.createElement('div');div.classNa
 
 function copyInvite(){var o=window.location.origin;var p=window.location.pathname;var bp=p.split('?')[0];if(!bp.endsWith('/'))bp=bp.substring(0,bp.lastIndexOf('/')+1);navigator.clipboard.writeText(o+bp+'?room='+roomCode);showToast('Invite link copied!');}
 
-function leaveCall(){if(peerCall)peerCall.close();if(peer)peer.destroy();if(localStream)localStream.getTracks().forEach(function(t){t.stop();});if(screenStream)screenStream.getTracks().forEach(function(t){t.stop();});peerConnected=false;isHost=false;peerCall=null;peer=null;peerDataConn=null;stopTimer();stopScreenShare();document.getElementById('remoteVideo').srcObject=null;document.getElementById('remoteVideo').style.display='none';document.getElementById('remotePlaceholder').style.display='flex';document.getElementById('remoteLabel').style.display='none';document.getElementById('remoteBox').classList.remove('connected');document.getElementById('chatMessages').innerHTML='';localStream=null;remoteStream=null;document.getElementById('callLayout').style.display='none';document.getElementById('callLayout').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');localStorage.removeItem('wte_video_user');}
-
+function leaveCall(){if(peerCall)peerCall.close();if(peer)peer.destroy();if(localStream)localStream.getTracks().forEach(function(t){t.stop();});if(screenStream)screenStream.getTracks().forEach(function(t){t.stop();});peerConnected=false;isHost=false;peerCall=null;peer=null;peerDataConn=null;stopTimer();stopScreenShare();document.getElementById('remoteVideo').srcObject=null;document.getElementById('remoteVideo').style.display='none';document.getElementById('remotePlaceholder').style.display='flex';document.getElementById('remoteLabel').style.display='none';document.getElementById('remoteBox').classList.remove('connected');document.getElementById('chatMessages').innerHTML='';localStream=null;remoteStream=null;document.getElementById('callLayout').style.display='none';document.getElementById('callLayout').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('entry-step-1').style.display='block';document.getElementById('entry-step-2').style.display='none';currentUser=null;roomCode='';}
 function checkUrlRoom(){
-  var room='';var params=new URLSearchParams(window.location.search);room=params.get('room');if(!room){var path=window.location.pathname.replace(/^\/+/,'');if(path&&path!=='index.html'&&path.length>=4)room=path.toUpperCase();}
-  if(room){room=room.toUpperCase().replace(/[^A-Z0-9]/g,'');if(!roomCode){roomCode=room;document.getElementById('displayRoomCode').textContent=room;}document.getElementById('loginRoomInput').value=room;if(currentUser){document.getElementById('displayRoomCode').textContent=roomCode;var cm=setInterval(function(){if(localStream){clearInterval(cm);joinCallAuto();}},500);setTimeout(function(){clearInterval(cm);},10000);}}
+  var room='';var params=new URLSearchParams(window.location.search);room=params.get('room');
+  if(!room){var path=window.location.pathname.replace(/^\/+/,'');if(path&&path!=='index.html'&&path.length>=4)room=path.toUpperCase();}
+  if(room){room=room.toUpperCase().replace(/[^A-Z0-9]/g,'');if(!roomCode){roomCode=room;}document.getElementById('loginRoomInput').value=room;if(currentUser&&localStream){document.getElementById('displayRoomCode').textContent=roomCode;}}
 }
-function joinCallAuto(){document.getElementById('displayRoomCode').textContent=roomCode;document.getElementById('localVideo').srcObject=localStream;startCall();}
 </script>
 </body>
 </html></body>
