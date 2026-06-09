@@ -8,14 +8,19 @@ AI-powered SEO and digital marketing agency. We use a multi-agent system (Agenti
 
 ## Active Campaigns
 - [[campaigns/WTE-SEO-2026]] — William Thomason English SEO campaign
+- [[campaigns/WTE-SEO-2026-content-calendar]] — Content publishing schedule
 
 ## Agent Roster
-- **COO** (Director) — Routes work, manages token budget, assigns tasks
-- **Researcher** — Keyword research, competitor analysis, SERP tracking
-- **Writer** — Blog posts, outreach emails, ad copy, meta descriptions
-- **Analyst** — Rankings, traffic analysis, conversion tracking, reporting
-- **Outreach** — Link building, PR, partnership emails
-- **Reviewer** — Quality check, brand voice compliance, approval gate
+| Agent | Role | Model | Token Budget | Status |
+|-------|------|-------|-------------|--------|
+| [[agents/coo]] | COO / Orchestrator | Claude Sonnet 4.6 | 100K/day | Active |
+| [[agents/researcher]] | Researcher | Claude Opus 4 | 150K/day | Active |
+| [[agents/writer]] | Writer | Claude Sonnet 4.6 | 150K/day | Active |
+| [[agents/analyst]] | Analyst | Claude Sonnet 4.6 | 50K/day | Active |
+| [[agents/outreach]] | Outreach | Claude Haiku 4.5 | 50K/day | Active |
+| [[agents/reviewer]] | Reviewer | Claude Haiku 4.5 | 50K/day | Active |
+
+**Total token budget:** 550K/day across all agents
 
 ## Token Budgets
 - Global: 500K tokens/day
@@ -36,3 +41,14 @@ AI-powered SEO and digital marketing agency. We use a multi-agent system (Agenti
 
 ## Journal
 - [[journal/2026-06-08]] — Daily notes
+
+## SEO Data
+- [[keywords/wte-seo-2026]] — Keyword research and competitor analysis
+- [[outreach/wte-2026-prospects]] — Link building prospect list
+
+## Governance Policies
+1. All content must pass through Reviewer before publishing
+2. All outreach emails must pass through Reviewer before sending
+3. PII must be anonymized in all outputs
+4. External publishing requires COO approval
+5. Token budget overruns trigger automatic agent throttling
