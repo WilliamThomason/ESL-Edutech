@@ -3,660 +3,263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Agentic OS — Orchestration & Governance</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>Agentic OS — Orchestration &amp; Governance</title>
 <style>
-:root {
-  --bg: #0a0e1a; --bg2: #0d1117; --bg3: #111827; --bg4: #162032;
-  --border: #1e3a5f; --border-light: #2a4a7f;
-  --text: #e0f2fe; --text-muted: #94a3b8; --text-dim: #4a6080;
-  --purple: #a78bfa; --purple-light: #c4b5fd; --purple-dim: rgba(167,139,250,.08); --purple-glow: rgba(167,139,250,.35); --green: #34d399; --amber: #fbbf24; --rose: #fb7185; --violet: #a78bfa;
-  --sidebar-w: 220px;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html { font-size:16px; }
-body { font-family:"Share Tech Mono",monospace; background:var(--bg); color:var(--text); min-height:100vh; display:flex; overflow:hidden; }
-.stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
-.star { position:absolute; background:#fff; border-radius:50%; animation:twinkle var(--dur) ease-in-out infinite; opacity:var(--op); }
-@keyframes twinkle { 0%,100%{opacity:var(--op)} 50%{opacity:.1} }
-.sidebar { width:var(--sidebar-w); min-width:var(--sidebar-w); background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; z-index:10; position:relative; }
-.sidebar-logo { padding:20px 18px 16px; border-bottom:1px solid var(--border); }
-.sidebar-logo h1 { font-family:"Orbitron",sans-serif; font-size:14px; font-weight:900; color:var(--purple); letter-spacing:2px; }
-.sidebar-logo span { font-size:9px; color:var(--text-dim); letter-spacing:1px; }
-.sidebar-nav { flex:1; padding:12px 0; overflow-y:auto; }
-.nav-section-label { padding:8px 18px 4px; font-family:"Orbitron",sans-serif; font-size:8px; font-weight:600; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; }
-.nav-item { display:flex; align-items:center; gap:10px; padding:8px 18px; cursor:pointer; border-left:2px solid transparent; transition:all .15s; font-size:12px; color:var(--text-muted); }
-.nav-item:hover { color:var(--text); background:rgba(167,139,250,.04); }
-.nav-item.active { color:var(--purple); border-left-color:var(--purple); background:rgba(167,139,250,.06); }
-.nav-item .nav-icon { width:16px; height:16px; flex-shrink:0; }
-.nav-badge { margin-left:auto; background:var(--rose); color:#000; font-size:8px; font-weight:700; padding:1px 5px; border-radius:4px; font-family:"Orbitron",sans-serif; }
-.nav-badge.ok { background:var(--green); }
-.sidebar-footer { padding:12px 18px; border-top:1px solid var(--border); font-size:9px; color:var(--text-dim); }
-.main { flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; z-index:1; }
-.topbar { height:48px; background:var(--bg2); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 20px; gap:16px; flex-shrink:0; }
-.topbar-title { font-family:"Orbitron",sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--text); }
-.topbar-search { margin-left:auto; background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:5px 10px; color:var(--text); font-family:"Share Tech Mono",monospace; font-size:11px; width:200px; outline:none; }
-.topbar-search:focus { border-color:var(--purple); }
-.topbar-search::placeholder { color:var(--text-dim); }
-.status-dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 6px rgba(52,211,153,.5); animation:pulse 2s ease-in-out infinite; }
-.status-dot.warn { background:var(--amber); box-shadow:0 0 6px rgba(251,191,36,.5); }
-.status-dot.err { background:var(--rose); box-shadow:0 0 6px rgba(251,113,133,.5); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-.page { flex:1; overflow-y:auto; padding:20px; display:none; }
-.page.active { display:block; }
-.card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; }
-.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.card-title { font-family:"Orbitron",sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--text-muted); }
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-.grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; }
-.grid-main { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
-.mb-16 { margin-bottom:16px; }
-.metric { text-align:center; padding:16px; }
-.metric-value { font-family:"Orbitron",sans-serif; font-size:28px; font-weight:900; color:var(--purple); }
-.metric-value.green { color:var(--green); }
-.metric-value.amber { color:var(--amber); }
-.metric-value.rose { color:var(--rose); }
-.metric-value.violet { color:var(--purple); }
-.metric-label { font-size:10px; color:var(--text-dim); margin-top:4px; letter-spacing:1px; }
-.agent-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(30,58,95,.5); }
-.agent-row:last-child { border-bottom:none; }
-.agent-avatar { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:"Orbitron",sans-serif; font-size:10px; font-weight:700; flex-shrink:0; }
-.agent-info { flex:1; min-width:0; }
-.agent-name { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.agent-meta { font-size:10px; color:var(--text-dim); margin-top:2px; }
-.agent-status { font-family:"Orbitron",sans-serif; font-size:8px; font-weight:600; letter-spacing:1px; padding:3px 8px; border-radius:4px; flex-shrink:0; }
-.agent-status.running { background:rgba(52,211,153,.15); color:var(--green); }
-.agent-status.idle { background:rgba(148,163,184,.15); color:var(--text-muted); }
-.agent-status.error { background:rgba(251,113,133,.15); color:var(--rose); }
-.agent-status.pending { background:rgba(251,191,36,.15); color:var(--amber); }
-.progress-bar { height:6px; background:var(--bg4); border-radius:3px; overflow:hidden; }
-.progress-fill { height:100%; border-radius:3px; transition:width .5s ease; }
-.progress-fill.cyan { background:var(--purple); }
-.progress-fill.green { background:var(--green); }
-.progress-fill.amber { background:var(--amber); }
-.progress-fill.rose { background:var(--rose); }
-.progress-fill.violet { background:var(--purple); }
-.progress-label { display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim); margin-bottom:4px; }
-.log-entry { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid rgba(30,58,95,.3); font-size:11px; }
-.log-entry:last-child { border-bottom:none; }
-.log-time { color:var(--text-dim); flex-shrink:0; width:65px; }
-.log-level { flex-shrink:0; width:50px; font-family:"Orbitron",sans-serif; font-size:8px; font-weight:700; letter-spacing:1px; }
-.log-level.info { color:var(--purple); }
-.log-level.warn { color:var(--amber); }
-.log-level.error { color:var(--rose); }
-.log-level.success { color:var(--green); }
-.log-msg { color:var(--text-muted); flex:1; }
-.tool-item { display:flex; align-items:center; gap:10px; padding:10px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; }
-.tool-icon { width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; }
-.tool-info { flex:1; }
-.tool-name { font-size:11px; color:var(--text); }
-.tool-desc { font-size:9px; color:var(--text-dim); margin-top:2px; }
-.tool-cost { font-family:"Orbitron",sans-serif; font-size:9px; color:var(--amber); flex-shrink:0; }
-.memory-item { padding:10px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; }
-.memory-key { font-family:"Orbitron",sans-serif; font-size:9px; font-weight:700; color:var(--purple); letter-spacing:1px; }
-.memory-val { font-size:11px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
-.memory-meta { font-size:9px; color:var(--text-dim); margin-top:4px; }
-.approval-item { display:flex; align-items:center; gap:12px; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; }
-.approval-info { flex:1; }
-.approval-title { font-size:12px; color:var(--text); }
-.approval-desc { font-size:10px; color:var(--text-dim); margin-top:2px; }
-.approval-actions { display:flex; gap:6px; flex-shrink:0; }
-.btn { height:28px; padding:0 12px; border-radius:6px; border:1px solid var(--border); background:var(--bg3); color:var(--text-muted); font-family:"Orbitron",sans-serif; font-size:9px; font-weight:600; cursor:pointer; letter-spacing:1px; transition:all .15s; }
-.btn:hover { border-color:var(--purple); color:var(--purple); }
-.btn-primary { border-color:var(--purple); color:var(--purple); background:rgba(167,139,250,.08); }
-.btn-primary:hover { background:var(--purple); color:#000; }
-.btn-danger { border-color:var(--rose); color:var(--rose); background:rgba(251,113,133,.08); }
-.btn-danger:hover { background:var(--rose); color:#000; }
-.btn-success { border-color:var(--green); color:var(--green); background:rgba(52,211,153,.08); }
-.btn-success:hover { background:var(--green); color:#000; }
-.btn-sm { height:22px; padding:0 8px; font-size:8px; }
-.sparkle-container { position:absolute; inset:-20px; pointer-events:none; z-index:3; }
-.sparkle-particle { position:absolute; width:4px; height:4px; border-radius:50%; pointer-events:none; animation:sparkleFly .6s ease-out forwards; }
-@keyframes sparkleFly { 0%{opacity:1;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)} }
-::-webkit-scrollbar { width:6px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background:var(--border-light); }
-.chart-placeholder { height:160px; display:flex; align-items:flex-end; gap:4px; padding:10px 0; }
-.chart-bar { flex:1; border-radius:3px 3px 0 0; transition:height .5s ease; min-height:4px; }
-.tabs { display:flex; gap:4px; margin-bottom:12px; }
-.tab { padding:6px 14px; border-radius:6px; border:1px solid var(--border); background:var(--bg3); color:var(--text-muted); font-family:"Orbitron",sans-serif; font-size:9px; font-weight:600; cursor:pointer; letter-spacing:1px; }
-.tab.active { border-color:var(--purple); color:var(--purple); background:rgba(167,139,250,.08); }
-.section-heading { font-family:"Orbitron",sans-serif; font-size:12px; font-weight:700; color:var(--text); letter-spacing:1.5px; margin-bottom:12px; }
-.wf-node { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border); background:var(--bg3); font-size:10px; color:var(--text-muted); }
-.wf-node.active { border-color:var(--purple); color:var(--purple); }
-.wf-node.done { border-color:var(--green); color:var(--green); }
-.wf-arrow { color:var(--text-dim); padding:0 4px; }
-.wf-row { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:8px; }
-/* ═══ ALIEN ═══ */
-.alien-wrap{position:relative;width:140px;height:140px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
-.alien-glow{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.25) 0%,rgba(167,139,250,.08) 40%,transparent 70%);animation:alienPulse 3s ease-in-out infinite;filter:blur(8px)}
-.alien-invader{font-size:140px;line-height:140px;width:140px;height:140px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 12px rgba(167,139,250,.5)) drop-shadow(0 0 30px rgba(167,139,250,.2));animation:alienFloat 4s ease-in-out infinite;position:relative;z-index:1}
-@keyframes alienPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:1}}
-@keyframes alienFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-/* ═══ CONFIG ═══ */
-.config-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.config-header-icon{font-size:48px;filter:drop-shadow(0 0 8px rgba(167,139,250,.4))}
-.config-grid{max-width:900px}
-.config-router-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.config-router-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;text-align:center}
-.config-router-card:hover{border-color:var(--purple);background:var(--purple-dim)}
-.config-router-card.active{border-color:var(--purple);background:var(--purple-dim);box-shadow:0 0 12px rgba(167,139,250,.15)}
-.config-router-name{font-family:"Orbitron",sans-serif;font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px}
-.config-router-desc{font-size:9px;color:var(--text-dim);margin-bottom:6px}
-.config-router-status{font-size:8px;font-weight:600;color:var(--text-dim)}
-.config-router-card.active .config-router-status{color:var(--purple)}
-.config-agent-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,58,95,.5)}
-.config-agent-row:last-child{border-bottom:none}
-.config-agent-info{flex:1}
-.config-agent-name{font-size:12px;font-weight:600;color:var(--text)}
-.config-agent-role{font-size:9px;color:var(--text-dim);font-weight:400;margin-left:6px}
-.config-select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-family:"Orbitron",sans-serif;font-size:8px;font-weight:600;outline:none;cursor:pointer;letter-spacing:1px}
-.config-select:focus{border-color:var(--purple)}
-.config-select option{background:var(--bg2);color:var(--text)}
-.config-limits-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.config-limit-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
-.config-limit-label{font-family:"Orbitron",sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
-.config-input{width:100%;height:32px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:"Orbitron",sans-serif;font-size:10px;font-weight:700;text-align:center;outline:none}
-.config-input:focus{border-color:var(--purple);box-shadow:0 0 8px rgba(167,139,250,.15)}
-.config-limit-unit{font-size:8px;color:var(--text-dim);margin-top:4px}
-.config-agent-limits{display:flex;flex-direction:column;gap:6px}
-.config-agent-limit-row{display:flex;align-items:center;gap:10px;padding:6px 0}
-.config-agent-limit-name{font-family:"Orbitron",sans-serif;font-size:9px;font-weight:700;color:var(--text);width:90px;letter-spacing:1px}
-.config-input-sm{flex:1;height:28px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:"Orbitron",sans-serif;font-size:9px;font-weight:600;text-align:center;outline:none}
-.config-input-sm:focus{border-color:var(--purple)}
-.config-agent-limit-unit{font-size:8px;color:var(--text-dim);width:30px}
-.config-actions{display:flex;gap:8px;justify-content:center;margin-top:20px}
-.config-save-status{text-align:center;font-size:10px;color:var(--text-dim);margin-top:8px;min-height:16px}
-.config-save-status.success{color:var(--green)}
-
-@media(max-width:900px) { .grid-4{grid-template-columns:1fr 1fr} .grid-3{grid-template-columns:1fr 1fr} .grid-main{grid-template-columns:1fr} }
-@media(max-width:600px) { .sidebar{display:none} .grid-2,.grid-3,.grid-4{grid-template-columns:1fr} }
-</style></head><body>
-<div class="stars" id="stars"></div>
+:root{--bg:#0a0e1a;--bg2:#16213e;--card:#1a1a2e;--border:#2a3a5f;--border-light:#3a4a7f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--primary:#a78bfa;--primary-light:#c4b5fd;--primary-dim:rgba(167,139,250,.08);--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--rose:#fb7185;--rose-dim:rgba(251,113,133,.08);--cyan:#22d3ee;--green:#34d399;--peach:#fcbe6a}
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;overflow:hidden}
+h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agent-status,.log-level,.metric-value,.room-code,.slide-num-badge,.deck-counter,.Badge,.badge,.ctrl-label,.diagram-box .box-title,.section-num,.lesson-cat,.lesson-count,.day-label,.tempo-label,.fret-label,.string-label,.note-label,.interval-label,.chord-label,.scale-label,.timer-label,.timer-value,.timer-unit,.timer-status,.timer-bar-fill-text,.ApprovalTitle,.PolicyTitle,.MemoryKey,.MemoryMeta,.StatNum,.StatLabel,.TabLabel,.ToolName,.ToolCost,.WorkflowTitle,.WorkflowMeta,.SlideTitle,.SlideOriginal,.SlideParaphrase,.SlideNumber,.CatLabel,.SlideQuestion,.SlideAnswer,.SlideNav,.SlideFooter,.SlideBack,.SlideNext,.SlideShuffle,.SlideCounter,.SlideProgress,.SlideProgressBar,.SlideProgressFill{font-family:'Fira Code',monospace}
+.label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:9px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);color:var(--bg);border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-light);color:var(--bg);box-shadow:0 0 12px rgba(167,139,250,.15)}
+.btn-danger{border-color:var(--rose);color:var(--rose)}.btn-danger:hover{background:rgba(251,113,133,.12)}
+.btn-sm{height:24px;padding:0 10px;font-size:8px}
+.btn-block{width:100%;justify-content:center}
+.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.progress-fill.purple{background:var(--primary)}.progress-fill.green{background:var(--green)}
+.progress-fill.amber{background:var(--amber)}.progress-fill.rose{background:var(--rose)}
+.badge{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 8px;border-radius:9999px;font-size:8px;font-weight:700;letter-spacing:1px}
+.badge.running{background:rgba(52,211,153,.15);color:var(--green)}
+.badge.idle{background:rgba(148,163,184,.15);color:var(--text-muted)}
+.badge.error{background:var(--rose-dim);color:var(--rose)}
+.badge.warning{background:var(--amber-dim);color:var(--amber)}
+.badge-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+.badge-dot.active{background:var(--green);box-shadow:0 0 4px var(--green)}
+.badge-dot.inactive{background:var(--text-dim)}
+.badge-dot.error{background:var(--rose);box-shadow:0 0 4px var(--rose)}
+.input{width:100%;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 12px rgba(167,139,250,.15)}
+.input::placeholder{color:var(--text-dim)}
+.select{appearance:none;cursor:pointer}
+.textarea{height:auto;padding:10px 12px;resize:vertical}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-main{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.mb-16{margin-bottom:16px}
+.app{display:flex;height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;flex-shrink:0}
+.sidebar-logo{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-logo h1{font-size:13px;font-weight:900;color:var(--primary);letter-spacing:2px}
+.sidebar-logo span{font-size:8px;color:var(--text-dim);letter-spacing:1px;display:block;margin-top:2px}
+.sidebar-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-section-label{padding:8px 16px 4px;font-size:8px;font-weight:600;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:12px;color:var(--text-muted)}
+.nav-item:hover{color:var(--text);background:var(--primary-dim)}
+.nav-item.active{color:var(--primary);border-left-color:var(--primary);background:var(--primary-dim)}
+.nav-icon{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--rose);color:#000;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px}
+.nav-badge.ok{background:var(--green)}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-size:9px;color:var(--text-dim)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:48px;background:rgba(10,14,26,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:5}
+.topbar-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--primary)}
+.topbar-search{margin-left:auto;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:11px;width:200px;outline:none}
+.topbar-search:focus{border-color:var(--primary)}.topbar-search::placeholder{color:var(--text-dim)}
+.topbar-btn{height:30px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.topbar-btn:hover{border-color:var(--primary);color:var(--primary)}
+.topbar-btn.danger:hover{border-color:var(--rose);color:var(--rose)}
+.topbar-icon{width:13px;height:13px}
+.page{flex:1;padding:20px;overflow-y:auto;display:none}
+.page.active{display:block}
+.section-heading{font-size:12px;font-weight:700;color:var(--text);letter-spacing:1.5px;margin-bottom:12px}
+.metric{text-align:center;padding:16px}
+.metric-value{font-size:28px;font-weight:900;color:var(--primary)}
+.metric-value.green{color:var(--green)}.metric-value.amber{color:var(--amber)}.metric-value.rose{color:var(--rose)}
+.metric-label{font-size:10px;color:var(--text-dim);margin-top:4px;letter-spacing:1px}
+.agent-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.agent-row:last-child{border-bottom:none}
+.agent-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agent-meta{font-size:10px;color:var(--text-dim);margin-top:2px}
+.agent-status{font-size:8px;font-weight:600;letter-spacing:1px;padding:3px 8px;border-radius:4px;flex-shrink:0}
+.agent-status.running{background:rgba(52,211,153,.15);color:var(--green)}
+.agent-status.idle{background:rgba(148,163,184,.15);color:var(--text-muted)}
+.agent-status.error{background:var(--rose-dim);color:var(--rose)}
+.agent-status.pending{background:var(--amber-dim);color:var(--amber)}
+.log-entry{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:var(--text-dim);flex-shrink:0;width:65px}
+.log-level{flex-shrink:0;width:50px;font-size:8px;font-weight:700;letter-spacing:1px}
+.log-level.info{color:var(--primary)}.log-level.warn{color:var(--amber)}.log-level.error{color:var(--rose)}.log-level.success{color:var(--green)}
+.log-msg{color:var(--text-muted);flex:1}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
 <div class="sidebar">
-<div class="sidebar-logo"><div class="alien-wrap"><div class="alien-glow"></div><div class="alien-invader">&#128125;</div></div><h1>AGENTIC OS</h1><span>Orchestration &amp; Governance</span></div>
-<div class="sidebar-nav">
-<div class="nav-section-label">Overview</div>
-<div class="nav-item active" onclick="showPage('dashboard',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
-<div class="nav-section-label">Management</div>
-<div class="nav-item" onclick="showPage('resources',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Resources</div>
-<div class="nav-item" onclick="showPage('memory',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Context &amp; Memory</div>
-<div class="nav-section-label">Control</div>
-<div class="nav-item" onclick="showPage('governance',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Governance<span class="nav-badge">3</span></div>
-<div class="nav-item" onclick="showPage('tools',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tool Orchestration</div>
-<div class="nav-item" onclick="showPage('observability',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Observability</div>
-<div class="nav-section-label">System</div>
-<div class="nav-item" onclick="showPage('config',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Agent Config</div>
-<div class="nav-item" onclick="showPage('agents',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Agent Fleet<span class="nav-badge ok">7</span></div>
-<div class="nav-item" onclick="showPage('workflows',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Workflows</div>
+  <div class="sidebar-logo"><h1>AGENTIC OS</h1><span>Orchestration &amp; Governance</span></div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+    <div class="nav-section-label">Management</div>
+    <div class="nav-item" onclick="showPage('resources')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Resources</div>
+    <div class="nav-item" onclick="showPage('memory')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Context &amp; Memory</div>
+    <div class="nav-section-label">Control</div>
+    <div class="nav-item" onclick="showPage('governance')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Governance<span class="nav-badge">3</span></div>
+    <div class="nav-item" onclick="showPage('tools')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tool Orchestration</div>
+    <div class="nav-item" onclick="showPage('observability')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Observability</div>
+    <div class="nav-section-label">System</div>
+    <div class="nav-item" onclick="showPage('config')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.05a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Agent Config</div>
+    <div class="nav-item" onclick="showPage('agents')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Agent Fleet<span class="nav-badge ok">7</span></div>
+    <div class="nav-item" onclick="showPage('workflows')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Workflows</div>
+  </div>
+  <div class="sidebar-footer">v2.0.0 &mdash; Agentic OS</div>
 </div>
-<div class="sidebar-footer">v1.0.0 &mdash; Agentic OS</div>
-</div>
+<!-- MAIN -->
 <div class="main">
-<div class="topbar"><div class="status-dot" id="systemStatusDot"></div><div class="topbar-title" id="pageTitle">Dashboard</div><input class="topbar-search" type="text" placeholder="Search agents, tools, logs..." id="searchInput" oninput="handleSearch(this.value)"></div>
+<div class="topbar">
+  <div class="topbar-title" id="pageTitle">Dashboard</div>
+  <input class="topbar-search" type="text" placeholder="Search agents, tools, logs...">
+  <button class="topbar-btn" onclick="showToast('Invite link copied!')"><svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Invite</button>
+  <button class="topbar-btn danger" onclick="showToast('Leaving...')"><svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Leave</button>
+</div>
+
+<!-- DASHBOARD PAGE -->
 <div class="page active" id="page-dashboard">
 <div class="grid-4 mb-16">
-<div class="card metric"><div class="metric-value" id="metricAgents">7</div><div class="metric-label">ACTIVE AGENTS</div></div>
-<div class="card metric"><div class="metric-value green" id="metricTasks">24</div><div class="metric-label">TASKS TODAY</div></div>
-<div class="card metric"><div class="metric-value amber" id="metricTokens">142K</div><div class="metric-label">TOKENS USED</div></div>
-<div class="card metric"><div class="metric-value violet" id="metricUptime">99.7%</div><div class="metric-label">UPTIME</div></div>
+<div class="card metric"><div class="metric-value">7</div><div class="metric-label">ACTIVE AGENTS</div></div>
+<div class="card metric"><div class="metric-value amber">24</div><div class="metric-label">TASKS TODAY</div></div>
+<div class="card metric"><div class="metric-value">142K</div><div class="metric-label">TOKENS USED</div></div>
+<div class="card metric"><div class="metric-value green">99.7%</div><div class="metric-label">UPTIME</div></div>
 </div>
 <div class="grid-main mb-16">
-<div class="card"><div class="card-header"><div class="card-title">TOKEN USAGE (24H)</div><div class="tabs" style="margin:0"><div class="tab active" onclick="switchTokenTab(this,'24h')">24H</div><div class="tab" onclick="switchTokenTab(this,'7d')">7D</div><div class="tab" onclick="switchTokenTab(this,'30d')">30D</div></div></div><div class="chart-placeholder" id="tokenChart"></div></div>
+<div class="card"><div class="card-header"><div class="card-title">TOKEN USAGE (24H)</div></div>
+<div style="height:160px;display:flex;align-items:flex-end;gap:3px;padding:10px 0">
+<div style="flex:1"><div class="progress-fill green" style="height:12%;border-radius:2px 2px 0 0;opacity:.5"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:18%;border-radius:2px 2px 0 0;opacity:.6"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:25%;border-radius:2px 2px 0 0;opacity:.6"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:32%;border-radius:2px 2px 0 0;opacity:.7"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:28%;border-radius:2px 2px 0 0;opacity:.7"></div></div>
+<div style="flex:1"><div class="progress-fill amber" style="height:35%;border-radius:2px 2px 0 0;opacity:.7"></div></div>
+<div style="flex:1"><div class="progress-fill amber" style="height:42%;border-radius:2px 2px 0 0;opacity:.8"></div></div>
+<div style="flex:1"><div class="progress-fill amber" style="height:38%;border-radius:2px 2px 0 0;opacity:.8"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:55%;border-radius:2px 2px 0 0;opacity:.8"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:62%;border-radius:2px 2px 0 0;opacity:.9"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:68%;border-radius:2px 2px 0 0;opacity:.9"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:72%;border-radius:2px 2px 0 0;opacity:.9"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:65%;border-radius:2px 2px 0 0;opacity:1"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:78%;border-radius:2px 2px 0 0;opacity:1"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:82%;border-radius:2px 2px 0 0;opacity:1"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:88%;border-radius:2px 2px 0 0;opacity:1"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:92%;border-radius:2px 2px 0 0;opacity:1"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:85%;border-radius:2px 2px 0 0;opacity:1"></div></div>
+<div style="flex:1"><div class="progress-fill rose" style="height:72%;border-radius:2px 2px 0 0;opacity:.8"></div></div>
+<div style="flex:1"><div class="progress-fill amber" style="height:58%;border-radius:2px 2px 0 0;opacity:.7"></div></div>
+<div style="flex:1"><div class="progress-fill amber" style="height:42%;border-radius:2px 2px 0 0;opacity:.6"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:35%;border-radius:2px 2px 0 0;opacity:.6"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:28%;border-radius:2px 2px 0 0;opacity:.5"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:22%;border-radius:2px 2px 0 0;opacity:.5"></div></div>
+<div style="flex:1"><div class="progress-fill green" style="height:15%;border-radius:2px 2px 0 0;opacity:.4"></div></div>
+</div>
+<div style="display:flex;justify-content:space-between;padding:0 4px;font-size:8px;color:var(--text-dim)"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+</div>
 <div class="card"><div class="card-header"><div class="card-title">SYSTEM HEALTH</div></div>
-<div style="display:flex;flex-direction:column;gap:10px">
-<div><div class="progress-label"><span>CPU</span><span id="cpuVal">34%</span></div><div class="progress-bar"><div class="progress-fill cyan" id="cpuBar" style="width:34%"></div></div></div>
-<div><div class="progress-label"><span>Memory</span><span id="memVal">62%</span></div><div class="progress-bar"><div class="progress-fill violet" id="memBar" style="width:62%"></div></div></div>
-<div><div class="progress-label"><span>Token Budget</span><span id="tokenVal">47%</span></div><div class="progress-bar"><div class="progress-fill amber" id="tokenBar" style="width:47%"></div></div></div>
-<div><div class="progress-label"><span>Error Rate</span><span id="errVal">0.3%</span></div><div class="progress-bar"><div class="progress-fill rose" id="errBar" style="width:3%"></div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>CPU</span><span id="cpuVal">34%</span></div><div class="progress-bar"><div class="progress-fill green" id="cpuBar" style="width:34%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>Memory</span><span>62%</span></div><div class="progress-bar"><div class="progress-fill amber" style="width:62%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>Token Budget</span><span>47%</span></div><div class="progress-bar"><div class="progress-fill purple" style="width:47%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>Error Rate</span><span>0.3%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:3%"></div></div></div>
 </div></div>
 </div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">RECENT ACTIVITY</div><button class="btn btn-sm" onclick="refreshActivity()">REFRESH</button></div>
+<div class="card mb-16"><div class="card-header"><div class="card-title">RECENT ACTIVITY</div><button class="btn btn-sm" onclick="showToast('Refreshed')">REFRESH</button></div>
 <div id="activityLog">
 <div class="log-entry"><span class="log-time">14:32</span><span class="log-level success">OK</span><span class="log-msg">Agent "ResearchBot" completed literature review task</span></div>
 <div class="log-entry"><span class="log-time">14:28</span><span class="log-level info">INFO</span><span class="log-msg">Memory sync: 3 new context entries indexed</span></div>
-<div class="log-entry"><span class="log-time">14:25</span><span class="log-level warn">WARN</span><span class="log-msg">Token budget at 47% - 3 agents throttled</span></div>
-<div class="log-entry"><span class="log-time">14:21</span><span class="log-level info">INFO</span><span class="log-msg">Tool "Salesforce API" registered with cost tier B</span></div>
+<div class="log-entry"><span class="log-time">14:25</span><span class="log-level warn">WARN</span><span class="log-msg">Token budget at 47% — 3 agents throttled</span></div>
 <div class="log-entry"><span class="log-time">14:18</span><span class="log-level error">ERR</span><span class="log-msg">Agent "DataMiner" failed: timeout on external API</span></div>
 <div class="log-entry"><span class="log-time">14:15</span><span class="log-level success">OK</span><span class="log-msg">Governance: approval flow #4421 auto-approved</span></div>
-<div class="log-entry"><span class="log-time">14:10</span><span class="log-level info">INFO</span><span class="log-msg">New agent "CodeReview" spawned from fleet template</span></div>
-</div></div>
-<div class="grid-2">
-<div class="card"><div class="card-header"><div class="card-title">TOP AGENTS BY WORKLOAD</div></div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div><div class="progress-label"><span>ResearchBot</span><span>87%</span></div><div class="progress-bar"><div class="progress-fill cyan" style="width:87%"></div></div></div>
-<div><div class="progress-label"><span>DataMiner</span><span>62%</span></div><div class="progress-bar"><div class="progress-fill violet" style="width:62%"></div></div></div>
-<div><div class="progress-label"><span>CodeReview</span><span>45%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:45%"></div></div></div>
-<div><div class="progress-label"><span>EmailAgent</span><span>31%</span></div><div class="progress-bar"><div class="progress-fill amber" style="width:31%"></div></div></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">ACTIVE ALERTS</div></div>
-<div id="alertsList">
-<div class="log-entry"><span class="log-time">14:25</span><span class="log-level warn">WARN</span><span class="log-msg">Token budget threshold (47%)</span></div>
-<div class="log-entry"><span class="log-time">14:18</span><span class="log-level error">ERR</span><span class="log-msg">DataMiner: API timeout</span></div>
-<div class="log-entry"><span class="log-time">13:55</span><span class="log-level warn">WARN</span><span class="log-msg">Memory pressure: 78% capacity</span></div>
 </div></div>
 </div>
-</div>
-<div class="page" id="page-resources">
-<div class="grid-3 mb-16">
-<div class="card metric"><div class="metric-value">8 / 16</div><div class="metric-label">CORES ALLOCATED</div></div>
-<div class="card metric"><div class="metric-value violet">12 / 20</div><div class="metric-label">CONCURRENT SESSIONS</div></div>
-<div class="card metric"><div class="metric-value amber">$0.42</div><div class="metric-label">COST / HOUR</div></div>
-</div>
-<div class="grid-2 mb-16">
-<div class="card"><div class="card-header"><div class="card-title">COMPUTE QUOTAS</div></div>
-<div style="display:flex;flex-direction:column;gap:12px">
-<div><div class="progress-label"><span>Agent: ResearchBot</span><span>4 cores</span></div><div class="progress-bar"><div class="progress-fill cyan" style="width:75%"></div></div></div>
-<div><div class="progress-label"><span>Agent: DataMiner</span><span>2 cores</span></div><div class="progress-bar"><div class="progress-fill violet" style="width:40%"></div></div></div>
-<div><div class="progress-label"><span>Agent: CodeReview</span><span>1 core</span></div><div class="progress-bar"><div class="progress-fill green" style="width:20%"></div></div></div>
-<div><div class="progress-label"><span>Reserved Pool</span><span>1 core</span></div><div class="progress-bar"><div class="progress-fill amber" style="width:15%"></div></div></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">TOKEN BUDGET</div></div>
-<div style="display:flex;flex-direction:column;gap:12px">
-<div><div class="progress-label"><span>Claude 3.5 Sonnet</span><span>82K / 200K</span></div><div class="progress-bar"><div class="progress-fill cyan" style="width:41%"></div></div></div>
-<div><div class="progress-label"><span>GPT-4o</span><span>35K / 100K</span></div><div class="progress-bar"><div class="progress-fill violet" style="width:35%"></div></div></div>
-<div><div class="progress-label"><span>Gemini Pro</span><span>25K / 100K</span></div><div class="progress-bar"><div class="progress-fill green" style="width:25%"></div></div></div>
-</div></div>
-</div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">SCHEDULED PROCESSES</div><button class="btn btn-primary btn-sm" onclick="sparkleBurst(this)">+ NEW</button></div>
-<div id="processList">
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">R</div><div class="agent-info"><div class="agent-name">ResearchBot - Daily Briefing</div><div class="agent-meta">Every 24h - Next: 06:00 UTC</div></div><span class="agent-status running">ACTIVE</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">D</div><div class="agent-info"><div class="agent-name">DataMiner - Market Scan</div><div class="agent-meta">Every 6h - Next: 18:00 UTC</div></div><span class="agent-status running">ACTIVE</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(52,211,153,.15);color:var(--green)">C</div><div class="agent-info"><div class="agent-name">CodeReview - PR Monitor</div><div class="agent-meta">Event-driven - Last: 14:10 UTC</div></div><span class="agent-status idle">IDLE</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(251,191,36,.15);color:var(--amber)">E</div><div class="agent-info"><div class="agent-name">EmailAgent - Inbox Triage</div><div class="agent-meta">Every 1h - Next: 15:00 UTC</div></div><span class="agent-status pending">PENDING</span></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">SHARED STATE</div></div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div class="memory-item"><div class="memory-key">GLOBAL_CONTEXT</div><div class="memory-val">Current sprint: Q2-2026 - Active projects: 4 - Team: 12 agents</div><div class="memory-meta">Updated 2 min ago - Shared across all agents</div></div>
-<div class="memory-item"><div class="memory-key">USER_PREFERENCES</div><div class="memory-val">Language: EN - Timezone: UTC+2 - Notification: critical only</div><div class="memory-meta">Updated 1h ago - Session-scoped</div></div>
-<div class="memory-item"><div class="memory-key">API_RATE_LIMITS</div><div class="memory-val">Salesforce: 42/100 - HubSpot: 12/50 - Slack: 89/1000</div><div class="memory-meta">Updated 5 min ago - System-managed</div></div>
-</div></div>
-</div>
-<div class="page" id="page-memory">
-<div class="grid-2 mb-16">
-<div class="card metric"><div class="metric-value violet">1,247</div><div class="metric-label">MEMORY ENTRIES</div></div>
-<div class="card metric"><div class="metric-value">89%</div><div class="metric-label">INDEX HEALTH</div></div>
-</div>
-<div class="tabs mb-16">
-<div class="tab active" onclick="switchMemoryTab(this,'institutional')">Institutional Memory</div>
-<div class="tab" onclick="switchMemoryTab(this,'working')">Working Memory</div>
-<div class="tab" onclick="switchMemoryTab(this,'cross-agent')">Cross-Agent Context</div>
-</div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">INSTITUTIONAL MEMORY</div><button class="btn btn-sm btn-primary" onclick="sparkleBurst(this)">+ ADD ENTRY</button></div>
-<div id="memoryList">
-<div class="memory-item"><div class="memory-key">COMPANY_POLICIES</div><div class="memory-val">Data retention: 90 days. PII must be anonymized before storage. All external API calls require audit logging. Agents must not access financial records without L2 approval.</div><div class="memory-meta">Scope: Global - Updated: 2026-06-01 - By: Admin</div></div>
-<div class="memory-item"><div class="memory-key">CUSTOMER_INTERACTIONS</div><div class="memory-val">Acme Corp: Prefers formal communication, decision-maker is CTO. Beta LLC: Fast-moving, prefers Slack, key contact is VP Eng. Gamma Inc: Risk-averse, requires written approval for all changes.</div><div class="memory-meta">Scope: Sales agents - Updated: 2026-06-07 - By: CRM Agent</div></div>
-<div class="memory-item"><div class="memory-key">TECHNICAL_KNOWLEDGE</div><div class="memory-val">API v2 deprecated 2026-05-15. Migration guide: /docs/migrate-v3. Rate limits: 100 req/min for tier B. Auth: Bearer token via X-API-Key header.</div><div class="memory-meta">Scope: Dev agents - Updated: 2026-06-05 - By: CodeReview</div></div>
-<div class="memory-item"><div class="memory-key">ERROR_PATTERNS</div><div class="memory-val">Salesforce timeout: retry with exponential backoff (3 attempts). Slack rate limit: queue and batch. OpenAI 429: switch to fallback model (Gemini Pro).</div><div class="memory-meta">Scope: All agents - Updated: 2026-06-08 - By: System</div></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">MEMORY RETRIEVAL</div></div>
-<div style="display:flex;gap:8px;margin-bottom:12px"><input class="topbar-search" style="flex:1;margin-left:0" type="text" placeholder="Query institutional memory..." id="memoryQuery"><button class="btn btn-primary" onclick="sparkleBurst(this)">SEARCH</button></div>
-<div style="font-size:10px;color:var(--text-dim)">Try: "customer preferences" - "API limits" - "approval process"</div></div>
-</div>
-<div class="page" id="page-governance">
-<div class="grid-3 mb-16">
-<div class="card metric"><div class="metric-value">156</div><div class="metric-label">AUDIT ENTRIES TODAY</div></div>
-<div class="card metric"><div class="metric-value amber">3</div><div class="metric-label">PENDING APPROVALS</div></div>
-<div class="card metric"><div class="metric-value green">12</div><div class="metric-label">POLICIES ACTIVE</div></div>
-</div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">PENDING APPROVALS</div></div>
-<div id="approvalList">
-<div class="approval-item"><div class="approval-info"><div class="approval-title">Data Export Request - Agent: DataMiner</div><div class="approval-desc">Requesting access to export 50K customer records to CSV. Risk: HIGH (PII involved).</div></div><div class="approval-actions"><button class="btn btn-success btn-sm" onclick="handleApprove(this)">APPROVE</button><button class="btn btn-danger btn-sm" onclick="handleReject(this)">REJECT</button></div></div>
-<div class="approval-item"><div class="approval-info"><div class="approval-title">API Scope Expansion - Agent: ResearchBot</div><div class="approval-desc">Requesting write access to Confluence workspace. Risk: MEDIUM.</div></div><div class="approval-actions"><button class="btn btn-success btn-sm" onclick="handleApprove(this)">APPROVE</button><button class="btn btn-danger btn-sm" onclick="handleReject(this)">REJECT</button></div></div>
-<div class="approval-item"><div class="approval-info"><div class="approval-title">Budget Increase - Agent: CodeReview</div><div class="approval-desc">Requesting token budget increase from 50K to 100K/day. Risk: LOW.</div></div><div class="approval-actions"><button class="btn btn-success btn-sm" onclick="handleApprove(this)">APPROVE</button><button class="btn btn-danger btn-sm" onclick="handleReject(this)">REJECT</button></div></div>
-</div></div>
-<div class="grid-2 mb-16">
-<div class="card"><div class="card-header"><div class="card-title">INTENT-SCOPED PRIVILEGES</div></div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div class="memory-item"><div class="memory-key">ResearchBot</div><div class="memory-val">Read: Web, ArXiv, Confluence - Write: None - Max tokens: 200K/day</div></div>
-<div class="memory-item"><div class="memory-key">DataMiner</div><div class="memory-val">Read: Salesforce, HubSpot, DB - Write: DB (staging) - Max tokens: 100K/day</div></div>
-<div class="memory-item"><div class="memory-key">CodeReview</div><div class="memory-val">Read: GitHub, GitLab - Write: PR comments - Max tokens: 50K/day</div></div>
-<div class="memory-item"><div class="memory-key">EmailAgent</div><div class="memory-val">Read: Gmail, Calendar - Write: Drafts only - Max tokens: 30K/day</div></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">POLICY RULES</div></div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div class="memory-item"><div class="memory-key">PII_ACCESS</div><div class="memory-val">Requires L2 approval. All access logged. Data must be anonymized within 24h.</div></div>
-<div class="memory-item"><div class="memory-key">EXTERNAL_API_WRITE</div><div class="memory-val">Requires intent scope match. Rate limit: 100 req/min. Audit trail mandatory.</div></div>
-<div class="memory-item"><div class="memory-key">BUDGET_OVERRIDE</div><div class="memory-val">Agents can request up to 2x daily budget. Auto-approved if total fleet usage &lt; 60%.</div></div>
-<div class="memory-item"><div class="memory-key">CROSS_AGENT_SHARE</div><div class="memory-val">Working memory shared by default. Institutional memory requires explicit grant.</div></div>
-</div></div>
-</div>
-<div class="card"><div class="card-header"><div class="card-title">AUDIT TRAIL</div></div>
-<div id="auditTrail">
-<div class="log-entry"><span class="log-time">14:32:01</span><span class="log-level success">OK</span><span class="log-msg">ResearchBot: task_complete - literature_review_v3</span></div>
-<div class="log-entry"><span class="log-time">14:31:45</span><span class="log-level info">INFO</span><span class="log-msg">System: memory_sync - 3 entries indexed</span></div>
-<div class="log-entry"><span class="log-time">14:30:12</span><span class="log-level info">INFO</span><span class="log-msg">Governance: approval_auto - flow #4421 (budget_increase, LOW risk)</span></div>
-<div class="log-entry"><span class="log-time">14:28:33</span><span class="log-level error">ERR</span><span class="log-msg">DataMiner: api_timeout - salesforce.query (retry 2/3)</span></div>
-<div class="log-entry"><span class="log-time">14:25:00</span><span class="log-level warn">WARN</span><span class="log-msg">ResourceMgr: token_throttle - 3 agents (budget 47%)</span></div>
-<div class="log-entry"><span class="log-time">14:22:18</span><span class="log-level info">INFO</span><span class="log-msg">ToolMgr: register - salesforce_api (tier B, $0.02/call)</span></div>
-<div class="log-entry"><span class="log-time">14:20:05</span><span class="log-level success">OK</span><span class="log-msg">CodeReview: pr_comment - repo/frontend#142</span></div>
-<div class="log-entry"><span class="log-time">14:18:44</span><span class="log-level info">INFO</span><span class="log-msg">FleetMgr: spawn - agent CodeReview from template v2.1</span></div>
-</div></div>
-</div>
-<div class="page" id="page-tools">
-<div class="grid-3 mb-16">
-<div class="card metric"><div class="metric-value">24</div><div class="metric-label">REGISTERED TOOLS</div></div>
-<div class="card metric"><div class="metric-value green">18</div><div class="metric-label">HEALTHY</div></div>
-<div class="card metric"><div class="metric-value rose">2</div><div class="metric-label">DEGRADED</div></div>
-</div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">TOOL REGISTRY</div><button class="btn btn-primary btn-sm" onclick="sparkleBurst(this)">+ REGISTER TOOL</button></div>
-<div id="toolList">
-<div class="tool-item"><div class="tool-icon" style="background:rgba(167,139,250,.15);color:var(--purple)">SF</div><div class="tool-info"><div class="tool-name">Salesforce CRM</div><div class="tool-desc">Read/write CRM data, accounts, opportunities</div></div><div class="tool-cost">$0.02/call</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(167,139,250,.15);color:var(--purple)">HS</div><div class="tool-info"><div class="tool-name">HubSpot API</div><div class="tool-desc">Marketing automation, contact management</div></div><div class="tool-cost">$0.01/call</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(52,211,153,.15);color:var(--green)">GH</div><div class="tool-info"><div class="tool-name">GitHub API</div><div class="tool-desc">Repos, PRs, issues, code review</div></div><div class="tool-cost">Free</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(251,191,36,.15);color:var(--amber)">SL</div><div class="tool-info"><div class="tool-name">Slack API</div><div class="tool-desc">Messaging, channels, file sharing</div></div><div class="tool-cost">Free</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(251,113,133,.15);color:var(--rose)">GM</div><div class="tool-info"><div class="tool-name">Gmail API</div><div class="tool-desc">Email read/write, drafts, labels</div></div><div class="tool-cost">Free</div><span class="agent-status idle" style="font-size:7px">DEGRADED</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(167,139,250,.15);color:var(--purple)">CV</div><div class="tool-info"><div class="tool-name">Confluence</div><div class="tool-desc">Wiki pages, documentation, search</div></div><div class="tool-cost">$0.005/call</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(167,139,250,.15);color:var(--purple)">AR</div><div class="tool-info"><div class="tool-name">ArXiv Search</div><div class="tool-desc">Academic paper search and retrieval</div></div><div class="tool-cost">Free</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-<div class="tool-item"><div class="tool-icon" style="background:rgba(52,211,153,.15);color:var(--green)">WB</div><div class="tool-info"><div class="tool-name">Web Search</div><div class="tool-desc">Real-time web search via SearXNG</div></div><div class="tool-cost">Free</div><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
-</div></div>
-<div class="grid-2">
-<div class="card"><div class="card-header"><div class="card-title">ROUTING RULES</div></div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div class="memory-item"><div class="memory-key">COST_OPTIMIZED</div><div class="memory-val">Route to cheapest capable tool. Fallback: next tier. Used for: search, data retrieval.</div></div>
-<div class="memory-item"><div class="memory-key">CAPABILITY_FIRST</div><div class="memory-val">Route to most capable tool regardless of cost. Used for: code review, analysis.</div></div>
-<div class="memory-item"><div class="memory-key">LATENCY_SENSITIVE</div><div class="memory-val">Route to fastest responding tool. Timeout: 5s. Used for: real-time chat, notifications.</div></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">INTEGRATION LAYER</div></div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div><div class="progress-label"><span>API Gateway</span><span>99.9%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:99%"></div></div></div>
-<div><div class="progress-label"><span>Auth Service</span><span>100%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:100%"></div></div></div>
-<div><div class="progress-label"><span>Rate Limiter</span><span>Active</span></div><div class="progress-bar"><div class="progress-fill cyan" style="width:42%"></div></div></div>
-<div><div class="progress-label"><span>Circuit Breaker</span><span>2 open</span></div><div class="progress-bar"><div class="progress-fill amber" style="width:20%"></div></div></div>
-</div></div>
-</div>
-</div>
-<div class="page" id="page-observability">
-<div class="grid-4 mb-16">
-<div class="card metric"><div class="metric-value">7</div><div class="metric-label">AGENTS RUNNING</div></div>
-<div class="card metric"><div class="metric-value green">156</div><div class="metric-label">TASKS COMPLETED</div></div>
-<div class="card metric"><div class="metric-value rose">3</div><div class="metric-label">EXCEPTIONS</div></div>
-<div class="card metric"><div class="metric-value">1.2s</div><div class="metric-label">AVG LATENCY</div></div>
-</div>
-<div class="grid-2 mb-16">
-<div class="card"><div class="card-header"><div class="card-title">PERFORMANCE METRICS</div></div>
-<div style="display:flex;flex-direction:column;gap:10px">
-<div><div class="progress-label"><span>Task Success Rate</span><span>97.8%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:97%"></div></div></div>
-<div><div class="progress-label"><span>Avg Response Time</span><span>1.2s</span></div><div class="progress-bar"><div class="progress-fill cyan" style="width:60%"></div></div></div>
-<div><div class="progress-label"><span>Error Recovery Rate</span><span>89%</span></div><div class="progress-bar"><div class="progress-fill violet" style="width:89%"></div></div></div>
-<div><div class="progress-label"><span>Human Intervention Rate</span><span>2.1%</span></div><div class="progress-bar"><div class="progress-fill amber" style="width:15%"></div></div></div>
-</div></div>
-<div class="card"><div class="card-header"><div class="card-title">EXCEPTION MANAGEMENT</div></div>
-<div id="exceptionList">
-<div class="log-entry"><span class="log-time">14:18</span><span class="log-level error">ERR</span><span class="log-msg">DataMiner: API timeout (salesforce.query) - auto-retrying</span></div>
-<div class="log-entry"><span class="log-time">13:45</span><span class="log-level error">ERR</span><span class="log-msg">EmailAgent: Auth token expired - refreshed automatically</span></div>
-<div class="log-entry"><span class="log-time">12:30</span><span class="log-level warn">WARN</span><span class="log-msg">ResearchBot: Rate limited (arxiv.search) - backoff active</span></div>
-</div>
-<div style="margin-top:10px;display:flex;gap:6px"><button class="btn btn-sm btn-primary" onclick="sparkleBurst(this)">RETRY ALL</button><button class="btn btn-sm" onclick="sparkleBurst(this)">CLEAR RESOLVED</button></div>
-</div></div>
-</div>
-<div class="card"><div class="card-header"><div class="card-title">AGENT STATE MONITOR</div><div style="display:flex;gap:6px;align-items:center"><div class="status-dot" style="width:6px;height:6px"></div><span style="font-size:9px;color:var(--text-dim)">Live</span></div></div>
-<div id="agentMonitorList">
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">R</div><div class="agent-info"><div class="agent-name">ResearchBot</div><div class="agent-meta">Task: literature_review_v3 - 2m 14s elapsed</div></div><span class="agent-status running">RUNNING</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">D</div><div class="agent-info"><div class="agent-name">DataMiner</div><div class="agent-meta">Task: market_scan - Retrying (2/3)</div></div><span class="agent-status error">ERROR</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(52,211,153,.15);color:var(--green)">C</div><div class="agent-info"><div class="agent-name">CodeReview</div><div class="agent-meta">Idle - Last: PR #142 (14:20)</div></div><span class="agent-status idle">IDLE</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(251,191,36,.15);color:var(--amber)">E</div><div class="agent-info"><div class="agent-name">EmailAgent</div><div class="agent-meta">Task: inbox_triage - Awaiting auth</div></div><span class="agent-status pending">PENDING</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">S</div><div class="agent-info"><div class="agent-name">Scheduler</div><div class="agent-meta">Task: fleet_health_check - 45s elapsed</div></div><span class="agent-status running">RUNNING</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">N</div><div class="agent-info"><div class="agent-name">Notifier</div><div class="agent-meta">Idle - Last: alert sent (14:25)</div></div><span class="agent-status idle">IDLE</span></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(52,211,153,.15);color:var(--green)">A</div><div class="agent-info"><div class="agent-name">Archiver</div><div class="agent-meta">Task: daily_backup - 8m 32s elapsed</div></div><span class="agent-status running">RUNNING</span></div>
-</div></div>
-</div>
-<div class="page" id="page-agents">
-<div class="grid-4 mb-16">
-<div class="card metric"><div class="metric-value">7</div><div class="metric-label">TOTAL AGENTS</div></div>
-<div class="card metric"><div class="metric-value green">4</div><div class="metric-label">RUNNING</div></div>
-<div class="card metric"><div class="metric-value amber">2</div><div class="metric-label">IDLE</div></div>
-<div class="card metric"><div class="metric-value rose">1</div><div class="metric-label">ERROR</div></div>
-</div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">AGENT FLEET</div><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" onclick="sparkleBurst(this)">+ SPAWN AGENT</button><button class="btn btn-sm" onclick="sparkleBurst(this)">TEMPLATES</button></div></div>
-<div id="agentFleetList">
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">R</div><div class="agent-info"><div class="agent-name">ResearchBot</div><div class="agent-meta">v2.3 - Claude 3.5 - 200K tokens/day - Web, ArXiv, Confluence</div></div><span class="agent-status running">RUNNING</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">D</div><div class="agent-info"><div class="agent-name">DataMiner</div><div class="agent-meta">v1.8 - GPT-4o - 100K tokens/day - Salesforce, HubSpot, DB</div></div><span class="agent-status error">ERROR</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(52,211,153,.15);color:var(--green)">C</div><div class="agent-info"><div class="agent-name">CodeReview</div><div class="agent-meta">v2.1 - Claude 3.5 - 50K tokens/day - GitHub, GitLab</div></div><span class="agent-status idle">IDLE</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(251,191,36,.15);color:var(--amber)">E</div><div class="agent-info"><div class="agent-name">EmailAgent</div><div class="agent-meta">v1.5 - Gemini Pro - 30K tokens/day - Gmail, Calendar</div></div><span class="agent-status pending">PENDING</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">S</div><div class="agent-info"><div class="agent-name">Scheduler</div><div class="agent-meta">v3.0 - Claude 3.5 - 80K tokens/day - Internal only</div></div><span class="agent-status running">RUNNING</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--purple)">N</div><div class="agent-info"><div class="agent-name">Notifier</div><div class="agent-meta">v1.2 - GPT-4o - 20K tokens/day - Slack, Email</div></div><span class="agent-status idle">IDLE</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-<div class="agent-row"><div class="agent-avatar" style="background:rgba(52,211,153,.15);color:var(--green)">A</div><div class="agent-info"><div class="agent-name">Archiver</div><div class="agent-meta">v1.0 - Gemini Pro - 40K tokens/day - S3, GCS</div></div><span class="agent-status running">RUNNING</span><button class="btn btn-sm" style="margin-left:8px">CONFIG</button></div>
-</div></div>
-</div>
-<div class="page" id="page-workflows">
-<div class="grid-3 mb-16">
-<div class="card metric"><div class="metric-value">12</div><div class="metric-label">ACTIVE WORKFLOWS</div></div>
-<div class="card metric"><div class="metric-value green">847</div><div class="metric-label">COMPLETED (30D)</div></div>
-<div class="card metric"><div class="metric-value">94%</div><div class="metric-label">SUCCESS RATE</div></div>
-</div>
-<div class="card mb-16"><div class="card-header"><div class="card-title">ACTIVE WORKFLOWS</div><button class="btn btn-primary btn-sm" onclick="sparkleBurst(this)">+ NEW WORKFLOW</button></div>
-<div id="workflowList">
-<div class="card" style="margin-bottom:8px"><div class="card-header"><div class="card-title">Customer Onboarding</div><span class="agent-status running">RUNNING</span></div>
-<div class="wf-row"><div class="wf-node done">Intent Parse</div><span class="wf-arrow">-></span><div class="wf-node done">CRM Lookup</div><span class="wf-arrow">-></span><div class="wf-node active">Account Setup</div><span class="wf-arrow">-></span><div class="wf-node">Welcome Email</div><span class="wf-arrow">-></span><div class="wf-node">Notify Sales</div></div>
-<div style="font-size:9px;color:var(--text-dim);margin-top:6px">Step 3/5 - Agent: DataMiner - Started: 14:22 UTC</div></div>
-<div class="card" style="margin-bottom:8px"><div class="card-header"><div class="card-title">Daily Research Briefing</div><span class="agent-status running">RUNNING</span></div>
-<div class="wf-row"><div class="wf-node done">Topic Scan</div><span class="wf-arrow">-></span><div class="wf-node active">Paper Retrieval</div><span class="wf-arrow">-></span><div class="wf-node">Summarize</div><span class="wf-arrow">-></span><div class="wf-node">Distribute</div></div>
-<div style="font-size:9px;color:var(--text-dim);margin-top:6px">Step 2/4 - Agent: ResearchBot - Started: 14:00 UTC</div></div>
-<div class="card" style="margin-bottom:8px"><div class="card-header"><div class="card-title">Code Review Pipeline</div><span class="agent-status idle">IDLE</span></div>
-<div class="wf-row"><div class="wf-node">PR Detect</div><span class="wf-arrow">-></span><div class="wf-node">Diff Analysis</div><span class="wf-arrow">-></span><div class="wf-node">Comment</div><span class="wf-arrow">-></span><div class="wf-node">Notify</div></div>
-<div style="font-size:9px;color:var(--text-dim);margin-top:6px">Waiting for PR event - Agent: CodeReview</div></div>
-</div></div>
+
+<!-- AGENT CONFIG PAGE (content from design-mockups/agent-config.html would go here) -->
 <div class="page" id="page-config">
-  <div class="config-header">
-    <div class="config-header-icon">&#128125;</div>
-    <div>
-      <div class="section-heading" style="margin-bottom:4px">Agent Configuration</div>
-      <div style="font-size:11px;color:var(--text-dim)">Choose routers, models, and set usage limits. Changes apply immediately.</div>
-    </div>
-  </div>
-  <div class="config-grid">
-    <div class="card mb-16"><div class="card-header"><div class="card-title">ROUTER / PROVIDER</div></div>
-      <div class="config-router-grid">
-        <div class="config-router-card active" onclick="selectRouter(this,'openrouter')" id="router-openrouter"><div class="config-router-name">OpenRouter</div><div class="config-router-desc">Multi-model gateway</div><div class="config-router-status">&#10003; Active</div></div>
-        <div class="config-router-card" onclick="selectRouter(this,'anthropic')" id="router-anthropic"><div class="config-router-name">Anthropic Direct</div><div class="config-router-desc">Claude models</div><div class="config-router-status">Available</div></div>
-        <div class="config-router-card" onclick="selectRouter(this,'openai')" id="router-openai"><div class="config-router-name">OpenAI Direct</div><div class="config-router-desc">GPT-4o, GPT-4</div><div class="config-router-status">Available</div></div>
-        <div class="config-router-card" onclick="selectRouter(this,'google')" id="router-google"><div class="config-router-name">Google AI</div><div class="config-router-desc">Gemini models</div><div class="config-router-status">Available</div></div>
-      </div>
-    </div>
-    <div class="card mb-16"><div class="card-header"><div class="card-title">AGENT MODEL ASSIGNMENTS</div></div>
-      <div id="config-agent-list">
-        <div class="config-agent-row" data-agent="coo"><div class="config-agent-info"><div class="config-agent-name">COO <span class="config-agent-role">Orchestrator</span></div></div><select class="config-select" onchange="updateAgentModel('coo',this.value)"><option value="claude-sonnet-4-6" selected>Claude Sonnet 4.6</option><option value="claude-opus-4">Claude Opus 4</option><option value="gpt-4o">GPT-4o</option><option value="gemini-2.5-pro">Gemini 2.5 Pro</option></select></div>
-        <div class="config-agent-row" data-agent="planner"><div class="config-agent-info"><div class="config-agent-name">Planner <span class="config-agent-role">Strategy</span></div></div><select class="config-select" onchange="updateAgentModel('planner',this.value)"><option value="claude-opus-4" selected>Claude Opus 4</option><option value="claude-sonnet-4-6">Claude Sonnet 4.6</option><option value="gpt-4o">GPT-4o</option><option value="gemini-2.5-pro">Gemini 2.5 Pro</option></select></div>
-        <div class="config-agent-row" data-agent="copywriter"><div class="config-agent-info"><div class="config-agent-name">CopyWriter <span class="config-agent-role">Content</span></div></div><select class="config-select" onchange="updateAgentModel('copywriter',this.value)"><option value="claude-sonnet-4-6" selected>Claude Sonnet 4.6</option><option value="claude-opus-4">Claude Opus 4</option><option value="gpt-4o">GPT-4o</option><option value="gemini-2.5-pro">Gemini 2.5 Pro</option></select></div>
-        <div class="config-agent-row" data-agent="designer"><div class="config-agent-info"><div class="config-agent-name">Designer <span class="config-agent-role">Visual</span></div></div><select class="config-select" onchange="updateAgentModel('designer',this.value)"><option value="claude-sonnet-4-6" selected>Claude Sonnet 4.6</option><option value="claude-opus-4">Claude Opus 4</option><option value="gpt-4o">GPT-4o</option><option value="gemini-2.5-pro">Gemini 2.5 Pro</option></select></div>
-        <div class="config-agent-row" data-agent="coder"><div class="config-agent-info"><div class="config-agent-name">Coder <span class="config-agent-role">Engineering</span></div></div><select class="config-select" onchange="updateAgentModel('coder',this.value)"><option value="claude-opus-4" selected>Claude Opus 4</option><option value="claude-sonnet-4-6">Claude Sonnet 4.6</option><option value="gpt-4o">GPT-4o</option><option value="gemini-2.5-pro">Gemini 2.5 Pro</option></select></div>
-        <div class="config-agent-row" data-agent="scrubber"><div class="config-agent-info"><div class="config-agent-name">Scrubber <span class="config-agent-role">QA Review</span></div></div><select class="config-select" onchange="updateAgentModel('scrubber',this.value)"><option value="claude-haiku-4-5" selected>Claude Haiku 4.5</option><option value="claude-sonnet-4-6">Claude Sonnet 4.6</option><option value="gpt-4o-mini">GPT-4o Mini</option><option value="gemini-2.5-flash">Gemini 2.5 Flash</option></select></div>
-      </div>
-    </div>
-    <div class="card mb-16"><div class="card-header"><div class="card-title">TOKEN BUDGET LIMITS</div></div>
-      <div class="config-limits-grid">
-        <div class="config-limit-item"><div class="config-limit-label">Daily Tokens</div><input type="number" class="config-input" id="limit-daily-tokens" value="500000" min="10000" step="10000" onchange="updateLimit('dailyTokens',this.value)"><div class="config-limit-unit">tokens/day</div></div>
-        <div class="config-limit-item"><div class="config-limit-label">Cost Budget</div><input type="number" class="config-input" id="limit-daily-cost" value="10" min="1" step="0.5" onchange="updateLimit('dailyCost',this.value)"><div class="config-limit-unit">USD/day</div></div>
-        <div class="config-limit-item"><div class="config-limit-label">Max Concurrent</div><input type="number" class="config-input" id="limit-concurrent" value="20" min="1" max="100" onchange="updateLimit('maxConcurrent',this.value)"><div class="config-limit-unit">sessions</div></div>
-        <div class="config-limit-item"><div class="config-limit-label">Max Turns</div><input type="number" class="config-input" id="limit-max-turns" value="20" min="1" max="100" onchange="updateLimit('maxTurns',this.value)"><div class="config-limit-unit">/task</div></div>
-      </div>
-    </div>
-    <div class="card mb-16"><div class="card-header"><div class="card-title">PER-AGENT TOKEN LIMITS</div></div>
-      <div class="config-agent-limits">
-        <div class="config-agent-limit-row"><span class="config-agent-limit-name">COO</span><input type="number" class="config-input-sm" value="100000" min="10000" step="5000" onchange="updateAgentLimit('coo',this.value)"><span class="config-agent-limit-unit">/day</span></div>
-        <div class="config-agent-limit-row"><span class="config-agent-limit-name">Planner</span><input type="number" class="config-input-sm" value="200000" min="10000" step="5000" onchange="updateAgentLimit('planner',this.value)"><span class="config-agent-limit-unit">/day</span></div>
-        <div class="config-agent-limit-row"><span class="config-agent-limit-name">CopyWriter</span><input type="number" class="config-input-sm" value="150000" min="10000" step="5000" onchange="updateAgentLimit('copywriter',this.value)"><span class="config-agent-limit-unit">/day</span></div>
-        <div class="config-agent-limit-row"><span class="config-agent-limit-name">Designer</span><input type="number" class="config-input-sm" value="150000" min="10000" step="5000" onchange="updateAgentLimit('designer',this.value)"><span class="config-agent-limit-unit">/day</span></div>
-        <div class="config-agent-limit-row"><span class="config-agent-limit-name">Coder</span><input type="number" class="config-input-sm" value="200000" min="10000" step="5000" onchange="updateAgentLimit('coder',this.value)"><span class="config-agent-limit-unit">/day</span></div>
-        <div class="config-agent-limit-row"><span class="config-agent-limit-name">Scrubber</span><input type="number" class="config-input-sm" value="50000" min="10000" step="5000" onchange="updateAgentLimit('scrubber',this.value)"><span class="config-agent-limit-unit">/day</span></div>
-      </div>
-    </div>
-    <div class="config-actions">
-      <button class="btn btn-primary" onclick="saveConfig()">&#128190; SAVE CONFIGURATION</button>
-      <button class="btn" onclick="resetConfig()">&#128260; RESET DEFAULTS</button>
-      <button class="btn" onclick="exportConfig()">&#128228; EXPORT JSON</button>
-    </div>
-    <div class="config-save-status" id="configSaveStatus"></div>
-  </div>
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+<div style="font-size:48px">&#128125;</div>
+<div><div class="section-heading" style="margin-bottom:4px">AGENT CONFIGURATION</div><div style="font-size:11px;color:var(--text-dim)">Assign models, roles, teams, tools, and token limits.</div></div>
 </div>
+<div class="card mb-16"><div class="card-header"><div class="card-title">ROUTER / PROVIDER</div></div>
+<div class="grid-4">
+<div style="background:var(--bg3);border:1px solid var(--primary);border-radius:10px;padding:14px;text-align:center;cursor:pointer"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenRouter</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Multi-model gateway</div><div style="font-size:8px;font-weight:600;color:var(--primary)">&#10003; Active</div></div>
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Anthropic Direct</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Claude models</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenAI Direct</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">GPT-4o, GPT-4</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Google AI</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Gemini models</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
+</div>
+</div>
+<div style="text-align:center;padding:40px;color:var(--text-dim)">Agent config cards, global limits, save/export buttons...</div>
 </div>
 
-<div class="sparkle-container" id="sparkleContainer"></div>
+<!-- Placeholder pages -->
+<div class="page" id="page-agents"><div class="section-heading">Agent Fleet</div><div class="card"><div class="card-header"><div class="card-title">AGENT FLEET</div><button class="btn btn-primary btn-sm">+ SPAWN</button></div>
+<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--primary)">R</div><div class="agent-info"><div class="agent-name">ResearchBot</div><div class="agent-meta">v2.3 — Claude 3.5 — 200K tokens/day</div></div><span class="agent-status running">RUNNING</span><button class="btn btn-sm">CONFIG</button></div>
+<div class="agent-row"><div class="agent-avatar" style="background:var(--rose-dim);color:var(--rose)">D</div><div class="agent-info"><div class="agent-name">DataMiner</div><div class="agent-meta">v1.8 — GPT-4o — 100K tokens/day</div></div><span class="agent-status error">ERROR</span><button class="btn btn-sm">CONFIG</button></div>
+<div class="agent-row"><div class="agent-avatar" style="background:rgba(52,211,153,.15);color:var(--green)">C</div><div class="agent-info"><div class="agent-name">CodeReview</div><div class="agent-meta">v2.1 — Claude 3.5 — 50K tokens/day</div></div><span class="agent-status idle">IDLE</span><button class="btn btn-sm">CONFIG</button></div>
+</div></div>
+<div class="page" id="page-workflows"><div class="section-heading">Workflows</div><div class="card"><div class="card-header"><div class="card-title">ACTIVE WORKFLOWS</div><button class="btn btn-primary btn-sm">+ NEW WORKFLOW</button></div>
+<div class="agent-row"><div style="flex:1"><div style="font-size:12px;font-weight:600">Customer Onboarding</div><div style="font-size:10px;color:var(--text-dim)">Step 3/5 — Agent: DataMiner</div></div><span class="agent-status running">RUNNING</span></div>
+<div class="agent-row"><div style="flex:1"><div style="font-size:12px;font-weight:600">Daily Research Briefing</div><div style="font-size:10px;color:var(--text-dim)">Step 2/4 — Agent: ResearchBot</div></div><span class="agent-status running">RUNNING</span></div>
+</div></div>
+<div class="page" id="page-kanban"><div class="section-heading">Kanban Board</div><div class="card"><div class="card-header"><div class="card-title">TASKS</div><div style="display:flex;gap:8px"><button class="btn btn-sm">TO-DO (3)</button><button class="btn btn-sm">RUNNING (5)</button><button class="btn btn-sm">DONE (12)</button></div></div>
+<div class="agent-row"><div class="agent-avatar" style="background:rgba(167,139,250,.15);color:var(--primary)">T</div><div class="agent-info"><div class="agent-name">SEO keyword research for WTE</div><div class="agent-meta">Researcher — 45K tokens used</div></div><span class="badge warning">TO-DO</span></div>
+<div class="agent-row"><div class="agent-avatar" style="background:var(--amber-dim);color:var(--amber)">T</div><div class="agent-info"><div class="agent-name">Write blog: English for IT Professionals</div><div class="agent-meta">Writer — 78K tokens used</div></div><span class="badge running">RUNNING</span></div>
+</div></div>
+<div class="page" id="page-memory"><div class="section-heading">Context &amp; Memory</div><div class="grid-2"><div class="card"><div class="card-header"><div class="card-title">INSTITUTIONAL MEMORY</div><button class="btn btn-sm btn-primary">+ ADD ENTRY</button></div>
+<div class="log-entry"><span class="log-level success">COMPANY_POLICIES</span><span class="log-msg" style="font-size:10px">Data retention 90 days. PII must be anonymized...</span></div>
+<div class="log-entry"><span class="log-level info">ERROR_PATTERNS</span><span class="log-msg" style="font-size:10px">Salesforce timeout: retry with exponential backoff...</span></div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">MEMORY RETRIEVAL</div></div>
+<div class="input" style="margin-bottom:8px" placeholder="Query institutional memory..."></div>
+<div style="font-size:9px;color:var(--text-dim)">Try: "customer preferences" - "API limits" - "approval process"</div>
+</div></div>
+<div class="page" id="page-governance"><div class="section-heading">Governance &amp; Security</div><div class="grid-3 mb-16"><div class="card metric"><div class="metric-value">156</div><div class="metric-label">AUDIT ENTRIES TODAY</div></div><div class="card metric"><div class="metric-value amber">3</div><div class="metric-label">PENDING APPROVALS</div></div><div class="card metric"><div class="metric-value green">12</div><div class="metric-label">POLICIES ACTIVE</div></div></div>
+<div class="card"><div class="card-header"><div class="card-title">PENDING APPROVALS</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><div style="flex:1"><div style="font-size:12px;color:var(--text)">Data Export Request — Agent: DataMiner</div><div style="font-size:10px;color:var(--text-dim)">Risk: HIGH (PII involved)</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-primary">APPROVE</button><button class="btn btn-sm btn-danger">REJECT</button></div></div>
+</div></div>
+<div class="page" id="page-tools"><div class="section-heading">Tool Orchestration</div><div class="grid-3 mb-16"><div class="card metric"><div class="metric-value">24</div><div class="metric-label">REGISTERED TOOLS</div></div><div class="card metric"><div class="metric-value green">18</div><div class="metric-label">HEALTHY</div></div><div class="card metric"><div class="metric-value rose">2</div><div class="metric-label">DEGRADED</div></div></div>
+<div class="card"><div class="card-header"><div class="card-title">TOOL REGISTRY</div></div>
+<div class="agent-row"><div style="width:28px;height:28px;border-radius:6px;background:rgba(167,139,250,.15);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">SF</div><div style="flex:1"><div style="font-size:11px;color:var(--text)">Salesforce CRM</div><div style="font-size:9px;color:var(--text-dim)">Read/write CRM data</div></div><span style="font-size:9px;color:var(--amber)">$0.02/call</span><span class="agent-status running" style="font-size:7px">HEALTHY</span></div>
+</div></div>
+<div class="page" id="page-observability"><div class="section-heading">Observability</div><div class="grid-4 mb-16"><div class="card metric"><div class="metric-value">7</div><div class="metric-label">AGENTS RUNNING</div></div><div class="card metric"><div class="metric-value green">156</div><div class="metric-label">TASKS COMPLETED</div></div><div class="card metric"><div class="metric-value rose">3</div><div class="metric-label">EXCEPTIONS</div></div><div class="card metric"><div class="metric-value">1.2s</div><div class="metric-label">AVG LATENCY</div></div></div></div>
+<div class="page" id="page-resources"><div class="section-heading">Resource Management</div><div class="grid-3 mb-16"><div class="card metric"><div class="metric-value">8 / 16</div><div class="metric-label">CORES ALLOCATED</div></div><div class="card metric"><div class="metric-value" style="color:var(--primary)">12 / 20</div><div class="metric-label">CONCURRENT SESSIONS</div></div><div class="card metric"><div class="metric-value amber">$0.42</div><div class="metric-label">COST / HOUR</div></div></div></div>
+
 <script>
-(function(){
-"use strict";
-function createStars(){
-  var c=document.getElementById("stars");
-  for(var i=0;i<80;i++){
-    var s=document.createElement("div");
-    s.className="star";
-    var sz=1+Math.random()*2;
-    s.style.cssText="left:"+(Math.random()*100)+"%;top:"+(Math.random()*100)+"%;width:"+sz+"px;height:"+sz+"px;--dur:"+(2+Math.random()*4)+"s;--op:"+(0.2+Math.random()*0.5)+";animation-delay:"+(Math.random()*3)+"s";
-    c.appendChild(s);
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var titles={dashboard:'Dashboard',config:'Agent Config',agents:'Agent Fleet',kanban:'Kanban Board',workflows:'Workflows',memory:'Context & Memory',governance:'Governance & Security',tools:'Tool Orchestration',observability:'Observability',resources:'Resource Management'};
+  document.getElementById('pageTitle').textContent=titles[id]||id;
+  // Update nav items
+  var navMap={dashboard:0,resources:1,memory:2,governance:3,tools:4,observability:5,config:6,agents:7,workflows:8};
+  if(navMap[id]!==undefined){
+    document.querySelectorAll('.nav-item')[navMap[id]].classList.add('active');
   }
 }
-createStars();
-function renderTokenChart(){
-  var c=document.getElementById("tokenChart");
-  if(!c)return;
-  var vals=[12,18,25,32,28,35,42,38,45,52,48,55,62,58,65,72,68,75,82,78,85,92,88,95];
-  c.innerHTML="";
-  for(var i=0;i<vals.length;i++){
-    var b=document.createElement("div");
-    b.className="chart-bar";
-    var h=vals[i];
-    var color=h>70?"var(--rose)":h>50?"var(--amber)":"var(--purple)";
-    b.style.cssText="height:"+h+"%;background:"+color+";opacity:"+(0.6+(i/vals.length)*0.4)+";";
-    c.appendChild(b);
-  }
+function showToast(msg){
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:7px 14px;border-radius:6px;background:var(--primary);color:var(--bg);font-size:10px;font-weight:700;z-index:200';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},2500);
 }
-renderTokenChart();
-window.showPage=function(id,el){
-  var pages=document.querySelectorAll(".page");
-  for(var i=0;i<pages.length;i++)pages[i].classList.remove("active");
-  document.getElementById("page-"+id).classList.add("active");
-  var items=document.querySelectorAll(".nav-item");
-  for(var j=0;j<items.length;j++)items[j].classList.remove("active");
-  if(el)el.classList.add("active");
-  var titles={dashboard:"Dashboard",resources:"Resource Management",memory:"Context & Memory",governance:"Governance & Security",tools:"Tool Orchestration",observability:"Observability",agents:"Agent Fleet",config:"Agent Config",workflows:"Workflows"};
-  document.getElementById("pageTitle").textContent=titles[id]||id;
-};
-window.sparkleBurst=function(btn){
-  var container=document.getElementById("sparkleContainer");
-  var rect=btn.getBoundingClientRect();
-  var scrollX=window.scrollX||window.pageXOffset;
-  var scrollY=window.scrollY||window.pageYOffset;
-  var cx=rect.left+rect.width/2+scrollX;
-  var cy=rect.top+rect.height/2+scrollY;
-  var colors=["#a78bfa","#a78bfa","#34d399","#fbbf24","#fb7185"];
-  for(var i=0;i<12;i++){
-    var el=document.createElement("div");
-    el.className="sparkle-particle";
-    var angle=(i/12)*Math.PI*2;
-    var dist=20+Math.random()*40;
-    var tx=Math.cos(angle)*dist;
-    var ty=Math.sin(angle)*dist;
-    el.style.cssText="left:"+cx+"px;top:"+cy+"px;background:"+colors[i%colors.length]+";--tx:"+tx+"px;--ty:"+ty+"px;";
-    document.body.appendChild(el);
-    (function(e){setTimeout(function(){if(e.parentNode)e.parentNode.removeChild(e);},700);})(el);
-  }
-};
-window.switchTokenTab=function(el,period){
-  var tabs=el.parentElement.querySelectorAll(".tab");
-  for(var i=0;i<tabs.length;i++)tabs[i].classList.remove("active");
-  el.classList.add("active");
-  var charts={24:[12,18,25,32,28,35,42,38,45,52,48,55,62,58,65,72,68,75,82,78,85,92,88,95],7:[35,42,38,55,48,62,58,72,68,82,78,92,88,75,65,45,52,38,28,32,25,18,12,15],30:[45,52,62,58,72,68,82,78,92,88,95,85,75,65,55,48,38,28,32,25,18,12,15,22]};
-  var vals=charts[period]||charts[24];
-  var c=document.getElementById("tokenChart");
-  var bars=c.querySelectorAll(".chart-bar");
-  for(var j=0;j<Math.min(bars.length,vals.length);j++){
-    bars[j].style.height=vals[j]+"%";
-    bars[j].style.background=vals[j]>70?"var(--rose)":vals[j]>50?"var(--amber)":"var(--purple)";
-  }
-};
-window.switchMemoryTab=function(el,tab){
-  var tabs=el.parentElement.querySelectorAll(".tab");
-  for(var i=0;i<tabs.length;i++)tabs[i].classList.remove("active");
-  el.classList.add("active");
-};
-window.handleApprove=function(btn){
-  var item=btn.closest(".approval-item");
-  item.style.opacity="0.4";
-  btn.textContent="APPROVED";
-  btn.classList.remove("btn-success");
-  btn.classList.add("btn-primary");
-  btn.disabled=true;
-  var rejectBtn=item.querySelector(".btn-danger");
-  if(rejectBtn)rejectBtn.disabled=true;
-  sparkleBurst(btn);
-};
-window.handleReject=function(btn){
-  var item=btn.closest(".approval-item");
-  item.style.opacity="0.3";
-  item.style.textDecoration="line-through";
-  var allBtns=item.querySelectorAll(".btn");
-  for(var i=0;i<allBtns.length;i++)allBtns[i].disabled=true;
-};
-window.handleSearch=function(q){
-  q=q.toLowerCase();
-  var rows=document.querySelectorAll(".agent-row,.tool-item,.memory-item,.log-entry");
-  for(var i=0;i<rows.length;i++){
-    var text=rows[i].textContent.toLowerCase();
-    rows[i].style.display=text.indexOf(q)===-1?"none":"";
-  }
-};
-window.refreshActivity=function(){
-  sparkleBurst(document.querySelector("#activityLog").parentElement.querySelector(".btn"));
-};
-
-var agentConfig=JSON.parse(localStorage.getItem('agentic_os_config')||'{}');
-if(!agentConfig.router) agentConfig.router='openrouter';
-if(!agentConfig.models) agentConfig.models={coo:'claude-sonnet-4-6',planner:'claude-opus-4',copywriter:'claude-sonnet-4-6',designer:'claude-sonnet-4-6',coder:'claude-opus-4',scrubber:'claude-haiku-4-5'};
-if(!agentConfig.limits) agentConfig.limits={dailyTokens:500000,dailyCost:10,maxConcurrent:20,maxTurns:20,perAgent:{coo:100000,planner:200000,copywriter:150000,designer:150000,coder:200000,scrubber:50000}};
-function selectRouter(el,router){
-  document.querySelectorAll('.config-router-card').forEach(function(c){c.classList.remove('active');c.querySelector('.config-router-status').textContent='Available';c.querySelector('.config-router-status').style.color=''});
-  el.classList.add('active');el.querySelector('.config-router-status').textContent='\u2713 Active';el.querySelector('.config-router-status').style.color='var(--purple)';
-  agentConfig.router=router;saveConfigToStorage();
-}
-function updateAgentModel(agent,model){agentConfig.models[agent]=model;saveConfigToStorage();}
-function updateLimit(key,value){agentConfig.limits[key]=parseFloat(value)||0;saveConfigToStorage();}
-function updateAgentLimit(agent,value){if(!agentConfig.limits.perAgent) agentConfig.limits.perAgent={};agentConfig.limits.perAgent[agent]=parseInt(value)||0;saveConfigToStorage();}
-function saveConfig(){saveConfigToStorage();var s=document.getElementById('configSaveStatus');s.textContent='Configuration saved successfully';s.className='config-save-status success';sparkleBurst(document.querySelector('.config-actions .btn-primary'));setTimeout(function(){s.textContent='';s.className='config-save-status'},3000);}
-function saveConfigToStorage(){localStorage.setItem('agentic_os_config',JSON.stringify(agentConfig));}
-function resetConfig(){localStorage.removeItem('agentic_os_config');location.reload();}
-function exportConfig(){var b=new Blob([JSON.stringify(agentConfig,null,2)],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='agentic-os-config.json';a.click();URL.revokeObjectURL(u);}
-function loadConfig(){
-  var saved=localStorage.getItem('agentic_os_config');
-  if(saved){
-    try{
-      var p=JSON.parse(saved);
-      if(p.router){var rc=document.getElementById('router-'+p.router);if(rc) selectRouter(rc,p.router);}
-      if(p.models){for(var a in p.models){var sel=document.querySelector('.config-agent-row[data-agent="'+a+'"] .config-select');if(sel) sel.value=p.models[a];}}
-      if(p.limits){
-        var dt=document.getElementById('limit-daily-tokens');if(dt&&p.limits.dailyTokens) dt.value=p.limits.dailyTokens;
-        var dc=document.getElementById('limit-daily-cost');if(dc&&p.limits.dailyCost) dc.value=p.limits.dailyCost;
-        var mc=document.getElementById('limit-concurrent');if(mc&&p.limits.maxConcurrent) mc.value=p.limits.maxConcurrent;
-        var mt=document.getElementById('limit-max-turns');if(mt&&p.limits.maxTurns) mt.value=p.limits.maxTurns;
-        if(p.limits.perAgent){for(var ag in p.limits.perAgent){var rows=document.querySelectorAll('.config-agent-limit-row');rows.forEach(function(row){var ne=row.querySelector('.config-agent-limit-name');if(ne&&ne.textContent.trim().toLowerCase()===ag.toLowerCase()){var inp=row.querySelector('.config-input-sm');if(inp) inp.value=p.limits.perAgent[ag];}});}}
-      }
-    }catch(e){console.error('Config load error:',e);}
-  }
-}
-loadConfig();
-function simulateUpdates(){
+// Simulated updates
+setInterval(function(){
   var cpu=Math.floor(25+Math.random()*20);
-  var mem=Math.floor(55+Math.random()*15);
-  var token=Math.floor(40+Math.random()*15);
-  var err=(Math.random()*0.5).toFixed(1);
-  var cpuEl=document.getElementById("cpuVal");
-  if(cpuEl){cpuEl.textContent=cpu+"%";document.getElementById("cpuBar").style.width=cpu+"%";}
-  var memEl=document.getElementById("memVal");
-  if(memEl){memEl.textContent=mem+"%";document.getElementById("memBar").style.width=mem+"%";}
-  var tokenEl=document.getElementById("tokenVal");
-  if(tokenEl){tokenEl.textContent=token+"%";document.getElementById("tokenBar").style.width=token+"%";}
-  var errEl=document.getElementById("errVal");
-  if(errEl){errEl.textContent=err+"%";document.getElementById("errBar").style.width=(parseFloat(err)*10)+"%";}
-  var agents=document.getElementById("metricAgents");
-  if(agents)agents.textContent=6+Math.floor(Math.random()*3);
-  var tasks=document.getElementById("metricTasks");
-  if(tasks)tasks.textContent=20+Math.floor(Math.random()*10);
-}
-setInterval(simulateUpdates,5000);
-})();
+  var el=document.getElementById('cpuVal');
+  if(el)el.textContent=cpu+'%';
+  var bar=document.getElementById('cpuBar');
+  if(bar)bar.style.width=cpu+'%';
+},5000);
 </script>
-</body></html>
+</div><!-- end main -->
+</div><!-- end app -->
+</body>
+</html>
