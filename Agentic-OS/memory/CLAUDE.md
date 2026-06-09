@@ -52,3 +52,6 @@ AI-powered SEO and digital marketing agency. We use a multi-agent system (Agenti
 3. PII must be anonymized in all outputs
 4. External publishing requires COO approval
 5. Token budget overruns trigger automatic agent throttling
+
+## Auto-Update Rule
+**[[AUTO-UPDATE-RULE]]** — When the user shares business-relevant information, ALWAYS update the corresponding markdown file in this vault BEFORE responding. This is the single source of truth.
