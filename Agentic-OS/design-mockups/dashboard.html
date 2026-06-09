@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agentic OS — Dashboard</title>
+<style>
+:root{--bg:#0a0e1a;--bg2:#16213e;--card:#1a1a2e;--border:#2a3a5f;--border-light:#3a4a7f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--primary:#a78bfa;--primary-light:#c4b5fd;--primary-dim:rgba(167,139,250,.08);--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--rose:#fb7185;--rose-dim:rgba(251,113,133,.08);--cyan:#22d3ee;--green:#34d399;--peach:#fcbe6a;--font-mono:'Fira Code','Share Tech Mono',monospace;--font-sans:'Blogger Sans','Inter',system-ui,sans-serif;--r-sm:4px;--r-md:8px;--r-lg:12px;--r-xl:16px}
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:14px}
+h1,h2,h3,h4{font-family:var(--font-mono)}
+.mono{font-family:var(--font-mono)}
+.label{font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:var(--r-md);border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);color:var(--bg);border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-light);color:var(--bg);box-shadow:0 0 12px rgba(167,139,250,.15)}
+.btn-danger{border-color:var(--rose);color:var(--rose)}
+.btn-danger:hover{background:var(--rose-dim)}
+.btn-sm{height:24px;padding:0 10px;font-size:8px}
+.progress-bar{height:4px;background:var(--bg);border-radius:var(--r-sm);overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:var(--r-sm);transition:width .5s ease}
+.progress-fill.purple{background:var(--primary)}
+.progress-fill.green{background:var(--green)}
+.progress-fill.amber{background:var(--amber)}
+.progress-fill.rose{background:var(--rose)}
+.badge{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 8px;border-radius:9999px;font-family:var(--font-mono);font-size:8px;font-weight:700;letter-spacing:1px}
+.badge.running{background:rgba(52,211,153,.15);color:var(--green)}
+.badge.idle{background:rgba(148,163,184,.15);color:var(--text-muted)}
+.badge.error{background:var(--rose-dim);color:var(--rose)}
+.badge.warning{background:var(--amber-dim);color:var(--amber)}
+.badge-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+.badge-dot.active{background:var(--green);box-shadow:0 0 4px var(--green)}
+.badge-dot.inactive{background:var(--text-dim)}
+.badge-dot.error{background:var(--rose);box-shadow:0 0 4px var(--rose)}
+.input{width:100%;height:36px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 12px rgba(167,139,250,.15)}
+.input::placeholder{color:var(--text-dim)}
+.select{appearance:none;cursor:pointer}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-main{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.mb-16{margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <h1>AGENTIC OS</h1>
+    <span>Orchestration &amp; Governance</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-section-label">Management</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Resources
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Context &amp; Memory
+    </div>
+    <div class="nav-section-label">Control</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Governance<span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      Tool Orchestration
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Observability
+    </div>
+    <div class="nav-section-label">System</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Agent Config
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Agent Fleet<span class="nav-badge ok">7</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Workflows
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Output Workspace
+    </div>
+  </div>
+  <div class="sidebar-footer">v2.0.0 &mdash; Agentic OS</div>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">Dashboard</div>
+    <input class="topbar-search" type="text" placeholder="Search agents, tools, logs...">
+    <button class="topbar-btn" onclick="showToast('Invite link copied!')">
+      <svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Invite
+    </button>
+    <button class="topbar-btn" onclick="showToast('Settings coming soon')">
+      <svg style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+  </div>
+
+  <!-- PAGE CONTENT -->
+  <div class="page active" id="page-dashboard">
+    <div class="grid-4 mb-16">
+      <div class="card metric">
+        <div class="metric-value">7</div>
+        <div class="metric-label">ACTIVE AGENTS</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-value amber">24</div>
+        <div class="metric-label">TASKS TODAY</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-value">142K</div>
+        <div class="metric-label">TOKENS USED</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-value green">99.7%</div>
+        <div class="metric-label">UPTIME</div>
+      </div>
+    </div>
+
+    <div class="grid-main mb-16">
+      <div class="card">
+        <div class="card-header"><div class="card-title">TOKEN USAGE (24H)</div></div>
+        <div style="height:160px;display:flex;align-items:flex-end;gap:4px;padding:10px 0">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:12%;border-radius:3px 3px 0 0;opacity:.6"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:18%;border-radius:3px 3px 0 0;opacity:.7"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:25%;border-radius:3px 3px 0 0;opacity:.7"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:32%;border-radius:3px 3px 0 0;opacity:.8"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:28%;border-radius:3px 3px 0 0;opacity:.8"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill amber" style="width:100%;height:42%;border-radius:3px 3px 0 0;opacity:.8"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill amber" style="width:100%;height:55%;border-radius:3px 3px 0 0;opacity:.8"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill amber" style="width:100%;height:62%;border-radius:3px 3px 0 0;opacity:.9"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill amber" style="width:100%;height:58%;border-radius:3px 3px 0 0;opacity:.9"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:72%;border-radius:3px 3px 0 0;opacity:.9"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:68%;border-radius:3px 3px 0 0;opacity:1"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:82%;border-radius:3px 3px 0 0;opacity:1"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:78%;border-radius:3px 3px 0 0;opacity:1"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:88%;border-radius:3px 3px 0 0;opacity:1"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:92%;border-radius:3px 3px 0 0;opacity:1"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill rose" style="width:100%;height:95%;border-radius:3px 3px 0 0;opacity:1"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:72%;border-radius:3px 3px 0 0;opacity:.7"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:58%;border-radius:3px 3px 0 0;opacity:.6"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:42%;border-radius:3px 3px 0 0;opacity:.6"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:35%;border-radius:3px 3px 0 0;opacity:.5"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:28%;border-radius:3px 3px 0 0;opacity:.5"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:22%;border-radius:3px 3px 0 0;opacity:.5"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:18%;border-radius:3px 3px 0 0;opacity:.4"></div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="progress-fill green" style="width:100%;height:12%;border-radius:3px 3px 0 0;opacity:.4"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0 4px;font-size:8px;color:var(--text-dim);font-family:var(--font-mono)">
+          <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">SYSTEM HEALTH</div></div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>CPU</span><span>34%</span></div>
+            <div class="progress-bar"><div class="progress-fill green" style="width:34%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>Memory</span><span>62%</span></div>
+            <div class="progress-bar"><div class="progress-fill amber" style="width:62%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>Token Budget</span><span>47%</span></div>
+            <div class="progress-bar"><div class="progress-fill purple" style="width:47%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px"><span>Error Rate</span><span>0.3%</span></div>
+            <div class="progress-bar"><div class="progress-fill green" style="width:3%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">TOP AGENTS BY WORKLOAD</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px"><span>ResearchBot</span><span style="color:var(--text-dim)">87%</span></div>
+            <div class="progress-bar"><div class="progress-fill rose" style="width:87%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px"><span>DataMiner</span><span style="color:var(--text-dim)">62%</span></div>
+            <div class="progress-bar"><div class="progress-fill amber" style="width:62%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px"><span>CodeReview</span><span style="color:var(--text-dim)">45%</span></div>
+            <div class="progress-bar"><div class="progress-fill purple" style="width:45%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px"><span>EmailAgent</span><span style="color:var(--text-dim)">31%</span></div>
+            <div class="progress-bar"><div class="progress-fill green" style="width:31%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">RECENT ACTIVITY</div><button class="btn btn-sm">REFRESH</button></div>
+        <div style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto">
+          <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+            <span style="color:var(--text-dim);flex-shrink:0;width:65px">14:32</span>
+            <span style="color:var(--green);flex-shrink:0;width:50px;font-family:var(--font-mono);font-size:8px;font-weight:700">OK</span>
+            <span style="color:var(--text-muted)">Agent "ResearchBot" completed literature review</span>
+          </div>
+          <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+            <span style="color:var(--text-dim);flex-shrink:0;width:65px">14:28</span>
+            <span style="color:var(--primary);flex-shrink:0;width:50px;font-family:var(--font-mono);font-size:8px;font-weight:700">INFO</span>
+            <span style="color:var(--text-muted)">Memory sync: 3 new context entries indexed</span>
+          </div>
+          <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+            <span style="color:var(--text-dim);flex-shrink:0;width:65px">14:25</span>
+            <span style="color:var(--amber);flex-shrink:0;width:50px;font-family:var(--font-mono);font-size:8px;font-weight:700">WARN</span>
+            <span style="color:var(--text-muted)">Token budget at 47% — 3 agents throttled</span>
+          </div>
+          <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+            <span style="color:var(--text-dim);flex-shrink:0;width:65px">14:18</span>
+            <span style="color:var(--rose);flex-shrink:0;width:50px;font-family:var(--font-mono);font-size:8px;font-weight:700">ERR</span>
+            <span style="color:var(--text-muted)">Agent "DataMiner" failed: timeout on external API</span>
+          </div>
+          <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+            <span style="color:var(--text-dim);flex-shrink:0;width:65px">14:15</span>
+            <span style="color:var(--green);flex-shrink:0;width:50px;font-family:var(--font-mono);font-size:8px;font-weight:700">OK</span>
+            <span style="color:var(--text-muted)">Governance: approval flow #4421 auto-approved</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(msg){
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:7px 14px;border-radius:6px;background:var(--primary);color:var(--bg);font-size:10px;font-weight:700;font-family:var(--font-mono);z-index:200';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},2500);
+}
+</script>
+</body>
+</html>

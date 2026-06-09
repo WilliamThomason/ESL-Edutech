@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agentic OS — Agent Config</title>
+<style>
+:root{--bg:#0a0e1a;--bg2:#16213e;--card:#1a1a2e;--border:#2a3a5f;--border-light:#3a4a7f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--primary:#a78bfa;--primary-light:#c4b5fd;--primary-dim:rgba(167,139,250,.08);--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--rose:#fb7185;--rose-dim:rgba(251,113,133,.08);--cyan:#22d3ee;--green:#34d399;--peach:#fcbe6a;--font-mono:'Fira Code','Share Tech Mono',monospace;--font-sans:'Blogger Sans','Inter',system-ui,sans-serif;--r-sm:4px;--r-md:8px;--r-lg:12px;--r-xl:16px}
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:14px}
+h1,h2,h3,h4{font-family:var(--font-mono)}.mono{font-family:var(--font-mono)}
+.label{font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:var(--r-md);border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--primary);color:var(--primary)}.btn-primary{background:var(--primary);color:var(--bg);border-color:var(--primary)}.btn-primary:hover{background:var(--primary-light);color:var(--bg);box-shadow:0 0 12px rgba(167,139,250,.15)}.btn-danger{border-color:var(--rose);color:var(--rose)}.btn-sm{height:24px;padding:0 10px;font-size:8px}
+.progress-bar{height:6px;background:var(--bg);border-radius:var(--r-sm);overflow:hidden}.progress-fill{height:100%;border-radius:var(--r-sm);transition:width .5s ease}
+.progress-fill.purple{background:var(--primary)}.progress-fill.green{background:var(--green)}.progress-fill.amber{background:var(--amber)}.progress-fill.rose{background:var(--rose)}
+.badge{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 8px;border-radius:9999px;font-family:var(--font-mono);font-size:8px;font-weight:700;letter-spacing:1px}
+.badge.running{background:rgba(52,211,153,.15);color:var(--green)}.badge.idle{background:rgba(148,163,184,.15);color:var(--text-muted)}.badge.error{background:var(--rose-dim);color:var(--rose)}.badge.warning{background:var(--amber-dim);color:var(--amber)}
+.badge-dot{width:5px;height:5px;border-radius:50%;display:inline-block}.badge-dot.active{background:var(--green);box-shadow:0 0 4px var(--green)}.badge-dot.inactive{background:var(--text-dim)}.badge-dot.error{background:var(--rose)}
+.input{width:100%;height:36px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none}.input:focus{border-color:var(--primary);box-shadow:0 0 12px rgba(167,139,250,.15)}.input::placeholder{color:var(--text-dim)}
+.select{appearance:none;cursor:pointer}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-main{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.mb-16{margin-bottom:16px}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sidebar-logo{padding:16px;border-bottom:1px solid var(--border)}.sidebar-logo h1{font-family:var(--font-mono);font-size:13px;font-weight:900;color:var(--primary);letter-spacing:2px}.sidebar-logo span{font-size:8px;color:var(--text-dim);letter-spacing:1px;display:block;margin-top:2px}
+.sidebar-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-section-label{padding:8px 16px 4px;font-family:var(--font-mono);font-size:8px;font-weight:600;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:12px;color:var(--text-muted)}
+.nav-item:hover{color:var(--text);background:var(--primary-dim)}
+.nav-item.active{color:var(--primary);border-left-color:var(--primary);background:var(--primary-dim)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--rose);color:#000;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;font-family:var(--font-mono)}
+.nav-badge.ok{background:var(--green)}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-size:9px;color:var(--text-dim);font-family:var(--font-mono)}
+.main{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.topbar{height:48px;background:rgba(10,14,26,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;position:sticky;top:0;z-index:5}
+.topbar-title{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--primary)}
+.topbar-search{margin-left:auto;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-family:var(--font-mono);font-size:11px;width:200px;outline:none}.topbar-search:focus{border-color:var(--primary)}.topbar-search::placeholder{color:var(--text-dim)}
+.topbar-btn{height:30px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--font-mono);display:flex;align-items:center;gap:5px}.topbar-btn:hover{border-color:var(--primary);color:var(--primary)}.topbar-btn.danger:hover{border-color:var(--rose);color:var(--rose)}
+.topbar-btn svg{width:13px;height:13px}
+.page{flex:1;padding:20px;overflow-y:auto;display:none}
+.page.active{display:block}
+.section-heading{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--text);letter-spacing:1.5px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo"><h1>AGENTIC OS</h1><span>Orchestration &amp; Governance</span></div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item" onclick="showPage('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+    <div class="nav-section-label">Management</div>
+    <div class="nav-item" onclick="showPage('resources')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Resources</div>
+    <div class="nav-item" onclick="showPage('memory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Context &amp; Memory</div>
+    <div class="nav-section-label">Control</div>
+    <div class="nav-item" onclick="showPage('governance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Governance<span class="nav-badge">3</span></div>
+    <div class="nav-item" onclick="showPage('tools')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tool Orchestration</div>
+    <div class="nav-item" onclick="showPage('observability')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Observability</div>
+    <div class="nav-section-label">System</div>
+    <div class="nav-item active" onclick="showPage('config')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Agent Config</div>
+    <div class="nav-item" onclick="showPage('agents')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Agent Fleet<span class="nav-badge ok">7</span></div>
+    <div class="nav-item" onclick="showPage('workflows')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Workflows</div>
+    <div class="nav-item" onclick="showPage('workspace')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Output Workspace</div>
+  </div>
+  <div class="sidebar-footer">v2.0.0 &mdash; Agentic OS</div>
+</div>
+<div class="main">
+<div class="topbar">
+  <div class="topbar-title" id="pageTitle">Agent Config</div>
+  <input class="topbar-search" type="text" placeholder="Search agents, tools, logs...">
+  <button class="topbar-btn" onclick="showToast('Invite link copied!')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Invite</button>
+</div>
+
+<!-- PAGE: Agent Config -->
+<div class="page active" id="page-config">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+    <div style="font-size:48px;filter:drop-shadow(0 0 8px rgba(167,139,250,.4))">&#128125;</div>
+    <div>
+      <div class="section-heading" style="margin-bottom:4px">AGENT CONFIGURATION</div>
+      <div style="font-size:11px;color:var(--text-dim)">Assign models, roles, teams, tools, and token limits. Changes apply immediately.</div>
+    </div>
+  </div>
+  <div class="card mb-16"><div class="card-header"><div class="card-title">ROUTER / PROVIDER</div></div>
+    <div class="grid-4">
+      <div style="background:var(--bg3);border:1px solid var(--primary);border-radius:10px;padding:14px;text-align:center;cursor:pointer">
+        <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenRouter</div>
+        <div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Multi-model gateway</div>
+        <div style="font-size:8px;font-weight:600;color:var(--primary)">&#10003; Active</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer">
+        <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Anthropic Direct</div>
+        <div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Claude models</div>
+        <div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer">
+        <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenAI Direct</div>
+        <div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">GPT-4o, GPT-4</div>
+        <div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer">
+        <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Google AI</div>
+        <div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Gemini models</div>
+        <div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-16"><div class="card-header"><div class="card-title">AGENT CONFIGURATION</div><button class="btn btn-sm" onclick="showToast('Add agent dialog')">+ ADD AGENT</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <!-- Agent Card: COO -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(167,139,250,.15);color:var(--primary);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:700">CO</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">COO <span style="font-size:10px;color:var(--text-dim);font-weight:400;margin-left:6px">Orchestrator</span></div></div>
+          <select class="select input" style="width:160px;font-family:var(--font-mono);font-size:8px;font-weight:600;padding:5px 10px">
+            <option selected>Claude Sonnet 4.6</option>
+            <option>Claude Opus 4</option>
+            <option>GPT-4o</option>
+            <option>Gemini 2.5 Pro</option>
+          </select>
+        </div>
+        <div class="grid-3">
+          <div><div class="label">Role</div><input type="text" class="input" value="Orchestrator"></div>
+          <div><div class="label">Team</div><select class="select input"><option selected>Leadership</option><option>Content</option><option>Engineering</option><option>QA</option></select></div>
+          <div><div class="label">Token Limit</div><input type="number" class="input" value="100000"><span style="font-size:7px;color:var(--text-dim)">/day</span></div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="label">Tools &amp; Skills <span style="font-size:7px;color:var(--primary);cursor:pointer">[refresh]</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(232,168,124,.1);color:var(--peach);font-size:9px;cursor:pointer">Web Search ×</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(232,168,124,.1);color:var(--peach);font-size:9px;cursor:pointer">ArXiv ×</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(52,211,153,.1);color:var(--green);font-size:9px;cursor:pointer">Confluence ×</span>
+            <span style="padding:3px 8px;border-radius:4px;background:var(--bg);border:1px dashed var(--border);color:var(--text-dim);font-size:9px;cursor:pointer">+ Add</span>
+          </div>
+        </div>
+      </div>
+      <!-- Agent Card: Planner -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(167,139,250,.15);color:var(--primary);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:700">PL</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Planner <span style="font-size:10px;color:var(--text-dim);font-weight:400;margin-left:6px">Strategy</span></div></div>
+          <select class="select input" style="width:160px;font-family:var(--font-mono);font-size:8px;font-weight:600;padding:5px 10px">
+            <option>Claude Sonnet 4.6</option>
+            <option selected>Claude Opus 4</option>
+            <option>GPT-4o</option>
+          </select>
+        </div>
+        <div class="grid-3">
+          <div><div class="label">Role</div><input type="text" class="input" value="Strategy"></div>
+          <div><div class="label">Team</div><select class="select input"><option>Leadership</option><option selected>Content</option><option>Engineering</option></select></div>
+          <div><div class="label">Token Limit</div><input type="number" class="input" value="200000"><span style="font-size:7px;color:var(--text-dim)">/day</span></div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="label">Tools &amp; Skills</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(167,139,250,.1);color:var(--primary);font-size:9px">Web Search</span>
+            <span style="padding:3px 8px;border-radius:4px;background:var(--bg);border:1px dashed var(--border);color:var(--text-dim);font-size:9px;cursor:pointer">+ Add</span>
+          </div>
+        </div>
+      </div>
+      <!-- Agent Card: Writer -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(163,230,53,.15);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:700">CD</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Coder <span style="font-size:10px;color:var(--text-dim);font-weight:400;margin-left:6px">Engineering</span></div></div>
+          <select class="select input" style="width:160px;font-family:var(--font-mono);font-size:8px;font-weight:600;padding:5px 10px">
+            <option>Claude Sonnet 4.6</option>
+            <option>GPT-4o</option>
+            <option selected>Gemini 2.5 Pro</option>
+          </select>
+        </div>
+        <div class="grid-3">
+          <div><div class="label">Role</div><input type="text" class="input" value="Engineering"></div>
+          <div><div class="label">Team</div><select class="select input"><option>Leadership</option><option>Content</option><option selected>Engineering</option></select></div>
+          <div><div class="label">Token Limit</div><input type="number" class="input" value="200000"><span style="font-size:7px;color:var(--text-dim)">/day</span></div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="label">Tools &amp; Skills</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(163,230,53,.1);color:var(--accent);font-size:9px">GitHub</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(163,230,53,.1);color:var(--accent);font-size:9px">GitLab</span>
+            <span style="padding:3px 8px;border-radius:4px;background:var(--bg);border:1px dashed var(--border);color:var(--text-dim);font-size:9px;cursor:pointer">+ Add</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-16"><div class="card-header"><div class="card-title">GLOBAL LIMITS</div></div>
+    <div class="grid-4">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+        <div class="label" style="margin-bottom:8px">Daily Tokens</div>
+        <input type="number" class="input" value="500000" style="text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:700">
+        <div style="font-size:8px;color:var(--text-dim);margin-top:4px">tokens/day</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+        <div class="label" style="margin-bottom:8px">Cost Budget</div>
+        <input type="number" class="input" value="10" style="text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:700">
+        <div style="font-size:8px;color:var(--text-dim);margin-top:4px">USD/day</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+        <div class="label" style="margin-bottom:8px">Max Concurrent</div>
+        <input type="number" class="input" value="20" style="text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:700">
+        <div style="font-size:8px;color:var(--text-dim);margin-top:4px">sessions</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+        <div class="label" style="margin-bottom:8px">Max Turns</div>
+        <input type="number" class="input" value="20" style="text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:700">
+        <div style="font-size:8px;color:var(--text-dim);margin-top:4px">/task</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:20px">
+    <button class="btn btn-primary" onclick="showToast('Configuration saved!')">&#128190; SAVE CONFIGURATION</button>
+    <button class="btn" onclick="showToast('Reset to defaults')">&#128260; RESET DEFAULTS</button>
+    <button class="btn" onclick="showToast('Config exported')">&#128228; EXPORT JSON</button>
+  </div>
+  <div style="text-align:center;font-size:10px;color:var(--text-dim);margin-top:8px;min-height:16px" id="configSaveStatus"></div>
+</div>
+
+<!-- Placeholder pages for other sections -->
+<div class="page" id="page-dashboard"><div class="section-heading">Dashboard</div><p style="color:var(--text-muted)">Dashboard content — see dashboard.html for full mockup</p></div>
+<div class="page" id="page-agents"><div class="section-heading">Agent Fleet</div><p style="color:var(--text-muted)">Agent fleet management page</p></div>
+<div class="page" id="page-kanban"><div class="section-heading">Kanban Board</div><p style="color:var(--text-muted)">Kanban task board</p></div>
+<div class="page" id="page-workflows"><div class="section-heading">Workflows</div><p style="color:var(--text-muted)">Workflow editor</p></div>
+<div class="page" id="page-memory"><div class="section-heading">Context &amp; Memory</div><p style="color:var(--text-muted)">Obsidian vault browser</p></div>
+<div class="page" id="page-governance"><div class="section-heading">Governance</div><p style="color:var(--text-muted)">Approval flows and audit trail</p></div>
+<div class="page" id="page-tools"><div class="section-heading">Tool Orchestration</div><p style="color:var(--text-muted)">Tool registry and routing rules</p></div>
+<div class="page" id="page-observability"><div class="section-heading">Observability</div><p style="color:var(--text-muted)">Performance metrics and exception management</p></div>
+<div class="page" id="page-resources"><div class="section-heading">Resources</div><p style="color:var(--text-muted)">Compute quotas and token budget</p></div>
+<div class="page" id="page-workspace"><div class="section-heading">Output Workspace</div><p style="color:var(--text-muted)">Generated content and file browser</p></div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var titles={dashboard:'Dashboard',config:'Agent Config',agents:'Agent Fleet',kanban:'Kanban',workflows:'Workflows',memory:'Context & Memory',governance:'Governance',tools:'Tool Orchestration',observability:'Observability',resources:'Resources',workspace:'Output Workspace'};
+  document.getElementById('pageTitle').textContent=titles[id]||id;
+}
+function showToast(msg){
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:7px 14px;border-radius:6px;background:var(--primary);color:var(--bg);font-size:10px;font-weight:700;font-family:var(--font-mono);z-index:200';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},2500);
+}
+</script>
+</body>
+</html>
