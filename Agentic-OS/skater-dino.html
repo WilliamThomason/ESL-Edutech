@@ -142,7 +142,8 @@ function activatePowerUp(type){
     P.laserActive=true;
     P.laserTimer=600; // 10 seconds at 60fps
     P.pwCounts[type]=0; // Reset so you can collect more
-    spawnP(P.x+P.w/2,P.y+P.h/2,pwColors[type],15);
+    spawnP(P.x+P.w/2,P.y+P.h/2,'#fb7185',20);
+    spawnP(P.x+P.w/2,P.y,'#fff',10);
   }else{
     // Single power-up: activate temporary boost
     P.pwType=type;
@@ -150,9 +151,14 @@ function activatePowerUp(type){
     if(type==='size'){P.w=36;P.h=56;P.y-=14;}
     if(type==='jump'){P.jp=-14;}
     if(type==='shield'){P.inv=480;}
-    spawnP(P.x+P.w/2,P.y,pwColors[type],10);
+    spawnP(P.x+P.w/2,P.y,pwColors[type],15);
+    spawnP(P.x+P.w/2,P.y+P.h/2,'#fff',8);
   }
   updatePowerBar();
+  // Flash the power bar
+  var bar=document.getElementById('powerBar');
+  bar.style.background='rgba(163,230,53,.3)';
+  setTimeout(function(){bar.style.background='linear-gradient(transparent,rgba(10,14,26,.7))';},300);
 }
 
 function updatePowerBar(){
@@ -324,15 +330,26 @@ function draw(){
     if(b.t==='g'){X.fillStyle='#2a3a5f';X.fillRect(b.x,b.y,b.w,b.h);X.fillStyle='#a3e635';X.fillRect(b.x,b.y,b.w,3);}
     else if(b.t==='b'){X.fillStyle='#a78bfa';X.fillRect(b.x,b.y,b.w,b.h);X.fillStyle='rgba(0,0,0,.2)';X.fillRect(b.x,b.y+b.h-2,b.w,2);X.fillRect(b.x+b.w-2,b.y,2,b.h);}
     else if(b.t==='h'){
-      // Hidden brick — subtle visual hint (slightly different color, flickering)
-      var alpha=b.hit?0.15:0.25+Math.sin(frame*0.05+b.x)*0.08;
-      X.fillStyle='rgba(167,139,250,'+alpha+')';
+      // Hidden brick — visible as a "?" block with pulsing glow
+      var pulse=0.6+Math.sin(frame*0.08+b.x*0.1)*0.2;
+      // Brick body
+      X.fillStyle=b.hit?'rgba(167,139,250,.15)':'rgba(167,139,250,'+pulse+')';
       X.fillRect(b.x,b.y,b.w,b.h);
+      // Border
+      X.strokeStyle='rgba(251,191,36,'+(pulse*0.8)+')';
+      X.lineWidth=2;
+      X.strokeRect(b.x+1,b.y+1,b.w-2,b.h-2);
+      X.lineWidth=1;
+      // "?" symbol
       if(!b.hit){
-        // Small sparkle hint
-        if(Math.floor(frame/30)%3===0){
-          X.fillStyle='rgba(251,191,36,.4)';
-          X.fillRect(b.x+12,b.y+12,3,3);
+        X.fillStyle='rgba(251,191,36,'+pulse+')';
+        X.font='bold 14px monospace';
+        X.textAlign='center';
+        X.fillText('?',b.x+16,b.y+22);
+        // Sparkle particles
+        if(Math.floor(frame/20)%2===0){
+          X.fillStyle='rgba(255,255,255,.6)';
+          X.fillRect(b.x+8+(Math.sin(frame*0.1)*8),b.y+6+(Math.cos(frame*0.12)*4),2,2);
         }
       }
     }
