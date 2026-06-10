@@ -281,7 +281,14 @@ function draw(){
 }
 
 // ═══ GAME LOOP ═══
-function loop(){
+var lastTime=0;
+function loop(now){
+  requestAnimationFrame(loop);
+  if(!lastTime){lastTime=now;return;}
+  var dt=now-lastTime;
+  lastTime=now;
+  // Cap delta to prevent speed-up after tab switch / background
+  if(dt>100)dt=33;
   frame++;
   if(state==='play'){
     updatePlayer();updateEnemies();updateCoins();updateP();
@@ -290,7 +297,6 @@ function loop(){
     if(time<=0)die();
   }
   draw();
-  requestAnimationFrame(loop);
 }
 
 // ═══ INPUT ═══
