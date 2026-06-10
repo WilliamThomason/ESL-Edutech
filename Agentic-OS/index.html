@@ -9,6 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;overflow:hidden}
+html,body{height:100%;width:100%}
 h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agent-status,.log-level,.metric-value,.room-code,.slide-num-badge,.deck-counter,.Badge,.badge,.ctrl-label,.diagram-box .box-title,.section-num,.lesson-cat,.lesson-count,.day-label,.tempo-label,.fret-label,.string-label,.note-label,.interval-label,.chord-label,.scale-label,.timer-label,.timer-value,.timer-unit,.timer-status,.timer-bar-fill-text,.ApprovalTitle,.PolicyTitle,.MemoryKey,.MemoryMeta,.StatNum,.StatLabel,.TabLabel,.ToolName,.ToolCost,.WorkflowTitle,.WorkflowMeta,.SlideTitle,.SlideOriginal,.SlideParaphrase,.SlideNumber,.CatLabel,.SlideQuestion,.SlideAnswer,.SlideNav,.SlideFooter,.SlideBack,.SlideNext,.SlideShuffle,.SlideCounter,.SlideProgress,.SlideProgressBar,.SlideProgressFill{font-family:'Fira Code',monospace}
 .label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
@@ -344,7 +345,7 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 </div><!-- end app -->
 
 <script>
-var API = window.location.origin;
+var API = window.location.origin.includes('github.io') ? 'http://127.0.0.1:8642' : window.location.origin;
 
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});

@@ -155,8 +155,9 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
-    server = HTTPServer(('127.0.0.1', port), Handler)
-    print(f'Agentic OS API running on http://127.0.0.1:{port}', flush=True)
+    host = '0.0.0.0' if '--daemon' in sys.argv else '127.0.0.1'
+    server = HTTPServer((host, port), Handler)
+    print(f'Agentic OS API running on http://{host}:{port}', flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
