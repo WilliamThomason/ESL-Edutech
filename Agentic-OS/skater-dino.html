@@ -67,7 +67,7 @@ var camX=0,keys={},ps=[],lasers=[];
 // 2 of same type = laser shooting active
 
 // ═══ PLAYER ═══
-var P={x:64,y:300,vx:0,vy:0,w:26,h:42,spd:4.2,jp:-10.5,og:false,duck:false,dir:1,f:0,ft:0,inv:0,dead:false,
+var P={x:64,y:300,vx:0,vy:0,w:26,h:42,spd:4.2,jp:-10.5,og:false,duck:false,dir:1,f:0,ft:0,inv:0,dead:false,jumpHeld:false,
   pwTimer:0,pwType:null,          // active power-up timer and type
   pwCounts:{size:0,jump:0,shield:0},  // how many of each collected (persists across lives)
   laserActive:false,laserTimer:0};
@@ -222,9 +222,12 @@ function updatePlayer(){
     if(P.laserTimer<=0){P.laserActive=false;updatePowerBar();}
   }
   // Movement
-  if(keys['ArrowLeft']||keys['KeyA']){P.vx-=0.7;P.dir=-1;}
-  if(keys['ArrowRight']||keys['KeyD']){P.vx+=0.7;P.dir=1;}
-  if((keys['ArrowUp']||keys['KeyW']||keys['Space'])&&P.og){P.vy=P.jp;P.og=false;}
+  if((keys['ArrowLeft']||keys['KeyA'])){P.vx-=0.7;P.dir=-1;}
+  if((keys['ArrowRight']||keys['KeyD'])){P.vx+=0.7;P.dir=1;}
+  // Jump: only on fresh press, not hold — requires key release between jumps
+  var jumpKey=keys['ArrowUp']||keys['KeyW']||keys['Space'];
+  if(jumpKey&&P.og&&!P.jumpHeld){P.vy=P.jp;P.og=false;P.jumpHeld=true;}
+  if(!jumpKey)P.jumpHeld=false;
   if((keys['ArrowDown']||keys['KeyS'])&&!P.og)P.vy+=0.25;
   P.vx*=FRICTION;P.vy+=GRAVITY;
   if(P.vx>5.5)P.vx=5.5;if(P.vx<-5.5)P.vx=-5.5;
