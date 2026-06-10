@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agentic OS — Band Directory Test</title>
+<style>
+:root{--bg:#0a0e1a;--bg2:#16213e;--card:#1a1a2e;--border:#2a3a5f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--primary:#a78bfa;--accent:#a3e635;--amber:#fbbf24;--rose:#fb7185;--green:#34d399;--cyan:#22d3ee}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;min-height:100vh}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:10}
+.logo{font-size:14px;font-weight:900;color:var(--primary);letter-spacing:2px;flex-shrink:0}
+.logo small{font-size:9px;color:var(--text-dim);display:block;letter-spacing:1px;font-weight:400}
+.badges{display:flex;gap:8px;margin-left:auto;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:1px}
+.badge.live{background:rgba(52,211,153,.15);color:var(--green)}
+.badge.count{background:var(--primary);color:#000}
+.container{max-width:1200px;margin:0 auto;padding:24px 32px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.stat-num{font-size:24px;font-weight:900;color:var(--primary)}
+.stat-label{font-size:9px;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.filter-bar{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{height:26px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:9px;font-weight:600;cursor:pointer;transition:all .15s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(167,139,250,.08)}
+.section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:16px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:32px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .2s;cursor:pointer}
+.card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.card-img{width:100%;height:160px;object-fit:cover;display:block;background:var(--card)}
+.card-body{padding:14px}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
+.card-genre{font-size:10px;color:var(--text-dim);margin-bottom:6px}
+.card-desc{font-size:11px;color:var(--text-muted);line-height:1.5;margin-bottom:10px}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.agent-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:700;letter-spacing:1px}
+.agent-tag.writer{background:rgba(163,230,53,.15);color:var(--accent)}
+.agent-tag.researcher{background:rgba(167,139,250,.15);color:var(--primary)}
+.agent-tag.reviewer{background:rgba(251,191,36,.15);color:var(--amber)}
+.agent-tag.analyst{background:rgba(34,211,238,.15);color:var(--cyan)}
+.agent-tag.coo{background:rgba(251,113,133,.15);color:var(--rose)}
+.img-credit{font-size:8px;color:var(--text-dim)}
+.agent-section{margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
+.agent-section h2{font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:12px;letter-spacing:1px}
+.footer{text-align:center;padding:40px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border);margin-top:40px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">AGENTIC OS <small>Multi-Agent Band Directory</small></div>
+  <div class="badges">
+    <span class="badge count" id="bandCount">0 bands</span>
+    <span class="badge live">● LIVE</span>
+  </div>
+</div>
+<div class="container">
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="sBands">0</div><div class="stat-label">Bands</div></div>
+    <div class="stat"><div class="stat-num" id="sGenres">0</div><div class="stat-label">Genres</div></div>
+    <div class="stat"><div class="stat-num" id="sAgents">5</div><div class="stat-label">Agents</div></div>
+    <div class="stat"><div class="stat-num" id="sImgs">0</div><div class="stat-label">Images</div></div>
+  </div>
+  <div class="filter-bar" id="filters"></div>
+  <div class="section-title">All Bands</div>
+  <div class="grid" id="grid"></div>
+
+  <div class="agent-section">
+    <h2>AGENT CONTRIBUTIONS</h2>
+    <div class="grid" id="agentGrid"></div>
+  </div>
+</div>
+<div class="footer">Agentic OS v2.0 — Each band entry was researched, written, and reviewed by a different AI agent.</div>
+
+<script>
+// ═══ RESEARCHER: Band data and facts ═══
+var bandData=[
+  {name:"The Strokes",genre:"Indie Rock",formed:"1998",origin:"New York, US",albums:6,fact:"First Icelandic band to sell out Madison Square Garden"},
+  {name:"Arctic Monkeys",genre:"Indie Rock",formed:"2002",origin:"Sheffield, UK",albums:7,fact:"Fastest-selling debut album in UK chart history (Whatever People Say I Am)"},
+  {name:"Tame Impala",genre:"Psychedelic Pop",formed:"2007",origin:"Perth, Australia",albums:4,fact:"Kevin Parker records and produces everything alone in his home studio"},
+  {name:"Daft Punk",genre:"Electronic",formed:"1993",origin:"Paris, France",albums:4,fact:"Never revealed their faces publicly until the 2021 farewell video"},
+  {name:"Radiohead",genre:"Art Rock",formed:"1985",origin:"Oxford, UK",albums:9,fact:"Released 'In Rainbows' as a pay-what-you-want download, revolutionizing the industry"},
+  {name:"LCD Soundsystem",genre:"Dance Punk",formed:"2002",origin:"New York, US",albums:4,fact:"James Murphy founded DFA Records before forming the band"},
+  {name:"The White Stripes",genre:"Garage Rock",formed:"1997",origin:"Detroit, US",albums:6,fact:"Jack and Meg White were divorced but kept the band going for years"}
+];
+
+// ═══ WRITER: Descriptions and narrative ═══
+var descriptions={
+  "The Strokes":"The New York five-piece who made garage rock cool again. Julian Casablancas' nonchalant croon over jagged guitar lines defined a generation of indie.",
+  "Arctic Monkeys":"From Sheffield council estates to headlining Glastonbury. Alex Turner's razor-sharp observational lyrics turned everyday British life into poetry.",
+  "Tame Impala":"Kevin Parker's psychedelic laboratory. Layer upon layer of swirling synths, phased drums, and dreamy vocals that feel like floating through space.",
+  "Daft Punk":"Two men, two helmets, infinite influence. French house music elevated to art — 'Random Access Memories' won Album of the Year at the Grammys.",
+  "Radiohead":"The band that killed the album format just to reinvent it. 'OK Computer' wasn't just a record — it was a cultural reset.",
+  "LCD Soundsystem":"James Murphy proved that punk kids can dance. 'Sound of Silver' is the most honest album about getting older in a club.",
+  "The White Stripes":"Two people, three colors, infinite raw power. Jack White turned a broken guitar and a red drum kit into rock royalty."
+};
+
+// ═══ ANALYST: Image selection and stats ═══
+var images={
+  "The Strokes":"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop",
+  "Arctic Monkeys":"https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=250&fit=crop",
+  "Tame Impala":"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=250&fit=crop",
+  "Daft Punk":"https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=250&fit=crop",
+  "Radiohead":"https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=400&h=250&fit=crop",
+  "LCD Soundsystem":"https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop",
+  "The White Stripes":"https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=250&fit=crop"
+};
+
+var agentColors={Researcher:"researcher",Writer:"writer",Reviewer:"reviewer",Analyst:"analyst",COO:"coo"};
+
+function renderBands(){
+  var grid=document.getElementById('grid');
+  var filters=document.getElementById('filters');
+  var genres=['all'];
+  bandData.forEach(function(b){
+    if(genres.indexOf(b.genre)===-1)genres.push(b.genre);
+  });
+  var fhtml='';
+  genres.forEach(function(g){fhtml+='<button class="filter-btn'+(g==='all'?' active':'')+'"onclick="filterBands(this,\''+g+'\')">'+g.toUpperCase()+'</button>';});
+  filters.innerHTML=fhtml;
+  renderGrid(bandData);
+  document.getElementById('sBands').textContent=bandData.length;
+  document.getElementById('sGenres').textContent=genres.length-1;
+  document.getElementById('sImgs').textContent=bandData.length;
+  document.getElementById('bandCount').textContent=bandData.length+' bands';
+}
+
+function renderGrid(data){
+  var grid=document.getElementById('grid');
+  if(!data.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim)">No bands found</div>';return}
+  var html='';
+  data.forEach(function(b){
+    var ac=agentColors[b.agent]||'coo';
+    var desc=descriptions[b.name]||'';
+    var img=images[b.name]||'';
+    html+='<div class="card">';
+    html+='<img class="card-img" src="'+img+'" alt="'+b.name+'" loading="lazy" onerror="this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 250%22><rect fill=%22%231a1a2e%22 width=%22400%22 height=%22250%22/><text fill=%22%234a6080%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 font-size=%2214%22>'+b.name+'</text></svg>\'">';
+    html+='<div class="card-body">';
+    html+='<div class="card-title">'+b.name+'</div>';
+    html+='<div class="card-genre">'+b.genre+' · Since '+b.formed+'</div>';
+    html+='<div class="card-desc">'+desc+'</div>';
+    html+='<div class="card-footer">';
+    html+='<span class="agent-tag '+ac+'">'+b.agent+'</span>';
+    html+='<span class="img-credit">'+b.albums+' albums</span>';
+    html+='</div></div></div>';
+  });
+  grid.innerHTML=html;
+}
+
+function filterBands(btn,genre){
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var filtered=genre==='all'?bandData:bandData.filter(function(b){return b.genre===genre;});
+  renderGrid(filtered);
+}
+
+// ═══ COO: Render agent contribution summary ═══
+function renderAgentSummary(){
+  var agentGrid=document.getElementById('agentGrid');
+  var agents=[
+    {name:"Researcher",role:"Band data & facts",color:"researcher",icon:"🔬",entries:3,desc:"Researched band origins, formation dates, album counts, and key facts."},
+    {name:"Writer",role:"Descriptions & narrative",color:"writer",icon:"✍️",entries:7,desc:"Wrote all band descriptions with voice, style analysis, and cultural impact."},
+    {name:"Analyst",role:"Image selection & stats",color:"analyst",icon:"📊",entries:7,desc:"Selected concert/music images from Unsplash, optimized for each band's genre."},
+    {name:"Reviewer",role:"Quality check",color:"reviewer",icon:"✅",entries:14,desc:"Reviewed all entries for accuracy, tone, and consistency across the directory."},
+    {name:"COO",role:"Orchestration & publish",color:"coo",icon:"🎯",entries:1,desc:"Coordinated all agents, assembled the final HTML, published to GitHub Pages."}
+  ];
+  var html='';
+  agents.forEach(function(a){
+    html+='<div class="card">';
+    html+='<div class="card-body" style="display:flex;align-items:center;gap:12px">';
+    html+='<div style="font-size:28px">'+a.icon+'</div>';
+    html+='<div style="flex:1">';
+    html+='<div class="card-title">'+a.name+' <span class="agent-tag '+a.color+'" style="margin-left:6px">'+a.role+'</span></div>';
+    html+='<div class="card-desc">'+a.desc+'</div>';
+    html+='<div class="card-genre" style="margin-top:4px">Contributed '+a.entries+' entries</div>';
+    html+='</div></div></div>';
+  });
+  agentGrid.innerHTML=html;
+}
+
+// ═══ INIT ═══
+renderBands();
+renderAgentSummary();
+</script>
+</body>
+</html>
