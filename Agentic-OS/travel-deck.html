@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wanderlust — Travel & Accommodation</title>
+<style>
+:root{--bg:#0a0e1a;--surface:#16213e;--card:#1a1a2e;--border:#2a3a5f;--text:#e0f2fe;--muted:#94a3b8;--dim:#4a6080;--primary:#a78bfa;--accent:#a3e635;--amber:#fbbf24;--rose:#fb7185;--cyan:#22d3ee;--green:#34d399}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+
+/* ═══ SLIDES ═══ */
+.slide{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:translateY(30px) scale(.97);transition:opacity .6s ease,transform .6s ease;pointer-events:none;padding:60px;overflow:hidden}
+.slide.active{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;z-index:2}
+.slide.past{opacity:0;transform:translateY(-20px) scale(.97);z-index:1}
+
+/* ═══ NAV ═══ */
+.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:100;padding:8px 14px;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:99px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);cursor:pointer;transition:all .3s;border:none;padding:0}
+.nav-dot.active{background:var(--primary);width:24px;border-radius:4px}
+.nav-dot:hover{background:var(--muted)}
+
+/* ═══ ARROWS ═══ */
+.arrow{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(10,14,26,.7);backdrop-filter:blur(8px);border:1px solid var(--border);color:var(--text);font-size:18px;cursor:pointer;z-index:100;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.arrow:hover{background:var(--primary);color:#000;border-color:var(--primary)}
+.arrow.prev{left:16px}
+.arrow.next{right:16px}
+
+/* ═══ PROGRESS ═══ */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--primary);z-index:100;transition:width .4s ease}
+
+/* ═══ COUNTER ═══ */
+.counter{position:fixed;top:16px;right:16px;font-size:11px;color:var(--dim);z-index:100;font-weight:600;letter-spacing:1px}
+
+/* ═══ SLIDE TYPES ═══ */
+/* Title slide */
+.s-title{text-align:center;gap:24px}
+.s-title h1{font-family:'Playfair Display',serif;font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.s-title h2{font-size:18px;font-weight:300;color:var(--muted);letter-spacing:4px;text-transform:uppercase}
+.s-title .line{width:80px;height:3px;background:var(--primary);border-radius:2px}
+.s-title p{font-size:14px;color:var(--dim);max-width:500px;line-height:1.7}
+
+/* Image + text */
+.s-split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:1100px;width:100%}
+.s-split .img-wrap{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.s-split .img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.s-split .img-wrap .overlay{position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:11px;color:var(--muted)}
+.s-split .text h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;margin-bottom:16px;line-height:1.2}
+.s-split .text p{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:12px}
+.s-split .text .tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;margin-right:6px;margin-bottom:6px}
+.s-split .text .tag.purple{background:rgba(167,139,250,.15);color:var(--primary)}
+.s-split .text .tag.green{background:rgba(163,230,53,.15);color:var(--accent)}
+.s-split .text .tag.amber{background:rgba(251,191,36,.15);color:var(--amber)}
+
+/* Full bleed image */
+.s-bleed{padding:0}
+.s-bleed .bg{position:absolute;inset:0}
+.s-bleed .bg img{width:100%;height:100%;object-fit:cover;display:block}
+.s-bleed .bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(10,14,26,.85),rgba(10,14,26,.4))}
+.s-bleed .content{position:relative;z-index:2;text-align:center;max-width:700px}
+.s-bleed .content h2{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;margin-bottom:16px;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+.s-bleed .content p{font-size:16px;color:var(--muted);line-height:1.7}
+
+/* Grid / cards */
+.s-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;width:100%}
+.s-grid .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .2s}
+.s-grid .card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.3);border-color:var(--primary)}
+.s-grid .card .img{height:160px;overflow:hidden}
+.s-grid .card .img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.s-grid .card:hover .img img{transform:scale(1.05)}
+.s-grid .card .body{padding:16px}
+.s-grid .card .body h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.s-grid .card .body p{font-size:11px;color:var(--muted);line-height:1.6}
+.s-grid .card .body .price{font-size:13px;font-weight:700;color:var(--accent);margin-top:8px}
+
+/* Quote */
+.s-quote{text-align:center;max-width:800px}
+.s-quote blockquote{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1.4;margin-bottom:20px;font-style:italic}
+.s-quote cite{font-size:13px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+
+/* Stats */
+.s-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;width:100%}
+.s-stats .stat{text-align:center;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.s-stats .stat .num{font-size:36px;font-weight:900;color:var(--primary);margin-bottom:4px}
+.s-stats .stat .label{font-size:10px;color:(--dim);text-transform:uppercase;letter-spacing:1px}
+
+/* List / tips */
+.s-list{max-width:700px;width:100%}
+.s-list h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;margin-bottom:24px}
+.s-list .item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
+.s-list .item:last-child{border-bottom:none}
+.s-list .item .num{font-size:24px;font-weight:900;color:var(--primary);flex-shrink:0;width:40px}
+.s-list .item .text h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.s-list .item .text p{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* End slide */
+.s-end{text-align:center;gap:20px}
+.s-end h1{font-family:'Playfair Display',serif;font-size:56px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.s-end p{font-size:14px;color:(--muted);max-width:500px;line-height:1.7}
+.s-end .line{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:8px 0}
+
+/* ═══ KEN BURNS ═══ */
+.kenburns img{animation:kenburns 20s ease-in-out infinite alternate}
+@keyframes kenburns{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.12) translate(-2%,-2%)}}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .slide{padding:30px}
+  .s-title h1{font-size:40px}
+  .s-split{grid-template-columns:1fr;gap:20px}
+  .s-grid{grid-template-columns:1fr}
+  .s-stats{grid-template-columns:repeat(2,1fr)}
+  .s-bleed .content h2{font-size:32px}
+  .s-quote blockquote{font-size:22px}
+  .arrow{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">1 / 12</div>
+
+<button class="arrow prev" onclick="prev()">←</button>
+<button class="arrow next" onclick="next()">→</button>
+
+<div class="nav" id="nav"></div>
+
+<!-- SLIDE 1: Title -->
+<div class="slide s-title active" data-slide="0">
+  <h1>Wanderlust</h1>
+  <div class="line"></div>
+  <h2>Travel &amp; Accommodation</h2>
+  <p>A journey through the world's most incredible destinations and the places that make them unforgettable.</p>
+</div>
+
+<!-- SLIDE 2: Full bleed hero -->
+<div class="slide s-bleed" data-slide="1">
+  <div class="bg kenburns"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=700&fit=crop" alt="Beach" onerror="this.style.display='none'"></div>
+  <div class="content">
+    <h2>The World Is Waiting</h2>
+    <p>From pristine beaches to mountain peaks, ancient cities to modern marvels — every destination has a story. And every story begins with a place to stay.</p>
+  </div>
+</div>
+
+<!-- SLIDE 3: Split - Beach -->
+<div class="slide s-split" data-slide="2">
+  <div class="img-wrap kenburns"><img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&h=450&fit=crop" alt="Maldives" onerror="this.style.display='none'"><div class="overlay">© Unsplash</div></div>
+  <div class="text">
+    <h2>Tropical Escapes</h2>
+    <p>Crystal-clear waters, overwater bungalows, and sunsets that paint the sky in impossible colors. Tropical destinations offer the ultimate reset for mind and body.</p>
+    <div><span class="tag purple">Maldives</span><span class="tag purple">Bali</span><span class="tag purple">Seychelles</span><span class="tag green">Thailand</span><span class="tag green">Fiji</span></div>
+    <p style="margin-top:12px;font-size:12px;color:var(--dim)">Average stay: 5-7 nights · Best value: shoulder season (May-Jun, Sep-Oct)</p>
+  </div>
+</div>
+
+<!-- SLIDE 4: Split - City -->
+<div class="slide s-split" data-slide="3">
+  <div class="text">
+    <h2>Urban Adventures</h2>
+    <p>World-class restaurants, iconic architecture, vibrant nightlife, and cultural experiences around every corner. City breaks feed the soul of every curious traveler.</p>
+    <div><span class="tag amber">Tokyo</span><span class="tag amber">Paris</span><span class="tag amber">New York</span><span class="tag purple">Barcelona</span><span class="tag green">Lisbon</span></div>
+    <p style="margin-top:12px;font-size:12px;color:var(--dim)">Average stay: 3-4 nights · Best value: mid-week bookings, 3+ weeks ahead</p>
+  </div>
+  <div class="img-wrap kenburns"><img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=450&fit=crop" alt="Paris" onerror="this.style.display='none'"><div class="overlay">© Unsplash</div></div>
+</div>
+
+<!-- SLIDE 5: Full bleed mountain -->
+<div class="slide s-bleed" data-slide="4">
+  <div class="bg kenburns"><img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=700&fit=crop" alt="Mountains" onerror="this.style.display='none'"></div>
+  <div class="content">
+    <h2>Mountain Retreats</h2>
+    <p>Fresh air, panoramic views, and the kind of silence that makes you remember what peace feels like. From cozy cabins to luxury alpine resorts.</p>
+  </div>
+</div>
+
+<!-- SLIDE 6: Accommodation types grid -->
+<div class="slide" data-slide="5" style="justify-content:flex-start;padding-top:80px">
+  <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;margin-bottom:24px;text-align:center">Where You Stay Matters</h2>
+  <div class="s-grid">
+    <div class="card">
+      <div class="img"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=250&fit=crop" alt="Hotel" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>Boutique Hotels</h3><p>Intimate, design-forward, and full of character. Perfect for couples and solo travelers.</p><div class="price">$150-400/night</div></div>
+    </div>
+    <div class="card">
+      <div class="img"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=250&fit=crop" alt="Resort" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>All-Inclusive Resorts</h3><p>Everything taken care of. Food, drinks, activities — just show up and relax.</p><div class="price">$200-800/night</div></div>
+    </div>
+    <div class="card">
+      <div class="img"><img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=250&fit=crop" alt="Hostel" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>Hostels &amp; Guesthouses</h3><p>Meet fellow travelers, share stories, and keep your budget intact. The social choice.</p><div class="price">$20-80/night</div></div>
+    </div>
+    <div class="card">
+      <div class="img"><img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=400&h=250&fit=crop" alt="Cabin" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>Cabins &amp; Cottages</h3><p>Off-grid charm with modern comforts. Nature at your doorstep, silence included.</p><div class="price">$80-250/night</div></div>
+    </div>
+    <div class="card">
+      <div class="img"><img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=250&fit=crop" alt="Airbnb" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>Vacation Rentals</h3><p>Live like a local. Full kitchen, your own space, and neighborhood authenticity.</p><div class="price">$60-300/night</div></div>
+    </div>
+    <div class="card">
+      <div class="img"><img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&h=250&fit=crop" alt="Luxury" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>Luxury Escapes</h3><p>Five-star service, infinity pools, and experiences you'll talk about for years.</p><div class="price">$500+/night</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Quote -->
+<div class="slide s-quote" data-slide="6">
+  <blockquote>"The world is a book, and those who do not travel read only one page."</blockquote>
+  <cite>— Saint Augustine</cite>
+</div>
+
+<!-- SLIDE 8: Split - Food -->
+<div class="slide s-split" data-slide="7">
+  <div class="img-wrap kenburns"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=450&fit=crop" alt="Food" onerror="this.style.display='none'"><div class="overlay">© Unsplash</div></div>
+  <div class="text">
+    <h2>Taste the World</h2>
+    <p>Food is the universal language. Every destination has its own flavors, its own rituals, its own way of bringing people together around a table.</p>
+    <p>From street food in Bangkok to Michelin-starred dining in Copenhagen, the culinary journey is just as important as the visual one.</p>
+    <div><span class="tag green">Street Food</span><span class="tag amber">Fine Dining</span><span class="tag purple">Local Markets</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Stats -->
+<div class="slide" data-slide="8" style="gap:24px">
+  <h2 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:8px">By The Numbers</h2>
+  <p style="font-size:12px;color:var(--dim);margin-bottom:16px">Global travel &amp; accommodation trends 2025</p>
+  <div class="s-stats">
+    <div class="stat"><div class="num">4.1B</div><div class="label">Tourist Arrivals</div></div>
+    <div class="stat"><div class="num">$9.9T</div><div class="label">Global Revenue</div></div>
+    <div class="stat"><div class="num">68%</div><div class="label">Book Online</div></div>
+    <div class="stat"><div class="num">4.2★</div><div class="label">Avg Rating</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Tips list -->
+<div class="slide s-list" data-slide="9">
+  <h2>Travel Smart</h2>
+  <div class="item"><div class="num">01</div><div class="text"><h3>Book accommodation early</h3><p>Prices rise 15-30% within 2 weeks of peak dates. Book 4-6 weeks ahead for best rates.</p></div></div>
+  <div class="item"><div class="num">02</div><div class="text"><h3>Read recent reviews</h3><p>Photos can be outdated. Reviews from the last 3 months tell the real story of a place.</p></div></div>
+  <div class="item"><div class="num">03</div><div class="text"><h3>Consider location over luxury</h3><p>A 3-star hotel in the city center beats a 5-star in the suburbs. You're there to explore, not sit in a lobby.</p></div></div>
+  <div class="item"><div class="num">04</div><div class="text"><h3>Travel in shoulder season</h3><p>May-June and September-October offer the best balance of good weather, fewer crowds, and lower prices.</p></div></div>
+</div>
+
+<!-- SLIDE 11: Full bleed desert -->
+<div class="slide s-bleed" data-slide="10">
+  <div class="bg kenburns"><img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1200&h=700&fit=crop" alt="Desert" onerror="this.style.display='none'"></div>
+  <div class="content">
+    <h2>Every Journey Begins<br>With a Single Step</h2>
+    <p>The best accommodation isn't about thread count or star ratings. It's about the feeling you get when you walk through the door and think: "I could stay here forever."</p>
+  </div>
+</div>
+
+<!-- SLIDE 12: End -->
+<div class="slide s-end" data-slide="11">
+  <h1>Wanderlust</h1>
+  <div class="line"></div>
+  <p>Travel &amp; Accommodation</p>
+  <p style="margin-top:16px">Go see the world. Stay somewhere unforgettable.</p>
+  <p style="margin-top:24px;font-size:11px;color:var(--dim)">Press ← → or use dots to navigate · Built with Unsplash</p>
+</div>
+
+<script>
+var slides=document.querySelectorAll('.slide');
+var current=0;
+var total=slides.length;
+var nav=document.getElementById('nav');
+var progress=document.getElementById('progress');
+var counter=document.getElementById('counter');
+
+// Build nav dots
+for(var i=0;i<total;i++){
+  var dot=document.createElement('button');
+  dot.className='nav-dot'+(i===0?' active':'');
+  dot.onclick=function(idx){return function(){goTo(idx);};}(i);
+  nav.appendChild(dot);
+}
+
+function update(){
+  slides.forEach(function(s,i){
+    s.classList.remove('active','past');
+    if(i===current)s.classList.add('active');
+    if(i<current)s.classList.add('past');
+  });
+  document.querySelectorAll('.nav-dot').forEach(function(d,i){
+    d.classList.toggle('active',i===current);
+  });
+  progress.style.width=((current+1)/total*100)+'%';
+  counter.textContent=(current+1)+' / '+total;
+}
+
+function goTo(n){
+  if(n<0||n>=total)return;
+  current=n;
+  update();
+}
+
+function next(){goTo(current+1);}
+function prev(){goTo(current-1);}
+
+// Keyboard
+document.addEventListener('keydown',function(e){
+  if(e.code==='ArrowRight'||e.code==='Space'||e.code==='Enter'){e.preventDefault();next();}
+  if(e.code==='ArrowLeft'||e.code==='Backspace'){e.preventDefault();prev();}
+  if(e.code==='Home'){e.preventDefault();goTo(0);}
+  if(e.code==='End'){e.preventDefault();goTo(total-1);}
+});
+
+// Touch / swipe
+var touchStartX=0;
+document.addEventListener('touchstart',function(e){touchStartX=e.touches[0].clientX;});
+document.addEventListener('touchend',function(e){
+  var diff=e.changedTouches[0].clientX-touchStartX;
+  if(Math.abs(diff)>50){diff<0?next():prev();}
+});
+
+// Wheel (debounce)
+var wheelTimer;
+document.addEventListener('wheel',function(e){
+  clearTimeout(wheelTimer);
+  wheelTimer=setTimeout(function(){
+    if(Math.abs(e.deltaY)>30){e.deltaY>0?next():prev();}
+  },50);
+},{passive:true});
+
+update();
+</script>
+</body>
+</html>
