@@ -13,6 +13,10 @@ canvas{display:block}
 .hud-left,.hud-right{display:flex;gap:14px}
 .hud-item{color:#e0f2fe;font-size:10px;font-weight:700;text-shadow:2px 2px 0 #000}
 .hud-item em{color:#a3e635;font-style:normal}
+#powerBar{position:absolute;bottom:0;left:0;right:0;padding:6px 16px;display:flex;gap:8px;pointer-events:none;z-index:5;background:linear-gradient(transparent,rgba(10,14,26,.7));min-height:28px}
+.power-slot{display:flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:rgba(0,0,0,.5);font-size:8px;color:var(--text-muted)}
+.power-slot.active{border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px rgba(163,230,53,.3)}
+.power-slot .count{color:#fbbf24}
 #overlay{position:absolute;inset:0;background:rgba(10,14,26,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;color:#e0f2fe;text-align:center}
 #overlay.hidden{display:none}
 #overlay h1{font-size:32px;color:#a78bfa;text-shadow:3px 3px 0 #000;margin-bottom:6px;letter-spacing:4px;line-height:1.2}
@@ -33,16 +37,22 @@ canvas{display:block}
   <div class="hud-left"><span class="hud-item">SCORE <em id="sc">0</em></span><span class="hud-item">COINS <em id="cn">0</em></span></div>
   <div class="hud-right"><span class="hud-item">TIME <em id="tm">300</em></span><span class="hud-item">LIVES <em id="lv">♥♥♥</em></span></div>
 </div>
+<div id="powerBar" class="hidden"></div>
 <div id="overlay">
   <h1>SKATER DINO</h1>
   <h2>Skateboarder vs Dinosaurs</h2>
   <div class="box"><h3>CONTROLS</h3>
     <p>← → / A D : Move</p>
     <p>↑ / W / SPACE : Jump</p>
-    <p>↓ / S : Fast fall</p><p>P : Pause</p>
+    <p>↓ / S : Fast fall</p>
+    <p>P : Pause</p>
   </div>
   <p>Stomp dinos. Collect coins. Reach the flag.</p>
-  <p style="margin-bottom:20px;color:#4a6080">A multi-agent production</p>
+  <div class="box" style="margin-top:12px"><h3>POWER-UPS</h3>
+    <p>Hit hidden bricks from below</p>
+    <p><span style="color:#22d3ee">SIZE</span> · <span style="color:#fbbf24">JUMP</span> · <span style="color:#34d399">SHIELD</span></p>
+    <p>Collect 2 of the same = <span style="color:#fb7185">LASER</span></p>
+  </div>
   <button class="btn" id="startBtn">START GAME</button>
 </div>
 </div>
@@ -50,16 +60,23 @@ canvas{display:block}
 var C=document.getElementById('gc'),X=C.getContext('2d'),W=800,H=480;
 var GRAVITY=0.55,FRICTION=0.82,TILE=32;
 var state='start',score=0,coins=0,lives=3,time=300,frame=0;
-var camX=0,keys={},ps=[];
+var camX=0,keys={},ps=[],lasers=[];
+
+// ═══ POWER-UP TYPES ═══
+// size=bigger player, jump=higher jump, shield=invincible
+// 2 of same type = laser shooting active
 
 // ═══ PLAYER ═══
-var P={x:64,y:300,vx:0,vy:0,w:26,h:42,spd:4.2,jp:-10.5,og:false,duck:false,dir:1,f:0,ft:0,inv:0,dead:false};
+var P={x:64,y:300,vx:0,vy:0,w:26,h:42,spd:4.2,jp:-10.5,og:false,duck:false,dir:1,f:0,ft:0,inv:0,dead:false,
+  pwTimer:0,pwType:null,          // active power-up timer and type
+  pwCounts:{size:0,jump:0,shield:0},  // how many of each collected (persists across lives)
+  laserActive:false,laserTimer:0};
 
 // ═══ LEVEL ═══
-var plats=[],enems=[],cns=[],flag;
+var plats=[],enems=[],cns=[],pups=[],flag;
 
 function buildLevel(){
-  plats=[];enems=[];cns=[];
+  plats=[];enems=[];cns=[];pups=[];lasers=[];
   // Ground
   for(var x=0;x<3200;x+=TILE){
     if((x>=416&&x<512)||(x>=1216&&x<1312)||(x>=2016&&x<2112))continue;
@@ -69,50 +86,88 @@ function buildLevel(){
   [[200,340,96],[360,280,64],[520,340,96],[720,260,128],[920,200,64],[1060,300,96],[1420,340,64],[1560,260,96],[1760,200,128],[1960,300,64],[2220,260,96],[2420,340,128]].forEach(function(p){
     plats.push({x:p[0],y:p[1],w:p[2],h:24,t:'p'});
   });
-  // Bricks
+  // Visible bricks
   [[600,440],[632,440],[1100,440],[1132,440],[1164,440],[1800,440],[1832,440],[2500,440],[2532,440],[2564,440]].forEach(function(b){
     plats.push({x:b[0],y:b[1],w:32,h:32,t:'b'});
   });
-  // Coins — grouped around platforms and enemies
-  var coinDefs=[
-    // Near start
-    [220,300],[260,300],[380,240],
-    // Near first platforms
-    [540,300],[580,300],[740,220],[780,220],[820,220],[940,160],
-    // Above pterodactyl 1
-    [730,170],[770,170],
-    // Mid section
-    [1080,260],[1120,260],[1440,300],[1580,220],[1620,220],
-    // Above pterodactyl 2
-    [1430,150],[1470,150],
-    // Later section
-    [1780,160],[1820,160],[1860,160],[1980,260],[2240,220],[2280,220],
-    // Above pterodactyl 3
-    [2230,170],[2270,170],
-    // Near end
-    [2440,300],[2480,300],[2520,300]
+  // Hidden bricks (type 'h') — placed strategically near platforms
+  // Power-up type encoded in .pw: 'size', 'jump', 'shield'
+  var hiddenBricks=[
+    {x:560,y:400,pw:'size'},      // Near first raptor pair
+    {x:1100,y:400,pw:'jump'},     // Near T-rex
+    {x:1600,y:400,pw:'shield'},   // Mid level
+    {x:2100,y:400,pw:'size'},     // After third pit
+    {x:2400,y:400,pw:'jump'},     // Later section
+    // Above platforms (require platforming skill)
+    {x:740,y:220,pw:'shield'},    // On platform near pterodactyl
+    {x:1580,y:220,pw:'size'},     // On mid platform
+    {x:2240,y:220,pw:'jump'},     // On later platform
   ];
-  coinDefs.forEach(function(c){
-    cns.push({x:c[0],y:c[1],w:18,h:18,got:false,a:Math.random()*6});
+  hiddenBricks.forEach(function(b){
+    plats.push({x:b.x,y:b.y,w:32,h:32,t:'h',pw:b.pw,hit:false});
   });
-  // Enemies — spread across level, away from pit edges
-  // r=raptor(walks), t=t-rex(walks), p=pterodactyl(flies)
+  // Coins
+  var coinDefs=[
+    [220,300],[260,300],[380,240],[540,300],[580,300],
+    [740,220],[780,220],[820,220],[940,160],
+    [1080,260],[1120,260],[1440,300],[1580,220],[1620,220],
+    [1780,160],[1820,160],[1860,160],[1980,260],
+    [2240,220],[2280,220],[2440,300],[2480,300],[2520,300],
+    // Above pterodactyls
+    [730,170],[770,170],[1430,150],[1470,150],[2230,170],[2270,170]
+  ];
+  coinDefs.forEach(function(c){cns.push({x:c[0],y:c[1],w:18,h:18,got:false,a:Math.random()*6});});
+  // Enemies
   var enemyDefs=[
-    // Section 1 (start area)
     {x:350,y:400,t:'r'},{x:550,y:400,t:'r'},
-    // Section 2 (after first pit)
     {x:650,y:400,t:'r'},{x:900,y:400,t:'t'},
-    // Section 3 (after second pit)
     {x:1350,y:400,t:'r'},{x:1500,y:400,t:'t'},{x:1700,y:400,t:'r'},
-    // Section 4 (after third pit)
     {x:2150,y:400,t:'r'},{x:2350,y:400,t:'t'},{x:2550,y:400,t:'r'},
-    // Flying pterodactyls (more visible, on platforms)
     {x:750,y:200,t:'p'},{x:1450,y:180,t:'p'},{x:2250,y:200,t:'p'}
   ];
   enemyDefs.forEach(function(e){
     enems.push({x:e.x,y:e.y,vx:e.t==='p'?0:-1.5,vy:0,w:e.t==='t'?34:26,h:e.t==='t'?46:e.t==='p'?22:34,t:e.t,alive:true,ft:0,fy:e.y,fd:1});
   });
   flag={x:2850,y:H-64-110,w:14,h:110,trig:false};
+}
+
+// ═══ POWER-UPS ═══
+var pwColors={size:'#22d3ee',jump:'#fbbf24',shield:'#34d399'};
+var pwLabels={size:'BIG',jump:'JUMP',shield:'SHLD'};
+
+function activatePowerUp(type){
+  P.pwCounts[type]++;
+  // If 2 of same type collected, activate laser
+  if(P.pwCounts[type]>=2){
+    P.laserActive=true;
+    P.laserTimer=600; // 10 seconds at 60fps
+    P.pwCounts[type]=0; // Reset so you can collect more
+    spawnP(P.x+P.w/2,P.y+P.h/2,pwColors[type],15);
+  }else{
+    // Single power-up: activate temporary boost
+    P.pwType=type;
+    P.pwTimer=480; // 8 seconds
+    if(type==='size'){P.w=36;P.h=56;P.y-=14;}
+    if(type==='jump'){P.jp=-14;}
+    if(type==='shield'){P.inv=480;}
+    spawnP(P.x+P.w/2,P.y,pwColors[type],10);
+  }
+  updatePowerBar();
+}
+
+function updatePowerBar(){
+  var bar=document.getElementById('powerBar');
+  var html='';
+  for(var type in P.pwCounts){
+    var count=P.pwCounts[type];
+    var active=(P.pwType===type&&P.pwTimer>0)||(P.laserActive&&P.laserTimer>0);
+    var label=pwLabels[type];
+    if(P.laserActive&&P.laserTimer>0&&count===0)label='LASER';
+    html+='<div class="power-slot'+(active?' active':'')+'"><span style="color:'+pwColors[type]+'">'+label+'</span>';
+    if(count>0)html+=' <span class="count">x'+count+'</span>';
+    html+='</div>';
+  }
+  bar.innerHTML=html;
 }
 
 // ═══ COLLISION ═══
@@ -122,9 +177,45 @@ function rc(a,ax,ay,aw,ah,b,bx,by,bw,bh){return ax<bw+bx&&ax+aw>bx&&ay<bh+by&&ay
 function spawnP(x,y,col,n){for(var i=0;i<n;i++){ps.push({x:x,y:y,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6-2,life:30+Math.random()*20,col:col,sz:2+Math.random()*3});}}
 function updateP(){for(var i=ps.length-1;i>=0;i--){var p=ps[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life--;if(p.life<=0)ps.splice(i,1);}}
 
+// ═══ LASERS ═══
+function shootLaser(){
+  lasers.push({x:P.x+(P.dir>0?P.w+4:-16),y:P.y+P.h/2-2,vx:P.dir*12,w:16,h:4,col:'#fb7185',life:60});
+}
+function updateLasers(){
+  for(var i=lasers.length-1;i>=0;i--){
+    var l=lasers[i];l.x+=l.vx;l.life--;
+    if(l.life<=0||l.x<camX-50||l.x>camX+W+50){lasers.splice(i,1);continue;}
+    // Hit enemies
+    for(var j=0;j<enems.length;j++){
+      var e=enems[j];if(!e.alive)continue;
+      if(rc(l,l.x,l.y,l.w,l.h,e,e.x,e.y,e.w,e.h)){
+        e.alive=false;score+=(e.t==='t'?200:e.t==='r'?100:150);
+        spawnP(e.x+e.w/2,e.y+e.h/2,'#fb7185',8);
+        lasers.splice(i,1);break;
+      }
+    }
+  }
+}
+
 // ═══ UPDATE ═══
 function updatePlayer(){
   if(P.dead)return;
+  // Power-up timers
+  if(P.pwTimer>0){
+    P.pwTimer--;
+    if(P.pwTimer<=0){
+      // Reset power-up effects
+      if(P.pwType==='size'){P.w=26;P.h=42;}
+      if(P.pwType==='jump'){P.jp=-10.5;}
+      P.pwType=null;
+      updatePowerBar();
+    }
+  }
+  if(P.laserActive){
+    P.laserTimer--;
+    if(P.laserTimer<=0){P.laserActive=false;updatePowerBar();}
+  }
+  // Movement
   if(keys['ArrowLeft']||keys['KeyA']){P.vx-=0.7;P.dir=-1;}
   if(keys['ArrowRight']||keys['KeyD']){P.vx+=0.7;P.dir=1;}
   if((keys['ArrowUp']||keys['KeyW']||keys['Space'])&&P.og){P.vy=P.jp;P.og=false;}
@@ -137,6 +228,13 @@ function updatePlayer(){
   for(var i=0;i<plats.length;i++){
     var b=plats[i];
     if(rc(P,P.x,P.y,P.w,ph,b,b.x,b.y,b.w,b.h)){
+      // Hidden brick hit from below
+      if(b.t==='h'&&!b.hit&&P.vy<0&&P.y>=b.y+b.h-8){
+        b.hit=true;
+        activatePowerUp(b.pw);
+        spawnP(b.x+16,b.y+16,pwColors[b.pw],12);
+      }
+      // Normal collision
       if(P.vy>0&&P.y+ph-P.vy<=b.y+6){P.y=b.y-ph;P.vy=0;P.og=true;}
       else if(P.vy<0&&P.y-P.vy>=b.y+b.h-4){P.y=b.y+b.h;P.vy=0.5;}
       else if(P.vx>0){P.x=b.x-P.w;P.vx=0;}
@@ -165,18 +263,14 @@ function updateEnemies(){
           else if(e.vx<0){e.x=b.x+b.w;e.vx*=-1;}
         }
       }
-      // Turn around at platform edges (look ahead 8px next to ground)
       var lookX=e.vx<0?e.x-8:e.x+e.w+8;
       var lookY=e.y+e.h+4;
       var hasFloor=false;
-      for(var j=0;j<plats.length;j++){
-        var b=plats[j];
-        if(lookX>=b.x&&lookX<b.x+b.w&&lookY>=b.y&&lookY<b.y+b.h){hasFloor=true;break;}
-      }
+      for(var j=0;j<plats.length;j++){var b=plats[j];if(lookX>=b.x&&lookX<b.x+b.w&&lookY>=b.y&&lookY<b.y+b.h){hasFloor=true;break;}}
       if(!hasFloor&&e.vy===0){e.vx*=-1;}
-      // Remove if fell off world
       if(e.y>H+200){e.alive=false;}
     }
+    // Player collision
     if(!P.dead&&P.inv<=0&&rc(P,P.x,P.y,P.w,P.h,e,e.x,e.y,e.w,e.h)){
       if(P.vy>0&&P.y+P.h-P.vy<=e.y+10){
         e.alive=false;P.vy=-7;
@@ -201,9 +295,13 @@ function updateCoins(){
 function die(){
   if(P.dead)return;
   P.dead=true;lives--;
+  // Reset power-up visual effects on death
+  if(P.pwType==='size'){P.w=26;P.h=42;}
+  if(P.pwType==='jump'){P.jp=-10.5;}
+  P.pwType=null;P.pwTimer=0;
   spawnP(P.x+13,P.y+21,'#e8a87c',10);
   if(lives<=0){state='over';}
-  else{setTimeout(function(){P.x=64;P.y=300;P.vx=0;P.vy=0;P.dead=false;P.inv=90;camX=0;enems.forEach(function(e){e.alive=true;});},800);}
+  else{setTimeout(function(){P.x=64;P.y=300;P.vx=0;P.vy=0;P.dead=false;P.inv=90;camX=0;enems.forEach(function(e){e.alive=true;});lasers=[];},800);}
 }
 
 function winLevel(){
@@ -213,11 +311,9 @@ function winLevel(){
 
 // ═══ DRAW ═══
 function draw(){
-  // Sky gradient
   var grad=X.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,'#0a0e1a');grad.addColorStop(0.5,'#16213e');grad.addColorStop(1,'#1a1a2e');
   X.fillStyle=grad;X.fillRect(0,0,W,H);
-  // Stars
   X.fillStyle='rgba(224,242,254,.3)';
   for(var i=0;i<40;i++){var sx=(i*137+camX*0.1)%W,sy=(i*89)%H;X.fillRect(sx,sy,2,2);}
   X.save();X.translate(-camX,0);
@@ -227,6 +323,19 @@ function draw(){
     if(b.x+b.w<camX-32||b.x>camX+W+32)continue;
     if(b.t==='g'){X.fillStyle='#2a3a5f';X.fillRect(b.x,b.y,b.w,b.h);X.fillStyle='#a3e635';X.fillRect(b.x,b.y,b.w,3);}
     else if(b.t==='b'){X.fillStyle='#a78bfa';X.fillRect(b.x,b.y,b.w,b.h);X.fillStyle='rgba(0,0,0,.2)';X.fillRect(b.x,b.y+b.h-2,b.w,2);X.fillRect(b.x+b.w-2,b.y,2,b.h);}
+    else if(b.t==='h'){
+      // Hidden brick — subtle visual hint (slightly different color, flickering)
+      var alpha=b.hit?0.15:0.25+Math.sin(frame*0.05+b.x)*0.08;
+      X.fillStyle='rgba(167,139,250,'+alpha+')';
+      X.fillRect(b.x,b.y,b.w,b.h);
+      if(!b.hit){
+        // Small sparkle hint
+        if(Math.floor(frame/30)%3===0){
+          X.fillStyle='rgba(251,191,36,.4)';
+          X.fillRect(b.x+12,b.y+12,3,3);
+        }
+      }
+    }
     else{X.fillStyle='#e8a87c';X.fillRect(b.x,b.y,b.w,b.h);X.fillStyle='#c4956a';X.fillRect(b.x,b.y+b.h-3,b.w,3);X.fillStyle='rgba(0,0,0,.15)';X.fillRect(b.x,b.y,b.w,2);}
   }
   // Flag
@@ -242,51 +351,62 @@ function draw(){
     X.fillStyle='#fbbf24';X.beginPath();X.ellipse(c.x+9,cy+9,9,9,0,0,6.28);X.fill();
     X.fillStyle='#fbbf2488';X.beginPath();X.ellipse(c.x+9,cy+9,5,5,0,0,6.28);X.fill();
   }
+  // Lasers
+  for(var i=0;i<lasers.length;i++){
+    var l=lasers[i];
+    X.fillStyle=l.col;X.shadowColor=l.col;X.shadowBlur=8;
+    X.fillRect(l.x,l.y,l.w,l.h);
+    X.shadowBlur=0;
+  }
   // Enemies
   for(var i=0;i<enems.length;i++){
     var e=enems[i];if(!e.alive)continue;
     var ex=e.x,ey=e.y;
-    if(e.t==='r'){//RAPTOR
+    if(e.t==='r'){
       X.fillStyle='#34d399';
-      X.fillRect(ex+4,ey+8,e.w-8,e.h-16);//body
-      X.fillRect(ex+6,ey,e.w-12,12);//head
-      X.fillStyle='#0a0e1a';X.fillRect(ex+8,ey+3,3,3);X.fillRect(ex+e.w-11,ey+3,3,3);//eyes
+      X.fillRect(ex+4,ey+8,e.w-8,e.h-16);
+      X.fillRect(ex+6,ey,e.w-12,12);
+      X.fillStyle='#0a0e1a';X.fillRect(ex+8,ey+3,3,3);X.fillRect(ex+e.w-11,ey+3,3,3);
       X.fillStyle='#2a8a6a';
-      X.fillRect(ex+2,ey+e.h-10,6,10);X.fillRect(ex+e.w-8,ey+e.h-10,6,10);//legs
-      X.fillStyle='#34d399';
-      X.fillRect(ex+e.w-4,ey+10,8,4);//tail
-    }else if(e.t==='t'){//T-REX
+      X.fillRect(ex+2,ey+e.h-10,6,10);X.fillRect(ex+e.w-8,ey+e.h-10,6,10);
+      X.fillStyle='#34d399';X.fillRect(ex+e.w-4,ey+10,8,4);
+    }else if(e.t==='t'){
       X.fillStyle='#fb7185';
-      X.fillRect(ex+6,ey+10,e.w-12,e.h-18);//body
-      X.fillRect(ex+4,ey,e.w-8,14);//head
-      X.fillStyle='#0a0e1a';X.fillRect(ex+7,ey+3,4,4);X.fillRect(ex+e.w-11,ey+3,4,4);//eyes
+      X.fillRect(ex+6,ey+10,e.w-12,e.h-18);
+      X.fillRect(ex+4,ey,e.w-8,14);
+      X.fillStyle='#0a0e1a';X.fillRect(ex+7,ey+3,4,4);X.fillRect(ex+e.w-11,ey+3,4,4);
       X.fillStyle='#c45a6a';
-      X.fillRect(ex+4,ey+e.h-14,8,14);X.fillRect(ex+e.w-12,ey+e.h-14,8,14);//legs
-      X.fillStyle='#fb7185';
-      X.fillRect(ex+e.w-6,ey+12,10,6);//tail
-      X.fillStyle='#fff';X.fillRect(ex+6,ey+8,3,2);X.fillRect(ex+e.w-9,ey+8,3,2);//teeth
-    }else{//PTERODACTYL
+      X.fillRect(ex+4,ey+e.h-14,8,14);X.fillRect(ex+e.w-12,ey+e.h-14,8,14);
+      X.fillStyle='#fb7185';X.fillRect(ex+e.w-6,ey+12,10,6);
+      X.fillStyle='#fff';X.fillRect(ex+6,ey+8,3,2);X.fillRect(ex+e.w-9,ey+8,3,2);
+    }else{
       X.fillStyle='#22d3ee';
-      X.fillRect(ex+6,ey+4,e.w-12,e.h-8);//body
-      X.fillStyle='#0a0e1a';X.fillRect(ex+8,ey+6,3,3);//eye
+      X.fillRect(ex+6,ey+4,e.w-12,e.h-8);
+      X.fillStyle='#0a0e1a';X.fillRect(ex+8,ey+6,3,3);
       X.fillStyle='#22d3ee';
-      // Wings
       var wOff=Math.sin(frame*0.15)*8;
       X.beginPath();X.moveTo(ex+e.w/2,ey+e.h/2);X.lineTo(ex-8,ey+wOff);X.lineTo(ex+4,ey+e.h/2);X.fill();
       X.beginPath();X.moveTo(ex+e.w/2,ey+e.h/2);X.lineTo(ex+e.w+8,ey+wOff);X.lineTo(ex+e.w-4,ey+e.h/2);X.fill();
     }
   }
-  // Player (skateboarder)
+  // Player
   if(!P.dead){
     var px=P.x,py=P.y;
-    if(P.inv>0&&Math.floor(P.inv/4)%2===0){X.globalAlpha=0.5;}
+    // Shield glow
+    if(P.pwType==='shield'&&P.pwTimer>0){
+      X.strokeStyle='rgba(52,211,153,.4)';X.lineWidth=3;
+      X.beginPath();X.arc(px+P.w/2,py+P.h/2,P.w+8,0,6.28);X.stroke();
+      X.lineWidth=1;
+    }
+    // Invincibility flash
+    if((P.inv>0||P.pwType==='shield')&&Math.floor(P.inv/4)%2===0){X.globalAlpha=0.5;}
     // Skateboard
     X.fillStyle='#e8a87c';
     X.fillRect(px+2,py+P.h-6,P.w-4,6);
     X.fillStyle='#a78bfa';
-    X.fillRect(px+4,py+P.h-8,4,3);X.fillRect(px+P.w-8,py+P.h-8,4,3);//wheels
+    X.fillRect(px+4,py+P.h-8,4,3);X.fillRect(px+P.w-8,py+P.h-8,4,3);
     // Body
-    X.fillStyle='#e8a87c';
+    X.fillStyle=P.pwType==='size'?'#22d3ee':'#e8a87c';
     X.fillRect(px+4,py+14,P.w-8,P.h-20);
     // Head
     X.fillStyle='#f5d0a9';
@@ -298,7 +418,7 @@ function draw(){
     X.fillStyle='#0a0e1a';
     if(P.dir>0){X.fillRect(px+14,py+7,3,3);}else{X.fillRect(px+9,py+7,3,3);}
     // Helmet
-    X.fillStyle='#a78bfa';
+    X.fillStyle=P.laserActive?'#fb7185':'#a78bfa';
     X.fillRect(px+3,py,P.w-10,5);
     // Legs
     var legOff=P.og?0:Math.sin(P.f*1.5)*4;
@@ -319,7 +439,7 @@ function draw(){
   document.getElementById('sc').textContent=score;
   document.getElementById('cn').textContent=coins;
   document.getElementById('lv').textContent='♥'.repeat(Math.max(0,lives));
-  document.getElementById('tm').textContent=Math.max(0,Math.floor((18000-frame)/60));
+  document.getElementById('tm').textContent=Math.max(0,Math.floor((18000-frame)/60)));
 }
 
 // ═══ GAME LOOP ═══
@@ -327,13 +447,11 @@ var lastTime=0;
 function loop(now){
   requestAnimationFrame(loop);
   if(!lastTime){lastTime=now;return;}
-  var dt=now-lastTime;
-  lastTime=now;
-  // Cap delta to prevent speed-up after tab switch / background
+  var dt=now-lastTime;lastTime=now;
   if(dt>100)dt=33;
   frame++;
   if(state==='play'){
-    updatePlayer();updateEnemies();updateCoins();updateP();
+    updatePlayer();updateEnemies();updateCoins();updateP();updateLasers();
     camX=P.x-W/2+13;if(camX<0)camX=0;
     time=Math.max(0,Math.floor((18000-frame)/60));
     if(time<=0)die();
@@ -346,6 +464,8 @@ document.addEventListener('keydown',function(e){
   keys[e.code]=true;
   if(e.code==='KeyP'&&state==='play')state='pause';
   else if(e.code==='KeyP'&&state==='pause')state='play';
+  // Laser shooting with X key
+  if(e.code==='KeyX'&&P.laserActive&&state==='play')shootLaser();
   if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.code)>=0)e.preventDefault();
 });
 document.addEventListener('keyup',function(e){keys[e.code]=false;});
@@ -355,13 +475,18 @@ document.getElementById('startBtn').addEventListener('click',startGame);
 function startGame(){
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('hud').classList.remove('hidden');
+  document.getElementById('powerBar').classList.remove('hidden');
   buildLevel();
   P.x=64;P.y=300;P.vx=0;P.vy=0;P.dead=false;P.inv=60;
-  score=0;coins=0;lives=3;frame=0;camX=0;ps=[];
+  P.w=26;P.h=42;P.jp=-10.5;P.pwType=null;P.pwTimer=0;
+  P.laserActive=false;P.laserTimer=0;
+  P.pwCounts={size:0,jump:0,shield:0};
+  score=0;coins=0;lives=3;frame=0;camX=0;ps=[];lasers=[];
   state='play';
+  updatePowerBar();
 }
 
-// ═══ GAME OVER / WIN SCREENS ═══
+// ═══ GAME OVER / WIN ═══
 var origDraw=draw;
 draw=function(){
   origDraw();
@@ -370,11 +495,11 @@ draw=function(){
     X.fillStyle='#fb7185';X.font='28px monospace';X.textAlign='center';X.fillText('GAME OVER',W/2,H/2-20);
     X.fillStyle='#e0f2fe';X.font='12px monospace';X.fillText('SCORE: '+score,W/2,H/2+16);
     X.fillStyle='#94a3b8';X.font='10px monospace';X.fillText('Press START to try again',W/2,H/2+40);
-    // Restart button
     var btn=document.getElementById('startBtn');
     btn.textContent='TRY AGAIN';
     document.getElementById('overlay').classList.remove('hidden');
     document.getElementById('hud').classList.add('hidden');
+    document.getElementById('powerBar').classList.add('hidden');
     btn.onclick=function(){btn.textContent='START GAME';btn.onclick=startGame;startGame();};
   }
   if(state==='win'){
@@ -387,6 +512,7 @@ draw=function(){
     btn.textContent='NEXT LEVEL';
     document.getElementById('overlay').classList.remove('hidden');
     document.getElementById('hud').classList.add('hidden');
+    document.getElementById('powerBar').classList.add('hidden');
     btn.onclick=function(){btn.textContent='START GAME';btn.onclick=startGame;startGame();};
   }
   if(state==='pause'){
