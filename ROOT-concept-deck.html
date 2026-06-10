@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ROOT — Regenerative Outcomes & Opportunity Token</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #e3dbcb;
+  --bg2: #d6cfc0;
+  --bg3: #c9c2b4;
+  --surface: #f5f0e8;
+  --border: #c4b8a8;
+  --border-light: #b0a494;
+  --text: #23334b;
+  --text-muted: #4a5a6e;
+  --text-dim: #7a8a9e;
+  --accent: #23334b;
+  --accent2: #3a4a5e;
+  --peach: #f5a623;
+  --peach-hover: #e09520;
+  --peach-text: #fff;
+  --green: #3d8b37;
+  --rose: #c44536;
+  --amber: #d4a017;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow:hidden}
+
+.slide{display:none;flex-direction:column;justify-content:center;min-height:100vh;padding:80px 120px;position:relative;background-size:cover;background-position:center}
+.slide.active{display:flex}
+.slide-num{position:absolute;top:32px;left:120px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;opacity:.6}
+h2{font-size:2.4rem;font-weight:800;margin-bottom:24px;line-height:1.15;color:var(--text)}
+h3{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:8px}
+h4{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:4px}
+p{color:var(--text-muted);font-size:.9rem;line-height:1.7;margin-bottom:12px}
+ul{margin-bottom:16px}
+li{color:var(--text-muted);font-size:.85rem;line-height:1.7;margin-bottom:4px}
+
+.title-slide{text-align:center;align-items:center}
+.title-slide h1{font-size:3.2rem;font-weight:900;line-height:1.1;margin-bottom:16px;color:var(--text)}
+.tagline{font-size:1.1rem;color:var(--text-muted);max-width:600px;margin:0 auto 32px;line-height:1.6}
+.meta{font-size:.75rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
+.cta-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-size:.75rem;color:var(--text-dim)}
+.cta-hint kbd{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'JetBrains Mono',monospace;color:var(--text)}
+
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.threecol{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}
+.card h3{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:6px}
+.card p{font-size:.8rem;color:var(--text-muted);line-height:1.6;margin:0}
+
+.stat-row{display:flex;gap:24px;margin-top:32px;justify-content:center}
+.stat{text-align:center}
+.stat .num{display:block;font-size:1.6rem;font-weight:900;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.stat .label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;max-width:160px;margin-top:4px}
+
+.big-quote{font-size:1.3rem;font-weight:600;color:var(--text);border-left:4px solid var(--peach);padding:20px 24px;margin:24px 0;background:var(--surface);border-radius:0 12px 12px 0;line-height:1.6}
+
+.callout{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;font-size:.85rem;color:var(--text-muted);margin-top:20px}
+
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th{text-align:left;padding:8px 12px;font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+td{padding:8px 12px;font-size:.8rem;color:var(--text-muted);border-bottom:1px solid var(--border)}
+
+.prob-bar{height:8px;background:var(--bg3);border-radius:4px;margin-top:4px;overflow:hidden}
+.prob-fill{height:100%;border-radius:4px;background:var(--peach)}
+
+.case-study{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.case-study h4{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:8px}
+.case-study p{font-size:.8rem;color:var(--text-muted);line-height:1.6;margin:0 0 8px}
+.case-study .result{font-size:.75rem;color:var(--green);font-weight:600}
+
+.cost-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.cost-item:last-child{border-bottom:none}
+.cost-label{font-size:.8rem;color:var(--text-muted)}
+.cost-val{font-size:.8rem;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace}
+
+.crypto-step{display:flex;gap:16px;margin-bottom:16px}
+.crypto-num{width:28px;height:28px;border-radius:50%;background:var(--peach);color:var(--peach-text);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:2px}
+.crypto-text h4{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.crypto-text p{font-size:.75rem;color:var(--text-muted);margin:0;line-height:1.5}
+
+.hidden-cost{background:rgba(196,69,54,.06);border-left:3px solid var(--rose);padding:12px 16px;margin:8px 0;border-radius:0 8px 8px 0}
+.hidden-cost p{font-size:.75rem;color:var(--rose);margin:0}
+
+.roadmap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:24px}
+.rm{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}
+.rm-phase{font-size:.7rem;font-weight:700;color:var(--peach);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.rm-time{font-size:.75rem;color:var(--text-dim);margin-bottom:12px}
+.rm-items p{font-size:.75rem;color:var(--text-muted);margin-bottom:6px;padding-left:12px;border-left:2px solid var(--border)}
+
+.vision-statement{background:var(--surface);border-left:4px solid var(--peach);border-radius:0 12px 12px 0;padding:24px;margin:24px 0}
+.vision-statement p{font-size:1.1rem;color:var(--text);font-weight:500;line-height:1.6;margin:0}
+
+.contact-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.contact-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.contact-item:last-child{border-bottom:none}
+.cl{font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.cv{font-size:.85rem;color:var(--text)}
+
+.nav-btns{position:fixed;bottom:32px;right:32px;display:flex;gap:8px;z-index:10}
+.nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{border-color:var(--accent);background:var(--accent);color:var(--bg)}
+.slide-counter{position:fixed;bottom:32px;left:32px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-dim);z-index:10}
+
+.slide-image{width:100%;border-radius:12px;margin-bottom:20px;object-fit:cover;max-height:180px}
+
+@media(max-width:900px){
+  .slide{padding:60px 24px}
+  .slide-num{left:24px;top:20px}
+  h2{font-size:1.6rem}
+  .twocol,.threecol,.roadmap{grid-template-columns:1fr}
+  .stat-row{flex-direction:column;gap:12px}
+}
+</style>
+</head>
+<body>
+<div class="slide-counter" id="slideCounter">01 / 19</div>
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSlide()">&#x2190;</button>
+  <button class="nav-btn" onclick="nextSlide()">&#x2192;</button>
+</div>
+
+
+<div class="slide title-slide active" id="slide-0">
+  <div style="text-align:center;margin-bottom:24px">
+    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="1274pt" height="944pt" viewBox="0 0 1274.000000 944.000000" preserveAspectRatio="xMidYMid meet" style="width:640px;height:474px">
+      <g transform="translate(0.000000,944.000000) scale(0.100000,-0.100000)" fill="#0B1D3C" stroke="none">
+        <path d="M12090 7428 l0 -81 21 19 c17 16 22 16 29 4 8 -13 10 -13 10 0 0 13 2 13 11 0 9 -12 10 -12 5 3 -3 10 -6 22 -6 25 0 4 -5 0 -10 -8 -8 -12 -10 -12 -10 -1 0 11 -5 10 -20 -4 -20 -18 -20 -17 -20 46 l0 63 53 -49 52 -50 -55 58 c-30 31 -56 57 -57 57 -2 0 -3 -37 -3 -82z"/>
+        <path d="M6060 6660 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z"/>
+        <path d="M5670 6515 l-24 -25 29 -30 29 -30 28 27 28 27 -27 28 c-15 15 -30 28 -33 28 -4 0 -17 -11 -30 -25z"/>
+        <path d="M6060 6420 l0 -120 40 0 40 0 0 120 0 120 -40 0 -40 0 0 -120z"/>
+        <path d="M5787 6402 l-27 -28 93 -92 93 -92 27 28 27 28 -93 92 -93 92 -27 -28z"/>
+        <path d="M6920 6335 l-24 -25 29 -30 29 -30 28 27 28 27 -27 28 c-15 15 -30 28 -33 28 -4 0 -17 -11 -30 -25z"/>
+        <path d="M6796 6210 l-38 -42 28 -29 28 -29 40 40 41 40 -31 31 -31 30 -37 -41z"/>
+        <path d="M6443 6146 c-32 -15 -60 -38 -75 -59 l-22 -35 -33 25 c-18 14 -50 31 -70 39 -44 15 -129 18 -138 4 -3 -5 -6 -39 -6 -76 -1 -55 5 -77 31 -131 38 -77 87 -116 166 -134 67 -15 72 -39 18 -83 -87 -69 -118 -236 -62 -341 79 -149 179 -152 250 -8 58 117 45 235 -36 329 -32 37 -34 44 -37 129 l-4 89 31 7 c104 21 178 137 152 237 -8 31 -10 32 -61 32 -34 0 -70 -9 -104 -24z m87 -75 c0 -27 -39 -71 -76 -87 -42 -18 -44 -17 -44 1 0 31 29 72 62 88 43 22 58 21 58 -2z m-290 -41 c54 -28 100 -102 100 -161 0 -24 -14 -24 -66 2 -50 24 -81 68 -93 133 -10 54 -2 57 59 26z m193 -449 c43 -86 30 -190 -32 -245 -21 -19 -21 -19 -46 4 -28 27 -55 99 -55 149 0 35 29 110 52 138 22 27 52 10 81 -46z"/>
+        <path d="M5410 6090 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z"/>
+        <path d="M5570 6090 l0 -40 160 0 160 0 0 40 0 40 -160 0 -160 0 0 -40z"/>
+        <path d="M6820 6000 l0 -40 185 0 185 0 0 40 0 40 -185 0 -185 0 0 -40z"/>
+        <path d="M7270 6000 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z"/>
+        <path d="M6788 5853 l-27 -27 61 -68 61 -69 31 30 31 31 -65 65 -65 65 -27 -27z"/>
+        <path d="M6975 5660 l-29 -30 27 -27 27 -28 30 31 30 30 -28 27 -28 27 -29 -30z"/>
+        <path d="M5240 5583 c0 -47 3 -53 45 -92 50 -46 59 -47 142 -26 98 26 125 23 184 -20 105 -75 152 -79 321 -30 103 31 104 31 124 0 16 -25 16 -27 -6 -50 -28 -30 -104 -59 -220 -86 -47 -11 -92 -22 -100 -25 -26 -7 -50 -59 -50 -108 0 -93 49 -179 214 -376 52 -63 96 -121 96 -127 0 -22 -34 -14 -84 17 -58 37 -139 119 -313 316 -145 163 -214 227 -282 262 -62 31 -71 29 -71 -16 0 -34 4 -39 44 -60 48 -26 186 -164 367 -367 64 -72 142 -150 172 -174 85 -65 160 -87 202 -57 11 7 46 15 78 18 42 3 64 11 82 28 30 28 46 81 38 121 -3 18 -1 29 6 29 21 0 51 64 51 109 0 39 -5 49 -43 85 -24 23 -83 63 -132 90 -50 27 -130 72 -179 99 l-89 50 74 22 c151 44 222 92 234 157 13 70 -49 148 -117 148 -15 0 -66 -11 -113 -25 -46 -13 -106 -27 -132 -31 -44 -5 -52 -3 -98 30 -100 71 -160 82 -275 51 -55 -14 -55 -14 -85 13 -16 15 -42 38 -57 51 l-28 24 0 -50z m669 -617 c51 -59 124 -134 161 -168 70 -62 88 -98 63 -124 -22 -22 -58 -17 -70 9 -6 12 -54 73 -107 136 -110 129 -149 183 -176 244 -28 61 -25 78 8 41 15 -17 69 -79 121 -138z m246 -45 c31 -21 41 -34 43 -59 5 -53 -20 -51 -87 7 -32 28 -80 76 -107 108 l-49 57 80 -44 c44 -24 98 -55 120 -69z"/>
+        <path d="M7458 5581 l-57 -49 -58 14 c-78 19 -155 19 -190 0 -15 -9 -50 -32 -78 -52 -46 -34 -54 -36 -102 -30 -29 3 -88 17 -130 31 -90 29 -123 31 -162 11 -36 -19 -59 -55 -67 -103 -12 -78 78 -149 238 -189 38 -9 66 -20 61 -24 -4 -5 -75 -45 -158 -91 -258 -142 -275 -157 -275 -239 0 -36 6 -53 31 -83 23 -28 29 -44 25 -62 -8 -30 13 -83 43 -109 14 -13 41 -21 79 -24 31 -3 66 -11 77 -18 27 -19 72 -17 120 5 67 30 156 112 308 283 168 189 279 298 325 317 28 12 32 18 32 52 0 45 -7 47 -65 20 -68 -31 -148 -105 -298 -274 -219 -246 -319 -337 -372 -337 -29 0 -14 25 86 145 159 191 209 280 209 375 0 71 -31 104 -112 119 -129 25 -260 77 -273 109 -7 18 20 62 38 62 6 0 40 -9 75 -19 174 -53 241 -50 325 14 68 52 85 56 163 38 131 -29 128 -30 179 19 44 41 46 46 43 90 l-3 48 -57 -49z m-472 -506 c-21 -53 -78 -134 -194 -269 -46 -54 -89 -109 -94 -122 -15 -33 -65 -33 -77 -1 -13 34 -3 49 84 130 45 41 128 129 185 196 57 66 106 119 108 116 3 -2 -3 -25 -12 -50z m-231 -97 c-78 -87 -164 -161 -180 -154 -21 8 -19 59 3 78 15 14 212 128 220 128 2 0 -17 -24 -43 -52z"/>
+        <path d="M3479 4266 c-111 -31 -228 -124 -282 -224 -54 -100 -57 -135 -57 -754 l0 -568 95 0 95 0 0 371 0 370 443 -3 c424 -3 444 -4 487 -24 62 -29 105 -67 138 -123 l27 -46 3 -272 3 -273 95 0 94 0 0 233 c0 127 -5 260 -10 295 -11 83 -58 180 -114 240 l-45 48 48 48 c59 59 97 132 110 217 6 35 11 157 11 272 l0 207 -547 -1 c-410 -1 -560 -4 -594 -13z m951 -308 c0 -163 -11 -201 -74 -256 -72 -63 -63 -62 -568 -62 l-460 0 4 138 c3 137 3 138 37 191 19 29 51 64 72 78 78 52 83 52 552 53 l437 0 0 -142z"/>
+        <path d="M5129 4261 c-113 -36 -223 -132 -273 -236 -43 -90 -48 -144 -44 -560 3 -382 4 -391 27 -448 49 -123 146 -219 269 -269 55 -22 69 -23 407 -26 373 -4 417 0 511 44 110 51 207 168 238 286 15 55 17 114 14 478 l-3 415 -32 67 c-56 118 -162 211 -284 249 -55 17 -95 19 -417 18 -315 0 -364 -2 -413 -18z m795 -182 c39 -14 68 -35 100 -70 74 -83 76 -93 76 -501 0 -224 -4 -375 -11 -402 -15 -61 -74 -134 -139 -170 l-55 -31 -345 0 -345 0 -57 28 c-60 29 -106 78 -136 144 -15 34 -17 79 -17 423 0 381 0 386 23 435 35 77 81 118 167 152 21 8 132 12 357 12 307 1 331 0 382 -20z"/>
+        <path d="M6798 4261 c-120 -39 -226 -132 -281 -249 l-32 -67 -3 -415 c-4 -468 -1 -492 67 -598 65 -100 158 -168 266 -196 85 -23 703 -23 788 -1 166 43 289 166 332 330 12 48 15 129 15 432 0 235 -4 391 -11 425 -33 157 -157 292 -313 339 -55 17 -97 19 -416 18 -316 0 -361 -2 -412 -18z m815 -191 c57 -29 102 -76 131 -139 20 -44 21 -61 21 -431 0 -371 -1 -387 -21 -430 -28 -59 -86 -117 -143 -144 -44 -20 -61 -21 -391 -21 l-345 0 -55 30 c-61 33 -121 105 -139 165 -7 25 -11 160 -11 403 0 420 3 436 83 515 81 80 94 82 482 79 340 -2 340 -2 388 -27z"/>
+        <path d="M8140 4190 l0 -90 325 0 325 0 0 -690 0 -690 90 0 90 0 0 690 0 690 325 0 325 0 0 90 0 90 -740 0 -740 0 0 -90z"/>
+      </g>
+    </svg>
+  </div>
+  <h1>ROOT — Regenerative Outcomes<br>&amp; Opportunity Token</h1>
+  <div class="tagline">A cryptocurrency backed by living soil, real farms, and measurable ecological regeneration. Born from a South African permaculture farm with a governance crisis to solve.</div>
+  <div class="meta">Concept Deck &mdash; 2026</div>
+  <div class="cta-hint">Press <kbd>&rarr;</kbd> or swipe to continue</div>
+</div>
+
+
+<div class="slide" id="slide-1">
+  <div class="slide-num">01</div>
+  <h2>The Problem</h2>
+  <div class="twocol">
+    <div>
+      <h3>Green investment is broken</h3>
+      <ul>
+        <li>Most "green" funds invest in the same fossil fuel companies with a different label</li>
+        <li>Carbon credits are opaque — buyers don't know what they're funding</li>
+        <li>Impact reports are written by the same companies claiming impact</li>
+        <li>Small regenerative projects are invisible to capital markets</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Regenerative farmers are underfunded</h3>
+      <ul>
+        <li>Permaculture and regenerative farms can't access traditional investment</li>
+        <li>Ecological outcomes (soil carbon, biodiversity) are real economic value that goes unmeasured</li>
+        <li>Farmers bear 100% of the risk, 0% of the upside from carbon markets</li>
+        <li>Young farmers can't afford land — average age of a farmer globally is 60</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><span class="num">$700B</span><span class="label">green bonds issued annually</span></div>
+    <div class="stat"><span class="num">&lt;1%</span><span class="label">of climate finance reaches small regenerative agriculture</span></div>
+    <div class="stat"><span class="num">30%</span><span class="label">of global carbon could be sequestered in regenerative farmland</span></div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-2">
+  <div class="slide-num">02</div>
+  <h2>The Insight</h2>
+  <div class="big-quote">
+    "The most sophisticated carbon capture technology on Earth is already deployed. It's called a food forest. It runs on sunlight. It builds soil. And nobody's paying for it."
+  </div>
+  <div class="threecol">
+    <div class="card">
+      <h3>Carbon</h3>
+      <p>Regenerative farmland sequesters 3-8 tonnes of CO₂ per hectare per year. Verified. Measurable. Permanent if managed well.</p>
+    </div>
+    <div class="card">
+      <h3>Biodiversity</h3>
+      <p>Polyculture systems support 10-100x more species than monoculture. Each species is an indicator of ecosystem health.</p>
+    </div>
+    <div class="card">
+      <h3>Water</h3>
+      <p>Healthy soil holds 20x more water per 1% increase in organic matter. Flood reduction, drought resilience, groundwater recharge.</p>
+    </div>
+  </div>
+  <div class="callout">These are real economic externalities. They just haven't been measured, verified, and tokenized yet.</div>
+</div>
+
+
+<div class="slide" id="slide-3">
+  <div class="slide-num">03</div>
+  <h2>Financial Forecast — Real-World Figures</h2>
+  <div class="twocol">
+    <div>
+      <h3>Revenue per hectare (year 3+)</h3>
+      <table>
+        <tr><th>Source</th><th>Conservative</th><th>Optimistic</th></tr>
+        <tr><td>Carbon credits (3-8 tCO₂/ha/yr)</td><td>€600-1,600</td><td>€2,400-4,800</td></tr>
+        <tr><td>Agricultural output</td><td>€1,200-2,500</td><td>€3,000-5,000</td></tr>
+        <tr><td>Permatours / stays</td><td>€800-1,500</td><td>€2,000-4,000</td></tr>
+        <tr><td>Nursery / seeds / consulting</td><td>€400-800</td><td>€1,000-2,500</td></tr>
+        <tr><td>Data licensing</td><td>€200-500</td><td>€500-1,200</td></tr>
+        <tr><td><strong>Total per hectare</strong></td><td><strong>€3,200-6,900</strong></td><td><strong>€8,900-17,500</strong></td></tr>
+      </table>
+      <p style="font-size:.65rem;color:var(--text-dim)">Based on real permaculture farm data from South Africa, Brazil, and India. Carbon credit prices based on 2024-2025 voluntary market rates of €20-40/tCO₂ for verified regenerative credits.</p>
+    </div>
+    <div>
+      <h3>Portfolio growth projection</h3>
+      <table>
+        <tr><th>Year</th><th>Projects</th><th>Est. Revenue</th></tr>
+        <tr><td>Year 1</td><td>1 (flagship)</td><td>€16K-138K</td></tr>
+        <tr><td>Year 3</td><td>5-10</td><td>€160K-3.5M</td></tr>
+        <tr><td>Year 5</td><td>15-25</td><td>€640K-8.75M</td></tr>
+        <tr><td>Year 10</td><td>50+</td><td>€3.2M-17.5M</td></tr>
+      </table>
+      <h3 style="margin-top:16px">Comparable projects</h3>
+      <ul>
+        <li><strong>Syntropic farming (Brazil):</strong> €7,500-15,000/ha/yr from diverse tropical harvests</li>
+        <li><strong>Auroville food forests (India):</strong> €3,000-8,000/ha/yr from 40+ species polyculture</li>
+        <li><strong>SA permaculture (Karoo):</strong> €2,500-5,000/ha/yr from mixed livestock + dryland crops</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-4">
+  <div class="slide-num">04</div>
+  <h2>Case Studies — Where This Works</h2>
+  <img src="https://images.unsplash.com/photo-1517164850305-99a3e65bb47e?w=1200&q=80" alt="Community" class="slide-image">
+  <div class="twocol">
+    <div>
+      <div class="case-study">
+        <h4>Auroville, India</h4>
+        <p>50+ year-old intentional community. 2,000+ residents from 50 countries. 200+ hectares of restored tropical dry evergreen forest (from degraded land). Food forests produce 40+ species. Annual visitor economy generates €5M+. Carbon sequestration verified at 5-12 tCO₂/ha/yr.</p>
+        <div class="result">Key lesson: Community governance + long-term land stewardship = measurable ecological and economic returns.</div>
+      </div>
+      <div class="case-study">
+        <h4>Syntropic Farming, Brazil</h4>
+        <p>Ernst Götsch model. Converted degraded cattle pasture into productive agroforestry. Cacao + banana + timber system produces €7,500-15,000/ha/yr. 1,000+ farms now using the method across Latin America.</p>
+        <div class="result">Key lesson: Syntropic succession mimics natural forest growth. Low input, high output, increasing biodiversity every year.</div>
+      </div>
+    </div>
+    <div>
+      <div class="case-study">
+        <h4>Lacruz Farm, Mato Grosso, Brazil</h4>
+        <p>1,000+ hectares. Integrated soy-livestock-forestry. Syntropic rows between soy fields increased yields 20% while reducing inputs 35%. Carbon credits sold at €25/tCO₂. Annual revenue €2.5M+.</p>
+        <div class="result">Key lesson: Regenerative methods are not anti-commercial. They increase both yields and profit.</div>
+      </div>
+      <div class="case-study">
+        <h4>Guatemala &amp; Honduras — Mesoamerican Permaculture</h4>
+        <p>200+ smallholder farms (2-5 ha each). Milpa polyculture producing €3,000-6,000/ha/yr on land previously yielding €800. Water retention increased 300%. Communities now sell carbon credits through aggregation.</p>
+        <div class="result">Key lesson: Small farms can access carbon markets through aggregation.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-5">
+  <div class="slide-num">05</div>
+  <h2>Setup Costs &amp; The Hidden Ones</h2>
+  <div class="twocol">
+    <div>
+      <h3>Typical startup costs (ZAR, 5-20 ha)</h3>
+      <table>
+        <tr><td>Land lease or purchase (5yr)</td><td>neg - 4M</td></tr>
+        <tr><td>Perimeter fencing</td><td>80K-250K</td></tr>
+        <tr><td>Water infrastructure</td><td>150K-400K</td></tr>
+        <tr><td>Initial tree &amp; plant stock</td><td>30K-100K</td></tr>
+        <tr><td>Livestock (starter herds)</td><td>50K-200K</td></tr>
+        <tr><td>Equipment</td><td>100K-500K</td></tr>
+        <tr><td>Processing / storage</td><td>50K-200K</td></tr>
+        <tr><td>Design consultant</td><td>20K-80K</td></tr>
+        <tr><td><strong>Visible total</strong></td><td><strong>480K-5.5M</strong></td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>The hidden costs nobody talks about</h3>
+      <div class="hidden-cost"><p><strong>Time to income:</strong> 18-36 months before first meaningful harvest. You need working capital to survive the gap.</p></div>
+      <div class="hidden-cost"><p><strong>Learning curve failures:</strong> Wrong species, poor drainage, predator losses. Budget 20-30% extra for mistakes in year 1-2.</p></div>
+      <div class="hidden-cost"><p><strong>Certification costs:</strong> Organic/regenerative: R30K-80K. Carbon verification: R50K-150K. Annual audits: R20-50K/yr.</p></div>
+      <div class="hidden-cost"><p><strong>Marketing &amp; sales:</strong> Amazing produce means nothing without buyers. Budget R3K-8K/month.</p></div>
+      <div class="hidden-cost"><p><strong>Livestock losses:</strong> Predators, disease, theft. 5-15% annual loss is normal in SA.</p></div>
+      <h3 style="margin-top:16px">Realistic 3-year budget</h3>
+      <table>
+        <tr><td>Conservative (5 ha, leased)</td><td>R800K-1.5M</td></tr>
+        <tr><td>Moderate (10 ha, owned)</td><td>R2M-4M</td></tr>
+        <tr><td>Ambitious (20 ha, developed)</td><td>R4M-8M</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="slide" id="slide-6">
+  <div class="slide-num">06</div>
+  <h2>Crypto — Explained Simply</h2>
+  <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&q=80" alt="Blockchain" class="slide-image">
+  <div class="twocol">
+    <div>
+      <h3>What is a token? (No jargon)</h3>
+      <p>Think of ROOT like a digital share certificate. It's a verified entry on a public ledger. No one can forge it or delete it. When you hold ROOT, you own a share of the treasury — just like owning shares in a company, except everything is transparent and no single director can run off with the money.</p>
+      <h3>How is it secure?</h3>
+      <div class="crypto-step">
+        <div class="crypto-num">1</div>
+        <div class="crypto-text"><h4>Smart contract</h4><p>The rules are code on a blockchain. They execute automatically. No human intervention needed.</p></div>
+      </div>
+      <div class="crypto-step">
+        <div class="crypto-num">2</div>
+        <div class="crypto-text"><h4>Multi-sig treasury</h4><p>Moving money requires 3-of-5 authorised signers. No single person can withdraw funds alone.</p></div>
+      </div>
+      <div class="crypto-step">
+        <div class="crypto-num">3</div>
+        <div class="crypto-text"><h4>On-chain transparency</h4><p>Every transaction is public. Anyone can audit the treasury at any time.</p></div>
+      </div>
+    </div>
+    <div>
+      <h3>How this model protects investors</h3>
+      <table>
+        <tr><td>Traditional fund</td><td>Opaque. Manager controls everything.</td></tr>
+        <tr><td>ROOT token</td><td>Transparent. Multi-sig. On-chain audit trail.</td></tr>
+      </table>
+      <h3 style="margin-top:16px">What backs ROOT value?</h3>
+      <ul>
+        <li><strong>Real land</strong> — Owned or long-term leased</li>
+        <li><strong>Infrastructure</strong> — Buildings, fences, water systems</li>
+        <li><strong>Livestock</strong> — Goats, sheep, chickens</li>
+        <li><strong>Carbon credits</strong> — Verified and tradeable</li>
+        <li><strong>Permatours revenue</strong> — Real bookings, real income</li>
+        <li><strong>Governance rights</strong> — Token holders vote on spending</li>
+      </ul>
+      <div class="callout">This is not a speculative token. Every ROOT represents a share of real, productive land and the ecological assets it creates.</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-7">
+  <div class="slide-num">07</div>
+  <h2>Bitcoin Growth — Probabilities &amp; Scenarios</h2>
+  <div class="twocol">
+    <div>
+      <h3>Historical pattern (2012-2025)</h3>
+      <table>
+        <tr><th>Period</th><th>Low</th><th>High</th></tr>
+        <tr><td>2012-2013</td><td>$13</td><td>$1,150</td></tr>
+        <tr><td>2015-2017</td><td>$200</td><td>$19,800</td></tr>
+        <tr><td>2020-2021</td><td>$3,800</td><td>$69,000</td></tr>
+        <tr><td>2024-2025</td><td>$25,000</td><td>$108,000+</td></tr>
+      </table>
+      <h3 style="margin-top:16px">5-year probability scenarios</h3>
+      <div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-dim)"><span>Bear: $50-80K</span><span>25%</span></div>
+        <div class="prob-bar"><div class="prob-fill" style="width:25%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-dim);margin-top:6px"><span>Base: $150-300K</span><span>50%</span></div>
+        <div class="prob-bar"><div class="prob-fill" style="width:50%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-dim);margin-top:6px"><span>Bull: $500K-1M</span><span>20%</span></div>
+        <div class="prob-bar"><div class="prob-fill" style="width:20%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-dim);margin-top:6px"><span>Black swan: $1M+</span><span>5%</span></div>
+        <div class="prob-bar"><div class="prob-fill" style="width:5%"></div></div>
+      </div>
+    </div>
+    <div>
+      <h3>Why this matters for ROOT</h3>
+      <p>ROOT is not priced directly in Bitcoin, but the broader crypto market drives investor appetite for real-world asset tokens. When Bitcoin rises:</p>
+      <ul>
+        <li>Altcoin season follows (6-18 months after BTC peak)</li>
+        <li>Real-world asset tokens outperform during maturity phase</li>
+        <li>Institutional capital seeks yield in productive assets</li>
+        <li>Carbon credits become more valuable as ESG mandates tighten</li>
+      </ul>
+      <h3 style="margin-top:16px">The dream we are selling</h3>
+      <div class="big-quote">
+        "You buy ROOT at €1. The farm produces. The carbon credits flow. Bitcoin hits €500K. Investors seek real assets with real yields. Permatours is booked out. Your ROOT is worth €50. But more importantly, the soil is alive, the trees are growing, and your grandchildren will eat from them."
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-8">
+  <div class="slide-num">08</div>
+  <div style="text-align:center;margin-bottom:16px">
+    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="1274pt" height="944pt" viewBox="0 0 1274.000000 944.000000" preserveAspectRatio="xMidYMid meet" style="width:280px;height:207px">
+      <g transform="translate(0.000000,944.000000) scale(0.100000,-0.100000)" fill="#0B1D3C" stroke="none">
+        <path d="M12090 7428 l0 -81 21 19 c17 16 22 16 29 4 8 -13 10 -13 10 0 0 13 2 13 11 0 9 -12 10 -12 5 3 -3 10 -6 22 -6 25 0 4 -5 0 -10 -8 -8 -12 -10 -12 -10 -1 0 11 -5 10 -20 -4 -20 -18 -20 -17 -20 46 l0 63 53 -49 52 -50 -55 58 c-30 31 -56 57 -57 57 -2 0 -3 -37 -3 -82z"/>
+        <path d="M6060 6660 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z"/>
+        <path d="M5670 6515 l-24 -25 29 -30 29 -30 28 27 28 27 -27 28 c-15 15 -30 28 -33 28 -4 0 -17 -11 -30 -25z"/>
+        <path d="M6060 6420 l0 -120 40 0 40 0 0 120 0 120 -40 0 -40 0 0 -120z"/>
+        <path d="M5787 6402 l-27 -28 93 -92 93 -92 27 28 27 28 -93 92 -93 92 -27 -28z"/>
+        <path d="M6920 6335 l-24 -25 29 -30 29 -30 28 27 28 27 -27 28 c-15 15 -30 28 -33 28 -4 0 -17 -11 -30 -25z"/>
+        <path d="M6796 6210 l-38 -42 28 -29 28 -29 40 40 41 40 -31 31 -31 30 -37 -41z"/>
+        <path d="M6443 6146 c-32 -15 -60 -38 -75 -59 l-22 -35 -33 25 c-18 14 -50 31 -70 39 -44 15 -129 18 -138 4 -3 -5 -6 -39 -6 -76 -1 -55 5 -77 31 -131 38 -77 87 -116 166 -134 67 -15 72 -39 18 -83 -87 -69 -118 -236 -62 -341 79 -149 179 -152 250 -8 58 117 45 235 -36 329 -32 37 -34 44 -37 129 l-4 89 31 7 c104 21 178 137 152 237 -8 31 -10 32 -61 32 -34 0 -70 -9 -104 -24z m87 -75 c0 -27 -39 -71 -76 -87 -42 -18 -44 -17 -44 1 0 31 29 72 62 88 43 22 58 21 58 -2z m-290 -41 c54 -28 100 -102 100 -161 0 -24 -14 -24 -66 2 -50 24 -81 68 -93 133 -10 54 -2 57 59 26z m193 -449 c43 -86 30 -190 -32 -245 -21 -19 -21 -19 -46 4 -28 27 -55 99 -55 149 0 35 29 110 52 138 22 27 52 10 81 -46z"/>
+        <path d="M5410 6090 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z"/>
+        <path d="M5570 6090 l0 -40 160 0 160 0 0 40 0 40 -160 0 -160 0 0 -40z"/>
+        <path d="M6820 6000 l0 -40 185 0 185 0 0 40 0 40 -185 0 -185 0 0 -40z"/>
+        <path d="M7270 6000 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z"/>
+        <path d="M6788 5853 l-27 -27 61 -68 61 -69 31 30 31 31 -65 65 -65 65 -27 -27z"/>
+        <path d="M6975 5660 l-29 -30 27 -27 27 -28 30 31 30 30 -28 27 -28 27 -29 -30z"/>
+        <path d="M5240 5583 c0 -47 3 -53 45 -92 50 -46 59 -47 142 -26 98 26 125 23 184 -20 105 -75 152 -79 321 -30 103 31 104 31 124 0 16 -25 16 -27 -6 -50 -28 -30 -104 -59 -220 -86 -47 -11 -92 -22 -100 -25 -26 -7 -50 -59 -50 -108 0 -93 49 -179 214 -376 52 -63 96 -121 96 -127 0 -22 -34 -14 -84 17 -58 37 -139 119 -313 316 -145 163 -214 227 -282 262 -62 31 -71 29 -71 -16 0 -34 4 -39 44 -60 48 -26 186 -164 367 -367 64 -72 142 -150 172 -174 85 -65 160 -87 202 -57 11 7 46 15 78 18 42 3 64 11 82 28 30 28 46 81 38 121 -3 18 -1 29 6 29 21 0 51 64 51 109 0 39 -5 49 -43 85 -24 23 -83 63 -132 90 -50 27 -130 72 -179 99 l-89 50 74 22 c151 44 222 92 234 157 13 70 -49 148 -117 148 -15 0 -66 -11 -113 -25 -46 -13 -106 -27 -132 -31 -44 -5 -52 -3 -98 30 -100 71 -160 82 -275 51 -55 -14 -55 -14 -85 13 -16 15 -42 38 -57 51 l-28 24 0 -50z m669 -617 c51 -59 124 -134 161 -168 70 -62 88 -98 63 -124 -22 -22 -58 -17 -70 9 -6 12 -54 73 -107 136 -110 129 -149 183 -176 244 -28 61 -25 78 8 41 15 -17 69 -79 121 -138z m246 -45 c31 -21 41 -34 43 -59 5 -53 -20 -51 -87 7 -32 28 -80 76 -107 108 l-49 57 80 -44 c44 -24 98 -55 120 -69z"/>
+        <path d="M7458 5581 l-57 -49 -58 14 c-78 19 -155 19 -190 0 -15 -9 -50 -32 -78 -52 -46 -34 -54 -36 -102 -30 -29 3 -88 17 -130 31 -90 29 -123 31 -162 11 -36 -19 -59 -55 -67 -103 -12 -78 78 -149 238 -189 38 -9 66 -20 61 -24 -4 -5 -75 -45 -158 -91 -258 -142 -275 -157 -275 -239 0 -36 6 -53 31 -83 23 -28 29 -44 25 -62 -8 -30 13 -83 43 -109 14 -13 41 -21 79 -24 31 -3 66 -11 77 -18 27 -19 72 -17 120 5 67 30 156 112 308 283 168 189 279 298 325 317 28 12 32 18 32 52 0 45 -7 47 -65 20 -68 -31 -148 -105 -298 -274 -219 -246 -319 -337 -372 -337 -29 0 -14 25 86 145 159 191 209 280 209 375 0 71 -31 104 -112 119 -129 25 -260 77 -273 109 -7 18 20 62 38 62 6 0 40 -9 75 -19 174 -53 241 -50 325 14 68 52 85 56 163 38 131 -29 128 -30 179 19 44 41 46 46 43 90 l-3 48 -57 -49z m-472 -506 c-21 -53 -78 -134 -194 -269 -46 -54 -89 -109 -94 -122 -15 -33 -65 -33 -77 -1 -13 34 -3 49 84 130 45 41 128 129 185 196 57 66 106 119 108 116 3 -2 -3 -25 -12 -50z m-231 -97 c-78 -87 -164 -161 -180 -154 -21 8 -19 59 3 78 15 14 212 128 220 128 2 0 -17 -24 -43 -52z"/>
+        <path d="M3479 4266 c-111 -31 -228 -124 -282 -224 -54 -100 -57 -135 -57 -754 l0 -568 95 0 95 0 0 371 0 370 443 -3 c424 -3 444 -4 487 -24 62 -29 105 -67 138 -123 l27 -46 3 -272 3 -273 95 0 94 0 0 233 c0 127 -5 260 -10 295 -11 83 -58 180 -114 240 l-45 48 48 48 c59 59 97 132 110 217 6 35 11 157 11 272 l0 207 -547 -1 c-410 -1 -560 -4 -594 -13z m951 -308 c0 -163 -11 -201 -74 -256 -72 -63 -63 -62 -568 -62 l-460 0 4 138 c3 137 3 138 37 191 19 29 51 64 72 78 78 52 83 52 552 53 l437 0 0 -142z"/>
+        <path d="M5129 4261 c-113 -36 -223 -132 -273 -236 -43 -90 -48 -144 -44 -560 3 -382 4 -391 27 -448 49 -123 146 -219 269 -269 55 -22 69 -23 407 -26 373 -4 417 0 511 44 110 51 207 168 238 286 15 55 17 114 14 478 l-3 415 -32 67 c-56 118 -162 211 -284 249 -55 17 -95 19 -417 18 -315 0 -364 -2 -413 -18z m795 -182 c39 -14 68 -35 100 -70 74 -83 76 -93 76 -501 0 -224 -4 -375 -11 -402 -15 -61 -74 -134 -139 -170 l-55 -31 -345 0 -345 0 -57 28 c-60 29 -106 78 -136 144 -15 34 -17 79 -17 423 0 381 0 386 23 435 35 77 81 118 167 152 21 8 132 12 357 12 307 1 331 0 382 -20z"/>
+        <path d="M6798 4261 c-120 -39 -226 -132 -281 -249 l-32 -67 -3 -415 c-4 -468 -1 -492 67 -598 65 -100 158 -168 266 -196 85 -23 703 -23 788 -1 166 43 289 166 332 330 12 48 15 129 15 432 0 235 -4 391 -11 425 -33 157 -157 292 -313 339 -55 17 -97 19 -416 18 -316 0 -361 -2 -412 -18z m815 -191 c57 -29 102 -76 131 -139 20 -44 21 -61 21 -431 0 -371 -1 -387 -21 -430 -28 -59 -86 -117 -143 -144 -44 -20 -61 -21 -391 -21 l-345 0 -55 30 c-61 33 -121 105 -139 165 -7 25 -11 160 -11 403 0 420 3 436 83 515 81 80 94 82 482 79 340 -2 340 -2 388 -27z"/>
+        <path d="M8140 4190 l0 -90 325 0 325 0 0 -690 0 -690 90 0 90 0 0 690 0 690 325 0 325 0 0 90 0 90 -740 0 -740 0 0 -90z"/>
+      </g>
+    </svg>
+  </div>
+  <h2 style="text-align:center">The Solution: ROOT Token</h2>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin:24px auto;max-width:700px;text-align:center">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:center;min-width:120px">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:4px">Investors</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">Buy ROOT</div>
+      </div>
+      <div style="color:var(--peach);font-size:1.2rem">→</div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:center;min-width:120px">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:4px">Treasury</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">On-chain allocation</div>
+      </div>
+      <div style="color:var(--peach);font-size:1.2rem">→</div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:center;min-width:120px">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:4px">Projects</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">Farms &amp; food forests</div>
+      </div>
+      <div style="color:var(--peach);font-size:1.2rem">→</div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:center;min-width:120px">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:4px">Value</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">Carbon + tourism</div>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:.85rem;color:var(--text-muted);max-width:600px;margin:0 auto">ROOT turns ecological regeneration into a tradeable, transparent asset. Every token represents real farms, real carbon, and real community value.</p>
+</div>
+
+
+<div class="slide" id="slide-9">
+  <div class="slide-num">09</div>
+  <h2>What ROOT Actually Does</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:24px">
+    <div class="card"><h3>Funds real projects</h3><p>Treasury allocates to vetted regenerative farms. Every euro on-chain.</p></div>
+    <div class="card"><h3>Measures outcomes</h3><p>Soil carbon testing, biodiversity audits, satellite NDVI — verified on-chain.</p></div>
+    <div class="card"><h3>Carbon credits</h3><p>Verified regenerative projects produce tokenized carbon credits.</p></div>
+    <div class="card"><h3>Powers Permatours</h3><p>Token holders get access to farm stays, workshops, and experiences.</p></div>
+    <div class="card"><h3>Democratic governance</h3><p>Token holders vote on funding, treasury, and protocol changes.</p></div>
+    <div class="card"><h3>Accrues real value</h3><p>Revenue from carbon, tourism, agriculture flows back to treasury.</p></div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-10">
+  <div class="slide-num">10</div>
+  <h2>The Flagship: South African Permaculture Farm</h2>
+  <div class="twocol">
+    <div>
+      <div style="background:var(--surface);border:1px dashed var(--peach);border-radius:8px;padding:12px;text-align:center;font-size:.75rem;color:var(--peach);margin-bottom:16px">YOUR FARM NAME</div>
+      <h3 style="font-size:1.2rem;color:var(--text);margin-bottom:8px">Permaculture Farm — South Africa</h3>
+      <p>Operational permaculture property with 2 houses and 5 stands. Currently home to springbok, goats, and chickens. Phase 1: add sheep for integrated multi-species grazing. Tourism revenue via Booking.com and Airbnb.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center"><span style="display:block;font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Entity</span><span style="font-size:1.1rem;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace">Company</span></div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center"><span style="display:block;font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Shareholders</span><span style="font-size:1.1rem;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace">16</span></div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center"><span style="display:block;font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Asset value</span><span style="font-size:1.1rem;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace">ZAR 8M</span></div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center"><span style="display:block;font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Livestock</span><span style="font-size:.75rem;font-weight:700;color:var(--text)">Springbok, goats, chickens</span></div>
+      </div>
+    </div>
+    <div>
+      <h4 style="color:var(--accent);margin-bottom:8px">Current state</h4>
+      <ul>
+        <li>2 houses, 5 stands — existing accommodation</li>
+        <li>Renter operates livestock — infrastructure in place</li>
+        <li>Booking.com and Airbnb — proven tourism revenue</li>
+        <li>Governance crisis: director squandered funds, ~half of SH want out</li>
+        <li>Buyout needed: ZAR 8M for 2 houses + 5 stands</li>
+      </ul>
+      <h4 style="color:var(--accent);margin-bottom:8px;margin-top:16px">What ROOT solves</h4>
+      <ul>
+        <li>Tokenizes shares — dissenting SH sell tokens to new buyers</li>
+        <li>All treasury on-chain — no single director can drain funds</li>
+        <li>Sheep integration funded through token sale — ZAR 120-250K</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-11">
+  <div class="slide-num">11</div>
+  <h2>Sheep Integration &amp; Permatours</h2>
+  <div class="twocol">
+    <div>
+      <h3>Why sheep</h3>
+      <ul>
+        <li><strong>Complementary grazing</strong> — Springbok bulk graze, goats browse, sheep intermediate</li>
+        <li><strong>Parasite break</strong> — Different species = different parasites. Rotation breaks cycles.</li>
+        <li><strong>Soil building</strong> — Manure adds nitrogen, improves pasture</li>
+        <li><strong>Income diversification</strong> — Wool, meat, potential dairy</li>
+      </ul>
+      <h3 style="margin-top:16px">Startup: ZAR 120-250K</h3>
+      <p>Revenue from year 2: ~R87,500/yr (lamb + wool + culls)</p>
+    </div>
+    <div>
+      <h3>Permatours experience tiers</h3>
+      <table>
+        <tr><th>Experience</th><th>Price (ROOT)</th><th>ZAR equiv</th></tr>
+        <tr><td>Day visit</td><td>50</td><td>~R3,000</td></tr>
+        <tr><td>Weekend</td><td>120</td><td>~R7,000</td></tr>
+        <tr><td>Week</td><td>300</td><td>~R18,000</td></tr>
+        <tr><td>Convergence</td><td>200</td><td>~R12,000</td></tr>
+      </table>
+      <h3 style="margin-top:16px">Why this matters</h3>
+      <p>Permatours creates real, non-speculative demand for ROOT. People need token to access experiences. This is utility, not hype.</p>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="slide" id="slide-12">
+  <div class="slide-num">12</div>
+  <h2>Trust Through Verification</h2>
+  <p>The biggest failure of existing eco-tokens is unverifiable claims. ROOT uses layered verification:</p>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px">
+    <div style="display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--peach);color:var(--peach-text);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;flex-shrink:0">1</div>
+      <div><h4 style="font-size:.85rem;margin-bottom:4px">Soil Carbon Testing</h4><p style="font-size:.75rem;color:var(--text-muted);margin:0">Quarterly lab analysis. Results published on-chain. Baseline at project start, tracked over time.</p></div>
+    </div>
+    <div style="display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--peach);color:var(--peach-text);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;flex-shrink:0">2</div>
+      <div><h4 style="font-size:.85rem;margin-bottom:4px">Satellite Monitoring</h4><p style="font-size:.75rem;color:var(--text-muted);margin:0">NDVI vegetation index via Google Earth Engine. Monthly comparison. Open data.</p></div>
+    </div>
+    <div style="display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--peach);color:var(--peach-text);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;flex-shrink:0">3</div>
+      <div><h4 style="font-size:.85rem;margin-bottom:4px">Biodiversity Audits</h4><p style="font-size:.75rem;color:var(--text-muted);margin:0">Annual species surveys. Partnered with university ecology departments.</p></div>
+    </div>
+    <div style="display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--peach);color:var(--peach-text);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;flex-shrink:0">4</div>
+      <div><h4 style="font-size:.85rem;margin-bottom:4px">Third-Party Audits</h4><p style="font-size:.75rem;color:var(--text-muted);margin:0">Annual independent verification. Report hashed and stored on IPFS.</p></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-13">
+  <div class="slide-num">13</div>
+  <h2>Token Economics</h2>
+  <div class="twocol">
+    <div>
+      <h3>Supply</h3>
+      <table>
+        <tr><td>Total supply</td><td>1,000,000 ROOT</td></tr>
+        <tr><td>Initial circulating</td><td>200,000 (20%)</td></tr>
+        <tr><td>Treasury reserve</td><td>400,000 (40%)</td></tr>
+        <tr><td>Team &amp; advisors</td><td>150,000 (15%, 3yr vest)</td></tr>
+        <tr><td>Ecosystem rewards</td><td>250,000 (25%, 10yr)</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Value flows</h3>
+      <ul>
+        <li>Carbon credit sales → 70% buyback/burn, 30% operations</li>
+        <li>Permatours revenue → 50% farm ops, 50% treasury</li>
+        <li>Data licensing → 80% treasury, 20% project team</li>
+      </ul>
+      <h3 style="margin-top:16px">What backs ROOT</h3>
+      <ul>
+        <li>Real land assets (owned or long-term lease)</li>
+        <li>Verified carbon credits in pipeline</li>
+        <li>Tourism infrastructure (accommodation, facilities)</li>
+        <li>Agricultural output (food, nursery stock, seeds)</li>
+        <li>Governance rights over treasury allocation</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-14">
+  <div class="slide-num">14</div>
+  <h2>Roadmap</h2>
+  <div class="roadmap">
+    <div class="rm">
+      <div class="rm-phase">Phase 1</div>
+      <div class="rm-time">Months 1-6</div>
+      <div class="rm-items">
+        <p>Deploy ROOT token on Polygon</p>
+        <p>Complete flagship baseline assessment</p>
+        <p>Launch concept deck</p>
+        <p>First Permatours pilot (15 people)</p>
+        <p>Soil carbon baseline test</p>
+        <p>Raise €50-100K seed</p>
+      </div>
+    </div>
+    <div class="rm">
+      <div class="rm-phase">Phase 2</div>
+      <div class="rm-time">Months 6-18</div>
+      <div class="rm-items">
+        <p>Fund flagship development</p>
+        <p>Add 3-5 partner projects</p>
+        <p>Satellite monitoring live</p>
+        <p>Launch DAO governance</p>
+        <p>First carbon credit issuance</p>
+        <p>Permatours at 3 sites</p>
+      </div>
+    </div>
+    <div class="rm">
+      <div class="rm-phase">Phase 3</div>
+      <div class="rm-time">Months 18-36</div>
+      <div class="rm-items">
+        <p>10+ projects across regions</p>
+        <p>Carbon credit marketplace</p>
+        <p>University partnerships (3+)</p>
+        <p>Protocol licensing</p>
+        <p>Permatours network online</p>
+        <p>€500K+ assets under management</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-15">
+  <div class="slide-num">15</div>
+  <h2>The Vision</h2>
+  <div class="vision-statement">
+    <p>A global network of regenerative farms, permaculture projects, and ecological restoration sites — funded by a transparent token economy, governed by the people who care about the land, and open to anyone who wants to be part of regeneration.</p>
+  </div>
+  <div class="threecol">
+    <div class="card"><h3>Short-term</h3><p>Prove the model works on one farm. Real soil. Real carbon. Real people visiting.</p></div>
+    <div class="card"><h3>Medium-term</h3><p>A network of 10+ verified regenerative projects. Carbon credits flowing. Permatours thriving.</p></div>
+    <div class="card"><h3>Long-term</h3><p>The open protocol for funding and verifying regenerative agriculture. Any project can apply.</p></div>
+  </div>
+</div>
+
+
+<div class="slide" id="slide-16">
+  <div class="slide-num">16</div>
+  <h2>Get Involved</h2>
+  <div class="twocol">
+    <div>
+      <h3>This is a concept, not a product</h3>
+      <p>This deck describes what is possible. The next step is turning it into reality — starting with one farm, one community, one token.</p>
+      <h3>What we need</h3>
+      <ul>
+        <li><strong>Farm partners</strong> — Regenerative projects ready for on-chain presence</li>
+        <li><strong>Ecological verifiers</strong> — Soil scientists, ecologists, remote sensing experts</li>
+        <li><strong>Early community</strong> — People who believe in this before it is trendy</li>
+        <li><strong>Legal guidance</strong> — Token structuring, foundation setup, compliance</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <div class="contact-block">
+        <div class="contact-item"><span class="cl">Project</span><span class="cv">ROOT — Regenerative Outcomes &amp; Opportunity Token</span></div>
+        <div class="contact-item"><span class="cl">Flagship</span><span class="cv">Permaculture farm, South Africa</span></div>
+        <div class="contact-item"><span class="cl">Lead</span><span class="cv">William Thomason</span></div>
+        <div class="contact-item"><span class="cl">Email</span><span class="cv">[your email]</span></div>
+      </div>
+      <div style="background:var(--surface);border-radius:10px;padding:16px;margin-top:16px">
+        <h4 style="font-size:.8rem;color:var(--peach);margin-bottom:6px">Next step</h4>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0">Fill in Slide 10 with your farm details. Add photos. Make it real. Then share it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+var slides = document.querySelectorAll('.slide');
+var current = 0;
+function showSlide(n) {
+  slides.forEach(function(s){ s.classList.remove('active'); });
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  document.getElementById('slideCounter').textContent = String(current+1).padStart(2,'0') + ' / ' + String(slides.length).padStart(2,'0');
+}
+function nextSlide() { showSlide(current + 1); }
+function prevSlide() { showSlide(current - 1); }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prevSlide(); }
+  if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+  if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+});
+var touchStartX = 0;
+document.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', function(e){
+  var diff = e.changedTouches[0].screenX - touchStartX;
+  if (Math.abs(diff) > 50) { diff < 0 ? nextSlide() : prevSlide(); }
+});
+showSlide(0);
+</script>
+</body>
+</html>
