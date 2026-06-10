@@ -73,12 +73,43 @@ function buildLevel(){
   [[600,440],[632,440],[1100,440],[1132,440],[1164,440],[1800,440],[1832,440],[2500,440],[2532,440],[2564,440]].forEach(function(b){
     plats.push({x:b[0],y:b[1],w:32,h:32,t:'b'});
   });
-  // Coins
-  [[220,300],[260,300],[380,240],[540,300],[580,300],[740,220],[780,220],[820,220],[940,160],[1080,260],[1120,260],[1440,300],[1580,220],[1620,220],[1780,160],[1820,160],[1860,160],[1980,260],[2240,220],[2280,220],[2440,300],[2480,300],[2520,300]].forEach(function(c){
+  // Coins — grouped around platforms and enemies
+  var coinDefs=[
+    // Near start
+    [220,300],[260,300],[380,240],
+    // Near first platforms
+    [540,300],[580,300],[740,220],[780,220],[820,220],[940,160],
+    // Above pterodactyl 1
+    [730,170],[770,170],
+    // Mid section
+    [1080,260],[1120,260],[1440,300],[1580,220],[1620,220],
+    // Above pterodactyl 2
+    [1430,150],[1470,150],
+    // Later section
+    [1780,160],[1820,160],[1860,160],[1980,260],[2240,220],[2280,220],
+    // Above pterodactyl 3
+    [2230,170],[2270,170],
+    // Near end
+    [2440,300],[2480,300],[2520,300]
+  ];
+  coinDefs.forEach(function(c){
     cns.push({x:c[0],y:c[1],w:18,h:18,got:false,a:Math.random()*6});
   });
-  // Enemies
-  [{x:480,y:400,t:'r'},{x:820,y:400,t:'r'},{x:1120,y:390,t:'t'},{x:1620,y:400,t:'r'},{x:1920,y:390,t:'t'},{x:2320,y:400,t:'r'},{x:2620,y:400,t:'r'},{x:1500,y:180,t:'p'}].forEach(function(e){
+  // Enemies — spread across level, away from pit edges
+  // r=raptor(walks), t=t-rex(walks), p=pterodactyl(flies)
+  var enemyDefs=[
+    // Section 1 (start area)
+    {x:350,y:400,t:'r'},{x:550,y:400,t:'r'},
+    // Section 2 (after first pit)
+    {x:650,y:400,t:'r'},{x:900,y:400,t:'t'},
+    // Section 3 (after second pit)
+    {x:1350,y:400,t:'r'},{x:1500,y:400,t:'t'},{x:1700,y:400,t:'r'},
+    // Section 4 (after third pit)
+    {x:2150,y:400,t:'r'},{x:2350,y:400,t:'t'},{x:2550,y:400,t:'r'},
+    // Flying pterodactyls (more visible, on platforms)
+    {x:750,y:200,t:'p'},{x:1450,y:180,t:'p'},{x:2250,y:200,t:'p'}
+  ];
+  enemyDefs.forEach(function(e){
     enems.push({x:e.x,y:e.y,vx:e.t==='p'?0:-1.5,vy:0,w:e.t==='t'?34:26,h:e.t==='t'?46:e.t==='p'?22:34,t:e.t,alive:true,ft:0,fy:e.y,fd:1});
   });
   flag={x:2850,y:H-64-110,w:14,h:110,trig:false};
@@ -134,6 +165,17 @@ function updateEnemies(){
           else if(e.vx<0){e.x=b.x+b.w;e.vx*=-1;}
         }
       }
+      // Turn around at platform edges (look ahead 8px next to ground)
+      var lookX=e.vx<0?e.x-8:e.x+e.w+8;
+      var lookY=e.y+e.h+4;
+      var hasFloor=false;
+      for(var j=0;j<plats.length;j++){
+        var b=plats[j];
+        if(lookX>=b.x&&lookX<b.x+b.w&&lookY>=b.y&&lookY<b.y+b.h){hasFloor=true;break;}
+      }
+      if(!hasFloor&&e.vy===0){e.vx*=-1;}
+      // Remove if fell off world
+      if(e.y>H+200){e.alive=false;}
     }
     if(!P.dead&&P.inv<=0&&rc(P,P.x,P.y,P.w,P.h,e,e.x,e.y,e.w,e.h)){
       if(P.vy>0&&P.y+P.h-P.vy<=e.y+10){
