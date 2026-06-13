@@ -52,24 +52,25 @@ section .subtitle{color:var(--text-dim);font-size:15px;margin-bottom:32px}
 }
 .card:hover{border-color:var(--accent)}
 
-/* VERB TABLE */
-.verb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.verb-card{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:12px;padding:14px;cursor:pointer;
-  transition:all .2s;position:relative;overflow:hidden;
+/* VERB CARD FLIP */
+.verb-card{perspective:800px;cursor:pointer}
+.card-inner{
+  position:relative;width:100%;min-height:130px;
+  transition:transform 0.5s;transform-style:preserve-3d;
 }
-.verb-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.verb-card.revealed{border-color:var(--green)}
-.verb-card .base{font-size:16px;font-weight:700;color:var(--accent2)}
-.verb-card .past{font-size:14px;color:var(--text);margin-top:2px}
-.verb-card .past-participle{font-size:13px;color:var(--text-dim)}
-.verb-card .meaning{
-  max-height:0;overflow:hidden;transition:max-height .3s ease;
-  font-size:13px;color:var(--green);margin-top:0;
+.verb-card.flipped .card-inner{transform:rotateY(180deg)}
+.card-front,.card-back{
+  position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:12px;padding:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
 }
-.verb-card.revealed .meaning{max-height:60px;margin-top:8px}
-.verb-card .flag{position:absolute;top:8px;right:8px;font-size:14px;opacity:.4}
+.card-front{background:var(--bg3);border:1px solid var(--border)}
+.card-back{background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(6,182,212,.2));border:1px solid var(--accent);transform:rotateY(180deg)}
+.card-back .fr{font-size:15px;font-weight:700;color:var(--accent2);margin-bottom:4px}
+.card-back .en{font-size:13px;color:var(--green)}
+.card-back .example{font-size:11px;color:var(--text-dim);margin-top:6px;font-style:italic}
+.verb-card:hover .card-front{border-color:var(--accent)}
 
 /* MISTAKES */
 .mistake-card{
@@ -270,61 +271,58 @@ footer{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px}
 // ===== DATA: 40 IRREGULAR VERBS =====
 // Format: [base, past, past participle, French meaning]
 var verbs = [
-  ["be","was/were","been","être"],
-  ["begin","begun","begun","commencer"],
-  ["break","broke","broken","casser"],
-  ["bring","brought","brought","apporter"],
-  ["build","built","built","construire"],
-  ["buy","bought","bought","acheter"],
-  ["catch","caught","caught","attraper"],
-  ["choose","chose","chosen","choisir"],
-  ["come","came","come","venir"],
-  ["do","did","done","faire"],
-  ["drink","drank","drunk","boire"],
-  ["drive","drove","driven","conduire"],
-  ["eat","ate","eaten","manger"],
-  ["fall","fell","fallen","tomber"],
-  ["feel","felt","felt","sentir"],
-  ["find","found","found","trouver"],
-  ["fly","flown","flown","voler"],
-  ["forget","forgot","forgot","oublier"],
-  ["get","got","got","obtenir"],
-  ["give","gave","given","donner"],
-  ["go","went","gone","aller"],
-  ["have","had","had","avoir"],
-  ["hear","heard","heard","entendre"],
-  ["hide","hid","hidden","cacher"],
-  ["keep","kept","kept","garder"],
-  ["know","knew","known","savoir/connaître"],
-  ["leave","left","left","laisser/partir"],
-  ["lose","lost","lost","perdre"],
-  ["make","made","made","faire/fabriquer"],
-  ["meet","met","met","rencontrer"],
-  ["pay","paid","paid","payer"],
-  ["put","put","put","mettre"],
-  ["read","read","read","lire"],
-  ["run","ran","run","courir"],
-  ["say","said","said","dire"],
-  ["see","saw","seen","voir"],
-  ["sell","sold","sold","vendre"],
-  ["send","sent","sent","envoyer"],
-  ["sit","sat","sat","s'asseoir"],
-  ["sleep","slept","slept","dormir"],
-  ["speak","spoke","spoken","parler"],
-  ["spend","spent","spent","dépenser"],
-  ["stand","stood","stood","se tenir debout"],
-  ["swim","swam","swum","nager"],
-  ["take","took","taken","prendre"],
-  ["teach","taught","taught","enseigner"],
-  ["tell","told","told","dire/raconter"],
-  ["think","thought","thought","penser"],
-  ["understand","understood","understood","comprendre"],
-  ["wear","wore","worn","porter (vêtement)"],
-  ["win","won","won","gagner"],
-  ["write","wrote","written","écrire"],
-  ["cut","cut","cut","couper"],
-  ["put","put","put","mettre"],
-  ["shut","shut","shut","fermer"]
+  ["be","was/were","been","être","to exist or happen"],
+  ["begin","began","begun","commencer","to start something"],
+  ["break","broke","broken","casser","to separate into pieces"],
+  ["bring","brought","brought","apporter","to carry toward the speaker"],
+  ["build","built","built","construire","to make by putting parts together"],
+  ["buy","bought","bought","acheter","to get something by paying money"],
+  ["catch","caught","caught","attraper","to grab something moving"],
+  ["choose","chose","chosen","choisir","to pick from options"],
+  ["come","came","come","venir","to move toward the speaker"],
+  ["do","did","done","faire","to perform an action"],
+  ["drink","drank","drunk","boire","to take liquid into the mouth"],
+  ["drive","drove","driven","conduire","to control a vehicle"],
+  ["eat","ate","eaten","manger","to put food in the mouth"],
+  ["fall","fell","fallen","tomber","to drop down"],
+  ["feel","felt","felt","sentir","to experience an emotion"],
+  ["find","found","found","trouver","to discover something"],
+  ["fly","flew","flown","voler","to move through the air"],
+  ["forget","forgot","forgotten","oublier","to not remember"],
+  ["get","got","got/gotten","obtenir","to receive or obtain"],
+  ["give","gave","given","donner","to hand over to someone"],
+  ["go","went","gone","aller","to move from one place to another"],
+  ["have","had","had","avoir","to own or possess"],
+  ["hear","heard","heard","entendre","to perceive sound with ears"],
+  ["hide","hid","hidden","cacher","to put out of sight"],
+  ["keep","kept","kept","garder","to continue to have"],
+  ["know","knew","known","savoir","to be aware of a fact"],
+  ["leave","left","left","partir","to go away from"],
+  ["lose","lost","lost","perdre","to no longer have"],
+  ["make","made","made","fabriquer","to create or produce"],
+  ["meet","met","met","rencontrer","to see someone for the first time"],
+  ["pay","paid","paid","payer","to give money for something"],
+  ["put","put","put","mettre","to place somewhere"],
+  ["read","read","read","lire","to look at and understand written words"],
+  ["run","ran","run","courir","to move quickly on foot"],
+  ["say","said","said","dire","to speak words"],
+  ["see","saw","seen","voir","to perceive with the eyes"],
+  ["sell","sold","sold","vendre","to give for money"],
+  ["send","sent","sent","envoyer","to make something go to another place"],
+  ["sit","sat","sat","s'asseoir","to be in a seated position"],
+  ["sleep","slept","slept","dormir","to rest with eyes closed"],
+  ["speak","spoke","spoken","parler","to say words aloud"],
+  ["spend","spent","spent","dépenser","to use money or time"],
+  ["stand","stood","stood","se tenir debout","to be upright on feet"],
+  ["swim","swam","swum","nager","to move through water"],
+  ["take","took","taken","prendre","to get hold of something"],
+  ["teach","taught","taught","enseigner","to help someone learn"],
+  ["tell","told","told","raconter","to give information to someone"],
+  ["think","thought","thought","penser","to use the mind"],
+  ["understand","understood","understood","comprendre","to know the meaning"],
+  ["wear","wore","worn","porter","to have clothes on the body"],
+  ["win","won","won","gagner","to be the best in a competition"],
+  ["write","wrote","written","écrire","to put words on paper"]
 ];
 
 // Deduplicate by base form
@@ -420,32 +418,78 @@ var mistakes = [
 function renderVerbs(){
   var grid = document.getElementById('verbGrid');
   var html = '';
+  var examples = {
+    "be":"I was happy yesterday", "begin":"She began to sing",
+    "break":"He broke the glass", "bring":"I brought a gift",
+    "build":"We built a house", "buy":"She bought a car",
+    "catch":"I caught the ball", "choose":"He chose the red one",
+    "come":"They came to the party", "do":"I did my homework",
+    "drink":"We drank water", "drive":"She drove to work",
+    "eat":"I ate pizza", "fall":"He fell down",
+    "feel":"I felt tired", "find":"She found her keys",
+    "fly":"The bird flew away", "forget":"I forgot his name",
+    "get":"I got a letter", "give":"She gave me a book",
+    "go":"We went to Paris", "have":"I had a dream",
+    "hear":"I heard a strange noise", "hide":"She hid the present",
+    "keep":"I kept the secret", "know":"He knew the answer",
+    "leave":"She left at 5pm", "lose":"I lost my wallet",
+    "make":"She made a cake", "meet":"I met her yesterday",
+    "pay":"He paid the bill", "put":"I put it on the table",
+    "read":"She read a book", "run":"He ran very fast",
+    "say":"She said hello", "see":"I saw a great movie",
+    "sell":"He sold his old car", "send":"I sent an email",
+    "sit":"She sat down quietly", "sleep":"I slept for ten hours",
+    "speak":"He spoke English fluently", "spend":"I spent fifty euros",
+    "stand":"She stood up slowly", "swim":"He swam across the lake",
+    "take":"I took a beautiful photo", "teach":"She taught mathematics",
+    "tell":"He told a funny story", "think":"I thought about it carefully",
+    "understand":"She understood the lesson", "wear":"He wore a black jacket",
+    "win":"We won the football match", "write":"I wrote a long letter"
+  };
   verbs.forEach(function(v, i){
-    html += '<div class="verb-card" id="verb' + i + '" data-action="reveal" data-idx="' + i + '">';
-    html += '<div class="flag">🇫🇷</div>';
-    html += '<div class="base">' + v[0] + '</div>';
-    html += '<div class="past">' + v[1] + '</div>';
-    html += '<div class="past-participle">' + v[2] + '</div>';
-    html += '<div class="meaning">🇫🇷 ' + v[3] + '</div>';
+    // v = [base, past, past_participle, french, english_def]
+    var ex = examples[v[0]] || ("I " + v[1] + " yesterday");
+    html += '<div class="verb-card" id="verb' + i + '" onclick="toggleVerb(' + i + ')">';
+    html += '<div class="card-inner">';
+    // FRONT: English forms
+    html += '<div class="card-front">';
+    html += '<div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">🇬🇧 Infinitive</div>';
+    html += '<div style="font-size:22px;font-weight:800;color:var(--accent2);margin-bottom:8px">' + v[0] + '</div>';
+    html += '<div style="font-size:15px;font-weight:700;color:var(--text)">' + v[1] + '</div>';
+    html += '<div style="font-size:11px;color:var(--text-dim)">past simple</div>';
+    html += '<div style="font-size:14px;color:var(--text-dim);margin-top:6px">' + v[2] + '</div>';
+    html += '<div style="font-size:11px;color:var(--text-dim)">past participle</div>';
+    html += '<div style="margin-top:10px;font-size:11px;color:var(--cyan);font-style:italic">🇫🇷 ' + v[3] + '</div>';
     html += '</div>';
+    // BACK: French + English definition + example
+    html += '<div class="card-back">';
+    html += '<div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">🇫🇷 French</div>';
+    html += '<div style="font-size:20px;font-weight:700;color:var(--pink);margin-bottom:8px">' + v[3] + '</div>';
+    html += '<div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🇬🇧 Definition</div>';
+    html += '<div style="font-size:13px;color:var(--green);margin-bottom:10px">' + v[4] + '</div>';
+    html += '<div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">💡 Example</div>';
+    html += '<div style="font-size:13px;color:var(--text);font-style:italic">"' + ex + '"</div>';
+    html += '</div>';
+    html += '</div>'; // card-inner
+    html += '</div>'; // verb-card
   });
   grid.innerHTML = html;
 }
 
-function revealVerb(i){
+function toggleVerb(i){
   var card = document.getElementById('verb' + i);
-  if(card) card.classList.toggle('revealed');
+  if(card) card.classList.toggle('flipped');
 }
 
 function revealAll(){
   verbs.forEach(function(v, i){
-    document.getElementById('verb' + i).classList.add('revealed');
+    document.getElementById('verb' + i).classList.add('flipped');
   });
 }
 
 function resetVerbs(){
   verbs.forEach(function(v, i){
-    document.getElementById('verb' + i).classList.remove('revealed');
+    document.getElementById('verb' + i).classList.remove('flipped');
   });
 }
 
