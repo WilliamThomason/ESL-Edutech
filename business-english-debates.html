@@ -3,48 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business English Debates — Eloquenta</title>
+<title>Business English Debates</title>
 <meta name="description" content="36 B2-C2 Business English debate questions with vocabulary, angles, and follow-ups.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #020617; --bg-card: #0f172a; --bg-hover: #1e293b;
-  --border: #1e293b; --border-light: #334155;
-  --text: #e2e8f0; --text-muted: #94a3b8; --text-dim: #64748b;
-  --cyan: #22d3ee; --amber: #fbbf24; --emerald: #34d399; --rose: #fb7185; --violet: #a78bfa;
+  --bg: #1c1c1c; --bg2: #161616; --bg3: #222222; --bg-card: #232323; --bg-card2: #1a1a1a;
+  --border: #333333; --border-light: #444444;
+  --text: #e8e8e8; --text-muted: #999999; --text-dim: #555555;
+  --accent: #a3e635; --accent-dim: rgba(163,230,53,.08); --accent-glow: rgba(163,230,53,.3);
+  --cta: #fcbe6a; --cta-hover: #fdb553; --cta-text: #1c1c1c;
+  --amber: #fbbf24; --green: #34d399; --rose: #fb7185; --violet: #a78bfa;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
-a{color:var(--cyan);text-decoration:none}
+body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 .container{max-width:900px;margin:0 auto;padding:0 24px}
 
 /* Header */
 .header{padding:60px 0 40px;text-align:center;border-bottom:1px solid var(--border);margin-bottom:40px}
-.header h1{font-size:2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
-.header h1 span{color:var(--cyan)}
+.header h1{font-family:'Fira Code',monospace;font-size:2.2rem;font-weight:700;letter-spacing:-.5px;margin-bottom:8px}
+.header h1 span{color:var(--accent)}
 .header p{color:var(--text-muted);font-size:1.1rem}
 .badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0 4px 8px}
-.badge.b2{background:rgba(34,211,238,.12);color:var(--cyan)}
+.badge.b2{background:var(--accent-dim);color:var(--accent)}
 .badge.c1{background:rgba(167,139,250,.12);color:var(--violet)}
 .badge.c2{background:rgba(251,113,133,.12);color:var(--rose)}
 
 /* Search */
 .search-wrap{margin-bottom:32px}
 .search-input{width:100%;padding:14px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;outline:none;transition:border .2s}
-.search-input:focus{border-color:var(--cyan)}
+.search-input:focus{border-color:var(--accent)}
 .search-input::placeholder{color:var(--text-dim)}
 
 /* Topic Filter */
 .filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
 .filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
 .filter-btn:hover{border-color:var(--text-dim);color:var(--text)}
-.filter-btn.active{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 
 /* Stats */
 .stats{display:flex;gap:24px;margin-bottom:32px;justify-content:center}
 .stat{text-align:center}
-.stat-num{font-size:28px;font-weight:800;color:var(--cyan)}
+.stat-num{font-size:28px;font-weight:800;color:var(--accent)}
 .stat-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
 
 /* Debate Cards */
@@ -58,24 +60,24 @@ a:hover{text-decoration:underline}
 .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .badge-topic{padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .topic-ethics{background:rgba(251,113,133,.12);color:var(--rose)}
-.topic-tech{background:rgba(34,211,238,.12);color:var(--cyan)}
+.topic-tech{background:var(--accent-dim);color:var(--accent)}
 .topic-work{background:rgba(251,191,36,.12);color:var(--amber)}
-.topic-econ{background:rgba(52,211,153,.12);color:var(--emerald)}
-.topic-mkt{background:rgba(167,139,250,.12);color:var(--volt)}
+.topic-econ{background:rgba(52,211,153,.12);color:var(--green)}
+.topic-mkt{background:rgba(167,139,250,.12);color:var(--violet)}
 .topic-global{background:rgba(148,163,184,.15);color:var(--text-muted)}
 
 .debat-body{padding-left:52px}
 .vocabulary{margin-bottom:14px}
 .vocabulary h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
 .vocab-chips{display:flex;flex-wrap:wrap;gap:6px}
-.vocab-chip{padding:3px 10px;border-radius:6px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);font-size:12px;color:var(--cyan);font-weight:500}
+.vocab-chip{padding:3px 10px;border-radius:6px;background:var(--accent-dim);border:1px solid rgba(163,230,53,.2);font-size:12px;color:var(--accent);font-weight:500}
 .vocab-chip .def{color:var(--text-dim);font-size:11px;margin-left:4px;font-style:italic}
 
 .angles h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
 .angle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .angle{padding:8px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-size:13px;color:var(--text-muted)}
 .angle .side{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px}
-.angle.for .side{color:var(--emerald)}
+.angle.for .side{color:var(--green)}
 .angle.against .side{color:var(--rose)}
 
 .followups{margin-top:14px}
@@ -87,10 +89,10 @@ a:hover{text-decoration:underline}
 .expand-btn{margin-top:12px;padding:8px 16px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
 .expand-btn:hover{border-color:var(--text-dim);color:var(--text)}
 .collapsed .angles,.collapsed .followups{display:none}
-.vocab-word:hover{border-bottom-color:#22d3ee}
-.vocab-word .v-tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:8px;padding:8px 12px;min-width:180px;max-width:260px;font-size:12px;font-weight:400;color:#e2e8f0;line-height:1.4;text-align:left;box-shadow:0 6px 24px rgba(0,0,0,.4);z-index:100;transition:opacity .25s,visibility .25s;pointer-events:none}
-.vocab-word .v-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#334155}
-.vocab-word .v-tooltip strong{display:block;color:#22d3ee;font-weight:700;font-size:13px;margin-bottom:2px}
+.vocab-word:hover{border-bottom-color:var(--accent)}
+.vocab-word .v-tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border-light);border-radius:8px;padding:8px 12px;min-width:180px;max-width:260px;font-size:12px;font-weight:400;color:#e2e8f0;line-height:1.4;text-align:left;box-shadow:0 6px 24px rgba(0,0,0,.4);z-index:100;transition:opacity .25s,visibility .25s;pointer-events:none}
+.vocab-word .v-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--border-light)}
+.vocab-word .v-tooltip strong{display:block;color:var(--accent);font-weight:700;font-size:13px;margin-bottom:2px}
 .vocab-word:hover .v-tooltip{visibility:visible;opacity:1}
 
 /* FOOTER */
@@ -104,32 +106,16 @@ a:hover{text-decoration:underline}
   .debat-body{padding-left:0}
   .filter-row{gap:6px}
 }
-/* Eloquenta Logo */
-  .elo-logo-wrap{display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s}
-  .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
-  .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
-  .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
-</style>
-<link rel="stylesheet" href="../Curriculum/eloquent-branding.css">
-</head>
-<body style="padding-top:48px">
-<!-- Eloquenta Branded Top Bar -->
-<div class="elo-bar">
-  <a href="../Extras/landing.html" class="elo-logo-wrap" title="Eloquenta Home"><span class="elo-wordmark">El<span class="o">o</span>quenta</span></a>
-  <span class="elo-tagline">Speaking Lesson</span>
-  <div class="elo-menu">
-    <a href="../Extras/landing.html" class="elo-menu-link">🏠 Home</a>
-    <a href="../Extras/dashboard.html" class="elo-menu-link">📊 Dashboard</a>
-    <a href="../Curriculum/speaking-practice-slideshows.html" class="elo-menu-link">📚 All Lessons</a>
-  </div>
-</div>
-<div class="elo-spacer"></div>
 
+</style>
+
+</head>
+<body>
 
 <div class="container">
 
 <div class="header">
-  <h1>🎯 Business English <span>Debates</span></h1>
+  <h1>Business English <span>Debates</span></h1>
   <p>36 discussion questions for B2-C2 learners. Vocabulary, angles, and follow-ups included.</p>
   <div style="margin-top:16px">
     <span class="badge b2">B2</span>
@@ -166,8 +152,7 @@ a:hover{text-decoration:underline}
 <div class="debate-list" id="debateList"></div>
 
 <div class="footer">
-  <p>Part of the <a href="https://eloquent.ee">Eloquenta</a> Knowledge Base — Premium ESL with live translations</p>
-  <p style="margin-top:4px;font-size:11px">Free for all Eloquenta students. Share freely.</p>
+  <p>Business English debate resource — B2 to C2 level</p>
 </div>
 
 </div>

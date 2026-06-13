@@ -4,19 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Agentic OS — Orchestration &amp; Governance</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-:root{--bg:#0a0e1a;--bg2:#16213e;--card:#1a1a2e;--border:#2a3a5f;--border-light:#3a4a7f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--primary:#a78bfa;--primary-light:#c4b5fd;--primary-dim:rgba(167,139,250,.08);--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--rose:#fb7185;--rose-dim:rgba(251,113,133,.08);--cyan:#22d3ee;--green:#34d399;--peach:#fcbe6a}
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{--bg:#0a0e1a;--bg2:#16213e;--bg3:#1a1a2e;--card:#1a1a2e;--border:#2a3a5f;--border-light:#3a4a7f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--primary:#a78bfa;--primary-light:#c4b5fd;--primary-dim:rgba(167,139,250,.08);--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--rose:#fb7185;--rose-dim:rgba(251,113,133,.08);--cyan:#22d3ee;--green:#34d399;--peach:#fcbe6a}
+*{margin:0;padding:0;box-sizing:border-box}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;overflow:hidden}
 html,body{height:100%;width:100%}
-h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agent-status,.log-level,.metric-value,.room-code,.slide-num-badge,.deck-counter,.Badge,.badge,.ctrl-label,.diagram-box .box-title,.section-num,.lesson-cat,.lesson-count,.day-label,.tempo-label,.fret-label,.string-label,.note-label,.interval-label,.chord-label,.scale-label,.timer-label,.timer-value,.timer-unit,.timer-status,.timer-bar-fill-text,.ApprovalTitle,.PolicyTitle,.MemoryKey,.MemoryMeta,.StatNum,.StatLabel,.TabLabel,.ToolName,.ToolCost,.WorkflowTitle,.WorkflowMeta,.SlideTitle,.SlideOriginal,.SlideParaphrase,.SlideNumber,.CatLabel,.SlideQuestion,.SlideAnswer,.SlideNav,.SlideFooter,.SlideBack,.SlideNext,.SlideShuffle,.SlideCounter,.SlideProgress,.SlideProgressBar,.SlideProgressFill{font-family:'Fira Code',monospace}
+.hidden{display:none!important}
+h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agent-status,.log-level,.metric-value,.badge,.ctrl-label,.diagram-box .box-title,.section-num,.stat-num,.stat-label,.tab-label,.tool-name,.tool-cost,.workflow-title,.slide-title,.slide-number,.cat-label,.slide-question,.slide-nav,.slide-footer,.slide-back,.slide-next,.slide-counter,.slide-progress,.timer-label,.timer-value,.timer-unit,.timer-status,.approval-title,.policy-title,.memory-key,.memory-meta{font-family:'Fira Code',monospace}
 .label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;transition:border-color .15s}
+.card:hover{border-color:var(--border-light)}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .card-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted)}
 .btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:9px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .15s}
-.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-dim)}
 .btn-primary{background:var(--primary);color:var(--bg);border-color:var(--primary)}
 .btn-primary:hover{background:var(--primary-light);color:var(--bg);box-shadow:0 0 12px rgba(167,139,250,.15)}
 .btn-danger{border-color:var(--rose);color:var(--rose)}.btn-danger:hover{background:rgba(251,113,133,.12)}
@@ -35,7 +39,7 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 .badge-dot.active{background:var(--green);box-shadow:0 0 4px var(--green)}
 .badge-dot.inactive{background:var(--text-dim)}
 .badge-dot.error{background:var(--rose);box-shadow:0 0 4px var(--rose)}
-.input{width:100%;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none}
+.input{width:100%;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none;transition:border-color .15s}
 .input:focus{border-color:var(--primary);box-shadow:0 0 12px rgba(167,139,250,.15)}
 .input::placeholder{color:var(--text-dim)}
 .select{appearance:none;cursor:pointer}
@@ -52,7 +56,7 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 .sidebar-logo span{font-size:8px;color:var(--text-dim);letter-spacing:1px;display:block;margin-top:2px}
 .sidebar-nav{flex:1;padding:8px 0;overflow-y:auto}
 .nav-section-label{padding:8px 16px 4px;font-size:8px;font-weight:600;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:12px;color:var(--text-muted)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .2s;font-size:12px;color:var(--text-muted)}
 .nav-item:hover{color:var(--text);background:var(--primary-dim)}
 .nav-item.active{color:var(--primary);border-left-color:var(--primary);background:var(--primary-dim)}
 .nav-icon{width:16px;height:16px;flex-shrink:0}
@@ -62,20 +66,21 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{height:48px;background:rgba(10,14,26,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:5}
 .topbar-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--primary)}
-.topbar-search{margin-left:auto;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:11px;width:200px;outline:none}
+.topbar-search{margin-left:auto;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:11px;width:200px;outline:none;transition:border-color .15s}
 .topbar-search:focus{border-color:var(--primary)}.topbar-search::placeholder{color:var(--text-dim)}
 .topbar-btn{height:30px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
 .topbar-btn:hover{border-color:var(--primary);color:var(--primary)}
 .topbar-btn.danger:hover{border-color:var(--rose);color:var(--rose)}
 .topbar-icon{width:13px;height:13px}
-.page{flex:1;padding:20px;overflow-y:auto;display:none}
-.page.active{display:block}
+.page{flex:1;padding:20px;overflow-y:auto;display:none;opacity:0;transition:opacity .25s ease}
+.page.active{display:block;opacity:1}
 .section-heading{font-size:12px;font-weight:700;color:var(--text);letter-spacing:1.5px;margin-bottom:12px}
 .metric{text-align:center;padding:16px}
 .metric-value{font-size:28px;font-weight:900;color:var(--primary)}
 .metric-value.green{color:var(--green)}.metric-value.amber{color:var(--amber)}.metric-value.rose{color:var(--rose)}
 .metric-label{font-size:10px;color:var(--text-dim);margin-top:4px;letter-spacing:1px}
-.agent-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.agent-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);transition:background .15s}
+.agent-row:hover{background:var(--primary-dim)}
 .agent-row:last-child{border-bottom:none}
 .agent-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
 .agent-info{flex:1;min-width:0}
@@ -92,20 +97,17 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 .log-level{flex-shrink:0;width:50px;font-size:8px;font-weight:700;letter-spacing:1px}
 .log-level.info{color:var(--primary)}.log-level.warn{color:var(--amber)}.log-level.error{color:var(--rose)}.log-level.success{color:var(--green)}
 .log-msg{color:var(--text-muted);flex:1}
-/* Kanban board */
 .kanban-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .kanban-col{min-height:60px}
-.kanban-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:11px;transition:border-color .15s}
-.kanban-card:hover{border-color:var(--primary)}
+.kanban-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:11px;transition:all .15s;cursor:pointer}
+.kanban-card:hover{border-color:var(--primary);transform:translateY(-1px)}
 .kanban-card .title{font-weight:600;color:var(--text);margin-bottom:4px;font-size:11px}
 .kanban-card .meta{display:flex;gap:6px;align-items:center;font-size:8px;color:var(--text-dim)}
 .kanban-card .status-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
-/* Idea Foundry */
 .foundry-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.foundry-textarea{width:100%;height:120px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;padding:10px;outline:none;resize:vertical;font-family:inherit}
+.foundry-textarea{width:100%;height:120px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;padding:10px;outline:none;resize:vertical;font-family:inherit;transition:border-color .15s}
 .foundry-textarea:focus{border-color:var(--primary)}
 .inbox-content{font-size:11px;color:var(--text);white-space:pre-wrap;max-height:200px;overflow-y:auto;line-height:1.6}
-/* API status */
 .api-status{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--text-dim)}
 .api-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
 .api-dot.connected{background:var(--green);box-shadow:0 0 4px var(--green)}
@@ -125,6 +127,7 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
     <div class="nav-item" data-page="activity"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Live Activity</div>
     <div class="nav-item" data-page="resources"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Resources</div>
     <div class="nav-item" data-page="memory"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Context &amp; Memory</div>
+    <div class="nav-item" data-page="galaxy"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="5" cy="5" r="0.5"/><circle cx="19" cy="3" r="0.5"/><circle cx="17" cy="17" r="0.5"/><circle cx="4" cy="19" r="0.5"/><circle cx="12" cy="19" r="0.5"/><circle cx="8" cy="8" r="0.5"/><circle cx="16" cy="10" r="0.5"/><line x1="12" y1="12" x2="5" y2="5"/><line x1="12" y1="12" x2="19" y2="3"/><line x1="12" y1="12" x2="17" y2="17"/><line x1="12" y1="12" x2="4" y2="19"/></svg>Memory Galaxy<span class="nav-badge ok">3D</span></div>
     <div class="nav-section-label">Control</div>
     <div class="nav-item" data-page="governance"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Governance<span class="nav-badge">3</span></div>
     <div class="nav-item" data-page="tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tool Orchestration</div>
@@ -199,27 +202,57 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 </div></div>
 </div>
 
+<!-- MEMORY GALAXY PAGE -->
+<div class="page" id="page-galaxy">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+  <div style="font-size:11px;color:var(--text-dim);flex:1;min-width:200px">3D star-map — notes are stars, links are constellations, recent notes glow brightest</div>
+  <input id="galaxySearch" type="text" placeholder="Search notes..." oninput="galaxySearch(this.value)" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:10px;width:180px;outline:none;font-family:'Fira Code',monospace" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+  <button class="btn btn-sm" onclick="loadGalaxy()">&#8635; REFRESH</button>
+  <button class="btn btn-sm" onclick="toggleGalaxyLabels()">&#9776; LABELS</button>
+  <button class="btn btn-sm" onclick="resetGalaxyView()">&#9679; RESET</button>
+</div>
+<div id="galaxyStats" style="font-size:9px;color:var(--text-dim);margin-bottom:4px;padding:0 4px"></div>
+<div style="display:flex;gap:12px;height:calc(100vh - 170px);min-height:400px">
+  <div id="galaxyContainer" style="flex:1;background:#050810;border-radius:12px;overflow:hidden;position:relative;cursor:grab;min-width:0">
+    <canvas id="galaxyCanvas" style="width:100%;height:100%;display:block"></canvas>
+    <div id="galaxyTooltip" style="display:none;position:absolute;padding:8px 12px;background:rgba(10,14,26,.95);border:1px solid var(--primary);border-radius:8px;font-size:10px;color:var(--text);pointer-events:none;z-index:10;max-width:240px;backdrop-filter:blur(4px)"></div>
+    <div id="galaxyLoading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--primary);text-align:center">
+      <div style="font-size:24px;margin-bottom:8px">&#9679;</div>
+      Loading vault data...
+    </div>
+    <div id="galaxyError" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--rose);text-align:center"></div>
+  </div>
+  <div id="galaxyPanel" class="hidden" style="width:260px;background:rgba(22,33,62,.95);border:1px solid var(--border);border-radius:12px;overflow-y:auto;flex-shrink:0;padding:14px;transition:transform .2s,opacity .2s">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim)">STAR DETAILS</div>
+      <button onclick="clearGalaxySelection()" style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-size:11px;cursor:pointer">&times;</button>
+    </div>
+    <div id="galaxyPanelBody" style="font-size:10px;color:var(--text-muted)">Click a star to see details</div>
+  </div>
+</div>
+</div>
+
 <!-- KANBAN BOARD PAGE -->
 <div class="page" id="page-kanban">
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
   <div style="font-size:11px;color:var(--text-dim);flex:1">Live task board — auto-refreshes every 30s</div>
-  <button class="btn btn-sm" onclick="loadKanban()">&#128260; REFRESH</button>
-  <button class="btn btn-sm btn-primary" onclick="showNewTaskModal()">&#43; NEW TASK</button>
+  <button class="btn btn-sm" onclick="loadKanban()">&#8635; REFRESH</button>
+  <button class="btn btn-sm btn-primary" onclick="showNewTaskModal()">+ NEW TASK</button>
 </div>
 <div class="kanban-cols">
-  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px">
     <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px">Todo <span id="count-todo" style="color:var(--text-muted)"></span></div>
     <div id="kanban-todo" class="kanban-col"></div>
   </div>
-  <div style="background:var(--bg3);border:1px solid var(--amber);border-radius:10px;padding:12px">
+  <div style="background:var(--bg2);border:1px solid var(--amber);border-radius:10px;padding:12px">
     <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--amber);text-transform:uppercase;margin-bottom:10px">In Progress <span id="count-running" style="color:var(--text-muted)"></span></div>
     <div id="kanban-running" class="kanban-col"></div>
   </div>
-  <div style="background:var(--bg3);border:1px solid var(--rose);border-radius:10px;padding:12px">
+  <div style="background:var(--bg2);border:1px solid var(--rose);border-radius:10px;padding:12px">
     <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--rose);text-transform:uppercase;margin-bottom:10px">Blocked <span id="count-blocked" style="color:var(--text-muted)"></span></div>
     <div id="kanban-blocked" class="kanban-col"></div>
   </div>
-  <div style="background:var(--bg3);border:1px solid var(--green);border-radius:10px;padding:12px">
+  <div style="background:var(--bg2);border:1px solid var(--green);border-radius:10px;padding:12px">
     <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;margin-bottom:10px">Done <span id="count-done" style="color:var(--text-muted)"></span></div>
     <div id="kanban-done" class="kanban-col" style="opacity:0.6"></div>
   </div>
@@ -234,21 +267,21 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 </div>
 <div class="foundry-cols mb-16">
   <div class="card">
-    <div class="card-header"><div class="card-title">&#128161; CAPTURE IDEA</div></div>
+    <div class="card-header"><div class="card-title">&#9679; CAPTURE IDEA</div></div>
     <textarea id="newIdeaText" class="foundry-textarea" placeholder="What's the idea? Raw, unstructured, whatever comes to mind...&#10;&#10;Press Ctrl+Enter to submit" onkeydown="if(event.ctrlKey&&event.key==='Enter')submitIdea()"></textarea>
     <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn btn-primary" onclick="submitIdea()">&#128640; SUBMIT</button>
+      <button class="btn btn-primary" onclick="submitIdea()">&#9679; SUBMIT</button>
       <button class="btn" onclick="document.getElementById('newIdeaText').value=''">CLEAR</button>
       <span id="ideaSubmitStatus" style="font-size:10px;color:var(--green);align-self:center"></span>
     </div>
   </div>
   <div class="card">
-    <div class="card-header"><div class="card-title">&#128203; INBOX</div><button class="btn btn-sm" onclick="loadInbox()">&#128260;</button></div>
+    <div class="card-header"><div class="card-title">&#9679; INBOX</div><button class="btn btn-sm" onclick="loadInbox()">&#8635;</button></div>
     <div id="inboxContent" class="inbox-content">Loading...</div>
   </div>
 </div>
 <div class="card">
-  <div class="card-header"><div class="card-title">&#12863; SCHEDULED JOBS</div><button class="btn btn-sm" onclick="loadCron()">&#128260;</button></div>
+  <div class="card-header"><div class="card-title">&#9679; SCHEDULED JOBS</div><button class="btn btn-sm" onclick="loadCron()">&#8635;</button></div>
   <div id="cronJobs" style="font-size:11px">Loading...</div>
 </div>
 </div>
@@ -257,7 +290,7 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 <div class="page" id="page-activity">
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
   <div style="font-size:11px;color:var(--text-dim);flex:1">Agent fleet status and statistics</div>
-  <button class="btn btn-sm" onclick="loadStats()">&#128260; REFRESH</button>
+  <button class="btn btn-sm" onclick="loadStats()">&#8635; REFRESH</button>
 </div>
 <div class="grid-4 mb-16">
   <div class="card metric"><div class="metric-value" id="stat-total">—</div><div class="metric-label">TOTAL TASKS</div></div>
@@ -266,9 +299,9 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
   <div class="card metric"><div class="metric-value rose" id="stat-blocked">—</div><div class="metric-label">BLOCKED</div></div>
 </div>
 <div class="grid-2">
-  <div class="card"><div class="card-header"><div class="card-title">&#128193; OBSIDIAN VAULT</div><button class="btn btn-sm" onclick="loadVault()">&#128260;</button></div>
+  <div class="card"><div class="card-header"><div class="card-title">&#9679; OBSIDIAN VAULT</div><button class="btn btn-sm" onclick="loadVault()">&#8635;</button></div>
   <div id="vaultFiles" style="font-size:10px;color:var(--text-dim)">Loading...</div></div>
-  <div class="card"><div class="card-header"><div class="card-title">&#128202; PRIORITY BREAKDOWN</div></div>
+  <div class="card"><div class="card-header"><div class="card-title">&#9679; PRIORITY BREAKDOWN</div></div>
   <div id="priorityBreakdown" style="font-size:10px;color:var(--text-dim)">Loading...</div></div>
 </div>
 </div>
@@ -276,29 +309,29 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 <!-- AGENT CONFIG PAGE -->
 <div class="page" id="page-config">
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-<div style="font-size:48px">&#128125;</div>
+<div style="font-size:48px"></div>
 <div><div class="section-heading" style="margin-bottom:4px">AGENT CONFIGURATION</div><div style="font-size:11px;color:var(--text-dim)">Assign models, roles, teams, tools, and token limits.</div></div>
 </div>
 <div class="card mb-16"><div class="card-header"><div class="card-title">ROUTER / PROVIDER</div></div>
 <div class="grid-4">
-<div style="background:var(--bg3);border:1px solid var(--primary);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'openrouter')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenRouter</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Multi-model gateway</div><div style="font-size:8px;font-weight:600;color:var(--primary)">&#128308; Active</div></div>
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'anthropic')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Anthropic Direct</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Claude models</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'openai')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenAI Direct</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">GPT-4o, GPT-4</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'google')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Google AI</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Gemini models</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
+<div style="background:var(--bg2);border:1px solid var(--primary);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'openrouter')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenRouter</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Multi-model gateway</div><div style="font-size:8px;font-weight:600;color:var(--primary)">&#9679; Active</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'anthropic')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Anthropic Direct</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Claude models</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'openai')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">OpenAI Direct</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">GPT-4o, GPT-4</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer" onclick="selectRouter(this,'google')"><div style="font-size:9px;font-weight:700;color:var(--text);letter-spacing:1px;margin-bottom:4px">Google AI</div><div style="font-size:9px;color:var(--text-dim);margin-bottom:6px">Gemini models</div><div style="font-size:8px;font-weight:600;color:var(--text-dim)">Available</div></div>
 </div></div>
 <div class="card mb-16"><div class="card-header"><div class="card-title">AGENT CONFIGURATION</div><button class="btn btn-sm" onclick="addAgent()">+ ADD AGENT</button></div>
 <div id="config-agent-cards"></div></div>
 <div class="card mb-16"><div class="card-header"><div class="card-title">GLOBAL LIMITS</div></div>
 <div class="grid-4">
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Daily Tokens</div><input type="number" value="500000" min="10000" step="10000" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">tokens/day</div></div>
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Cost Budget</div><input type="number" value="10" min="1" step="0.5" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">USD/day</div></div>
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Max Concurrent</div><input type="number" value="20" min="1" max="100" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">sessions</div></div>
-<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Max Turns</div><input type="number" value="20" min="1" max="100" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">/task</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Daily Tokens</div><input type="number" value="500000" min="10000" step="10000" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">tokens/day</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Cost Budget</div><input type="number" value="10" min="1" step="0.5" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">USD/day</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Max Concurrent</div><input type="number" value="20" min="1" max="100" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">sessions</div></div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px">Max Turns</div><input type="number" value="20" min="1" max="100" class="input" style="text-align:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700"><div style="font-size:8px;color:var(--text-dim);margin-top:4px">/task</div></div>
 </div></div>
 <div style="display:flex;gap:8px;justify-content:center;margin-top:20px">
-  <button class="btn btn-primary" onclick="saveConfig()">&#128190; SAVE CONFIGURATION</button>
-  <button class="btn" onclick="resetConfig()">&#128260; RESET DEFAULTS</button>
-  <button class="btn" onclick="exportConfig()">&#128228; EXPORT JSON</button>
+  <button class="btn btn-primary" onclick="saveConfig(loadConfig())">&#9679; SAVE CONFIGURATION</button>
+  <button class="btn" onclick="resetConfig()">&#8635; RESET DEFAULTS</button>
+  <button class="btn" onclick="exportConfig()">&#9679; EXPORT JSON</button>
 </div>
 <div style="text-align:center;font-size:10px;color:var(--text-dim);margin-top:8px;min-height:16px" id="configSaveStatus"></div>
 </div>
@@ -326,7 +359,7 @@ h1,h2,h3,h4,.mono,.label,.card-title,.topbar-title,.nav-section-label,.btn,.agen
 <!-- GOVERNANCE PAGE -->
 <div class="page" id="page-governance"><div class="section-heading">Governance &amp; Security</div><div class="grid-3 mb-16"><div class="card metric"><div class="metric-value">156</div><div class="metric-label">AUDIT ENTRIES TODAY</div></div><div class="card metric"><div class="metric-value amber">3</div><div class="metric-label">PENDING APPROVALS</div></div><div class="card metric"><div class="metric-value green">12</div><div class="metric-label">POLICIES ACTIVE</div></div></div>
 <div class="card"><div class="card-header"><div class="card-title">PENDING APPROVALS</div></div>
-<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><div style="flex:1"><div style="font-size:12px;color:var(--text)">Data Export Request — Agent: DataMiner</div><div style="font-size:10px;color:var(--text-dim)">Risk: HIGH (PII involved)</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-primary" onclick="showToast('Approved')">APPROVE</button><button class="btn btn-sm btn-danger" onclick="showToast('Rejected')">REJECT</button></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><div style="flex:1"><div style="font-size:12px;color:var(--text)">Data Export Request — Agent: DataMiner</div><div style="font-size:10px;color:var(--text-dim)">Risk: HIGH (PII involved)</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-primary" onclick="showToast('Approved')">APPROVE</button><button class="btn btn-sm btn-danger" onclick="showToast('Rejected')">REJECT</button></div></div>
 </div></div>
 
 <!-- TOOLS PAGE -->
@@ -353,12 +386,15 @@ function showPage(id){
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
   var navEl=document.querySelector('.nav-item[data-page="'+id+'"]');
   if(navEl)navEl.classList.add('active');
-  var titles={dashboard:'Dashboard',config:'Agent Config',agents:'Agent Fleet',kanban:'Kanban Board',foundry:'Idea Foundry',activity:'Live Activity',workflows:'Workflows',memory:'Context & Memory',governance:'Governance & Security',tools:'Tool Orchestration',observability:'Observability',resources:'Resource Management'};
+  var titles={dashboard:'Dashboard',config:'Agent Config',agents:'Agent Fleet',kanban:'Kanban Board',foundry:'Idea Foundry',activity:'Live Activity',workflows:'Workflows',memory:'Context & Memory',galaxy:'Memory Galaxy',governance:'Governance & Security',tools:'Tool Orchestration',observability:'Observability',resources:'Resource Management'};
   document.getElementById('pageTitle').textContent=titles[id]||id;
   if(id==='kanban')loadKanban();
+  if(id==='galaxy'){loadGalaxy();}
+  else{if(galaxyAutoRefresh){clearInterval(galaxyAutoRefresh);galaxyAutoRefresh=null;}}
   if(id==='foundry'){loadInbox();loadCron();}
   if(id==='activity'){loadStats();loadVault();}
   if(id==='agents')renderAgentFleet();
+  if(id==='config')renderConfigCards();
 }
 
 function showToast(msg){
@@ -489,7 +525,10 @@ async function loadVault(){
   var data=await apiGet('/api/obsidian');
   var el=document.getElementById('vaultFiles');
   if(!el||!data)return;
-  el.innerHTML=(data.files||[]).map(function(f){return '<div style="padding:3px 0;color:var(--text)">📄 '+f+'</div>';}).join('')||'No files';
+  el.innerHTML=(data.files||[]).map(function(f){return '<div style="padding:3px 0;color:var(--text);display:flex;align-items:center;gap:6px"><span style="flex:1">📄 '+f+'</span><button class="btn btn-sm" style="height:18px;padding:0 6px;font-size:7px" onclick="showPage(\'galaxy\')">GALAXY</button></div>';}).join('')||'No files';
+}
+function refreshGalaxy(){
+  loadGalaxy();
 }
 async function loadActivityLog(){
   var tasks=await apiGet('/api/kanban');
@@ -511,7 +550,7 @@ function renderAgentFleet(){
   if(!el)return;
   el.innerHTML=cfg.agents.map(function(a){
     var sc=a.status==='running'?'running':a.status==='error'?'error':a.status==='pending'?'pending':'idle';
-    return '<div class="agent-row"><div class="agent-avatar" style="background:'+a.color.replace(')','')+',.15);color:'+a.color+'">'+a.name.substring(0,2).toUpperCase()+'</div><div class="agent-info"><div class="agent-name">'+a.name+'</div><div class="agent-meta">'+a.model+' — '+a.tokens.toLocaleString()+' tokens/task</div></div><span class="agent-status '+sc+'">'+a.status.toUpperCase()+'</span><button class="btn btn-sm" onclick="showToast(\'Config: '+a.name+'\')">CONFIG</button></div>';
+    return '<div class="agent-row"><div class="agent-avatar" style="background:'+a.color+'26;color:'+a.color+'">'+a.name.substring(0,2).toUpperCase()+'</div><div class="agent-info"><div class="agent-name">'+a.name+'</div><div class="agent-meta">'+a.model+' — '+a.tokens.toLocaleString()+' tokens/task</div></div><span class="agent-status '+sc+'">'+a.status.toUpperCase()+'</span><button class="btn btn-sm" onclick="showToast(\'Config: '+a.name+'\')">CONFIG</button></div>';
   }).join('');
 }
 
@@ -521,15 +560,15 @@ function loadConfig(){
   return {agents:[
     {id:'coo',name:'COO',role:'Orchestrator',model:'claude-sonnet-4-6',team:'Leadership',tokens:30000,status:'running',color:'#e8a87c',tools:['Web Search','ArXiv','Confluence']},
     {id:'planner',name:'Planner',role:'Strategy',model:'claude-opus-4',team:'Strategy',tokens:20000,status:'running',color:'#a78bfa',tools:['Web Search']},
-    {id:'writer',name:'CopyWriter',role:'Content',model:'claude-sonnet-4-6',team:'Content',tokens:20000,status:'idle',color:'var(--accent)',tools:['Web Search','Grammarly']},
-    {id:'coder',name:'Coder',role:'Engineering',model:'claude-sonnet-4-6',team:'Engineering',tokens:20000,status:'running',color:'var(--accent)',tools:['GitHub','GitLab']},
-    {id:'data',name:'DataMiner',role:'Research',model:'gpt-4o',team:'Research',tokens:10000,status:'error',color:'var(--rose)',tools:['Web Scraping','Sheets']},
-    {id:'reviewer',name:'Scrubber',role:'QA',model:'claude-haiku-4-5',team:'QA',tokens:5000,status:'idle',color:'var(--amber)',tools:['Web Search']}
+    {id:'writer',name:'CopyWriter',role:'Content',model:'claude-sonnet-4-6',team:'Content',tokens:20000,status:'idle',color:'#a3e635',tools:['Web Search','Grammarly']},
+    {id:'coder',name:'Coder',role:'Engineering',model:'claude-sonnet-4-6',team:'Engineering',tokens:20000,status:'running',color:'#a3e635',tools:['GitHub','GitLab']},
+    {id:'data',name:'DataMiner',role:'Research',model:'gpt-4o',team:'Research',tokens:10000,status:'error',color:'#fb7185',tools:['Web Scraping','Sheets']},
+    {id:'reviewer',name:'Scrubber',role:'QA',model:'claude-haiku-4-5',team:'QA',tokens:5000,status:'idle',color:'#fbbf24',tools:['Web Search']}
   ],limits:{dailyTokens:500000,dailyCost:10,maxConcurrent:20,maxTurns:20},router:'openrouter'};
 }
 function saveConfig(c){try{localStorage.setItem('agentic_os_config',JSON.stringify(c));}catch(e){}showToast('Configuration saved');}
 function selectRouter(el,router){document.querySelectorAll('#page-config .grid-4 > div').forEach(function(c){c.style.borderColor='var(--border)';c.querySelector('div:last-child').textContent='Available';c.querySelector('div:last-child').style.color='var(--text-dim)';});el.style.borderColor='var(--primary)';el.querySelector('div:last-child').textContent='✓ Active';el.querySelector('div:last-child').style.color='var(--primary)';}
-function addAgent(){var name=prompt('Agent name:');if(!name)return;var id=name.toLowerCase().replace(/\s+/g,'-');var c=loadConfig();c.agents.push({id:id,name:name,role:'New Agent',model:'claude-sonnet-4-6',team:'Content',tokens:20000,status:'idle',color:'var(--accent)',tools:[]});saveConfig(c);renderConfigCards();renderAgentFleet();showToast('Agent "'+name+'" added');}
+function addAgent(){var name=prompt('Agent name:');if(!name)return;var id=name.toLowerCase().replace(/\s+/g,'-');var c=loadConfig();c.agents.push({id:id,name:name,role:'New Agent',model:'claude-sonnet-4-6',team:'Content',tokens:20000,status:'idle',color:'#a3e635',tools:[]});saveConfig(c);renderConfigCards();renderAgentFleet();showToast('Agent "'+name+'" added');}
 function exportConfig(){var c=loadConfig();var blob=new Blob([JSON.stringify(c,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='agentic-os-config.json';a.click();showToast('Config exported');}
 function resetConfig(){if(!confirm('Reset all settings to defaults?'))return;localStorage.removeItem('agentic_os_config');location.reload();}
 function renderConfigCards(){
@@ -538,10 +577,10 @@ function renderConfigCards(){
   if(!container)return;
   var html='';
   cfg.agents.forEach(function(a){
-    var statusColor=a.status==='running'?'var(--accent)':a.status==='error'?'var(--rose)':'var(--text-dim)';
+    var statusColor=a.status==='running'?'#a3e635':a.status==='error'?'#fb7185':'#4a6080';
     html+='<div class="agent-config-card" data-agent="'+a.id+'" style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px">';
     html+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">';
-    html+='<div style="width:36px;height:36px;border-radius:10px;background:'+a.color.replace(')','')+',.15);color:'+a.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+a.name.substring(0,2).toUpperCase()+'</div>';
+    html+='<div style="width:36px;height:36px;border-radius:10px;background:'+a.color+'26;color:'+a.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+a.name.substring(0,2).toUpperCase()+'</div>';
     html+='<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">'+a.name+' <span style="font-size:10px;color:var(--text-dim);font-weight:400;margin-left:6px">'+a.role+'</span></div></div>';
     html+='<select onchange="updateAgentModel(\''+a.id+'\',this.value)" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-size:8px;font-weight:600;outline:none;cursor:pointer">';
     ['claude-opus-4','claude-sonnet-4-6','gpt-4o','gemini-2.5-pro','claude-haiku-4-5'].forEach(function(m){html+='<option value="'+m+'"'+(a.model===m?' selected':'')+'>'+m+'</option>';});
@@ -558,6 +597,551 @@ function updateAgentModel(id,m){var c=loadConfig();c.agents.forEach(function(a){
 function updateAgentRole(id,r){var c=loadConfig();c.agents.forEach(function(a){if(a.id===id)a.role=r;});saveConfig(c);}
 function updateAgentTeam(id,t){var c=loadConfig();c.agents.forEach(function(a){if(a.id===id)a.team=t;});saveConfig(c);}
 function updateAgentLimit(id,v){var c=loadConfig();c.agents.forEach(function(a){if(a.id===id)a.tokens=parseInt(v)||50000;});saveConfig(c);}
+
+// ═══ MEMORY GALAXY ═══
+var galaxyData = null;
+var galaxyScene = null;
+var galaxyCamera = null;
+var galaxyRenderer = null;
+var galaxyStars = [];
+var galaxyLines = [];
+var galaxyLabels = [];
+// ═══ MEMORY GALAXY v2 ═══
+var galaxyData=null,galaxyScene=null,galaxyCamera=null,galaxyRenderer=null;
+var galaxyStars=[],galaxyLines=[],galaxyLabels=[],galaxyGlows=[];
+var galaxyLabelsVisible=true,galaxyAnimId=null;
+var galaxyMouse={x:0,y:0,down:false,lastX:0,lastY:0};
+var galaxyRotation={x:0.3,y:0,z:0},galaxyTargetRotation={x:0.3,y:0,z:0};
+var galaxyZoom=1,galaxyTargetZoom=1;
+var galaxyHoveredNode=null,galaxySelectedNode=null;
+var galaxyIdleTime=0,galaxyAutoRotate=true;
+var galaxyRaycaster=new THREE.Raycaster();
+var galaxyFolderColors={};
+var galaxyFolderColIdx=0;
+var galaxyFOLDER_PALETTE=[0xa78bfa,0xa3e635,0xfbbf24,0xfb7185,0x22d3ee,0x34d399,0xfcbe6a,0xc084fc,0xf4726b,0x38bdf8,0x818cf8,0xe879f9,0x4ade80,0xf472b6,0x60a5fa];
+var galaxySearchQuery='';
+var galaxyTmpVec=new THREE.Vector3();
+
+function loadGalaxy(){
+  var loading=document.getElementById('galaxyLoading');
+  var error=document.getElementById('galaxyError');
+  if(loading)loading.style.display='block';
+  if(error)error.style.display='none';
+  apiGet('/api/galaxy').then(function(data){
+    if(!data||!data.nodes){
+      if(error){error.style.display='block';error.textContent='No data from API. Run: python3 api.py';}
+      if(loading)loading.style.display='none';return;
+    }
+    galaxyData=data;
+    var stats=document.getElementById('galaxyStats');
+    if(stats)stats.textContent=data.nodes.length+' notes  •  '+data.links.length+' links  •  '+new Set(data.nodes.map(function(n){return n.folder})).size+' folders';
+    if(loading)loading.style.display='none';
+    initGalaxy();
+  }).catch(function(){
+    if(error){error.style.display='block';error.textContent='API error. Run: cd Agentic-OS && python3 api.py';}
+    if(loading)loading.style.display='none';
+  });
+}
+
+function getFolderColor(folder){
+  if(!(folder in galaxyFolderColors)){
+    galaxyFolderColors[folder]=galaxyFOLDER_PALETTE[galaxyFolderColIdx%galaxyFOLDER_PALETTE.length];
+    galaxyFolderColIdx++;
+  }
+  return galaxyFolderColors[folder];
+}
+
+function initGalaxy(){
+  var container=document.getElementById('galaxyContainer');
+  var canvas=document.getElementById('galaxyCanvas');
+  if(!container||!canvas)return;
+  var w=container.clientWidth;
+  var h=container.clientHeight;
+
+  // Clean up old Three.js objects
+  if(galaxyAnimId)cancelAnimationFrame(galaxyAnimId);
+  galaxyStars.forEach(function(s){s.geometry.dispose();s.material.dispose();});
+  galaxyLines.forEach(function(l){l.geometry.dispose();l.material.dispose();});
+  galaxyLabels.forEach(function(s){if(s.material.map)s.material.map.dispose();s.material.dispose();});
+  galaxyGlows.forEach(function(s){s.material.dispose();});
+  galaxyStars=[];galaxyLines=[];galaxyLabels=[];galaxyGlows=[];
+  galaxyFolderColors={};galaxyFolderColIdx=0;
+
+  if(galaxyRenderer){galaxyRenderer.dispose();galaxyRenderer=null;}
+  galaxyScene=new THREE.Scene();
+  galaxyScene.background=new THREE.Color(0x050810);
+  galaxyCamera=new THREE.PerspectiveCamera(60,w/h,0.1,3000);
+  galaxyCamera.position.set(0,0,350);
+  galaxyRenderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});
+  galaxyRenderer.setSize(w,h);
+  galaxyRenderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  var nodes=galaxyData.nodes;
+  var links=galaxyData.links;
+  var n=nodes.length;
+  var maxMtime=Math.max.apply(null,nodes.map(function(nd){return nd.mtime}))||1;
+  var minMtime=Math.min.apply(null,nodes.map(function(nd){return nd.mtime}))||0;
+  var mtimeRange=maxMtime-minMtime||1;
+
+  // ── Build adjacency map for constellation highlighting ──
+  var adjacency={};
+  for(var i=0;i<n;i++)adjacency[i]=[];
+  for(var l=0;l<links.length;l++){
+    adjacency[links[l].source].push(links[l].target);
+    adjacency[links[l].target].push(links[l].source);
+  }
+
+  // ── Force-directed layout with Barnes-Hut-like optimization ──
+  // Use fewer iterations with higher damping for stability
+  var positions=[],velocities=[];
+  // Seed initial positions in a sphere with golden-angle spiral for even distribution
+  var goldenAngle=Math.PI*(3-Math.sqrt(5));
+  for(var i=0;i<n;i++){
+    var r=60*Math.sqrt(i+1);
+    var theta=i*goldenAngle;
+    var phi=Math.acos(1-2*(i+0.5)/n);
+    positions.push({
+      x:r*Math.sin(phi)*Math.cos(theta),
+      y:r*Math.sin(phi)*Math.sin(theta),
+      z:r*Math.cos(phi)
+    });
+    velocities.push({x:0,y:0,z:0});
+  }
+
+  // Run force simulation with cooled iterations
+  var iterations=80;
+  for(var iter=0;iter<iterations;iter++){
+    var temp=1-iter/iterations; // cooling from 1 to 0
+    var repulsion=200*temp+50;
+    var attraction=0.008;
+    var damping=0.85;
+    var centerPull=0.01*temp;
+
+    // Repulsion (all pairs — O(n^2) but n<100 so fine)
+    for(var i=0;i<n;i++){
+      for(var j=i+1;j<n;j++){
+        var dx=positions[i].x-positions[j].x;
+        var dy=positions[i].y-positions[j].y;
+        var dz=positions[i].z-positions[j].z;
+        var dist=Math.sqrt(dx*dx+dy*dy+dz*dz)+0.1;
+        var force=repulsion/(dist*dist);
+        var fx=dx/dist*force;
+        var fy=dy/dist*force;
+        var fz=dz/dist*force;
+        velocities[i].x+=fx;velocities[i].y+=fy;velocities[i].z+=fz;
+        velocities[j].x-=fx;velocities[j].y-=fy;velocities[j].z-=fz;
+      }
+    }
+
+    // Attraction along links
+    for(var l=0;l<links.length;l++){
+      var si=links[l].source,ti=links[l].target;
+      if(si>=n||ti>=n)continue;
+      var dx=positions[ti].x-positions[si].x;
+      var dy=positions[ti].y-positions[si].y;
+      var dz=positions[ti].z-positions[si].z;
+      var dist=Math.sqrt(dx*dx+dy*dy+dz*dz)+0.1;
+      var force=dist*attraction;
+      var fx=dx/dist*force;
+      var fy=dy/dist*force;
+      var fz=dz/dist*force;
+      velocities[si].x+=fx;velocities[si].y+=fy;velocities[si].z+=fz;
+      velocities[ti].x-=fx;velocities[ti].y-=fy;velocities[ti].z-=fz;
+    }
+
+    // Center pull (keep graph centered)
+    for(var i=0;i<n;i++){
+      velocities[i].x-=positions[i].x*centerPull;
+      velocities[i].y-=positions[i].y*centerPull;
+      velocities[i].z-=positions[i].z*centerPull;
+    }
+
+    // Apply with damping
+    for(var i=0;i<n;i++){
+      positions[i].x+=velocities[i].x;
+      positions[i].y+=velocities[i].y;
+      positions[i].z+=velocities[i].z;
+      velocities[i].x*=damping;
+      velocities[i].y*=damping;
+      velocities[i].z*=damping;
+    }
+  }
+
+  // ── Create star meshes ──
+  for(var i=0;i<n;i++){
+    var nd=nodes[i];
+    var color=getFolderColor(nd.folder);
+    var recency=(nd.mtime-minMtime)/mtimeRange;
+    var size=2.5+Math.min(nd.links_out,15)*0.4;
+    var alpha=0.5+recency*0.5;
+
+    // Star body
+    var geo=new THREE.SphereGeometry(size,12,12);
+    var mat=new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:alpha});
+    var mesh=new THREE.Mesh(geo,mat);
+    mesh.position.set(positions[i].x,positions[i].y,positions[i].z);
+    mesh.userData={idx:i,title:nd.title,folder:nd.folder,links:nd.links_out,tags:nd.tags,path:nd.path,vault:nd.vault,recency:recency,color:color};
+    galaxyScene.add(mesh);
+    galaxyStars.push(mesh);
+
+    // Glow sprite for recent/important notes
+    if(recency>0.3||nd.links_out>3){
+      var glowSize=size*(3+recency*2+Math.min(nd.links_out,10)*0.3);
+      var spriteMat=new THREE.SpriteMaterial({color:color,transparent:true,opacity:Math.min(recency*0.35,0.4),blending:THREE.AdditiveBlending,depthWrite:false});
+      var sprite=new THREE.Sprite(spriteMat);
+      sprite.position.copy(mesh.position);
+      sprite.scale.set(glowSize,glowSize,1);
+      sprite.userData={idx:i};
+      galaxyScene.add(sprite);
+      galaxyGlows.push(sprite);
+    }
+  }
+
+  // ── Create constellation lines ──
+  var lineMat=new THREE.LineBasicMaterial({color:0x1e2d4d,transparent:true,opacity:0.2,depthWrite:false});
+  for(var l=0;l<links.length;l++){
+    var si=links[l].source,ti=links[l].target;
+    if(si>=n||ti>=n)continue;
+    var geo=new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(positions[si].x,positions[si].y,positions[si].z),
+      new THREE.Vector3(positions[ti].x,positions[ti].y,positions[ti].z)
+    ]);
+    var line=new THREE.Line(geo,lineMat.clone());
+    line.userData={source:si,target:ti};
+    galaxyScene.add(line);
+    galaxyLines.push(line);
+  }
+
+  // ── Create text labels ──
+  for(var i=0;i<n;i++){
+    var nd=nodes[i];
+    var c=document.createElement('canvas');
+    var ctx=c.getContext('2d');
+    c.width=256;c.height=48;
+    ctx.clearRect(0,0,256,48);
+    ctx.font='18px Fira Code, monospace';
+    ctx.fillStyle='#8899bb';
+    ctx.textAlign='center';
+    var label=nd.title.length>22?nd.title.substring(0,20)+'..':nd.title;
+    ctx.fillText(label,128,32);
+    var tex=new THREE.CanvasTexture(c);
+    tex.minFilter=THREE.LinearFilter;
+    var spriteMat=new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0.65,depthWrite:false});
+    var sprite=new THREE.Sprite(spriteMat);
+    sprite.position.set(positions[i].x,positions[i].y+size+3,positions[i].z);
+    sprite.scale.set(28,7,1);
+    sprite.userData={idx:i};
+    galaxyScene.add(sprite);
+    galaxyLabels.push(sprite);
+  }
+
+  // ── Background star particles ──
+  var particleCount=800;
+  var pGeo=new THREE.BufferGeometry();
+  var pPos=new Float32Array(particleCount*3);
+  var pSizes=new Float32Array(particleCount);
+  for(var i=0;i<particleCount;i++){
+    pPos[i*3]=(Math.random()-0.5)*1500;
+    pPos[i*3+1]=(Math.random()-0.5)*1500;
+    pPos[i*3+2]=(Math.random()-0.5)*1500;
+    pSizes[i]=0.5+Math.random()*1.5;
+  }
+  pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+  pGeo.setAttribute('size',new THREE.BufferAttribute(pSizes,1));
+  var pMat=new THREE.PointsMaterial({color:0x3a5070,size:0.8,transparent:true,opacity:0.35,depthWrite:false});
+  var particles=new THREE.Points(pGeo,pMat);
+  galaxyScene.add(particles);
+
+  // ── Selection ring (hidden by default) ──
+  var ringGeo=new THREE.RingGeometry(1,1.3,32);
+  var ringMat=new THREE.MeshBasicMaterial({color:0xa78bfa,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+  var selectionRing=new THREE.Mesh(ringGeo,ringMat);
+  selectionRing.visible=false;
+  galaxyScene.add(selectionRing);
+
+  // ── Mouse/touch interaction ──
+  canvas.addEventListener('mousedown',function(e){
+    galaxyMouse.down=true;galaxyMouse.lastX=e.clientX;galaxyMouse.lastY=e.clientY;
+    canvas.style.cursor='grabbing';
+    galaxyIdleTime=0;galaxyAutoRotate=false;
+  });
+  canvas.addEventListener('mouseup',function(){galaxyMouse.down=false;canvas.style.cursor='grab';});
+  canvas.addEventListener('mouseleave',function(){galaxyMouse.down=false;canvas.style.cursor='grab';});
+  canvas.addEventListener('mousemove',function(e){
+    var rect=canvas.getBoundingClientRect();
+    galaxyMouse.x=((e.clientX-rect.left)/rect.width)*2-1;
+    galaxyMouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
+    if(galaxyMouse.down){
+      var dx=e.clientX-galaxyMouse.lastX;
+      var dy=e.clientY-galaxyMouse.lastY;
+      galaxyTargetRotation.y+=dx*0.005;
+      galaxyTargetRotation.x+=dy*0.005;
+      galaxyTargetRotation.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,galaxyTargetRotation.x));
+      galaxyMouse.lastX=e.clientX;galaxyMouse.lastY=e.clientY;
+      galaxyIdleTime=0;
+    }
+    // Raycast for hover
+    if(galaxyCamera&&galaxyScene){
+      galaxyRaycaster.setFromCamera(new THREE.Vector2(galaxyMouse.x,galaxyMouse.y),galaxyCamera);
+      var hits=galaxyRaycaster.intersectObjects(galaxyStars);
+      var tooltip=document.getElementById('galaxyTooltip');
+      if(hits.length>0){
+        var nd=nodes[hits[0].object.userData.idx];
+        galaxyHoveredNode=nd;
+        canvas.style.cursor=galaxyMouse.down?'grabbing':'pointer';
+        if(tooltip){
+          tooltip.style.display='block';
+          tooltip.style.left=(e.clientX-rect.left+14)+'px';
+          tooltip.style.top=(e.clientY-rect.top-12)+'px';
+          var html='<div style="font-weight:700;color:#a78bfa;margin-bottom:3px">'+nd.title+'</div>';
+          html+='<div style="color:#4a6080;font-size:9px">'+nd.folder+' • '+nd.links_out+' links'+(nd.vault?' • '+nd.vault:'')+'</div>';
+          if(nd.tags&&nd.tags.length)html+='<div style="color:#a3e635;margin-top:3px;font-size:9px">'+nd.tags.slice(0,4).join(' ')+'</div>';
+          tooltip.innerHTML=html;
+        }
+      }else{
+        galaxyHoveredNode=null;
+        canvas.style.cursor=galaxyMouse.down?'grabbing':'grab';
+        if(tooltip)tooltip.style.display='none';
+      }
+    }
+  });
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    galaxyTargetZoom*=e.deltaY>0?1.06:0.94;
+    galaxyTargetZoom=Math.max(0.3,Math.min(6,galaxyTargetZoom));
+    galaxyIdleTime=0;
+  },{passive:false});
+  canvas.addEventListener('click',function(e){
+    if(galaxyHoveredNode){
+      selectGalaxyNode(galaxyHoveredNode);
+    }
+  });
+
+  // ── Resize handler ──
+  var resizeHandler=function(){
+    var w=container.clientWidth,h=container.clientHeight;
+    if(galaxyCamera){galaxyCamera.aspect=w/h;galaxyCamera.updateProjectionMatrix();}
+    if(galaxyRenderer)galaxyRenderer.setSize(w,h);
+  };
+  window.addEventListener('resize',resizeHandler);
+
+  // ── Animation loop ──
+  var clock=new THREE.Clock();
+  function animate(){
+    galaxyAnimId=requestAnimationFrame(animate);
+    var delta=clock.getDelta();
+    galaxyIdleTime+=delta;
+
+    // Auto-rotate after 5s idle
+    if(galaxyIdleTime>5&&galaxyAutoRotate){
+      galaxyTargetRotation.y+=delta*0.15;
+    }
+
+    // Smooth camera interpolation
+    galaxyRotation.x+=(galaxyTargetRotation.x-galaxyRotation.x)*0.08;
+    galaxyRotation.y+=(galaxyTargetRotation.y-galaxyRotation.y)*0.08;
+    galaxyZoom+=(galaxyTargetZoom-galaxyZoom)*0.08;
+
+    var dist=350*galaxyZoom;
+    galaxyCamera.position.x=dist*Math.sin(galaxyRotation.y)*Math.cos(galaxyRotation.x);
+    galaxyCamera.position.y=dist*Math.sin(galaxyRotation.x);
+    galaxyCamera.position.z=dist*Math.cos(galaxyRotation.y)*Math.cos(galaxyRotation.x);
+    galaxyCamera.lookAt(0,0,0);
+
+    // Animate glow sprites (subtle pulse)
+    var t=Date.now()*0.001;
+    for(var i=0;i<galaxyGlows.length;i++){
+      var s=galaxyGlows[i];
+      if(s&&s.material){
+        var base=0.25+Math.sin(t*0.8+i)*0.1;
+        s.material.opacity=Math.max(0.05,base);
+      }
+    }
+
+    // Animate selection ring
+    if(galaxySelectedNode&&selectionRing.visible){
+      var selIdx=galaxySelectedNode.idx!==undefined?galaxySelectedNode.idx:nodes.indexOf(galaxySelectedNode);
+      if(selIdx>=0&&selIdx<galaxyStars.length){
+        var sp=galaxyStars[selIdx].position;
+        selectionRing.position.copy(sp);
+        selectionRing.lookAt(galaxyCamera.position);
+        var pulse=0.4+Math.sin(t*3)*0.2;
+        selectionRing.material.opacity=pulse;
+        var ringSize=galaxyStars[selIdx].geometry.parameters.radius*2.5;
+        selectionRing.scale.set(ringSize,ringSize,1);
+      }
+    }
+
+    if(galaxyRenderer&&galaxyScene&&galaxyCamera)galaxyRenderer.render(galaxyScene,galaxyCamera);
+  }
+  animate();
+}
+
+function selectGalaxyNode(nd){
+  galaxySelectedNode=nd;
+  var idx=nd.idx!==undefined?nd.idx:galaxyData.nodes.indexOf(nd);
+  var nodes=galaxyData.nodes;
+
+  // Highlight connected lines
+  for(var l=0;l<galaxyLines.length;l++){
+    var line=galaxyLines[l];
+    var ud=line.userData;
+    if(ud.source===idx||ud.target===idx){
+      line.material.color.setHex(0xa78bfa);
+      line.material.opacity=0.6;
+    }else{
+      line.material.color.setHex(0x1e2d4d);
+      line.material.opacity=0.1;
+    }
+  }
+
+  // Dim unconnected stars, highlight connected
+  var connected={};
+  connected[idx]=true;
+  for(var l=0;l<galaxyData.links.length;l++){
+    var li=galaxyData.links[l];
+    if(li.source===idx)connected[li.target]=true;
+    if(li.target===idx)connected[li.source]=true;
+  }
+  for(var i=0;i<galaxyStars.length;i++){
+    var s=galaxyStars[i];
+    if(connected[i]){
+      s.material.opacity=Math.min(1,s.material.opacity+0.3);
+      s.scale.set(1.3,1.3,1.3);
+    }else{
+      s.material.opacity=0.15;
+      s.scale.set(0.8,0.8,0.8);
+    }
+  }
+
+  // Show selection ring
+  var ring=galaxyScene.children.find(function(c){return c.geometry&&c.geometry.type==='RingGeometry';});
+  if(ring){ring.visible=true;}
+
+  // Show details panel
+  showGalaxyDetails(nd,connected);
+}
+
+function showGalaxyDetails(nd,connected){
+  var panel=document.getElementById('galaxyPanel');
+  if(!panel)return;
+  panel.classList.remove('hidden');
+  var date=new Date(nd.mtime*1000);
+  var dateStr=date.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  var colorHex='#'+getFolderColor(nd.folder).toString(16).padStart(6,'0');
+
+  var connectedNodes=[];
+  for(var i=0;i<galaxyData.nodes.length;i++){
+    if(connected[i]&&i!==galaxyData.nodes.indexOf(nd))connectedNodes.push(galaxyData.nodes[i]);
+  }
+
+  var html='';
+  html+='<div style="font-size:12px;font-weight:700;color:'+colorHex+';margin-bottom:6px">'+nd.title+'</div>';
+  html+='<div style="font-size:9px;color:#4a6080;margin-bottom:8px">'+nd.path+'</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px">';
+  html+='<div><div style="font-size:8px;color:#4a6080;text-transform:uppercase;letter-spacing:1px">Folder</div><div style="font-size:10px;color:#a3e635">'+nd.folder+'</div></div>';
+  html+='<div><div style="font-size:8px;color:#4a6080;text-transform:uppercase;letter-spacing:1px">Links</div><div style="font-size:10px;color:#fbbf24">'+nd.links_out+'</div></div>';
+  html+='<div><div style="font-size:8px;color:#4a6080;text-transform:uppercase;letter-spacing:1px">Vault</div><div style="font-size:10px;color:#e0f2fe">'+(nd.vault||'obsidian')+'</div></div>';
+  html+='<div><div style="font-size:8px;color:#4a6080;text-transform:uppercase;letter-spacing:1px">Modified</div><div style="font-size:10px;color:#94a3b8">'+dateStr+'</div></div>';
+  html+='</div>';
+  if(nd.tags&&nd.tags.length){
+    html+='<div style="margin-bottom:10px">';
+    html+='<div style="font-size:8px;color:#4a6080;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Tags</div>';
+    html+='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    nd.tags.forEach(function(tag){
+      html+='<span style="font-size:8px;padding:2px 6px;background:rgba(163,230,53,.1);color:#a3e635;border-radius:4px">'+tag+'</span>';
+    });
+    html+='</div></div>';
+  }
+  if(connectedNodes.length){
+    html+='<div style="margin-bottom:8px">';
+    html+='<div style="font-size:8px;color:#4a6080;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Constellation ('+connectedNodes.length+')</div>';
+    html+='<div style="max-height:120px;overflow-y:auto">';
+    connectedNodes.forEach(function(cn){
+      html+='<div style="font-size:9px;padding:3px 6px;color:#94a3b8;cursor:pointer;border-radius:3px" onmouseover="this.style.background=\'rgba(167,139,250,.1)\'" onmouseout="this.style.background=\'\'" onclick="focusGalaxyNode(\''+cn.id+'\')">'+cn.title+'</div>';
+    });
+    html+='</div></div>';
+  }
+  html+='<div style="display:flex;gap:6px;margin-top:8px">';
+  html+='<button onclick="focusGalaxyNode(\''+nd.id+'\')" style="flex:1;padding:5px 10px;border:1px solid #2a3a5f;background:transparent;color:#a78bfa;font-size:9px;border-radius:4px;cursor:pointer;font-family:\'Fira Code\',monospace">FOCUS</button>';
+  html+='<button onclick="clearGalaxySelection()" style="flex:1;padding:5px 10px;border:1px solid #2a3a5f;background:transparent;color:#94a3b8;font-size:9px;border-radius:4px;cursor:pointer;font-family:\'Fira Code\',monospace">CLEAR</button>';
+  html+='</div>';
+  document.getElementById('galaxyPanelBody').innerHTML=html;
+}
+
+function focusGalaxyNode(nodeId){
+  var idx=-1;
+  for(var i=0;i<galaxyData.nodes.length;i++){
+    if(galaxyData.nodes[i].id===nodeId){idx=i;break;}
+  }
+  if(idx<0||idx>=galaxyStars.length)return;
+  var pos=galaxyStars[idx].position;
+  // Animate camera to look at this node
+  var r=350*galaxyZoom;
+  var targetTheta=Math.atan2(pos.x,pos.z);
+  var targetPhi=Math.asin(pos.y/Math.sqrt(pos.x*pos.x+pos.y*pos.y+pos.z*pos.z));
+  galaxyTargetRotation.y=targetTheta;
+  galaxyTargetRotation.x=Math.max(-1.2,Math.min(1.2,targetPhi));
+  galaxyIdleTime=0;galaxyAutoRotate=false;
+  selectGalaxyNode(galaxyData.nodes[idx]);
+}
+
+function clearGalaxySelection(){
+  galaxySelectedNode=null;
+  // Reset all lines
+  for(var l=0;l<galaxyLines.length;l++){
+    galaxyLines[l].material.color.setHex(0x1e2d4d);
+    galaxyLines[l].material.opacity=0.2;
+  }
+  // Reset all stars
+  for(var i=0;i<galaxyStars.length;i++){
+    var ud=galaxyStars[i].userData;
+    galaxyStars[i].material.opacity=0.5+ud.recency*0.5;
+    galaxyStars[i].scale.set(1,1,1);
+  }
+  // Hide ring
+  var ring=galaxyScene.children.find(function(c){return c.geometry&&c.geometry.type==='RingGeometry';});
+  if(ring)ring.visible=false;
+  // Hide panel
+  var panel=document.getElementById('galaxyPanel');
+  if(panel)panel.classList.add('hidden');
+}
+
+function toggleGalaxyLabels(){
+  galaxyLabelsVisible=!galaxyLabelsVisible;
+  galaxyLabels.forEach(function(s){s.visible=galaxyLabelsVisible;});
+}
+
+function resetGalaxyView(){
+  galaxyTargetRotation={x:0.3,y:0,z:0};
+  galaxyTargetZoom=1;
+  galaxyAutoRotate=true;
+  clearGalaxySelection();
+}
+
+function galaxySearch(q){
+  galaxySearchQuery=q.toLowerCase();
+  if(!galaxyData)return;
+  var hasQuery=q.length>0;
+  for(var i=0;i<galaxyStars.length;i++){
+    var nd=galaxyData.nodes[i];
+    var match=!hasQuery||nd.title.toLowerCase().indexOf(galaxySearchQuery)!==-1||nd.folder.toLowerCase().indexOf(galaxySearchQuery)!==-1||(nd.tags&&nd.tags.some(function(t){return t.toLowerCase().indexOf(galaxySearchQuery)!==-1;}));
+    if(match){
+      galaxyStars[i].material.opacity=0.5+nd.recency*0.5;
+      galaxyStars[i].scale.set(1,1,1);
+    }else{
+      galaxyStars[i].material.opacity=0.08;
+      galaxyStars[i].scale.set(0.5,0.5,0.5);
+    }
+  }
+  // Also filter lines
+  for(var l=0;l<galaxyLines.length;l++){
+    var ud=galaxyLines[l].userData;
+    var srcMatch=!hasQuery||galaxyData.nodes[ud.source].title.toLowerCase().indexOf(galaxySearchQuery)!==-1;
+    var tgtMatch=!hasQuery||galaxyData.nodes[ud.target].title.toLowerCase().indexOf(galaxySearchQuery)!==-1;
+    galaxyLines[l].material.opacity=(srcMatch&&tgtMatch)?0.3:0.05;
+  }
+}
 
 // ═══ SIMULATED UPDATES ═══
 function simulateUpdates(){

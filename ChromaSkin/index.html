@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎨 ChromaSkin — Theme Popup</title>
+<title>ChromaSkin — Theme Popup</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -111,47 +111,41 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   font-size:14px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);
 }
 
-/* ═══ LIVE PREVIEW ═══ */
+/* ═══ TOAST ═══ */
 .preview-box{
   background:var(--bg);border:1px solid var(--border);border-radius:10px;
   padding:10px;margin-bottom:12px;transition:background .4s,border-color .4s;
 }
-.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.preview-title{font-size:11px;font-weight:700;color:var(--accent);transition:color .4s}
-.preview-badge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--accent);color:var(--bg);transition:background .4s,color .4s}
-.preview-text{font-size:10px;color:var(--text-dim);margin-bottom:6px;transition:color .4s}
-.preview-btns{display:flex;gap:6px}
-.preview-btn{
-  padding:4px 10px;border-radius:5px;border:none;font-size:9px;font-weight:700;cursor:pointer;
-  font-family:inherit;transition:all .15s;
-}
-.preview-btn.primary{background:var(--accent);color:var(--bg);transition:background .4s}
-.preview-btn.secondary{background:var(--bg3);color:var(--text-dim);border:1px solid var(--border);transition:background .4s,color .4s,border-color .4s}
-.preview-btn.danger{background:hsla(350,70%,55%,.15);color:hsl(350,70%,55%);border:1px solid hsl(350,70%,55%)}
-.preview-btn:hover{filter:brightness(1.1)}
 
-/* Mini fretboard preview */
-.preview-fretboard{background:hsl(23,64%,5%);border-radius:6px;padding:6px;margin-top:8px;transition:background .4s}
-.preview-frets{display:flex;gap:2px}
-.preview-fret{flex:1;height:36px;background:linear-gradient(to bottom,hsl(23,64%,8%),hsl(23,64%,22%));border-radius:2px;display:flex;align-items:center;justify-content:center;transition:background .4s}
-.preview-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 4px var(--accent-glow);transition:background .4s,box-shadow .4s}
-.preview-dot.dim{background:hsl(23,64%,15%);box-shadow:none}
+/* Mini nav bar */
+.preview-nav-logo{font-size:12px;font-weight:900;color:var(--accent);text-transform:uppercase;letter-spacing:1px;transition:color .4s}
+.preview-nav-links{display:flex;gap:6px;flex:1}
+.preview-nav-link{font-size:8px;color:var(--text-dim);padding:2px 6px;border-radius:3px;transition:all .15s;cursor:default}
+.preview-nav-link.active{color:var(--bg);background:var(--accent);font-weight:700;transition:background .4s,color .4s}
+.preview-nav-cta{font-size:8px;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--accent);color:var(--bg);transition:background .4s,color .4s}
 
-/* Preview cards */
-.preview-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-.preview-card{
-  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
-  padding:8px;text-align:center;transition:all .3s;cursor:pointer;
-}
-.preview-card:hover{border-color:var(--accent);transform:translateY(-1px)}
-.preview-card.dim{opacity:.5}
-.preview-card-dot{
-  width:16px;height:16px;border-radius:50%;background:var(--accent);
-  box-shadow:0 0 8px var(--accent-glow);margin:0 auto 4px;
-  transition:background .4s,box-shadow .4s;
-}
-.preview-card-dot.dim{background:var(--border);box-shadow:none;transition:background .4s}
-.preview-card-label{font-size:9px;font-weight:600;color:var(--text-dim);transition:color .4s}
+/* Stat row */
+.preview-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.preview-stat{background:var(--bg);border-radius:6px;padding:6px 8px}
+.preview-stat-label{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);transition:color .4s}
+.preview-stat-value{font-size:13px;font-weight:800;color:var(--accent);margin:2px 0 4px;transition:color .4s}
+.preview-stat-bars{display:flex;gap:2px;align-items:flex-end;height:20px}
+.preview-bar{flex:1;border-radius:1px;background:var(--accent);opacity:.7;transition:background .4s}
+.preview-bar.dim{opacity:.25}
+
+/* Pricing card */
+.preview-pricing{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;transition:background .4s,border-color .4s}
+.preview-pricing-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.preview-pricing-plan{font-size:11px;font-weight:700;color:var(--accent);transition:color .4s}
+.preview-pricing-desc{font-size:8px;color:var(--text-dim);transition:color .4s}
+.preview-pricing-badge{font-size:7px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--accent);color:var(--bg);transition:background .4s,color .4s}
+.preview-pricing-price{margin-bottom:8px}
+.preview-pricing-amount{font-size:20px;font-weight:900;color:var(--text);transition:color .4s}
+.preview-pricing-period{font-size:9px;color:var(--text-dim);transition:color .4s}
+.preview-pricing-features{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.preview-pricing-feature{font-size:8px;color:var(--text-dim);display:flex;align-items:center;gap:4px;transition:color .4s}
+.preview-check{font-size:8px;color:var(--accent);font-weight:700;transition:color .4s}
+.preview-pricing-btn{width:100%;padding:6px;border-radius:5px;border:none;background:var(--accent);color:var(--bg);font-size:9px;font-weight:700;cursor:default;text-align:center;transition:background .4s,color .4s}
 
 /* ═══ ACTIONS ═══ */
 .actions{display:flex;gap:6px}
@@ -240,7 +234,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <div class="popup" id="popup">
   <div class="popup-header" id="popupHeader">
     <div class="popup-title">
-      <span class="icon">🎨</span> ChromaSkin
+    <span class="icon">⬡</span> ChromaSkin
     </div>
     <div class="popup-controls">
       <button class="popup-btn" onclick="minimizePopup()" title="Minimize">─</button>
@@ -278,32 +272,66 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <!-- Live Preview -->
     <div class="section-label">Live Preview</div>
     <div class="preview-box" id="previewBox">
-      <div class="preview-header">
-        <div class="preview-title" id="previewTitle">Scale Card Example</div>
-        <div class="preview-badge" id="previewBadge">Pro</div>
-      </div>
-      <div class="preview-text" id="previewText">This is how your UI looks with the current accent color applied.</div>
-      <div class="preview-btns">
-        <button class="preview-btn primary" id="previewBtnPrimary">Play</button>
-        <button class="preview-btn secondary" id="previewBtnSecondary">Stop</button>
-        <button class="preview-btn danger" id="previewBtnDanger">Delete</button>
-      </div>
-      <div class="preview-fretboard">
-        <div class="preview-frets" id="previewFrets"></div>
-      </div>
-      <div class="preview-cards">
-        <div class="preview-card" id="previewCard1">
-          <div class="preview-card-dot"></div>
-          <div class="preview-card-label">C Major</div>
+      <!-- Mini nav bar -->
+      <div class="preview-nav">
+        <div class="preview-nav-logo" id="previewNavLogo">acme</div>
+        <div class="preview-nav-links">
+          <span class="preview-nav-link active">Dashboard</span>
+          <span class="preview-nav-link">Pricing</span>
+          <span class="preview-nav-link">Docs</span>
         </div>
-        <div class="preview-card dim" id="previewCard2">
-          <div class="preview-card-dot dim"></div>
-          <div class="preview-card-label">A Minor</div>
+        <div class="preview-nav-cta" id="previewNavCta">Sign up</div>
+      </div>
+
+      <!-- Stat row -->
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="preview-stat-label">Revenue</div>
+          <div class="preview-stat-value" id="previewStatVal">$48.2k</div>
+          <div class="preview-stat-bars">
+            <div class="preview-bar" style="height:40%"></div>
+            <div class="preview-bar" style="height:65%"></div>
+            <div class="preview-bar" style="height:45%"></div>
+            <div class="preview-bar" style="height:80%"></div>
+            <div class="preview-bar" style="height:55%"></div>
+            <div class="preview-bar" style="height:90%"></div>
+            <div class="preview-bar" style="height:70%"></div>
+          </div>
         </div>
-        <div class="preview-card dim" id="previewCard3">
-          <div class="preview-card-dot dim"></div>
-          <div class="preview-card-label">G Mixolydian</div>
+        <div class="preview-stat">
+          <div class="preview-stat-label">Users</div>
+          <div class="preview-stat-value" id="previewStatVal2">1,847</div>
+          <div class="preview-stat-bars">
+            <div class="preview-bar dim" style="height:30%"></div>
+            <div class="preview-bar dim" style="height:50%"></div>
+            <div class="preview-bar dim" style="height:35%"></div>
+            <div class="preview-bar dim" style="height:60%"></div>
+            <div class="preview-bar dim" style="height:45%"></div>
+            <div class="preview-bar dim" style="height:75%"></div>
+            <div class="preview-bar dim" style="height:55%"></div>
+          </div>
         </div>
+      </div>
+
+      <!-- Pricing card -->
+      <div class="preview-pricing">
+        <div class="preview-pricing-header">
+          <div>
+            <div class="preview-pricing-plan" id="previewPricingPlan">Pro Plan</div>
+            <div class="preview-pricing-desc">For growing teams</div>
+          </div>
+          <div class="preview-pricing-badge" id="previewPricingBadge">Popular</div>
+        </div>
+        <div class="preview-pricing-price">
+          <span class="preview-pricing-amount" id="previewPriceAmount">$29</span>
+          <span class="preview-pricing-period">/mo</span>
+        </div>
+        <div class="preview-pricing-features">
+          <div class="preview-pricing-feature"><span class="preview-check" id="previewCheck1">&#10003;</span> Unlimited projects</div>
+          <div class="preview-pricing-feature"><span class="preview-check" id="previewCheck2">&#10003;</span> Team analytics</div>
+          <div class="preview-pricing-feature"><span class="preview-check" id="previewCheck3">&#10003;</span> Priority support</div>
+        </div>
+        <div class="preview-pricing-btn" id="previewPricingBtn">Get started</div>
       </div>
     </div>
 
@@ -322,10 +350,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <!-- Actions -->
     <div class="actions">
-      <button class="action-btn primary" onclick="copyCSS()">📋 Copy CSS</button>
-      <button class="action-btn" onclick="copyJSON()">📦 JSON</button>
-      <button class="action-btn" onclick="savePreset()">💾 Save</button>
-      <button class="action-btn" onclick="resetTheme()">↺ Reset</button>
+      <button class="action-btn primary" onclick="copyCSS()">Copy CSS</button>
+      <button class="action-btn" onclick="copyJSON()">JSON</button>
+      <button class="action-btn" onclick="savePreset()">Save</button>
+      <button class="action-btn" onclick="resetTheme()">Reset</button>
     </div>
 
     <!-- Saved themes -->
@@ -464,7 +492,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     updateWheelIndicator(h);
     renderPresets();
-    renderPreviewFrets();
     if(BC) BC.postMessage({type:'theme',h:h,s:s,l:l});
   }
 
@@ -535,22 +562,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   }
   window.loadPreset=function(i){var p=PRESETS[i];if(p)applyTheme(p.h,p.s,p.l);};
 
-  // ═══ PREVIEW FRETS ═══
-  function renderPreviewFrets(){
-    var container=document.getElementById('previewFrets');
-    var html='';
-    for(var f=0;f<12;f++){
-      html+='<div class="preview-fret">';
-      var isRoot=f===0;
-      var isDim=[3,5,7,9].indexOf(f)!==-1;
-      if(isRoot) html+='<div class="preview-dot"></div>';
-      else if(isDim) html+='<div class="preview-dot dim"></div>';
-      html+='</div>';
-    }
-    container.innerHTML=html;
-  }
-
-  // ═══ ADVANCED COLOR CONTROLS ═══
+  // ═══ PREVIEW (live via CSS vars — no JS needed) ═══
   var colorRoles = [
     {key:'bg', label:'Background'},
     {key:'bg2', label:'Panes'},
@@ -654,10 +666,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   // ═══ EXPORT ═══
   window.copyCSS=function(){
     var css=':root{--hue:'+currentHue+';--sat:'+currentSat+'%;--lit:'+currentLit+'%;--accent:hsl(var(--hue),var(--sat),var(--lit));--accent-dim:hsla(var(--hue),var(--sat),var(--lit),0.15);--accent-glow:hsla(var(--hue),var(--sat),var(--lit),0.4);--bg:hsl('+advColors.bg.h+','+advColors.bg.s+'%,'+advColors.bg.l+'%);--bg2:hsl('+advColors.bg2.h+','+advColors.bg2.s+'%,'+advColors.bg2.l+'%);--bg3:hsl('+advColors.bg3.h+','+advColors.bg3.s+'%,'+advColors.bg3.l+'%);--text:hsl('+advColors.text.h+','+advColors.text.s+'%,'+advColors.text.l+'%);--text-dim:hsl('+advColors.textDim.h+','+advColors.textDim.s+'%,'+advColors.textDim.l+'%);--border:hsl('+advColors.border.h+','+advColors.border.s+'%,'+advColors.border.l+'%)}';
-    navigator.clipboard.writeText(css).then(function(){showToast('CSS copied! 🎨');});
+    navigator.clipboard.writeText(css).then(function(){showToast('CSS copied!');});
   };
   window.copyJSON=function(){
-    navigator.clipboard.writeText(JSON.stringify({hue:currentHue,sat:currentSat,lit:currentLit,advColors:advColors,autoContrast:autoContrast},null,2)).then(function(){showToast('JSON copied! 📦');});
+    navigator.clipboard.writeText(JSON.stringify({hue:currentHue,sat:currentSat,lit:currentLit,advColors:advColors,autoContrast:autoContrast},null,2)).then(function(){showToast('JSON copied!');});
   };
   window.resetTheme=function(){
     applyTheme(180,60,50);
@@ -734,7 +746,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   // ═══ INIT ═══
   createParticles();
   renderPresets();
-  renderPreviewFrets();
   renderSaved();
   applyTheme(currentHue,currentSat,currentLit);
   applyAdvColors();

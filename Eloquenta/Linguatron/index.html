@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Linguatron — Professional Translation Tool</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Langui — Translation Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#020617;--bg2:#0a0e1a;--bg3:#0d1117;--bg-card:#111827;--bg-card2:#0f1629;--bg-hover:#162032;--border:#1e3a5f;--border-light:#2a4a7f;--text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;--accent:#22d3ee;--accent-dim:rgba(34,211,238,.08);--accent-glow:rgba(34,211,238,.35);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--green:#34d399;--violet:#a78bfa;--rose:#fb7185}
+:root{--bg:#1c1c1c;--bg2:#161616;--bg3:#222222;--bg-card:#232323;--bg-card2:#1a1a1a;--bg-hover:#2a2a2a;--border:#333333;--border-light:#444444;--text:#e8e8e8;--text-muted:#999999;--text-dim:#555555;--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--accent-glow:rgba(163,230,53,.35);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--green:#34d399;--violet:#a78bfa;--rose:#fb7185}
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-.topbar{position:sticky;top:0;z-index:50;background:rgba(2,6,23,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
-.topbar-logo{font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:1px;text-decoration:none;display:flex;align-items:center;gap:8px}
-.topbar-logo .logo-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:var(--bg)}
+body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(28,28,28,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.topbar-logo{font-family:'Fira Code',monospace;font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:1px;text-decoration:none;display:flex;align-items:center;gap:8px}
+.topbar-logo .logo-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .topbar-logo span{color:var(--accent)}
 .topbar-nav{display:flex;gap:4px}
 .topbar-nav a{padding:6px 14px;border-radius:6px;color:var(--text-muted);text-decoration:none;font-size:.75rem;font-weight:600;transition:all .15s}
@@ -20,10 +20,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;back
 .topbar-nav a.active{color:var(--accent);background:var(--accent-dim)}
 .topbar-actions{display:flex;gap:8px;align-items:center}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;position:relative;overflow:hidden}
-.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,211,238,.15)}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);transform:translateY(-1px);box-shadow:0 4px 16px rgba(163,230,53,.15)}
 .btn:active{transform:translateY(0)}
 .btn-primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
-.btn-primary:hover{background:#67e8f9;color:var(--bg);box-shadow:0 4px 20px var(--accent-glow)}
+.btn-primary:hover{background:#bef264;color:var(--bg);box-shadow:0 4px 20px var(--accent-glow)}
 .btn-icon{width:36px;height:36px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .btn-icon:hover{transform:scale(1.1) translateY(0)}
 .btn-sm{padding:5px 10px;font-size:.65rem;border-radius:6px}
@@ -77,6 +77,29 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;back
 .quality-example-source{font-size:.7rem;color:var(--text-muted);margin-bottom:2px}
 .quality-example-target{font-size:.7rem;color:var(--text)}
 .quality-highlight{color:var(--amber);font-weight:700;text-decoration:underline;text-decoration-color:var(--amber);text-underline-offset:2px}
+
+/* New: Translation result with alternatives */
+.translation-result{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.translation-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.translation-source{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px}
+.translation-text{font-size:1.05rem;color:var(--text);line-height:1.6;margin-bottom:10px}
+.translation-actions{display:flex;gap:6px}
+
+/* Alternative translations */
+.alt-translations{margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+.alt-header{font-size:.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.alt-trans{display:flex;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid transparent;cursor:pointer;transition:all .15s;margin-bottom:4px}
+.alt-trans:hover{background:var(--bg-hover);border-color:var(--border)}
+.alt-trans.active{background:var(--accent-dim);border-color:var(--accent)}
+.alt-label{font-size:.65rem;font-weight:700;color:var(--text-dim);min-width:80px;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.alt-text{font-size:.85rem;color:var(--text-muted);flex:1;line-height:1.5}
+.alt-trans.active .alt-text{color:var(--text)}
+.cycle-hint{font-size:.65rem;color:var(--text-dim);font-style:italic;margin-top:6px;text-align:center}
+
+.match-score{font-size:.7rem;font-weight:600;margin-left:6px}
+
+/* Toast */
+.toast-msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:.8rem;font-weight:600;z-index:9999;white-space:nowrap}
 @media(max-width:768px){.panels{grid-template-columns:1fr}.topbar-nav{display:none}.translate-area{padding:12px}}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -87,7 +110,15 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;back
 </head>
 <body>
 <div class="topbar">
-  <a href="#" class="topbar-logo"><div class="logo-icon">LT</div>LINGUATRON</a>
+  <a href="#" class="topbar-logo"><div class="logo-icon" style="background:none;padding:0">
+<svg width="28" height="28" viewBox="0 0 340 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="85" y="40" width="170" height="170" rx="30" fill="#a3e635" fill-opacity="0.15"/>
+<path d="M130 100 L170 80 L210 100 L210 140 L170 160 L130 140 Z" stroke="#a3e635" stroke-width="4" fill="none"/>
+<circle cx="170" cy="120" r="12" fill="#a3e635"/>
+<path d="M145 130 L155 145" stroke="#a3e635" stroke-width="3" stroke-linecap="round"/>
+<path d="M195 130 L185 145" stroke="#a3e635" stroke-width="3" stroke-linecap="round"/>
+</svg>
+</div>LANGUi</a>
   <div class="topbar-nav">
     <a href="#" class="active">Text Translation</a>
     <a href="#" onclick="showSection('documents');return false;">Documents</a>
@@ -193,8 +224,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;back
         <div class="panel-header">
           <span class="panel-lang" id="sourceLangLabel">English</span>
           <div class="panel-actions">
-            <button class="btn btn-icon btn-sm" onclick="clearSource()" title="Clear">✕</button>
-            <button class="btn btn-icon btn-sm" onclick="pasteFromClipboard()" title="Paste">📋</button>
+            <button class="btn btn-icon btn-sm" onclick="clearSource()" title="Clear">Clear</button>
+            <button class="btn btn-icon btn-sm" onclick="pasteFromClipboard()" title="Paste"></button>
           </div>
         </div>
         <div class="panel-body">
@@ -209,8 +240,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;back
         <div class="panel-header">
           <span class="panel-lang" id="targetLangLabel">Spanish</span>
           <div class="panel-actions">
-            <button class="btn btn-icon btn-sm" onclick="copyTranslation()" title="Copy">📋</button>
-            <button class="btn btn-icon btn-sm" onclick="speakTranslation()" title="Listen">🔊</button>
+            <button class="btn btn-icon btn-sm" onclick="copyTranslation()" title="Copy"></button>
+            <button class="btn btn-icon btn-sm" onclick="speakTranslation()" title="Listen"></button>
           </div>
         </div>
         <div class="panel-body">

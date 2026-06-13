@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Memory Galaxy — Obsidian Vault Visualization</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root {
+  --bg: #0a0e1a; --bg2: #16213e; --bg3: #1a1a2e;
+  --border: #2a3a5f; --border-light: #3a4a7f;
+  --text: #e0f2fe; --text-muted: #94a3b8; --text-dim: #4a6080;
+  --primary: #a78bfa; --primary-light: #c4b5fd; --primary-dim: rgba(167,139,250,.08);
+  --accent: #a3e635; --accent-dim: rgba(163,230,53,.08);
+  --amber: #fbbf24; --amber-dim: rgba(251,191,36,.08);
+  --rose: #fb7185; --rose-dim: rgba(251,113,133,.08);
+  --cyan: #22d3ee; --green: #34d399;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;width:100vw;height:100vh}
+h1,h2,h3,.mono,.label,.panel-title,.stat-value,.stat-label,.info-title,.info-meta,.search-input,.filter-btn,.legend-label,.tooltip-title,.tooltip-meta,.detail-label,.detail-value,.detail-path,.detail-links,.detail-mtime,.action-btn,.close-btn,.zoom-label,.zoom-value{font-family:'Fira Code',monospace}
+
+/* Canvas */
+#galaxy-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+
+/* Top Bar */
+.topbar{position:fixed;top:0;left:0;right:0;height:48px;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:10}
+.topbar-logo{font-size:13px;font-weight:900;color:var(--primary);letter-spacing:2px}
+.topbar-sub{font-size:8px;color:var(--text-dim);letter-spacing:1px;margin-top:1px}
+.search-wrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+.search-input{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text);font-size:11px;width:220px;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--primary)}
+.search-input::placeholder{color:var(--text-dim)}
+.stat-pill{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--text-dim);background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px}
+.stat-pill .val{color:var(--primary);font-weight:700}
+
+/* Filter Bar */
+.filter-bar{position:fixed;top:48px;left:0;right:0;height:36px;background:rgba(10,14,26,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(42,58,95,.4);display:flex;align-items:center;padding:0 20px;gap:8px;z-index:9;overflow-x:auto}
+.filter-btn{height:24px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:8px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.filter-btn:hover{border-color:var(--primary);color:var(--primary)}
+.filter-btn.active{background:var(--primary-dim);border-color:var(--primary);color:var(--primary)}
+.filter-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+
+/* Side Panel */
+.side-panel{position:fixed;top:90px;right:16px;width:280px;max-height:calc(100vh - 110px);background:rgba(22,33,62,.95);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:12px;z-index:10;overflow-y:auto;transition:transform .25s,opacity .25s}
+.side-panel.hidden{transform:translateX(320px);opacity:0;pointer-events:none}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.panel-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted)}
+.close-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.close-btn:hover{border-color:var(--rose);color:var(--rose)}
+.panel-body{padding:14px 16px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(42,58,95,.3);font-size:10px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--text-dim);font-size:9px;letter-spacing:1px;text-transform:uppercase}
+.info-val{color:var(--text);font-weight:600;text-align:right;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-val.folder{color:var(--accent)}
+.info-val.links{color:var(--amber)}
+.info-val.size{color:var(--cyan)}
+.detail-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.detail-section-title{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
+.link-list{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto}
+.link-item{font-size:10px;color:var(--text-muted);padding:4px 8px;background:var(--bg);border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.link-item:hover{background:var(--primary-dim);color:var(--primary)}
+.link-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.action-row{display:flex;gap:8px;margin-top:12px}
+.action-btn{flex:1;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:8px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
+.action-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-dim)}
+
+/* Tooltip */
+#tooltip{position:fixed;pointer-events:none;z-index:100;opacity:0;transition:opacity .15s;background:rgba(22,33,62,.96);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:8px;padding:8px 12px;max-width:240px}
+#tooltip.visible{opacity:1}
+.tooltip-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px}
+.tooltip-meta{font-size:9px;color:var(--text-dim);display:flex;gap:8px}
+
+/* Legend */
+.legend{position:fixed;bottom:16px;left:16px;background:rgba(22,33,62,.9);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:10px;padding:12px 14px;z-index:10}
+.legend-title{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
+.legend-items{display:flex;flex-direction:column;gap:5px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:9px;color:var(--text-muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Zoom Controls */
+.zoom-controls{position:fixed;bottom:16px;right:16px;display:flex;flex-direction:column;gap:4px;z-index:10}
+.zoom-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:rgba(22,33,62,.9);color:var(--text-muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.zoom-btn:hover{border-color:var(--primary);color:var(--primary)}
+.zoom-label{font-size:8px;color:var(--text-dim);text-align:center;margin-top:4px}
+
+/* Loading */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;transition:opacity .5s}
+#loading.done{opacity:0;pointer-events:none}
+.loading-text{font-size:11px;color:var(--text-muted);margin-top:16px;font-family:'Fira Code',monospace;letter-spacing:1px}
+.loading-bar{width:200px;height:3px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-top:8px}
+.loading-fill{height:100%;background:var(--primary);border-radius:2px;transition:width .3s;width:0%}
+
+/* Stats overlay */
+.stats-overlay{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:10}
+.stat-box{background:rgba(22,33,62,.9);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:8px;padding:8px 14px;text-align:center}
+.stat-box .val{font-size:16px;font-weight:900;color:var(--primary);display:block}
+.stat-box .lbl{font-size:8px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* API status */
+.api-status{position:fixed;top:56px;right:16px;font-size:8px;z-index:10;padding:4px 8px;border-radius:4px}
+.api-status.ok{background:rgba(52,211,153,.15);color:var(--green)}
+.api-status.err{background:var(--rose-dim);color:var(--rose)}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div style="font-size:24px;font-weight:900;color:var(--primary);letter-spacing:3px;font-family:'Fira Code',monospace">MEMORY GALAXY</div>
+  <div class="loading-text" id="loading-status">Connecting to API...</div>
+  <div class="loading-bar"><div class="loading-fill" id="loading-fill"></div></div>
+</div>
+
+<canvas id="galaxy-canvas"></canvas>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-logo">MEMORY GALAXY</div>
+    <div class="topbar-sub">Obsidian Vault Visualization</div>
+  </div>
+  <div class="search-wrap">
+    <div class="stat-pill"><span class="val" id="stat-stars">0</span> stars</div>
+    <div class="stat-pill"><span class="val" id="stat-links">0</span> links</div>
+    <div class="stat-pill"><span class="val" id="stat-folders">0</span> folders</div>
+    <input class="search-input" type="text" id="search" placeholder="Search notes...">
+  </div>
+</div>
+
+<div class="filter-bar" id="filter-bar"></div>
+
+<div class="side-panel hidden" id="side-panel">
+  <div class="panel-header">
+    <div class="panel-title">STAR DETAILS</div>
+    <button class="close-btn" onclick="closePanel()">&times;</button>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</div>
+
+<div id="tooltip">
+  <div class="tooltip-title" id="tt-title"></div>
+  <div class="tooltip-meta" id="tt-meta"></div>
+</div>
+
+<div class="legend">
+  <div class="legend-title">FOLDERS</div>
+  <div class="legend-items" id="legend-items"></div>
+</div>
+
+<div class="zoom-controls">
+  <button class="zoom-btn" onclick="zoomIn()">+</button>
+  <button class="zoom-btn" onclick="zoomOut()">&minus;</button>
+  <button class="zoom-btn" onclick="resetView()" style="font-size:10px">R</button>
+  <div class="zoom-label" id="zoom-label">100%</div>
+</div>
+
+<div class="stats-overlay">
+  <div class="stat-box"><span class="val" id="s-stars">0</span><span class="lbl">Notes</span></div>
+  <div class="stat-box"><span class="val" id="s-links">0</span><span class="lbl">Links</span></div>
+  <div class="stat-box"><span class="val" id="s-connections">0</span><span class="lbl">Constellations</span></div>
+</div>
+
+<script>
+// ─── Config ───
+var API = window.location.port ? 'http://127.0.0.1:8642' : window.location.origin;
+
+// ─── State ───
+var canvas, ctx;
+var galaxyData = null;
+var stars = [];
+var constellations = [];
+var galaxyScene = null;
+var galaxyCamera = null;
+var galaxyRenderer = null;
+var galaxyStars = [];
+var galaxySprites = [];
+var galaxyLines = [];
+var galaxyLabels = [];
+var galaxyAnimId = null;
+var galaxyRotation = {x:0.3,y:0,z:0};
+var galaxyZoom = 1;
+var camera = { x: 0, y: 0, zoom: 1, targetZoom: 1 };
+var mouse = { x: 0, y: 0, down: false, startX: 0, startY: 0, lastX: 0, lastY: 0 };
+var hoveredStar = null;
+var selectedStar = null;
+var activeFilter = 'all';
+var searchQuery = '';
+var time = 0;
+var positions = [];
+
+// ─── Init ───
+function init() {
+  canvas = document.getElementById('galaxy-canvas');
+  ctx = canvas.getContext('2d');
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Load live data from API
+  loadData();
+
+  // Input handlers
+  canvas.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('mousedown', onMouseDown);
+  canvas.addEventListener('mouseup', onMouseUp);
+  canvas.addEventListener('mouseleave', function(){ mouse.down = false; canvas.style.cursor = hoveredStar ? 'pointer' : 'grab'; });
+  canvas.addEventListener('wheel', onWheel, { passive: false });
+  canvas.addEventListener('click', onClick);
+
+  // Search
+  document.getElementById('search').addEventListener('input', function(){ handleSearch(this.value); });
+}
+
+// ─── API ───
+function loadData() {
+  var fill = document.getElementById('loading-fill');
+  var status = document.getElementById('loading-status');
+  fill.style.width = '20%';
+  status.textContent = 'Fetching vault data...';
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', API + '/api/galaxy', true);
+  xhr.timeout = 10000;
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          galaxyData = JSON.parse(xhr.responseText);
+          fill.style.width = '60%';
+          status.textContent = 'Building 3D scene...';
+          setTimeout(function() {
+            buildStars();
+            buildConstellations();
+            buildLegend();
+            buildFilters();
+            updateStats();
+            fill.style.width = '100%';
+            status.textContent = 'Ready.';
+            setTimeout(function(){
+              document.getElementById('loading').classList.add('done');
+            }, 400);
+            requestAnimationFrame(render);
+          }, 100);
+        } catch(e) {
+          status.textContent = 'Parse error: ' + e.message;
+          fill.style.width = '100%';
+          fill.style.background = 'var(--rose)';
+        }
+      } else {
+        status.textContent = 'API error (' + xhr.status + '). Run: cd Agentic-OS && python3 api.py';
+        fill.style.width = '100%';
+        fill.style.background = 'var(--rose)';
+      }
+    }
+  };
+  xhr.ontimeout = function() {
+    status.textContent = 'API timeout. Run: cd Agentic-OS && python3 api.py';
+    fill.style.width = '100%';
+    fill.style.background = 'var(--rose)';
+  };
+  xhr.send();
+}
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// ─── Folder Colors ───
+var FOLDER_COLORS = {};
+var FOLDER_COLOR_LIST = ['#a78bfa','#a3e635','#fbbf24','#fb7185','#22d3ee','#34d399','#fcbe6a','#c084fc','#f4726b','#38bdf8','#818cf8','#e879f9'];
+var folderColorIdx = 0;
+
+function getFolderColor(folder) {
+  if (!FOLDER_COLORS[folder]) {
+    FOLDER_COLORS[folder] = FOLDER_COLOR_LIST[folderColorIdx % FOLDER_COLOR_LIST.length];
+    folderColorIdx++;
+  }
+  return FOLDER_COLORS[folder];
+}
+
+// ─── Build Stars ───
+function buildStars() {
+  if (!galaxyData) return;
+  var nodes = galaxyData.nodes;
+  var n = nodes.length;
+  stars = [];
+  positions = [];
+
+  var maxMtime = Math.max.apply(null, nodes.map(function(nd){return nd.mtime})) || 1;
+  var minMtime = Math.min.apply(null, nodes.map(function(nd){return nd.mtime})) || 0;
+  var mtimeRange = maxMtime - minMtime || 1;
+
+  // Initial positions: Fibonacci spiral on a sphere
+  var goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  var cx = canvas.width / 2;
+  var cy = canvas.height / 2;
+
+  for (var i = 0; i < n; i++) {
+    var theta = i * goldenAngle;
+    var radius = 40 * Math.sqrt(i + 1) * 3.5;
+    var jitter = (Math.random() - 0.5) * 60;
+    var x = cx + Math.cos(theta) * radius + jitter;
+    var y = cy + Math.sin(theta) * radius + jitter;
+    var depth = 0.3 + Math.random() * 0.7;
+    var baseSize = 3 + Math.min(nodes[i].links_out, 15) * 1.2;
+    var size = baseSize * (0.7 + depth * 0.6);
+    var recency = (nodes[i].mtime - minMtime) / mtimeRange;
+    var color = getFolderColor(nodes[i].folder);
+
+    positions.push({x: x, y: y, z: depth});
+    stars.push({
+      i: i,
+      x: x, y: y,
+      baseX: x, baseY: y,
+      size: size, baseSize: size,
+      depth: depth,
+      color: color,
+      title: nodes[i].title,
+      path: nodes[i].path,
+      folder: nodes[i].folder,
+      links: nodes[i].links_out,
+      tags: nodes[i].tags || [],
+      size_kb: '—',
+      mtime: nodes[i].mtime,
+      recency: recency,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.2 + Math.random() * 0.5,
+      visible: true,
+      matched: true,
+    });
+  }
+}
+
+// ─── Build Constellations ───
+function buildConstellations() {
+  if (!galaxyData) return;
+  constellations = [];
+  var nodes = galaxyData.nodes;
+  galaxyData.links.forEach(function(l) {
+    var a = stars[l.source];
+    var b = stars[l.target];
+    if (a && b) {
+      constellations.push({ a: a, b: b });
+    }
+  });
+}
+
+// ─── Build Legend ───
+function buildLegend() {
+  var el = document.getElementById('legend-items');
+  var folders = {};
+  stars.forEach(function(s) {
+    if (!folders[s.folder]) folders[s.folder] = s.color;
+  });
+  var html = '';
+  for (var folder in folders) {
+    html += '<div class="legend-item"><span class="legend-dot" style="background:' + folders[folder] + '"></span>' + folder + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+// ─── Build Filters ───
+function buildFilters() {
+  var el = document.getElementById('filter-bar');
+  var folders = {};
+  stars.forEach(function(s) {
+    if (!folders[s.folder]) folders[s.folder] = { color: s.color, count: 0 };
+    folders[s.folder].count++;
+  });
+  var html = '<button class="filter-btn active" data-filter="all" onclick="setFilter(\'all\')"><span class="filter-dot" style="background:var(--primary)"></span>ALL (' + stars.length + ')</button>';
+  for (var folder in folders) {
+    html += '<button class="filter-btn" data-filter="' + folder + '" onclick="setFilter(\'' + folder + '\')"><span class="filter-dot" style="background:' + folders[folder].color + '"></span>' + folder.toUpperCase() + ' (' + folders[folder].count + ')</button>';
+  }
+  el.innerHTML = html;
+}
+
+// ─── Update Stats ───
+function updateStats() {
+  if (!galaxyData) return;
+  document.getElementById('stat-stars').textContent = stars.length;
+  document.getElementById('stat-links').textContent = constellations.length;
+  var folders = {};
+  stars.forEach(function(s) { folders[s.folder] = true; });
+  document.getElementById('stat-folders').textContent = Object.keys(folders).length;
+  document.getElementById('s-stars').textContent = galaxyData.nodes.length;
+  document.getElementById('s-links').textContent = galaxyData.links.length;
+  document.getElementById('s-connections').textContent = constellations.length;
+}
+
+// ─── Filtering ───
+function setFilter(folder) {
+  activeFilter = folder;
+  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.filter === folder);
+  });
+  applyFilters();
+}
+
+function handleSearch(q) {
+  searchQuery = q.toLowerCase();
+  applyFilters();
+}
+
+function applyFilters() {
+  stars.forEach(function(s) {
+    var matchFolder = activeFilter === 'all' || s.folder === activeFilter;
+    var matchSearch = !searchQuery || s.title.toLowerCase().indexOf(searchQuery) !== -1 || s.path.toLowerCase().indexOf(searchQuery) !== -1;
+    s.visible = matchFolder && matchSearch;
+    s.matched = matchFolder && matchSearch;
+  });
+}
+
+// ─── Canvas 2D Rendering ───
+function render() {
+  time += 0.016;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background stars (static)
+  ctx.fillStyle = 'rgba(74, 96, 128, 0.3)';
+  for (var i = 0; i < 200; i++) {
+    var sx = ((i * 137.5) % canvas.width);
+    var sy = ((i * 97.3 + time * 2) % canvas.height);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 0.5 + Math.sin(time + i) * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  var cx = canvas.width / 2 + camera.x;
+  var cy = canvas.height / 2 + camera.y;
+  var zoom = camera.zoom;
+
+  // Smooth zoom
+  camera.zoom += (camera.targetZoom - camera.zoom) * 0.1;
+
+  // Draw constellation lines
+  ctx.lineWidth = 1;
+  constellations.forEach(function(c) {
+    if (!c.a.visible || !c.b.visible) return;
+    var ax = cx + (c.a.x - canvas.width/2) * zoom;
+    var ay = cy + (c.a.y - canvas.height/2) * zoom;
+    var bx = cx + (c.b.x - canvas.width/2) * zoom;
+    var by = cy + (c.b.y - canvas.height/2) * zoom;
+
+    var grad = ctx.createLinearGradient(ax, ay, bx, by);
+    grad.addColorStop(0, c.a.color + '40');
+    grad.addColorStop(1, c.b.color + '40');
+    ctx.strokeStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(bx, by);
+    ctx.stroke();
+  });
+
+  // Draw stars
+  stars.forEach(function(s) {
+    if (!s.visible) return;
+    var sx = cx + (s.x - canvas.width/2) * zoom;
+    var sy = cy + (s.y - canvas.height/2) * zoom;
+    var sr = s.size * zoom;
+
+    // Glow
+    var glowR = sr * (2.5 + Math.sin(time * s.speed + s.phase) * 0.5);
+    var grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, glowR);
+    var baseAlpha = 0.15 + s.recency * 0.2;
+    grad.addColorStop(0, s.color + Math.round(baseAlpha * 255).toString(16).padStart(2, '0'));
+    grad.addColorStop(1, s.color + '00');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(sx, sy, glowR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core
+    ctx.fillStyle = s.color;
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr * 0.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // White center for recent stars
+    if (s.recency > 0.5) {
+      ctx.fillStyle = 'rgba(255,255,255,' + (s.recency * 0.6) + ')';
+      ctx.beginPath();
+      ctx.arc(sx, sy, sr * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  // Draw labels for hovered/selected and large stars
+  ctx.textAlign = 'center';
+  stars.forEach(function(s) {
+    if (!s.visible) return;
+    var sx = cx + (s.x - canvas.width/2) * zoom;
+    var sy = cy + (s.y - canvas.height/2) * zoom;
+    var sr = s.size * zoom;
+
+    // Show label if hovered, selected, or large enough
+    if ((hoveredStar && hoveredStar.i === s.i) || (selectedStar && selectedStar.i === s.i) || sr > 8) {
+      var fontSize = Math.max(9, Math.min(12, sr * 0.8));
+      ctx.font = fontSize + "px 'Fira Code', monospace";
+      ctx.fillStyle = 'rgba(148, 163, 184, ' + Math.min(1, sr / 10) + ')';
+      ctx.fillText(s.title.substring(0, 20), sx, sy - sr - 4);
+    }
+  });
+
+  requestAnimationFrame(render);
+}
+
+// ─── Interaction ───
+function onMouseMove(e) {
+  var rect = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+
+  if (mouse.down) {
+    camera.x += (e.clientX - mouse.startX);
+    camera.y += (e.clientY - mouse.startY);
+    mouse.startX = e.clientX;
+    mouse.startY = e.clientY;
+    return;
+  }
+
+  var cx = canvas.width / 2 + camera.x;
+  var cy = canvas.height / 2 + camera.y;
+  var zoom = camera.zoom;
+  var wx = (mouse.x - cx) / zoom + canvas.width/2;
+  var wy = (mouse.y - cy) / zoom + canvas.height/2;
+
+  hoveredStar = null;
+  var minDist = 20 / zoom;
+  stars.forEach(function(s) {
+    if (!s.visible) return;
+    var dx = s.x - wx;
+    var dy = s.y - wy;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < Math.max(s.size, minDist)) {
+      hoveredStar = s;
+    }
+  });
+
+  var tt = document.getElementById('tooltip');
+  if (hoveredStar) {
+    canvas.style.cursor = 'pointer';
+    tt.classList.add('visible');
+    tt.style.left = (e.clientX + 14) + 'px';
+    tt.style.top = (e.clientY - 10) + 'px';
+    document.getElementById('tt-title').textContent = hoveredStar.title;
+    document.getElementById('tt-meta').innerHTML =
+      '<span style="color:' + hoveredStar.color + '">' + hoveredStar.folder + '</span>' +
+      '<span>' + hoveredStar.links + ' links</span>';
+  } else {
+    canvas.style.cursor = 'grab';
+    tt.classList.remove('visible');
+  }
+}
+
+function onMouseDown(e) {
+  mouse.down = true;
+  mouse.startX = e.clientX;
+  mouse.startY = e.clientY;
+  canvas.style.cursor = 'grabbing';
+}
+
+function onMouseUp(e) {
+  mouse.down = false;
+  canvas.style.cursor = hoveredStar ? 'pointer' : 'grab';
+}
+
+function onWheel(e) {
+  e.preventDefault();
+  var delta = e.deltaY > 0 ? 0.9 : 1.1;
+  camera.targetZoom = Math.max(0.2, Math.min(5, camera.targetZoom * delta));
+  document.getElementById('zoom-label').textContent = Math.round(camera.targetZoom * 100) + '%';
+}
+
+function onClick(e) {
+  if (hoveredStar) {
+    selectStar(hoveredStar);
+  }
+}
+
+function zoomIn() {
+  camera.targetZoom = Math.min(5, camera.targetZoom * 1.3);
+  document.getElementById('zoom-label').textContent = Math.round(camera.targetZoom * 100) + '%';
+}
+
+function zoomOut() {
+  camera.targetZoom = Math.max(0.2, camera.targetZoom / 1.3);
+  document.getElementById('zoom-label').textContent = Math.round(camera.targetZoom * 100) + '%';
+}
+
+function resetView() {
+  camera.x = 0;
+  camera.y = 0;
+  camera.targetZoom = 1;
+  document.getElementById('zoom-label').textContent = '100%';
+}
+
+// ─── Selection ───
+function selectStar(star) {
+  selectedStar = star;
+  var panel = document.getElementById('side-panel');
+  panel.classList.remove('hidden');
+
+  var date = new Date(star.mtime * 1000);
+  var dateStr = date.toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'});
+
+  var connected = [];
+  constellations.forEach(function(c) {
+    if (c.a.i === star.i) connected.push(c.b);
+    if (c.b.i === star.i) connected.push(c.a);
+  });
+
+  var html = '';
+  html += '<div class="info-row"><span class="info-label">Title</span><span class="info-val" style="color:' + star.color + '">' + star.title + '</span></div>';
+  html += '<div class="info-row"><span class="info-label">Path</span><span class="info-val" style="font-size:8px;word-break:break-all">' + star.path + '</span></div>';
+  html += '<div class="info-row"><span class="info-label">Folder</span><span class="info-val folder">' + star.folder + '</span></div>';
+  html += '<div class="info-row"><span class="info-label">Links</span><span class="info-val links">' + star.links + '</span></div>';
+  if (star.tags.length) {
+    html += '<div class="info-row"><span class="info-label">Tags</span><span class="info-val" style="color:var(--accent)">' + star.tags.join(' ') + '</span></div>';
+  }
+  html += '<div class="info-row"><span class="info-label">Modified</span><span class="info-val">' + dateStr + '</span></div>';
+  html += '<div class="info-row"><span class="info-label">Recency</span><span class="info-val"><div style="width:60px;height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="width:' + Math.round(star.recency*100) + '%;height:100%;background:' + star.color + ';border-radius:2px"></div></div></span></div>';
+
+  if (connected.length > 0) {
+    html += '<div class="detail-section">';
+    html += '<div class="detail-section-title">CONSTELLATION LINKS (' + connected.length + ')</div>';
+    html += '<div class="link-list">';
+    connected.forEach(function(c) {
+      html += '<div class="link-item" onclick="focusStar(' + c.i + ')"><span class="link-dot" style="background:' + c.color + '"></span>' + c.title + '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  html += '<div class="action-row">';
+  html += '<button class="action-btn" onclick="focusStar(' + star.i + ')">CENTER</button>';
+  html += '</div>';
+
+  document.getElementById('panel-body').innerHTML = html;
+}
+
+function closePanel() {
+  selectedStar = null;
+  document.getElementById('side-panel').classList.add('hidden');
+}
+
+function focusStar(idx) {
+  var star = stars[idx];
+  if (!star) return;
+  camera.x = -(star.x - canvas.width/2) * camera.zoom;
+  camera.y = -(star.y - canvas.height/2) * camera.zoom;
+  selectStar(star);
+}
+
+// ─── Start ───
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

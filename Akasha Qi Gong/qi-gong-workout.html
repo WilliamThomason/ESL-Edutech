@@ -157,7 +157,25 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;
     <button class="music-tab active" onclick="showMusicTab('url',this)">🔗 URL</button>
     <button class="music-tab" onclick="showMusicTab('file',this)">📁 Upload File</button>
   </div>
-  <div class="music-panel active" id="music-url-panel">
+  <div class="music-panel active" id="music-ambient-panel">
+  <h3>🎵 Ambient Music</h3>
+  <div class="music-tabs">
+    <button class="music-tab active" onclick="showMusicTab('ambient',this)">Ambient Sounds</button>
+  </div>
+  <div class="music-player" id="ambientPlayer">
+    <button class="music-play-btn" id="ambientPlayBtn" onclick="toggleAmbientMusic()">▶ Play</button>
+    <div class="music-info">
+      <div class="music-name">No ambient track loaded</div>
+      <div class="music-time"><span id="ambientCurrentTime">0:00</span> / <span id="ambientTotalTime">0:00</span></div>
+    </div>
+    <div class="music-progress" id="ambientProgress"><div class="music-progress-fill" id="ambientProgressFill"></div></div>
+    <div class="music-vol">
+      <input type="range" id="ambientVol" min="0" max="100" value="80" oninput="setAmbientVolume(this.value)">
+    </div>
+    <button class="music-play-btn" onclick="stopAmbientMusic()" title="Stop">■</button>
+  </div>
+  <audio id="ambientAudio" preload="auto"></audio>
+</div>
     <input type="text" class="music-input" id="musicUrlInput" placeholder="Paste a URL to an audio file (MP3, WAV, OGG)..." onkeydown="if(event.key==='Enter')loadMusicUrl()">
     <button class="timer-btn primary" style="margin-top:8px;width:100%" onclick="loadMusicUrl()">Load URL</button>
   </div>
@@ -339,12 +357,28 @@ renderExercises();
 
 // ═══ TIMER ═══
 var timerInterval=null;
-var timerRemaining=30*60;
-var timerTotal=30*60;
+var timerRemaining=0;
+var timerTotal=0;
 var timerRunning=false;
 
+function initTimer(){
+  timerTotal=0;
+  for(var i=0;i<EXERCISES.length;i++) timerTotal+=EXERCISES[i].duration;
+  timerRemaining=timerTotal;
+  updateTimerDisplay();
+}
+
 function toggleTimer(){
-  if(timerRemaining<=0){resetTimer();return;}
+  if(timerRemaining<=0){
+  clearInterval(timerInterval);
+  timerInterval=null;
+  timerRunning=false;
+  stopExerciseAudio(); // Ensure audio stops
+  exercisePaused=true; // Pause exercise sequence as well
+  document.getElementById('timerLabel').textContent='Session complete!';
+  document.getElementById('timerStartBtn').innerHTML='Start';
+  // Optionally: You can give auto-speech feedback here
+}
   if(timerRunning){
     clearInterval(timerInterval);
     timerInterval=null;
@@ -355,6 +389,7 @@ function toggleTimer(){
     stopExerciseAudio();
   } else {
     timerRunning=true;
+    exercisePaused=false;
     document.getElementById('timerStartBtn').innerHTML='Pause';
     document.getElementById('timerLabel').textContent='Session in progress...';
     timerInterval=setInterval(function(){
