@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Past Simple Masterclass 🎯</title>
+<style>
+:root{
+  --bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#252540;--border:#3a3a5c;
+  --text:#e8e8f0;--text-dim:#9090b0;
+  --accent:#7c3aed;--accent2:#a78bfa;--green:#10b981;--red:#ef4444;
+  --amber:#f59e0b;--blue:#3b82f6;--pink:#ec4899;--cyan:#06b6d4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(15,15,26,.95);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+nav .logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+nav .links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+nav .links a{
+  color:var(--text-dim);text-decoration:none;font-size:13px;
+  padding:6px 12px;border-radius:8px;transition:all .15s;
+}
+nav .links a:hover{color:var(--text);background:var(--bg3)}
+
+/* SECTIONS */
+section{padding:60px 20px;max-width:900px;margin:0 auto}
+section h2{
+  font-size:28px;font-weight:800;margin-bottom:8px;
+  background:linear-gradient(135deg,var(--accent2),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+section .subtitle{color:var(--text-dim);font-size:15px;margin-bottom:32px}
+
+/* CARDS */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:16px;
+  transition:all .2s;
+}
+.card:hover{border-color:var(--accent)}
+
+/* VERB TABLE */
+.verb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.verb-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;padding:14px;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.verb-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.verb-card.revealed{border-color:var(--green)}
+.verb-card .base{font-size:16px;font-weight:700;color:var(--accent2)}
+.verb-card .past{font-size:14px;color:var(--text);margin-top:2px}
+.verb-card .past-participle{font-size:13px;color:var(--text-dim)}
+.verb-card .meaning{
+  max-height:0;overflow:hidden;transition:max-height .3s ease;
+  font-size:13px;color:var(--green);margin-top:0;
+}
+.verb-card.revealed .meaning{max-height:60px;margin-top:8px}
+.verb-card .flag{position:absolute;top:8px;right:8px;font-size:14px;opacity:.4}
+
+/* MISTAKES */
+.mistake-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:12px;
+  display:flex;gap:16px;align-items:flex-start;
+}
+.mistake-card .icon{font-size:28px;flex-shrink:0}
+.mistake-card .wrong{color:var(--red);font-weight:700;text-decoration:line-through}
+.mistake-card .right{color:var(--green);font-weight:700}
+.mistake-card .explanation{color:var(--text-dim);font-size:13px;margin-top:6px}
+
+/* EXERCISES */
+.exercise{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.exercise h3{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.exercise h3 .num{background:var(--accent);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* FILL IN THE BLANK */
+.fill-blank{display:flex;flex-direction:column;gap:12px}
+.fill-blank .sentence{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px}
+.fill-blank input{
+  background:var(--bg3);border:2px solid var(--border);border-radius:8px;
+  padding:6px 10px;color:var(--text);font-size:15px;font-weight:600;
+  width:140px;text-align:center;outline:none;transition:all .15s;
+}
+.fill-blank input:focus{border-color:var(--accent)}
+.fill-blank input.correct{border-color:var(--green);background:rgba(16,185,129,.1)}
+.fill-blank input.wrong{border-color:var(--red);background:rgba(239,68,68,.1)}
+.fill-blank .check-btn{
+  background:var(--accent);color:#fff;border:none;border-radius:8px;
+  padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .15s;
+}
+.fill-blank .check-btn:hover{background:var(--accent2)}
+
+/* MATCHING */
+.matching{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.matching .col{display:flex;flex-direction:column;gap:8px}
+.matching .col-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:4px}
+.match-item{
+  background:var(--bg3);border:2px solid var(--border);border-radius:10px;
+  padding:10px 14px;font-size:14px;cursor:pointer;transition:all .15s;
+  text-align:center;
+}
+.match-item:hover{border-color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:rgba(124,58,237,.2)}
+.match-item.matched{border-color:var(--green);background:rgba(16,185,129,.1);cursor:default}
+.match-item.wrong{border-color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* QUIZ */
+.quiz-q{margin-bottom:20px}
+.quiz-q .question{font-size:16px;font-weight:600;margin-bottom:12px}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{
+  background:var(--bg3);border:2px solid var(--border);border-radius:10px;
+  padding:12px 16px;font-size:14px;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:10px;
+}
+.quiz-opt:hover{border-color:var(--accent2)}
+.quiz-opt .letter{
+  width:24px;height:24px;border-radius:50%;background:var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;
+}
+.quiz-opt.selected{border-color:var(--accent)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(16,185,129,.1)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.1)}
+
+/* SCORE */
+.score-bar{
+  height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin:16px 0;
+}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:4px;transition:width .5s}
+.score-text{text-align:center;font-size:14px;color:var(--text-dim)}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--accent);color:#fff;border:none;border-radius:10px;
+  padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:all .15s;
+}
+.btn:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+/* PROGRESS */
+.progress{display:flex;gap:4px;margin:16px 0}
+.progress-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--border);
+  transition:all .3s;
+}
+.progress-dot.done{background:var(--green)}
+.progress-dot.current{background:var(--accent)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.tab{
+  background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+  padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .15s;color:var(--text-dim);
+}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* HINT */
+.hint{
+  background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);
+  border-radius:10px;padding:12px 16px;font-size:13px;color:var(--amber);
+  margin-top:12px;
+}
+
+/* FOOTER */
+footer{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeIn .4s ease-out}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .verb-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .matching{grid-template-columns:1fr}
+  nav .links{width:100%;margin-left:0;justify-content:center}
+  section{padding:40px 16px}
+  section h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">🎯 Past Simple</div>
+  <div class="links">
+    <a href="#verbs">Irregular Verbs</a>
+    <a href="#mistakes">French Mistakes</a>
+    <a href="#exercises">Exercises</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section style="text-align:center;padding-top:80px">
+  <div style="font-size:64px;margin-bottom:16px">🎯</div>
+  <h1 style="font-size:42px;font-weight:900;margin-bottom:12px;background:linear-gradient(135deg,var(--accent),var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:none;-webkit-text-fill-color:transparent">
+    Past Simple Masterclass
+  </h1>
+  <p style="color:var(--text-dim);font-size:18px;max-width:600px;margin:0 auto 32px">
+    Master the past simple tense with 40 essential irregular verbs, common French mistakes to avoid, and fun interactive exercises!
+  </p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="#verbs" class="btn">Start Learning 🚀</a>
+    <a href="#exercises" class="btn btn-outline">Jump to Exercises 💪</a>
+  </div>
+</section>
+
+<!-- IRREGULAR VERBS -->
+<section id="verbs">
+  <h2>40 Irregular Verbs</h2>
+  <p class="subtitle">Click each card to reveal the meaning. Memorize them all!</p>
+  <div class="verb-grid" id="verbGrid"></div>
+  <div style="text-align:center;margin-top:20px">
+    <button class="btn" onclick="revealAll()">Reveal All 👀</button>
+    <button class="btn btn-outline" onclick="resetVerbs()" style="margin-left:8px">Reset 🔄</button>
+  </div>
+</section>
+
+<!-- FRENCH MISTAKES -->
+<section id="mistakes">
+  <h2>Common French Mistakes</h2>
+  <p class="subtitle">These are the most common errors French speakers make in English. Learn to avoid them!</p>
+  <div id="mistakesList"></div>
+</section>
+
+<!-- EXERCISES -->
+<section id="exercises">
+  <h2>Interactive Exercises</h2>
+  <p class="subtitle">Test your knowledge! Complete all exercises to master the past simple.</p>
+  
+  <div class="tabs" id="exTabs">
+    <div class="tab active" data-tab="fill" data-action="tab" data-tab="fill">✏️ Fill the Blanks</div>
+    <div class="tab" data-tab="match" data-action="tab" data-tab="match">🔗 Matching</div>
+    <div class="tab" data-tab="quiz" data-action="tab" data-tab="quiz">🧠 Quiz</div>
+  </div>
+
+  <div id="fillEx" class="exercise-content"></div>
+  <div id="matchEx" class="exercise-content" style="display:none"></div>
+  <div id="quizEx" class="exercise-content" style="display:none"></div>
+</section>
+
+<footer>
+  <p>Past Simple Masterclass — Made for French learners 🇫🇷→🇬🇧</p>
+</footer>
+
+<script>
+
+
+// ===== DATA: 40 IRREGULAR VERBS =====
+// Format: [base, past, past participle, French meaning]
+var verbs = [
+  ["be","was/were","been","être"],
+  ["begin","begun","begun","commencer"],
+  ["break","broke","broken","casser"],
+  ["bring","brought","brought","apporter"],
+  ["build","built","built","construire"],
+  ["buy","bought","bought","acheter"],
+  ["catch","caught","caught","attraper"],
+  ["choose","chose","chosen","choisir"],
+  ["come","came","come","venir"],
+  ["do","did","done","faire"],
+  ["drink","drank","drunk","boire"],
+  ["drive","drove","driven","conduire"],
+  ["eat","ate","eaten","manger"],
+  ["fall","fell","fallen","tomber"],
+  ["feel","felt","felt","sentir"],
+  ["find","found","found","trouver"],
+  ["fly","flown","flown","voler"],
+  ["forget","forgot","forgot","oublier"],
+  ["get","got","got","obtenir"],
+  ["give","gave","given","donner"],
+  ["go","went","gone","aller"],
+  ["have","had","had","avoir"],
+  ["hear","heard","heard","entendre"],
+  ["hide","hid","hidden","cacher"],
+  ["keep","kept","kept","garder"],
+  ["know","knew","known","savoir/connaître"],
+  ["leave","left","left","laisser/partir"],
+  ["lose","lost","lost","perdre"],
+  ["make","made","made","faire/fabriquer"],
+  ["meet","met","met","rencontrer"],
+  ["pay","paid","paid","payer"],
+  ["put","put","put","mettre"],
+  ["read","read","read","lire"],
+  ["run","ran","run","courir"],
+  ["say","said","said","dire"],
+  ["see","saw","seen","voir"],
+  ["sell","sold","sold","vendre"],
+  ["send","sent","sent","envoyer"],
+  ["sit","sat","sat","s'asseoir"],
+  ["sleep","slept","slept","dormir"],
+  ["speak","spoke","spoken","parler"],
+  ["spend","spent","spent","dépenser"],
+  ["stand","stood","stood","se tenir debout"],
+  ["swim","swam","swum","nager"],
+  ["take","took","taken","prendre"],
+  ["teach","taught","taught","enseigner"],
+  ["tell","told","told","dire/raconter"],
+  ["think","thought","thought","penser"],
+  ["understand","understood","understood","comprendre"],
+  ["wear","wore","worn","porter (vêtement)"],
+  ["win","won","won","gagner"],
+  ["write","wrote","written","écrire"],
+  ["cut","cut","cut","couper"],
+  ["put","put","put","mettre"],
+  ["shut","shut","shut","fermer"]
+];
+
+// Deduplicate by base form
+var seen = {};
+var uniqueVerbs = [];
+verbs.forEach(function(v){
+  if(!seen[v[0]]){
+    seen[v[0]] = true;
+    uniqueVerbs.push(v);
+  }
+});
+verbs = uniqueVerbs.slice(0,40); // Ensure exactly 40
+
+
+
+// ===== DATA: COMMON FRENCH MISTAKES =====
+var mistakes = [
+  {
+    icon: "🚫",
+    title: "Using present perfect instead of past simple",
+    wrong: "I have seen him yesterday.",
+    right: "I saw him yesterday.",
+    explanation: "In French, 'J'ai vu' works for both recent and specific past. In English, use past simple with specific time markers (yesterday, last week, in 2020). Use present perfect only for unfinished time (today, this week) or no specific time."
+  },
+  {
+    icon: "🚫",
+    title: "Forgetting irregular past forms",
+    wrong: "I goed to the park.",
+    right: "I went to the park.",
+    explanation: "French uses 'Je suis allé' (être + past participle) for some verbs. English has irregular forms: go→went, see→saw, eat→ate. You MUST memorize these!"
+  },
+  {
+    icon: "🚫",
+    title: "Using 'was' with all subjects",
+    wrong: "You was happy. They was late.",
+    right: "You were happy. They were late.",
+    explanation: "In French, 'tu étais' and 'ils étaient' both use être. In English, 'was' is only for I/he/she/it. Use 'were' for you/we/they."
+  },
+  {
+    icon: "🚫",
+    title: "Adding 'have' before past simple",
+    wrong: "I have went to school.",
+    right: "I went to school. / I have gone to school.",
+    explanation: "Don't mix 'have' with past simple form. Past simple: 'I went'. Present perfect: 'I have gone' (past participle, not past simple!)."
+  },
+  {
+    icon: "🚫",
+    title: "Using 'did' with the past form",
+    wrong: "I didn't went. Did you saw?",
+    right: "I didn't go. Did you see?",
+    explanation: "After 'did/didn't', use the BASE form (infinitive), not the past form. The 'did' already carries the past meaning."
+  },
+  {
+    icon: "🚫",
+    title: "Confusing 'say' and 'tell'",
+    wrong: "He said me. She told that...",
+    right: "He told me. She said that...",
+    explanation: "TELL needs a person: tell me, tell him, tell them. SAY doesn't need a person directly: say something, say that..."
+  },
+  {
+    icon: "🚫",
+    title: "Using 'since' with past simple",
+    wrong: "I lived there since 2020.",
+    right: "I have lived there since 2020.",
+    explanation: "'Since' requires present perfect (have + past participle), not past simple. Past simple uses 'for' with a finished period: 'I lived there for 3 years' (but not anymore)."
+  },
+  {
+    icon: "🚫",
+    title: "Word order in questions",
+    wrong: "Where you went? When she arrived?",
+    right: "Where did you go? When did she arrive?",
+    explanation: "In French, you can say 'Où tu es allé?' (no auxiliary). In English questions, you NEED 'did' + subject + base verb (except with 'be' and 'have' as main verbs)."
+  },
+  {
+    icon: "🚫",
+    title: "Using 'be' with age",
+    wrong: "I am 14 years.",
+    right: "I am 14 (years old). / I was 14.",
+    explanation: "In French, 'J'ai 14 ans' uses 'avoir'. In English, use 'be': I am 14. For past: I was 14. Don't add 'years' after the number."
+  },
+  {
+    icon: "🚫",
+    title: "Confusing 'make' and 'do'",
+    wrong: "I made my homework. She does a mistake.",
+    right: "I did my homework. She makes a mistake.",
+    explanation: "DO = general activities, work, homework (do homework, do business). MAKE = create/produce something (make a mistake, make dinner, make noise)."
+  }
+];
+
+
+
+// ===== RENDER: VERB CARDS =====
+function renderVerbs(){
+  var grid = document.getElementById('verbGrid');
+  var html = '';
+  verbs.forEach(function(v, i){
+    html += '<div class="verb-card" id="verb' + i + '" data-action="reveal" data-idx="' + i + '">';
+    html += '<div class="flag">🇫🇷</div>';
+    html += '<div class="base">' + v[0] + '</div>';
+    html += '<div class="past">' + v[1] + '</div>';
+    html += '<div class="past-participle">' + v[2] + '</div>';
+    html += '<div class="meaning">🇫🇷 ' + v[3] + '</div>';
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+function revealVerb(i){
+  var card = document.getElementById('verb' + i);
+  if(card) card.classList.toggle('revealed');
+}
+
+function revealAll(){
+  verbs.forEach(function(v, i){
+    document.getElementById('verb' + i).classList.add('revealed');
+  });
+}
+
+function resetVerbs(){
+  verbs.forEach(function(v, i){
+    document.getElementById('verb' + i).classList.remove('revealed');
+  });
+}
+
+// ===== RENDER: MISTAKES =====
+function renderMistakes(){
+  var list = document.getElementById('mistakesList');
+  var html = '';
+  mistakes.forEach(function(m, i){
+    html += '<div class="mistake-card animate-in" style="animation-delay:' + (i * 0.05) + 's">';
+    html += '<div class="icon">' + m.icon + '</div>';
+    html += '<div style="flex:1">';
+    html += '<div style="font-weight:600;margin-bottom:6px">' + m.title + '</div>';
+    html += '<div><span class="wrong">' + m.wrong + '</span></div>';
+    html += '<div style="margin-top:4px"><span class="right">' + m.right + '</span></div>';
+    html += '<div class="explanation">' + m.explanation + '</div>';
+    html += '</div></div>';
+  });
+  list.innerHTML = html;
+}
+
+
+
+// ===== EXERCISE DATA =====
+
+// Fill-in-the-blank sentences with the correct past simple answer
+var fillExercises = [
+  { sentence: "She ___ to the store yesterday.", answer: "went", hint: "aller" },
+  { sentence: "I ___ a big cake for your birthday.", answer: "made", hint: "faire/fabriquer" },
+  { sentence: "We ___ the movie last night.", answer: "saw", hint: "voir" },
+  { sentence: "He ___ me a secret.", answer: "told", hint: "dire (à quelqu'un)" },
+  { sentence: "They ___ very tired after the game.", answer: "were", hint: "être (pluriel)" },
+  { sentence: "I ___ my keys at home.", answer: "left", hint: "laisser/oublier" },
+  { sentence: "The bird ___ over the house.", answer: "flew", hint: "voler" },
+  { sentence: "She ___ a beautiful song.", answer: "sang", hint: "chanter" },
+  { sentence: "We ___ the answer.", answer: "knew", hint: "savoir" },
+  { sentence: "He ___ the window.", answer: "broke", hint: "casser" }
+];
+
+// Matching pairs: French past tense → English past simple
+var matchPairs = [
+  { left: "J'ai mangé", right: "ate" },
+  { left: "Je suis allé", right: "went" },
+  { left: "J'ai vu", right: "saw" },
+  { left: "J'ai fait", right: "did/made" },
+  { left: "J'ai dit", right: "said" },
+  { left: "J'ai pris", right: "took" },
+  { left: "J'ai écrit", right: "wrote" },
+  { left: "J'ai bu", right: "drank" },
+  { left: "J'ai couru", right: "ran" },
+  { left: "J'ai dormi", right: "slept" }
+];
+
+// Quiz questions
+var quizQuestions = [
+  {
+    question: "What is the past simple of 'go'?",
+    options: ["goed", "went", "gone", "going"],
+    correct: 1,
+    explanation: "'Go' is irregular: go → went → gone. The past simple is 'went'."
+  },
+  {
+    question: "Which sentence is correct?",
+    options: [
+      "I didn't went there.",
+      "I didn't go there.",
+      "I don't went there.",
+      "I not went there."
+    ],
+    correct: 1,
+    explanation: "After 'didn't', use the base form (infinitive): 'I didn't go'."
+  },
+  {
+    question: "What is the past simple of 'see'?",
+    options: ["saw", "seen", "seed", "sewed"],
+    correct: 0,
+    explanation: "'See' is irregular: see → saw → seen. Past simple = 'saw'."
+  },
+  {
+    question: "Complete: 'They ___ happy.' (past of 'be')",
+    options: ["was", "were", "beed", "been"],
+    correct: 1,
+    explanation: "Use 'were' with 'they' (and you/we). 'Was' is only for I/he/she/it."
+  },
+  {
+    question: "Which is correct?",
+    options: [
+      "I have seen him yesterday.",
+      "I saw him yesterday.",
+      "I see him yesterday.",
+      "I was seen him yesterday."
+    ],
+    correct: 1,
+    explanation: "With 'yesterday' (specific past time), use past simple: 'I saw'."
+  },
+  {
+    question: "What is the past simple of 'eat'?",
+    options: ["eaten", "ate", "eated", "eating"],
+    correct: 1,
+    explanation: "'Eat' is irregular: eat → ate → eaten."
+  },
+  {
+    question: "Complete: 'She ___ me a story.'",
+    options: ["said", "told", "spoke", "talked"],
+    correct: 1,
+    explanation: "Use TELL when there's a person: tell me, tell her. Use SAY without a person: say something."
+  },
+  {
+    question: "What is the past simple of 'write'?",
+    options: ["writed", "wrote", "written", "writing"],
+    correct: 1,
+    explanation: "'Write' is irregular: write → wrote → written."
+  },
+  {
+    question: "Which is the past participle of 'break'?",
+    options: ["breaked", "broke", "broken", "breaking"],
+    correct: 2,
+    explanation: "'Break' is irregular: break → broke → broken. Past participle = 'broken'."
+  },
+  {
+    question: "Complete: 'Where ___ you go?'",
+    options: ["do", "did", "does", "were"],
+    correct: 1,
+    explanation: "Questions in past simple use 'did': Where did you go? When did she arrive?"
+  }
+];
+
+
+
+// ===== RENDER: FILL IN THE BLANKS =====
+function renderFillEx(){
+  var div = document.getElementById('fillEx');
+  var html = '<div class="exercise"><h3><span class="num">1</span> Fill in the Blanks</h3>';
+  html += '<p style="color:var(--text-dim);font-size:13px;margin-bottom:16px">Type the past simple form of the verb in brackets. Click the hint if you need help!</p>';
+  html += '<div class="fill-blank">';
+  
+  fillExercises.forEach(function(ex, i){
+    var words = ex.sentence.split('___');
+    html += '<div class="sentence">';
+    html += '<span>' + words[0] + '</span>';
+    html += '<input type="text" id="fill' + i + '" placeholder="???" autocomplete="off">';
+    html += '<span>' + words[1] + '</span>';
+    html += '<button class="check-btn" id="fillHint' + i + '" data-action="hint" data-idx="' + i + '">💡 Hint</button>';
+    html += '<button class="check-btn" style="background:var(--green)" data-action="check" data-idx="' + i + '">✓ Check</button>';
+    html += '</div>';
+    html += '<div class="hint" id="fillHintText' + i + '" style="display:none">🇫🇷 ' + ex.hint + '</div>';
+  });
+  
+  html += '</div>';
+  html += '<div style="text-align:center;margin-top:16px">';
+  html += '<button class="btn" onclick="checkAllFill()">Check All ✓</button>';
+  html += '<button class="btn btn-outline" onclick="resetFill()" style="margin-left:8px">Reset 🔄</button>';
+  html += '</div></div>';
+  
+  div.innerHTML = html;
+}
+
+function showFillHint(i){
+  var el = document.getElementById('fillHintText' + i);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function checkFill(i){
+  var input = document.getElementById('fill' + i);
+  var answer = input.value.toLowerCase().trim();
+  var correct = fillExercises[i].answer.toLowerCase();
+  if(answer === correct){
+    input.classList.add('correct');
+    input.classList.remove('wrong');
+  } else {
+    input.classList.add('wrong');
+    input.classList.remove('correct');
+  }
+}
+
+function checkAllFill(){
+  fillExercises.forEach(function(ex, i){ checkFill(i); });
+}
+
+function resetFill(){
+  fillExercises.forEach(function(ex, i){
+    var input = document.getElementById('fill' + i);
+    input.value = '';
+    input.classList.remove('correct', 'wrong');
+    document.getElementById('fillHintText' + i).style.display = 'none';
+  });
+}
+
+// ===== RENDER: MATCHING =====
+var matchState = { selectedLeft: null, selectedRight: null, matched: [], shuffledRight: [] };
+
+function renderMatchEx(){
+  var div = document.getElementById('matchEx');
+  var html = '<div class="exercise"><h3><span class="num">2</span> Matching Game</h3>';
+  html += '<p style="color:var(--text-dim);font-size:13px;margin-bottom:16px">Match the French past tense with the English past simple form!</p>';
+  html += '<div class="matching">';
+  
+  // Left column (French)
+  html += '<div class="col">';
+  html += '<div class="col-title">🇫🇷 French</div>';
+  matchPairs.forEach(function(p, i){
+    html += '<div class="match-item" id="matchL' + i + '" data-side="left" data-idx="' + i + '" data-action="match" data-side="left" data-idx="' + i + '">' + p.left + '</div>';
+  });
+  html += '</div>';
+  
+  // Right column (English) - shuffled
+  html += '<div class="col">';
+  html += '<div class="col-title">🇬🇧 English</div>';
+  var shuffled = matchPairs.map(function(p,i){return{right:p.right,idx:i};});
+  shuffleArray(shuffled);
+  matchState.shuffledRight = shuffled;
+  shuffled.forEach(function(p, i){
+    html += '<div class="match-item" id="matchR' + i + '" data-side="right" data-idx="' + p.idx + '" data-shuffled="' + i + '" data-action="match" data-side="right" data-idx="' + i + '">' + p.right + '</div>';
+  });
+  html += '</div>';
+  
+  html += '</div>';
+  html += '<div class="score-text" id="matchScore"></div>';
+  html += '<div style="text-align:center;margin-top:12px">';
+  html += '<button class="btn" onclick="resetMatch()">Reset 🔄</button>';
+  html += '</div></div>';
+  
+  div.innerHTML = html;
+  matchState = { selectedLeft: null, selectedRight: null, matched: [], shuffledRight: shuffled };
+}
+
+function shuffleArray(arr){
+  for(var i = arr.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+  }
+}
+
+function selectMatch(side, idx){
+  var item = document.getElementById('match' + (side === 'left' ? 'L' : 'R') + idx);
+  if(item.classList.contains('matched')) return;
+  
+  if(side === 'left'){
+    // Deselect previous
+    if(matchState.selectedLeft !== null){
+      var prev = document.getElementById('matchL' + matchState.selectedLeft);
+      if(prev) prev.classList.remove('selected');
+    }
+    matchState.selectedLeft = idx;
+    item.classList.add('selected');
+  } else {
+    if(matchState.selectedRight !== null){
+      var prev = document.getElementById('matchR' + matchState.selectedRight);
+      if(prev) prev.classList.remove('selected');
+    }
+    matchState.selectedRight = idx;
+    item.classList.add('selected');
+  }
+  
+  // Check match
+  if(matchState.selectedLeft !== null && matchState.selectedRight !== null){
+    var leftIdx = matchState.selectedLeft;
+    var rightShuffledIdx = matchState.selectedRight;
+    var rightIdx = matchState.shuffledRight[rightShuffledIdx].idx;
+    
+    var leftItem = document.getElementById('matchL' + leftIdx);
+    var rightItem = document.getElementById('matchR' + rightShuffledIdx);
+    
+    if(leftIdx === rightIdx){
+      // Correct!
+      leftItem.classList.remove('selected');
+      leftItem.classList.add('matched');
+      rightItem.classList.remove('selected');
+      rightItem.classList.add('matched');
+      matchState.matched.push(leftIdx);
+    } else {
+      // Wrong
+      leftItem.classList.add('wrong');
+      rightItem.classList.add('wrong');
+      setTimeout(function(){
+        leftItem.classList.remove('selected', 'wrong');
+        rightItem.classList.remove('selected', 'wrong');
+      }, 500);
+    }
+    
+    matchState.selectedLeft = null;
+    matchState.selectedRight = null;
+    
+    // Update score
+    var scoreEl = document.getElementById('matchScore');
+    scoreEl.textContent = matchState.matched.length + ' / ' + matchPairs.length + ' matched';
+    
+    if(matchState.matched.length === matchPairs.length){
+      scoreEl.textContent = '🎉 Perfect! All matched!';
+      scoreEl.style.color = 'var(--green)';
+    }
+  }
+}
+
+function resetMatch(){
+  renderMatchEx();
+  document.getElementById('matchScore').textContent = '';
+}
+
+// ===== RENDER: QUIZ =====
+var quizState = { currentQ: 0, score: 0, answered: [] };
+
+function renderQuizEx(){
+  var div = document.getElementById('quizEx');
+  var html = '<div class="exercise"><h3><span class="num">3</span> Quiz</h3>';
+  html += '<div class="progress" id="quizProgress">';
+  for(var i = 0; i < quizQuestions.length; i++){
+    html += '<div class="progress-dot" id="qDot' + i + '"></div>';
+  }
+  html += '</div>';
+  html += '<div id="quizContent"></div>';
+  html += '<div class="score-bar"><div class="score-fill" id="quizScoreFill" style="width:0%"></div></div>';
+  html += '<div class="score-text" id="quizScoreText"></div>';
+  html += '<div style="text-align:center;margin-top:12px">';
+  html += '<button class="btn" onclick="resetQuiz()">Start Over 🔄</button>';
+  html += '</div></div>';
+  
+  div.innerHTML = html;
+  quizState = { currentQ: 0, score: 0, answered: [] };
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  var q = quizQuestions[quizState.currentQ];
+  if(!q) { showQuizResults(); return; }
+  
+  var content = document.getElementById('quizContent');
+  var html = '<div class="quiz-q animate-in">';
+  html += '<div class="question"><strong>Question ' + (quizState.currentQ + 1) + '/' + quizQuestions.length + ':</strong> ' + q.question + '</div>';
+  html += '<div class="quiz-options">';
+  
+  q.options.forEach(function(opt, i){
+    html += '<div class="quiz-opt" id="qOpt' + i + '" data-action="quizopt" data-idx="' + i + '">';
+    html += '<span class="letter">' + String.fromCharCode(65 + i) + '</span>';
+    html += '<span>' + opt + '</span>';
+    html += '</div>';
+  });
+  
+  html += '</div>';
+  html += '<div id="quizFeedback" style="margin-top:12px;display:none"></div>';
+  html += '<div style="text-align:center;margin-top:12px"><button class="btn" id="nextQBtn" onclick="nextQuizQ()" style="disabled:true;opacity:0.5">Next Question →</button></div>';
+  html += '</div>';
+  
+  content.innerHTML = html;
+  
+  // Update progress dots
+  for(var i = 0; i < quizState.currentQ; i++){
+    var dot = document.getElementById('qDot' + i);
+    if(dot && quizState.answered[i]) dot.classList.add('done');
+  }
+  document.getElementById('qDot' + quizState.currentQ).classList.add('current');
+}
+
+function selectQuizOpt(idx){
+  var btn = document.getElementById('nextQBtn');
+  if(btn.disabled === false) return; // Already answered
+  
+  var q = quizQuestions[quizState.currentQ];
+  var isCorrect = idx === q.correct;
+  
+  // Mark options
+  q.options.forEach(function(opt, i){
+    var optEl = document.getElementById('qOpt' + i);
+    if(i === q.correct) optEl.classList.add('correct');
+    else if(i === idx && !isCorrect) optEl.classList.add('wrong');
+    optEl.style.pointerEvents = 'none';
+  });
+  
+  // Show feedback
+  var feedback = document.getElementById('quizFeedback');
+  feedback.style.display = 'block';
+  feedback.innerHTML = '<div style="padding:12px;border-radius:10px;background:' + (isCorrect ? 'rgba(16,185,129,.1)' : 'rgba(239,68,68,.1)') + '">';
+  feedback.innerHTML += '<strong style="color:' + (isCorrect ? 'var(--green)' : 'var(--red)') + '">' + (isCorrect ? '✅ Correct!' : '❌ Wrong!') + '</strong>';
+  feedback.innerHTML += '<div style="margin-top:6px;font-size:13px;color:var(--text-dim)">' + q.explanation + '</div>';
+  feedback.innerHTML += '</div>';
+  
+  if(isCorrect) quizState.score++;
+  quizState.answered.push(isCorrect);
+  
+  // Enable next button
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+
+function nextQuizQ(){
+  quizState.currentQ++;
+  renderQuizQuestion();
+}
+
+function showQuizResults(){
+  var content = document.getElementById('quizContent');
+  var pct = Math.round(quizState.score / quizQuestions.length * 100);
+  var emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '💪' : '📚';
+  var msg = pct >= 80 ? 'Excellent! You are a past simple master!' : pct >= 60 ? 'Good job! Keep practicing!' : pct >= 40 ? 'Not bad! Review the verbs and try again.' : 'Keep studying! You will get there!';
+  
+  content.innerHTML = '<div style="text-align:center;padding:40px 20px" class="animate-in">';
+  content.innerHTML += '<div style="font-size:48px;margin-bottom:16px">' + emoji + '</div>';
+  content.innerHTML += '<div style="font-size:24px;font-weight:700;margin-bottom:8px">' + quizState.score + ' / ' + quizQuestions.length + ' correct</div>';
+  content.innerHTML += '<div style="font-size:32px;font-weight:800;color:' + (pct >= 60 ? 'var(--green)' : 'var(--amber)') + '">' + pct + '%</div>';
+  content.innerHTML += '<div style="margin-top:12px;color:var(--text-dim)">' + msg + '</div>';
+  
+  document.getElementById('quizScoreFill').style.width = pct + '%';
+  document.getElementById('quizScoreText').textContent = pct + '%';
+}
+
+function resetQuiz(){
+  renderQuizEx();
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelector('.tab[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('fillEx').style.display = tab === 'fill' ? 'block' : 'none';
+  document.getElementById('matchEx').style.display = tab === 'match' ? 'block' : 'none';
+  document.getElementById('quizEx').style.display = tab === 'quiz' ? 'block' : 'none';
+}
+
+// ===== EVENT DELEGATION =====
+document.addEventListener('click', function(e){
+  var t = e.target;
+  var action = t.dataset && t.dataset.action;
+  if(!action) return;
+  
+  if(action === 'reveal'){
+    var idx = parseInt(t.dataset.idx);
+    var card = document.getElementById('verb' + idx);
+    if(card) card.classList.toggle('revealed');
+  }
+  else if(action === 'hint'){
+    var idx = parseInt(t.dataset.idx);
+    var el = document.getElementById('fillHintText' + idx);
+    if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+  else if(action === 'check'){
+    var idx = parseInt(t.dataset.idx);
+    checkFill(idx);
+  }
+  else if(action === 'match'){
+    var side = t.dataset.side;
+    var idx = parseInt(t.dataset.idx);
+    selectMatch(side, idx);
+  }
+  else if(action === 'quizopt'){
+    var idx = parseInt(t.dataset.idx);
+    selectQuizOpt(idx);
+  }
+  else if(action === 'tab'){
+    switchTab(t.dataset.tab);
+  }
+});
+
+// ===== INIT =====
+renderVerbs();
+renderMistakes();
+renderFillEx();
+renderMatchEx();
+renderQuizEx();
+
+</script>
+</body>
+</html>
