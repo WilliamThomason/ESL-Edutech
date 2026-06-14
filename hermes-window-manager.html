@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hermes Window Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg-panel: #111118;
+  --bg-card: #16161f;
+  --bg-hover: #1e1e2a;
+  --accent: #6c5ce7;
+  --accent-dim: rgba(108,92,231,.12);
+  --accent2: #22d3ee;
+  --text: #e8e8f0;
+  --text-dim: #8888a0;
+  --text-muted: #55556a;
+  --border: #2a2a3a;
+  --success: #00b894;
+  --warn: #fdcb6e;
+  --error: #e17055;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+/* ═══ TOP BAR ═══ */
+#topbar {
+  height: 36px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+}
+#topbar .title {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .3px;
+  color: var(--accent);
+  flex: 1;
+  white-space: nowrap;
+}
+#topbar .title em { color: var(--accent2); font-style: normal; }
+#topbar .controls { display: flex; gap: 4px; -webkit-app-region: no-drag; }
+.topbar-ctrl {
+  width: 20px; height: 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all .1s;
+  color: var(--text-dim);
+  background: transparent;
+}
+.topbar-ctrl:hover { background: var(--bg-hover); color: var(--text); }
+.topbar-ctrl.close:hover { background: var(--error); color: #fff; }
+.topbar-ctrl.minimize:hover { background: var(--warn); color: #000; }
+.topbar-ctrl.maximize:hover { background: var(--success); color: #000; }
+
+#stats {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+}
+#stats .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 4px var(--success);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ═══ LANE CONTROLS ═══ */
+#lane-controls {
+  height: 32px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+#lane-controls .label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+.lane-tab {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .12s;
+}
+.lane-tab:hover { background: var(--bg-hover); color: var(--text); border-color: var(--text-muted); }
+.lane-tab.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+.lane-tab .count {
+  font-size: 10px;
+  background: rgba(255,255,255,.06);
+  padding: 0 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+.lane-tab.active .count { background: rgba(108,92,231,.15); }
+.add-lane-btn {
+  width: 22px; height: 22px;
+  border-radius: 4px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  font-weight: 300;
+  transition: all .12s;
+}
+.add-lane-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+#lane-controls .spacer { flex: 1; }
+.window-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ═══ MAIN CONTENT ═══ */
+#main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Lanes container */
+#lanes {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  scroll-behavior: smooth;
+}
+#lanes::-webkit-scrollbar { width: 4px; }
+#lanes::-webkit-scrollbar-track { background: transparent; }
+#lanes::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Individual lane */
+.lane {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-shrink: 0;
+  transition: opacity .2s, height .2s;
+}
+.lane.collapsed {
+  opacity: .6;
+}
+.lane-header {
+  height: 28px;
+  background: var(--bg-panel);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.lane-header:hover { background: var(--bg-hover); }
+.lane-arrow {
+  width: 12px; height: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  color: var(--text-dim);
+  transition: transform .2s;
+}
+.lane.collapsed .lane-arrow { transform: rotate(-90deg); }
+.lane-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+.lane-name[contenteditable] { outline: none; cursor: text; }
+.lane-name[contenteditable]:focus {
+  background: var(--bg-active);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.lane-pill {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,.04);
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.lane-actions { display: flex; gap: 2px; }
+.lane-action-btn {
+  width: 18px; height: 18px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  transition: all .1s;
+}
+.lane-action-btn:hover { background: var(--bg-hover); color: var(--text); }
+.lane-action-btn.danger:hover { background: rgba(225,112,85,.2); color: var(--error); }
+
+/* Windows in a lane */
+.lane-windows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  min-height: 40px;
+  transition: max-height .2s ease, padding .2s ease, opacity .2s ease;
+  overflow: hidden;
+}
+.lane.collapsed .lane-windows {
+  max-height: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+/* Individual window card */
+.win-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all .15s;
+  position: relative;
+}
+.win-card:hover {
+  border-color: var(--text-muted);
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+.win-card.minimized {
+  opacity: .45;
+}
+.win-card.minimized:hover {
+  opacity: .7;
+}
+
+.win-card-header {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 5px;
+  background: var(--bg-active);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  cursor: grab;
+}
+.win-card-header:active { cursor: grabbing; }
+.win-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.win-dot.green { background: var(--success); box-shadow: 0 0 4px var(--success); }
+.win-dot.cyan { background: var(--accent2); }
+.win-dot.purple { background: var(--accent); }
+.win-dot.yellow { background: var(--warn); }
+.win-dot.red { background: var(--error); }
+
+.win-title {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.win-title[contenteditable] { outline: none; cursor: text; }
+.win-title[contenteditable]:focus { background: var(--bg-card); padding: 0 2px; border-radius: 2px; }
+
+.win-mini-btn {
+  width: 14px; height: 14px;
+  border: none; border-radius: 2px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 9px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.win-mini-btn:hover { background: rgba(255,255,255,.08); color: var(--text); }
+.win-mini-btn.close-btn:hover { background: var(--error); color: #fff; }
+
+.win-preview {
+  height: 100px;
+  background: #0d1117;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.win-preview .preview-placeholder {
+  font-size: 24px;
+  opacity: .15;
+}
+.win-preview iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.win-card.minimized .win-preview { display: none; }
+
+.win-toolbar {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 2px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.win-toolbar-btn {
+  height: 16px;
+  padding: 0 5px;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .1s;
+  display: flex; align-items: center; gap: 3px;
+}
+.win-toolbar-btn:hover { background: var(--bg-hover); color: var(--text); }
+.win-toolbar-btn.active { background: var(--accent-dim); color: var(--accent); }
+.win-toolbar-spacer { flex: 1; }
+.win-model-tag {
+  font-size: 8px;
+  color: var(--text-muted);
+  background: rgba(255,255,255,.03);
+  padding: 1px 4px;
+  border-radius: 2px;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty lane placeholder */
+.lane-empty {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-style: italic;
+  padding: 8px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  margin: 4px 0;
+  display: none;
+}
+.lane.collapsed .lane-empty { display: none !important; }
+
+/* ═══ ADD WINDOW MODAL ═══ */
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+#modal-overlay.show { display: flex; }
+#modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  width: 380px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(0,0,0,.5);
+}
+#modal h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#modal label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 4px;
+  margin-top: 10px;
+}
+#modal input, #modal select, #modal textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+  transition: border-color .15s;
+}
+#modal input:focus, #modal select:focus, #modal textarea:focus {
+  border-color: var(--accent);
+}
+#modal textarea {
+  height: 60px;
+  resize: vertical;
+}
+#modal .form-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+#modal .modal-btns {
+  display: flex;
+  gap: 6px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+.modal-btn {
+  padding: 5px 14px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+}
+.modal-btn:hover { background: var(--bg-hover); color: var(--text); }
+.modal-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.modal-btn.primary:hover { filter: brightness(1.15); }
+
+/* Quick-add buttons for common hermes targets */
+.quick-add-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 4px;
+}
+.quick-add-item {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-dim);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .12s;
+  text-align: center;
+  font-weight: 500;
+}
+.quick-add-item:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+.quick-add-item .icon { font-size: 13px; display: block; margin-bottom: 2px; }
+
+/* Toast notifications */
+#toasts {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2000;
+  pointer-events: none;
+}
+.toast {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text);
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  animation: toastIn .2s ease, toastOut .3s ease 2.5s forwards;
+  max-width: 260px;
+}
+@keyframes toastIn { from { opacity:0; transform: translateY(8px); } }
+@keyframes toastOut { to { opacity:0; transform: translateY(-4px); } }
+
+/* Empty state */
+#empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px;
+}
+#empty-state .big-icon { font-size: 48px; opacity: .3; }
+#empty-state h2 { font-size: 16px; font-weight: 700; color: var(--text-dim); }
+#empty-state p { font-size: 13px; max-width: 300px; line-height: 1.5; }
+#empty-state .cta-btn {
+  margin-top: 8px;
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter .15s;
+}
+#empty-state .cta-btn:hover { filter: brightness(1.2); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .win-card { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div id="topbar">
+  <div class="title">HERMES <em>Windows</em></div>
+  <div id="stats"><div class="dot"></div><span id="stats-text">0 windows in 0 lanes</span></div>
+  <div class="controls">
+    <button class="topbar-ctrl minimize" title="Minimize" onclick="minimizeAll()">—</button>
+    <button class="topbar-ctrl maximize" title="Maximize All" onclick="maximizeAll()">□</button>
+    <button class="topbar-ctrl close" title="Close all" onclick="clearAll()">✕</button>
+  </div>
+</div>
+
+<!-- Lane Tabs -->
+<div id="lane-controls">
+  <div class="label">Lanes</div>
+  <div id="lane-tabs"></div>
+  <button class="add-lane-btn" title="Add Lane" onclick="addLane()" oncontextmenu="event.preventDefault(); renameLanePrompt()">+</button>
+  <div class="spacer"></div>
+  <div class="window-count" id="window-count">0 windows</div>
+</div>
+
+<!-- Main Area -->
+<div id="main">
+  <div id="lanes"></div>
+  <div id="empty-state">
+    <div class="big-icon">🪟</div>
+    <h2>No windows yet</h2>
+    <p>Use the <strong>+</strong> button below or press <strong>N</strong> to add windows. Drag cards between lanes to organize.</p>
+    <button class="cta-btn" onclick="openAddModal()">Add First Window</button>
+  </div>
+</div>
+
+<!-- Add Window Modal -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <h3>Add Hermes Window</h3>
+
+    <label>Quick Add</label>
+    <div class="quick-add-grid">
+      <div class="quick-add-item" onclick="quickAdd('Agent Session', 'agent', '#6c5ce7')"><span class="icon">🤖</span>Agent</div>
+      <div class="quick-add-item" onclick="quickAdd('Claude Code', 'claude', '#fd79a8')"><span class="icon">🧠</span>Claude Code</div>
+      <div class="quick-add-item" onclick="quickAdd('Terminal', 'terminal', '#00b894')"><span class="icon">⌨</span>Terminal</div>
+      <div class="quick-add-item" onclick="quickAdd('Kanban', 'kanban', '#fdcb6e')"><span class="icon">📋</span>Kanban</div>
+      <div class="quick-add-item" onclick="quickAdd('Dashboard', 'dashboard', '#22d3ee')"><span class="icon">📊</span>Dashboard</div>
+      <div class="quick-add-item" onclick="quickAdd('Custom', 'custom', '#a78bfa')"><span class="icon">⚡</span>Custom</div>
+    </div>
+
+    <label>Window Title</label>
+    <input type="text" id="form-title" placeholder="e.g. WTE Agent Session" autofocus>
+
+    <label>Type</label>
+    <select id="form-type">
+      <option value="agent">Agent Session</option>
+      <option value="claude">Claude Code</option>
+      <option value="terminal">Terminal</option>
+      <option value="kanban">Kanban</option>
+      <option value="dashboard">Dashboard</option>
+      <option value="browser">Browser / Preview</option>
+      <option value="custom">Custom URL</option>
+    </select>
+
+    <label>URL / Command <span class="form-hint">(optional)</span></label>
+    <input type="text" id="form-url" placeholder="http://localhost:8000 or tmux session:name">
+    <div class="form-hint">Leave empty for label-only card. Use for embedded iframes or shell commands.</div>
+
+    <label>Model / Tag <span class="form-hint">(optional)</span></label>
+    <input type="text" id="form-model" placeholder="e.g. claude-sonnet-4 or opus">
+
+    <label>Color</label>
+    <select id="form-color">
+      <option value="#6c5ce7">Purple (Agent)</option>
+      <option value="#22d3ee">Cyan</option>
+      <option value="#00b894">Green</option>
+      <option value="#fd79a8">Pink</option>
+      <option value="#fdcb6e">Yellow</option>
+      <option value="#a78bfa">Lavender</option>
+      <option value="#e17055">Red</option>
+      <option value="#8888a0">Gray</option>
+    </select>
+
+    <label>Target Lane</label>
+    <select id="form-lane"></select>
+
+    <div class="modal-btns">
+      <button class="modal-btn" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitAddWindow()">Add Window</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="toasts"></div>
+
+<script>
+// ═══ STATE ═══
+const STORAGE_KEY = 'hermes-window-manager-v1';
+let state = {
+  lanes: [
+    { id: 'lane-1', name: 'Active', windows: [], collapsed: false }
+  ],
+  nextId: { lane: 2, win: 1 },
+  activeLane: 'lane-1'
+};
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch(e) { console.warn('Could not load state', e); }
+  // Ensure at least one lane
+  if (!state.lanes || !state.lanes.length) {
+    state.lanes = [{ id: 'lane-1', name: 'Active', windows: [], collapsed: false }];
+    state.activeLane = 'lane-1';
+  }
+}
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+load();
+
+// ═══ RENDER ═══
+function render() {
+  renderLaneTabs();
+  renderLanes();
+  renderStats();
+  renderLaneSelect();
+  updateEmptyState();
+}
+
+function renderLaneTabs() {
+  const el = document.getElementById('lane-tabs');
+  el.innerHTML = state.lanes.map(l => {
+    const winCount = l.windows.length;
+    return `<button class="lane-tab ${l.id===state.activeLane?'active':''}" onclick="switchLane('${l.id}')">
+      ${esc(l.name)}<span class="count">${winCount}</span>
+    </button>`;
+  }).join('');
+}
+
+function renderLanes() {
+  const el = document.getElementById('lanes');
+  if (!state.lanes.length) {
+    el.innerHTML = '';
+    return;
+  }
+  el.innerHTML = state.lanes.map(lane => {
+    const isCollapsed = lane.collapsed;
+    return `<div class="lane ${isCollapsed?'collapsed':''}" data-lane="${lane.id}>
+      <div class="lane-header" onclick="toggleLaneCollapse('${lane.id}')">
+        <div class="lane-arrow">▼</div>
+        <div class="lane-name" contenteditable="true" onclick="event.stopPropagation()" 
+             onblur="renameLane('${lane.id}', this.textContent)" 
+             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">${esc(lane.name)}</div>
+        <div class="lane-pill">${lane.windows.length}</div>
+        <div class="lane-actions">
+          <button class="lane-action-btn" title="Add window to this lane" onclick="event.stopPropagation();openAddModal('${lane.id}')">+</button>
+          <button class="lane-action-btn" title="Minimize all in lane" onclick="event.stopPropagation();minimizeLane('${lane.id}')">—</button>
+          ${state.lanes.length > 1 ? `<button class="lane-action-btn danger" title="Delete lane" onclick="event.stopPropagation();deleteLane('${lane.id}')">✕</button>` : ''}
+        </div>
+      </div>
+      <div class="lane-windows" id="windows-${lane.id}">${renderWindows(lane.windows, lane.id)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderWindows(wins, laneId) {
+  if (!wins.length) {
+    return `<div class="lane-empty" style="display:block">Drop windows here or click + to add</div>`;
+  }
+  return wins.map(w => `
+    <div class="win-card ${w.minimized?'minimized':''}" data-win="${w.id}" draggable="true"
+         ondragstart="handleDragStart(event,'${w.id}')" ondragend="handleDragEnd(event)">
+      <div class="win-card-header" ondblclick="toggleMinimize('${laneId}','${w.id}')">
+        <div class="win-dot ${w.colorClass||'purple'}"></div>
+        <div class="win-title" contenteditable="true" onclick="event.stopPropagation()" 
+             onblur="renameWin('${laneId}','${w.id}',this.textContent)"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">${esc(w.title)}</div>
+        <button class="win-mini-btn" title="Minimize" onclick="event.stopPropagation();toggleMinimize('${laneId}','${w.id}')">—</button>
+        <button class="win-mini-btn close-btn" title="Remove" onclick="event.stopPropagation();removeWin('${laneId}','${w.id}')">✕</button>
+      </div>
+      <div class="win-preview">
+        ${w.url ? `<iframe src="${esc(w.url)}" sandbox="allow-same-origin allow-scripts" title="${esc(w.title)}"></iframe>` 
+                 : `<div class="preview-placeholder">${typeIcon(w.type)}</div>`}
+      </div>
+      <div class="win-toolbar">
+        <button class="win-toolbar-btn active" title="Focus" onclick="focusWin('${laneId}','${w.id}')">◉ Focus</button>
+        <button class="win-toolbar-btn" title="Pop out" onclick="popOut('${laneId}','${w.id}')">⧉ Pop out</button>
+        <div class="win-toolbar-spacer"></div>
+        ${w.model ? `<span class="win-model-tag" title="${esc(w.model)}">${esc(w.model)}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderStats() {
+  const totalWins = state.lanes.reduce((s,l) => s + l.windows.length, 0);
+  const activeLanes = state.lanes.filter(l => l.windows.length > 0).length;
+  document.getElementById('stats-text').textContent = `${totalWins} window${totalWins!==1?'s':''} in ${activeLanes} lane${activeLanes!==1?'s':''}`;
+  document.getElementById('window-count').textContent = `${totalWins} window${totalWins!==1?'s':''}`;
+}
+
+function renderLaneSelect() {
+  const sel = document.getElementById('form-lane');
+  sel.innerHTML = state.lanes.map(l => `<option value="${l.id}">${esc(l.name)}</option>`).join('');
+}
+
+function updateEmptyState() {
+  const totalWins = state.lanes.reduce((s,l) => s + l.windows.length, 0);
+  const emptyState = document.getElementById('empty-state');
+  const lanes = document.getElementById('lanes');
+  emptyState.style.display = totalWins === 0 ? 'flex' : 'none';
+  lanes.style.display = totalWins === 0 ? 'none' : 'flex';
+}
+
+// ═══ HELPERS ═══
+function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+function typeIcon(t) {
+  const m = { agent:'🤖', claude:'🧠', terminal:'⌨️', kanban:'📋', dashboard:'📊', browser:'🌐', custom:'⚡' };
+  return m[t] || '📌';
+}
+function uid(prefix) { return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,6)}`; }
+function getLane(id) { return state.lanes.find(l => l.id === id); }
+function getWin(laneId, winId) { const l = getLane(laneId); return l && l.windows.find(w => w.id === winId); }
+
+const colorClasses = ['purple','cyan','green','pink','yellow','lavender','red','gray'];
+function colorClass(c) {
+  const map = {'#6c5ce7':'purple','#22d3ee':'cyan','#00b894':'green','#fd79a8':'pink','#fdcb6e':'yellow','#a78bfa':'lavender','#e17055':'red','#8888a0':'gray'};
+  return map[c] || 'purple';
+}
+
+// ═══ LANE ACTIONS ═══
+function addLane() {
+  const id = uid('lane');
+  // Use a number-based name
+  const name = `Lane ${state.nextId.lane++}`;
+  state.lanes.push({ id, name, windows: [], collapsed: false });
+  state.activeLane = id;
+  save(); render();
+  toast(`Lane "${name}" created`);
+}
+
+function switchLane(id) { state.activeLane = id; save(); render(); }
+function toggleLaneCollapse(id) {
+  const l = getLane(id); if (l) { l.collapsed = !l.collapsed; save(); render(); }
+}
+function renameLane(id, name) {
+  const l = getLane(id); if (l) { l.name = name.trim() || 'Unnamed'; save(); render(); }
+}
+function renameLanePrompt() {
+  const name = prompt('Lane name:');
+  if (name) renameLane(state.activeLane, name);
+}
+function deleteLane(id) {
+  if (state.lanes.length <= 1) { toast('Cannot delete the last lane'); return; }
+  const l = getLane(id); if (!l) return;
+  if (l.windows.length && !confirm(`Delete "${l.name}" with ${l.windows.length} window(s)?`)) return;
+  state.lanes = state.lanes.filter(x => x.id !== id);
+  if (state.activeLane === id) state.activeLane = state.lanes[0].id;
+  save(); render();
+  toast(`Lane "${l.name}" deleted`);
+}
+
+// ═══ WINDOW ACTIONS ═══
+function addWinToLane(laneId, winData) {
+  const lane = getLane(laneId); if (!lane) return;
+  const win = {
+    id: uid('win'),
+    title: winData.title || 'Untitled',
+    type: winData.type || 'custom',
+    url: winData.url || '',
+    model: winData.model || '',
+    color: winData.color || '#6c5ce7',
+    colorClass: colorClass(winData.color || '#6c5ce7'),
+    minimized: false,
+    createdAt: Date.now()
+  };
+  lane.windows.push(win);
+  save(); render();
+  return win;
+}
+
+function toggleMinimize(laneId, winId) {
+  const w = getWin(laneId, winId); if (w) { w.minimized = !w.minimized; save(); render(); }
+}
+
+function removeWin(laneId, winId) {
+  const lane = getLane(laneId); if (!lane) return;
+  lane.windows = lane.windows.filter(w => w.id !== winId);
+  save(); render();
+  toast('Window removed');
+}
+
+function renameWin(laneId, winId, name) {
+  const w = getWin(laneId, winId); if (w) { w.title = name.trim() || 'Untitled'; save(); render(); }
+}
+
+function focusWin(laneId, winId) {
+  // Bring to front of lane (move to end)
+  const lane = getLane(laneId); if (!lane) return;
+  const idx = lane.windows.findIndex(w => w.id === winId);
+  if (idx === -1) return;
+  const [win] = lane.windows.splice(idx, 1);
+  lane.windows.push(win);
+  win.minimized = false;
+  save(); render();
+  toast(`Focused: ${win.title}`);
+}
+
+function popOut(laneId, winId) {
+  const w = getWin(laneId, winId); if (!w) return;
+  if (w.url) {
+    window.open(w.url, '_blank');
+  } else {
+    toast('No URL to open. Add a URL to use pop-out.');
+  }
+}
+
+function minimizeLane(laneId) {
+  const lane = getLane(laneId); if (!lane) return;
+  lane.windows.forEach(w => w.minimized = true);
+  save(); render();
+  toast(`All windows in "${lane.name}" minimized`);
+}
+
+function minimizeAll() {
+  state.lanes.forEach(l => l.collapsed = true);
+  save(); render();
+  toast('All lanes collapsed');
+}
+
+function maximizeAll() {
+  state.lanes.forEach(l => { l.collapsed = false; l.windows.forEach(w => w.minimized = false); });
+  save(); render();
+  toast('All lanes expanded');
+}
+
+function clearAll() {
+  const total = state.lanes.reduce((s,l)=>s+l.windows.length,0);
+  if (!total) return;
+  if (!confirm(`Remove all ${total} window(s) from all lanes?`)) return;
+  state.lanes.forEach(l => l.windows = []);
+  save(); render();
+  toast('All windows cleared');
+}
+
+// ═══ MODAL ═══
+let modalTargetLane = null;
+
+function openAddModal(laneId) {
+  modalTargetLane = laneId || state.activeLane;
+  document.getElementById('form-lane').value = modalTargetLane;
+  document.getElementById('form-title').value = '';
+  document.getElementById('form-url').value = '';
+  document.getElementById('form-model').value = '';
+  document.getElementById('form-type').value = 'agent';
+  document.getElementById('form-color').value = '#6c5ce7';
+  document.getElementById('modal-overlay').classList.add('show');
+  setTimeout(() => document.getElementById('form-title').focus(), 50);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function submitAddWindow() {
+  const title = document.getElementById('form-title').value.trim() || 'Untitled';
+  const type = document.getElementById('form-type').value;
+  const url = document.getElementById('form-url').value.trim();
+  const model = document.getElementById('form-model').value.trim();
+  const color = document.getElementById('form-color').value;
+  const laneId = document.getElementById('form-lane').value;
+  addWinToLane(laneId, { title, type, url, model, color });
+  closeModal();
+  toast(`Added "${title}"`);
+}
+
+function quickAdd(title, type, color) {
+  document.getElementById('form-title').value = title;
+  document.getElementById('form-type').value = type;
+  document.getElementById('form-color').value = color;
+  document.getElementById('form-lane').value = modalTargetLane || state.activeLane;
+  // For previews just add directly
+  addWinToLane(document.getElementById('form-lane').value, { title, type, color });
+  closeModal();
+  toast(`Added "${title}"`);
+}
+
+// ═══ DRAG & DROP ═══
+let draggedWinId = null;
+let draggedFromLane = null;
+
+function handleDragStart(e, winId) {
+  draggedWinId = winId;
+  // Find which lane this is in
+  for (const l of state.lanes) {
+    if (l.windows.find(w => w.id === winId)) { draggedFromLane = l.id; break; }
+  }
+  e.target.style.opacity = '.4';
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(e) {
+  e.target.style.opacity = '1';
+  draggedWinId = null;
+  draggedFromLane = null;
+  // Remove all drag-over highlights
+  document.querySelectorAll('.lane-windows').forEach(el => el.style.background = '');
+}
+
+// Set up drag-over listeners on lanes container
+document.getElementById('lanes').addEventListener('dragover', function(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  // Highlight the lane-windows element
+  const laneWindows = e.target.closest('.lane-windows');
+  if (laneWindows) {
+    laneWindows.style.background = 'rgba(108,92,231,.08)';
+  }
+});
+
+document.getElementById('lanes').addEventListener('dragleave', function(e) {
+  const laneWindows = e.target.closest('.lane-windows');
+  if (laneWindows) laneWindows.style.background = '';
+});
+
+document.getElementById('lanes').addEventListener('drop', function(e) {
+  e.preventDefault();
+  document.querySelectorAll('.lane-windows').forEach(el => el.style.background = '');
+  if (!draggedWinId || !draggedFromLane) return;
+
+  // Find target lane
+  const laneEl = e.target.closest('.lane');
+  if (!laneEl) return;
+  const targetLaneId = laneEl.dataset.lane;
+  if (targetLaneId === draggedFromLane) return; // same lane
+
+  // Move the window
+  const fromLane = getLane(draggedFromLane);
+  const toLane = getLane(targetLaneId);
+  if (!fromLane || !toLane) return;
+
+  const winIdx = fromLane.windows.findIndex(w => w.id === draggedWinId);
+  if (winIdx === -1) return;
+
+  const [win] = fromLane.windows.splice(winIdx, 1);
+  toLane.windows.push(win);
+  save(); render();
+  toast(`Moved "${win.title}" to ${toLane.name}`);
+});
+
+// ═══ TOASTS ═══
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'n' || e.key === 'N') {
+    if (document.getElementById('modal-overlay').classList.contains('show')) return;
+    e.preventDefault();
+    openAddModal();
+  }
+  if (e.key === 'Escape') closeModal();
+});
+
+// ═══ INIT ═══
+render();
+</script>
+</body>
+</html>

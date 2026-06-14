@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🌊 Ocean Scales — Guitar Scale Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#040d1a;--bg2:#081525;--bg3:#0c1d35;--bg-card:#0f2440;--bg-card2:#0a1a30;--border:#1a3a5c;--border-light:#2a5a8c;--text:#d0e8ff;--text-muted:#7aa0c0;--text-dim:#4a7090;--accent:#00d4ff;--accent2:#00a0cc;--accent-dim:rgba(0,212,255,.1);--accent-glow:rgba(0,212,255,.25);--deep:#0066aa;--seafoam:#00e0c0;--coral:#ff6b8a;--sand:#f0d080}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;overflow-x:hidden}
+button{font-family:inherit}
+.mono{font-family:'JetBrains Mono',monospace}
+.ocean-bg{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,#020810 0%,#04182e 40%,#0a2848 70%,#061a30 100%)}
+.ocean-bg::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80') center/cover no-repeat;opacity:.12;filter:blur(3px) saturate(.5);animation:oceanDrift 25s ease-in-out infinite alternate}
+@keyframes oceanDrift{0%{transform:scale(1) translateY(0)}100%{transform:scale(1.06) translateY(-15px)}}
+.water-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(180deg,rgba(4,13,26,.75) 0%,rgba(4,24,46,.55) 50%,rgba(4,13,26,.85) 100%);pointer-events:none}
+.bubbles{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.bubble{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(0,212,255,.12),rgba(0,100,170,.04));border:1px solid rgba(0,212,255,.08);animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-100px) scale(1);opacity:0}}
+.app{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column}
+.header{background:rgba(8,20,35,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--deep));display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#fff;box-shadow:0 0 24px var(--accent-glow)}
+.logo h1{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--seafoam));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.logo h1 span{font-weight:400}
+.badge{padding:3px 10px;border-radius:20px;background:var(--accent-dim);border:1px solid var(--accent);font-size:.6rem;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase}
+.layout{display:flex;flex:1;min-height:calc(100vh - 52px)}
+.sidebar{width:310px;min-width:310px;background:rgba(8,20,35,.82);backdrop-filter:blur(10px);border-right:1px solid var(--border);padding:16px;overflow-y:auto;max-height:calc(100vh - 52px);position:sticky;top:52px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.main{flex:1;padding:20px;display:flex;flex-direction:column;align-items:stretch;overflow-x:hidden}
+.sb-section{margin-bottom:16px}
+.sb-section h3{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
+.form-group{margin-bottom:10px}
+.form-group label{display:block;font-size:.65rem;color:var(--text-muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.form-group select{width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:.85rem;cursor:pointer;transition:all .15s}
+.form-group select:hover{border-color:var(--accent)}
+.form-group select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .2s;user-select:none;position:relative;overflow:hidden}
+.chip::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-dim),transparent);opacity:0;transition:opacity .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 15px var(--accent-glow)}
+.chip:hover::before{opacity:1}
+.chip.active{background:linear-gradient(135deg,var(--accent-dim),rgba(0,220,200,.08));border-color:var(--accent);color:var(--accent);box-shadow:0 0 16px var(--accent-glow)}
+.chip.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:50%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:1px}
+.root-notes{display:flex;flex-wrap:wrap;gap:4px}
+.root-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace}
+.root-btn:hover{border-color:var(--accent);color:var(--accent);transform:scale(1.12);box-shadow:0 0 14px var(--accent-glow)}
+.root-btn.active{background:linear-gradient(135deg,var(--accent),var(--deep));border-color:var(--accent);color:#fff;box-shadow:0 0 24px var(--accent-glow);transform:scale(1.12)}
+.play-btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--deep));color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden}
+.play-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--accent-glow)}
+.play-btn:active{transform:translateY(0)}
+.play-btn.playing{background:linear-gradient(135deg,var(--seafoam),var(--accent));animation:pulseGlow 1.5s ease-in-out infinite}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px var(--accent-glow)}50%{box-shadow:0 0 40px var(--accent-glow),0 0 60px rgba(0,220,200,.15)}}
+.fretboard-wrap{background:rgba(8,20,35,.65);backdrop-filter:blur(10px);border-radius:16px;border:1px solid var(--border);padding:20px;margin-bottom:16px;overflow-x:auto}
+.fretboard{min-width:900px;position:relative}
+.fretboard svg{width:100%;height:auto;display:block}
+.scale-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px}
+.info-card{background:rgba(12,28,48,.6);backdrop-filter:blur(8px);border-radius:12px;border:1px solid var(--border);padding:14px;transition:border-color .2s}
+.info-card:hover{border-color:var(--border-light)}
+.info-card h4{font-size:.6rem;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
+.info-card .value{font-size:1.15rem;font-weight:700;color:var(--text)}
+.info-card .sub{font-size:.7rem;color:var(--text-muted);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.notes-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.note-pill{padding:4px 10px;border-radius:14px;background:var(--accent-dim);border:1px solid rgba(0,212,255,.3);color:var(--accent);font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace;transition:all .15s}
+.note-pill:hover{background:var(--accent);color:var(--bg)}
+.fret-dot{fill:rgba(0,212,255,.15)}
+.fret-line{stroke:var(--border);stroke-width:1}
+.string-line{stroke:#c8c5bc;stroke-linecap:round}
+.note-circle{transition:all .2s;cursor:pointer}
+.note-circle:hover{filter:brightness(1.3)}
+.note-root{fill:var(--coral)}
+.note-scale{fill:var(--accent)}
+.note-label{font-family:'JetBrains Mono',monospace;font-size:9px;fill:#fff;pointer-events:none;text-anchor:middle;dominant-baseline:central}
+.note-label-root{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--coral);pointer-events:none;text-anchor:middle;dominant-baseline:central;font-weight:700}
+.fret-num{font-family:'JetBrains Mono',monospace;font-size:8px;fill:var(--text-dim);text-anchor:middle}
+.tooltip{position:absolute;background:rgba(8,20,35,.95);border:1px solid var(--accent);border-radius:8px;padding:6px 10px;font-size:.7rem;color:var(--text);pointer-events:none;z-index:100;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+@media(max-width:768px){.sidebar{width:100%;min-width:unset;max-height:none;position:relative;top:0;border-right:none;border-bottom:1px solid var(--border)}.layout{flex-direction:column}.fretboard{min-width:600px}}
+</style>
+</head>
+<body>
+<div class="ocean-bg"></div>
+<div class="water-overlay"></div>
+<div class="bubbles" id="bubbles"></div>
+<div class="app">
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">🌊</div>
+    <h1>Ocean <span>Scales</span></h1>
+    <span class="badge">v2.0</span>
+  </div>
+  <div style="font-size:.7rem;color:var(--text-muted)">Guitar Scale Explorer — Underwater Edition</div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-section"><h3>Root Note</h3><div class="root-notes" id="rootNotes"></div></div>
+  <div class="sb-section"><h3>Category</h3><div class="chips" id="scaleCategories"></div></div>
+  <div class="sb-section"><h3>Scale Type</h3><div class="chips" id="scaleTypes"></div></div>
+  <div class="sb-section"><h3>Position</h3><div class="chips" id="positions"><div class="chip active" data-pos="full">Full Fretboard</div><div class="chip" data-pos="vertical">Vertical Position</div><div class="chip" data-pos="diagonal">Diagonal</div></div></div>
+  <div class="sb-section"><h3>Playback</h3>
+    <div class="form-group"><label>Tempo</label><select id="tempo"><option value="60">60 BPM — Slow Tide</option><option value="80" selected>80 BPM — Gentle Wave</option><option value="100">100 BPM — Flowing Current</option><option value="120">120 BPM — Ocean Surf</option><option value="160">160 BPM — Storm Surge</option></select></div>
+    <div class="form-group"><label>Direction</label><select id="direction"><option value="up">Ascending ↑</option><option value="down">Descending ↓</option><option value="both">Up & Down ↕</option></select></div>
+    <button class="play-btn" id="playBtn" onclick="togglePlayback()"><span id="playIcon">▶</span> <span id="playText">Play Scale</span></button>
+    <button class="play-btn" style="margin-top:8px;background:linear-gradient(135deg,#004433,#002211)" onclick="stopPlayback()"><span>⏹</span> Stop</button>
+  </div>
+</aside>
+<main class="main">
+  <div class="scale-info" id="scaleInfo"></div>
+  <div class="fretboard-wrap"><div class="fretboard" id="fretboard"></div></div>
+</main>
+</div></div>
+
+<script>
+// ═══ SCALE DATA ═══
+var NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+var SCALES = {
+  major:{name:'Major (Ionian)',intervals:[0,2,4,5,7,9,11],cat:'Common'},
+  minor_natural:{name:'Natural Minor',intervals:[0,2,3,5,7,8,10],cat:'Common'},
+  minor_harmonic:{name:'Harmonic Minor',intervals:[0,2,3,5,7,8,11],cat:'Common'},
+  minor_melodic:{name:'Melodic Minor',intervals:[0,2,3,5,7,9,11],cat:'Rare'},
+  dorian:{name:'Dorian',intervals:[0,2,3,5,7,9,10],cat:'Common'},
+  phrygian:{name:'Phrygian',intervals:[0,1,3,5,7,8,10],cat:'Rare'},
+  lydian:{name:'Lydian',intervals:[0,2,4,6,7,9,11],cat:'Common'},
+  mixolydian:{name:'Mixolydian',intervals:[0,2,4,5,7,9,10],cat:'Common'},
+  locrian:{name:'Locrian',intervals:[0,1,3,5,6,8,10],cat:'Rare'},
+  pentatonic_major:{name:'Pentatonic Major',intervals:[0,2,4,7,9],cat:'Common'},
+  pentatonic_minor:{name:'Pentatonic Minor',intervals:[0,3,5,7,10],cat:'Common'},
+  blues:{name:'Blues',intervals:[0,3,5,6,7,10],cat:'Common'},
+  whole_tone:{name:'Whole Tone',intervals:[0,2,4,6,8,10],cat:'Exotic'},
+  diminished:{name:'Diminished',intervals:[0,2,3,5,6,8,9,11],cat:'Exotic'},
+  chromatic:{name:'Chromatic',intervals:[0,1,2,3,4,5,6,7,8,9,10,11],cat:'Exotic'},
+  hungarian_minor:{name:'Hungarian Minor',intervals:[0,2,3,6,7,8,11],cat:'Exotic'},
+  japanese:{name:'Japanese',intervals:[0,1,5,7,8],cat:'Exotic'},
+  arabic:{name:'Arabic',intervals:[0,1,4,5,7,8,11],cat:'Exotic'},
+  flamenco:{name:'Flamenco',intervals:[0,1,3,4,5,7,8,10],cat:'Exotic'},
+  persian:{name:'Persian',intervals:[0,1,4,5,6,8,11],cat:'Exotic'}
+};
+
+var CATS = ['Common','Rare','Exotic'];
+var audioCtx = null;
+var isPlaying = false;
+var playTimeout = null;
+var rootNote = 0;
+var activeScale = 'major';
+
+// ═══ INIT ═══
+function init(){
+  createBubbles();
+  createRootNotes();
+  createScaleCategories();
+  selectRootNote(0);
+  selectScale('major');
+  document.querySelectorAll('#positions .chip').forEach(function(el){
+    el.addEventListener('click',function(){
+      document.querySelectorAll('#positions .chip').forEach(function(c){c.classList.remove('active')});
+      this.classList.add('active');
+      POSITION = this.dataset.pos;
+      renderFretboard();
+    });
+  });
+}
+
+var POSITION = 'full';
+
+// ═══ BUBBLES ═══
+function createBubbles(){
+  var c = document.getElementById('bubbles');
+  for(var i=0;i<18;i++){
+    var b = document.createElement('div');
+    b.className = 'bubble';
+    var s = 8 + Math.random() * 35;
+    b.style.cssText = 'width:'+s+'px;height:'+s+'px;left:'+(Math.random()*100)+'%;animation-duration:'+(10+Math.random()*15)+'s;animation-delay:'+(-Math.random()*12)+'s';
+    c.appendChild(b);
+  }
+}
+
+// ═══ ROOT NOTES ═══
+function createRootNotes(){
+  var c = document.getElementById('rootNotes');
+  for(var i=0;i<12;i++){
+    var b = document.createElement('button');
+    b.className = 'root-btn';
+    b.textContent = NOTES[i];
+    b.dataset.note = i;
+    (function(n){b.addEventListener('click',function(){selectRootNote(n);});})(i);
+    c.appendChild(b);
+  }
+}
+
+function selectRootNote(n){
+  rootNote = n;
+  document.querySelectorAll('.root-btn').forEach(function(b){b.classList.remove('active')});
+  document.querySelector('.root-btn[data-note="'+n+'"]').classList.add('active');
+  renderFretboard();
+  updateInfo();
+}
+
+// ═══ SCALE CATEGORIES ═══
+function createScaleCategories(){
+  var c = document.getElementById('scaleCategories');
+  CATS.forEach(function(cat){
+    var chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = cat;
+    chip.addEventListener('click',function(){
+      document.querySelectorAll('#scaleCategories .chip').forEach(function(c){c.classList.remove('active')});
+      this.classList.add('active');
+      createScaleTypes();
+    });
+    c.appendChild(chip);
+  });
+  c.querySelector('.chip').classList.add('active');
+  createScaleTypes();
+}
+
+// ═══ SCALE TYPES ═══
+function createScaleTypes(){
+  var c = document.getElementById('scaleTypes');
+  c.innerHTML = '';
+  var activeCat = document.querySelector('#scaleCategories .chip.active');
+  var cat = activeCat ? activeCat.textContent : 'Common';
+  var inCat = Object.keys(SCALES).filter(function(k){return SCALES[k].cat === cat;});
+  inCat.forEach(function(key){
+    var chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = SCALES[key].name;
+    chip.dataset.scale = key;
+    (function(k){chip.addEventListener('click',function(){selectScale(k);});})(key);
+    c.appendChild(chip);
+  });
+  if(inCat.length > 0) selectScale(inCat[0]);
+}
+
+function selectScale(key){
+  activeScale = key;
+  document.querySelectorAll('#scaleTypes .chip').forEach(function(c){c.classList.remove('active')});
+  var chip = document.querySelector('#scaleTypes .chip[data-scale="'+key+'"]');
+  if(chip) chip.classList.add('active');
+  renderFretboard();
+  updateInfo();
+}
+
+// ═══ INFO ═══
+function updateInfo(){
+  var sc = SCALES[activeScale];
+  var notes = getScaleNotes(rootNote, sc.intervals);
+  var names = notes.map(function(n){return NOTES[n%12]});
+  var pattern = [];
+  for(var i=1;i<sc.intervals.length;i++){
+    pattern.push(sc.intervals[i]-sc.intervals[i-1] === 2 ? 'W' : 'H');
+  }
+  var html = '';
+  html += '<div class="info-card"><h4>Scale</h4><div class="value">'+NOTES[rootNote]+' '+sc.name+'</div></div>';
+  html += '<div class="info-card"><h4>Notes</h4><div class="notes-row">'+notes.map(function(n){return '<span class="note-pill">'+NOTES[n%12]+'</span>';}).join('')+'</div></div>';
+  html += '<div class="info-card"><h4>Pattern</h4><div class="value">'+pattern.join(' – ')+'</div><div class="sub">'+sc.intervals.length+' notes</div></div>';
+  html += '<div class="info-card"><h4>Category</h4><div class="value">'+sc.cat+'</div><div class="sub">'+NOTES[rootNote]+' root</div></div>';
+  document.getElementById('scaleInfo').innerHTML = html;
+}
+
+function getScaleNotes(root, intervals){
+  return intervals.map(function(i){return root + i;});
+}
+
+function isInScale(note){
+  var sc = SCALES[activeScale];
+  var norm = ((note % 12) + 12) % 12;
+  return sc.intervals.indexOf(norm) >= 0;
+}
+
+function isRoot(note){
+  return ((note % 12) + 12) % 12 === rootNote;
+}
+
+// ═══ FRETBOARD RENDERING ═══
+function renderFretboard(){
+  var container = document.getElementById('fretboard');
+  var sc = SCALES[activeScale];
+  var numFrets = 24;
+  var numStrings = 6;
+  var svgW = 1050;
+  var svgH = 220;
+  var padL = 40;
+  var padT = 25;
+  var padB = 25;
+  var fretW = (svgW - padL) / numFrets;
+  var stringH = (svgH - padT - padB) / (numStrings - 1);
+  
+  // Standard tuning: E A D G B E (from bottom to top in SVG)
+  var openStrings = [4, 9, 2, 7, 11, 4]; // E A D G B E semitones
+  
+  var svg = '<svg viewBox="0 0 '+svgW+' '+svgH+'" xmlns="http://www.w3.org/2000/svg">';
+  
+  // Fret lines
+  for(var f = 0; f <= numFrets; f++){
+    var x = padL + f * fretW;
+    svg += '<line class="fret-line" x1="'+x+'" y1="'+padT+'" x2="'+x+'" y2="'+(svgH-padB)+'" '+(f===0?'stroke-width="3"':'')+'/>';
+  }
+  
+  // Fret dots (3,5,7,9,12,15,17,19,21,24)
+  var dotFrets = [3,5,7,9,12,15,17,19,21,24];
+  dotFrets.forEach(function(f){
+    if(f > numFrets) return;
+    var x = padL + (f - 0.5) * fretW;
+    var y = (svgH - padT - padB) / 2 + padT;
+    if(f === 12 || f === 24){
+      // Double dot
+      svg += '<circle class="fret-dot" cx="'+x+'" cy="'+(y-stringH*1.2)+'" r="5"/>';
+      svg += '<circle class="fret-dot" cx="'+x+'" cy="'+(y+stringH*1.2)+'" r="5"/>';
+    } else {
+      svg += '<circle class="fret-dot" cx="'+x+'" cy="'+y+'" r="5"/>';
+    }
+  });
+  
+  // Fret numbers
+  for(var f = 1; f <= numFrets; f++){
+    var x = padL + (f - 0.5) * fretW;
+    svg += '<text class="fret-num" x="'+x+'" y="'+(svgH-6)+'">'+f+'</text>';
+  }
+  
+  // Strings and notes
+  for(var s = 0; s < numStrings; s++){
+    var y = padT + s * stringH;
+    
+    // String line (thicker for lower strings)
+    var thickness = 1.2 + (numStrings - 1 - s) * 0.4;
+    svg += '<line class="string-line" x1="'+padL+'" y1="'+y+'" x2="'+(svgW-10)+'" y2="'+y+'" stroke-width="'+thickness+'"/>';
+    
+    // Notes on this string
+    for(var f = 0; f <= numFrets; f++){
+      var note = openStrings[s] + f;
+      if(isInScale(note)){
+        var x = padL + f * fretW + fretW / 2;
+        var isRootNote = isRoot(note);
+        var r = isRootNote ? 11 : 9;
+        var cls = isRootNote ? 'note-root' : 'note-scale';
+        var labelCls = isRootNote ? 'note-label-root' : 'note-label';
+        var noteName = NOTES[((note % 12) + 12) % 12];
+        
+        // Glow effect
+        svg += '<circle class="note-circle '+cls+'" cx="'+x+'" cy="'+y+'" r="'+(r+3)+'" opacity="0.2"/>';
+        svg += '<circle class="note-circle '+cls+'" cx="'+x+'" cy="'+y+'" r="'+r+'" data-note="'+note+'" data-string="'+s+'" data-fret="'+f+'" onmouseenter="showNoteTooltip(evt,'+note+','+s+','+f+')" onmouseleave="hideTooltip()" onclick="playSingleNote('+openStrings[s]+','+f+')"/>';
+        svg += '<text class="'+labelCls+'" x="'+x+'" y="'+y+'">'+noteName+'</text>';
+      }
+    }
+  }
+  
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+function showNoteTooltip(evt, note, string, fret){
+  var name = NOTES[((note % 12) + 12) % 12];
+  var tuning = ['E','A','D','G','B','E'];
+  var text = name + ' — ' + tuning[string] + ' string, fret ' + fret;
+  var tip = document.createElement('div');
+  tip.id = 'noteTooltip';
+  tip.className = 'tooltip';
+  tip.textContent = text;
+  tip.style.left = (evt.clientX + 12) + 'px';
+  tip.style.top = (evt.clientY - 20) + 'px';
+  document.body.appendChild(tip);
+}
+
+function hideTooltip(){
+  var t = document.getElementById('noteTooltip');
+  if(t) t.remove();
+}
+
+// ═══ AUDIO ENGINE ═══
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Note frequency from MIDI number: f = 440 * 2^((n-69)/12)
+function noteToFreq(semitone){
+  return 440 * Math.pow(2, (semitone - 69) / 12);
+}
+
+// Play a single note with guitar-like envelope
+function playNote(freq, startTime, duration){
+  var ctx = getAudioCtx();
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  var filter = ctx.createBiquadFilter();
+  
+  // Guitar-like: sawtooth through lowpass
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(freq, startTime);
+  
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(2000 + freq * 2, startTime);
+  filter.Q.setValueAtTime(1, startTime);
+  
+  // ADSR envelope
+  var attack = 0.02;
+  var decay = 0.1;
+  var sustain = 0.5;
+  var release = 0.3;
+  
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(0.3, startTime + attack);
+  gain.gain.linearRampToValueAtTime(0.3 * sustain, startTime + attack + decay);
+  gain.gain.setValueAtTime(0.3 * sustain, startTime + duration - release);
+  gain.gain.linearRampToValueAtTime(0, startTime + duration);
+  
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.05);
+  
+  return {osc:osc, gain:gain};
+}
+
+// Play single note on fretboard click
+function playSingleNote(openStringSemitone, fret){
+  var semitone = openStringSemitone + fret;
+  var freq = noteToFreq(semitone + 12); // Guitar is -1 octave from written
+  playNote(freq, getAudioCtx().currentTime, 0.8);
+}
+
+// ═══ SCALE PLAYBACK ═══
+function togglePlayback(){
+  if(isPlaying){
+    stopPlayback();
+  } else {
+    playScale();
+  }
+}
+
+function playScale(){
+  if(isPlaying) return;
+  isPlaying = true;
+  
+  var btn = document.getElementById('playBtn');
+  var icon = document.getElementById('playIcon');
+  var text = document.getElementById('playText');
+  btn.classList.add('playing');
+  icon.textContent = '⏸';
+  text.textContent = 'Playing...';
+  
+  var ctx = getAudioCtx();
+  var sc = SCALES[activeScale];
+  var notes = getScaleNotes(rootNote, sc.intervals);
+  var tempo = parseInt(document.getElementById('tempo').value);
+  var direction = document.getElementById('direction').value;
+  var secondsPerNote = 60 / tempo;
+  
+  var sequences = [];
+  
+  // Build note sequence based on tuning (E A D G B E)
+  var openStrings = [4, 9, 2, 7, 11, 4];
+  
+  // Find all playable positions for scale notes
+  var positions = []; // [{string, fret, semitone}]
+  for(var s = 0; s < 6; s++){
+    for(var f = 0; f <= 12; f++){
+      var note = openStrings[s] + f;
+      var norm = ((note % 12) + 12) % 12;
+      if(sc.intervals.indexOf(norm) >= 0){
+        positions.push({string:s, fret:f, semitone:note});
+      }
+    }
+  }
+  
+  // Sort positions by pitch for playback
+  positions.sort(function(a,b){return a.semitone - b.semitone;});
+  
+  // Build the note list based on direction
+  var noteList = [];
+  if(direction === 'up' || direction === 'both'){
+    positions.forEach(function(p){noteList.push(p);});
+  }
+  if(direction === 'down' || direction === 'both'){
+    var desc = positions.slice().reverse();
+    if(direction === 'both') desc.shift(); // Avoid duplicating top note
+    desc.forEach(function(p){noteList.push(p);});
+  }
+  
+  // Schedule all notes
+  var now = ctx.currentTime + 0.1;
+  noteList.forEach(function(p, i){
+    var freq = noteToFreq(p.semitone + 12); // Guitar tuning offset
+    var dur = secondsPerNote * 0.9;
+    playNote(freq, now + i * secondsPerNote, dur);
+  });
+  
+  var totalDuration = noteList.length * secondsPerNote;
+  playTimeout = setTimeout(function(){
+    stopPlayback();
+  }, (totalDuration + 0.5) * 1000);
+}
+
+function stopPlayback(){
+  isPlaying = false;
+  if(playTimeout){clearTimeout(playTimeout); playTimeout = null;}
+  var btn = document.getElementById('playBtn');
+  var icon = document.getElementById('playIcon');
+  var text = document.getElementById('playText');
+  btn.classList.remove('playing');
+  icon.textContent = '▶';
+  text.textContent = 'Play Scale';
+}
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown', function(e){
+  if(e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+  if(e.key === ' '){e.preventDefault(); togglePlayback();}
+  if(e.key === 'Escape') stopPlayback();
+});
+
+// ═══ START ═══
+init();
+</script>
+</body>
+</html>
